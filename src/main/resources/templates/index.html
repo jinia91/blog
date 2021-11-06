@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+ㅎㅇ
+
+<div sec:authorize="isAuthenticated()">
+    <div th:href="@{/profile/{userId}(userId=${#authentication.name})}" th:text="${#authentication.name} + '님'">
+        아이디</div>
+</div>
+
+
+<a sec:authorize="!isAuthenticated()" href="/oauth2/authorization/google">구글 로그인</a>
+<a sec:authorize="!isAuthenticated()" href="/oauth2/authorization/facebook">페이스북 로그인</a>
+<a sec:authorize="!isAuthenticated()" href="/oauth2/authorization/naver">네이버 로그인</a>
+<a sec:authorize="!isAuthenticated()" href="/oauth2/authorization/kakao">카카오 로그인</a>
+<a sec:authorize="isAuthenticated()" href="/logout">로그아웃</a>
+
+</body>
+</html>
