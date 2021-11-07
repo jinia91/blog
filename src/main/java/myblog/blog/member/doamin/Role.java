@@ -3,12 +3,12 @@ package myblog.blog.member.doamin;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
-@Getter
 @RequiredArgsConstructor
+@Getter
 public enum Role {
-    USER("ROLE_USER","일반사용자"),
-    ADMIN("ROLE_ADMIN","관리자");
+    USER("ROLE_USER"),
+    ADMIN("ROLE_ADMIN");
 
-    private final String key;
-    private final String title;
+    private final String value;
+
 }

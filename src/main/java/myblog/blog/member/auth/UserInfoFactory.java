@@ -1,6 +1,7 @@
 package myblog.blog.member.auth;
 
 import myblog.blog.member.auth.userinfo.*;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Component;
@@ -19,7 +20,8 @@ public class UserInfoFactory {
         } else if (oAuth2UserRequest.getClientRegistration().getRegistrationId().equals("naver")) {
             return new NaverUserInfo(oAuth2User.getAttribute("response"));
         }
-        else return null;
+        else {
+            throw new IllegalArgumentException("지원하지 않는 Oauth 인증 시도입니다");}
     }
 
 

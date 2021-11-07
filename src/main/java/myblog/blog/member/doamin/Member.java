@@ -2,8 +2,11 @@ package myblog.blog.member.doamin;
 
 import lombok.Builder;
 import lombok.Getter;
+import myblog.blog.article.domain.Article;
+import myblog.blog.base.domain.BasicEntity;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @SequenceGenerator(
@@ -11,10 +14,11 @@ import javax.persistence.*;
         sequenceName = "MEMBER_SEQ",
         initialValue = 1, allocationSize = 50)
 @Getter
-public class Member {
+public class Member extends BasicEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "MEMBER_SEQ_GENERATOR")
+    @Column(name = "member_id")
     private Long id;
 
     @Column(nullable = false)
@@ -23,7 +27,7 @@ public class Member {
     @Column(nullable = false)
     private String userId;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String email;
 
     private String picUrl;
@@ -34,6 +38,9 @@ public class Member {
     private String provider;
 
     private String providerId;
+
+    @OneToMany(mappedBy = "member")
+    private List<Article> articles;
 
     protected Member() {
     }

@@ -1,7 +1,6 @@
 package myblog.blog.member.service;
 
 import lombok.RequiredArgsConstructor;
-import myblog.blog.exception.DuplicateEmailException;
 import myblog.blog.member.auth.userinfo.Oauth2UserInfo;
 import myblog.blog.member.auth.UserInfoFactory;
 import myblog.blog.member.repository.MemberRepository;
@@ -25,6 +24,7 @@ public class Oauth2MemberService extends DefaultOAuth2UserService {
     private final MemberRepository memberRepository;
     private final UserInfoFactory userInfoFactory;
 
+    // 앱 구동시 ADMIN 계정 Insert
     @Value("${admin.username}")
     private String adminUsername;
     @Value("${admin.picUrl}")
@@ -37,6 +37,7 @@ public class Oauth2MemberService extends DefaultOAuth2UserService {
     private String adminProvider;
 
     @Override
+    @Transactional
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
 
         Oauth2UserInfo userInfo =
@@ -54,7 +55,7 @@ public class Oauth2MemberService extends DefaultOAuth2UserService {
         if(member == null) {
 
             if(memberRepository.findByEmail(userInfo.getEmail()) != null)
-                throw new DuplicateEmailException();
+                throw new OAuth2AuthenticationException("duplicateEmail");
 
             member = Member.builder()
                     .username(userInfo.getUserName())

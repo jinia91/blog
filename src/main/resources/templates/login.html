@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html th:replace="~{layout/layout.html :: layout(~{::title}, ~{::section}, ~{::link})}"
+      lang="ko" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5" xmlns="http://www.w3.org/1999/html">
+
+<head>
+    <title>Jinia's Log - 로그인</title>
+    <link rel="stylesheet" href="/css/login.css"/>
+</head>
+<body>
+
+<section>
+
+    <div style="margin-bottom: 300px"></div>
+
+    <div class="container">
+        <div class="row">
+
+            <P class="text-center field-error mt-3" id="capsAlert" th:text="${errMsg}">로그인 오류</P>
+
+            <div class="col">
+                <a href="/oauth2/authorization/google">
+                    <button class="btnCtm btn-google">구글 로그인</button>
+                </a>
+
+            </div>
+
+            <div class="col">
+                <a href="/oauth2/authorization/facebook">
+                    <button class="btnCtm btn-facebook">페이스북 로그인</button>
+                </a>
+            </div>
+
+            <div class="col">
+                <a href="/oauth2/authorization/kakao">
+                    <button class="btn-kakao"><img src="/img/kakao.png"></button>
+                </a>
+            </div>
+
+            <div class="col">
+                <a href="/oauth2/authorization/naver">
+                    <button class="btn-naver"><img src="/img/naver.png"></button>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div style="margin-bottom: 300px"></div>
+
+
+</section>
+
+</body>
+</html>

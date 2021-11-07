@@ -1,0 +1,58 @@
+
+button img{
+    width: 200px;
+    height:50px;
+}
+
+/* Social Buttons Style */
+.btnCtm {
+    background: none;
+    border: none;
+    background-position: 1em;
+    background-repeat: no-repeat;
+    background-size: 2em;
+    border-radius: 0.5em;
+    border: none;
+    color: white;
+    cursor: pointer;
+    font-size: 0.9em;
+    line-height: 1em;
+    padding: 0 2em 0 4em;
+    text-decoration: none;
+    transition: all 0.5s;
+    height: 50px;
+    width: 200px;
+    margin-bottom: 5px;
+}
+
+.btn-google {
+    background-color: #dd4b39;
+    background-image: url("/img/google.svg");
+}
+.btn-google:hover {
+    background-color: #e47365;
+}
+.btn-google:active {
+    background-color: #c23321;
+}
+.btn-facebook {
+    background-color: #3b5998;
+    background-image: url("/img/facebook.svg");
+}
+.btn-facebook:hover {
+    background-color: #4c70ba;
+}
+.btn-facebook:active {
+    background-color: #2d4373;
+}
+
+.btn-kakao{
+    background: none;
+    border: none;
+}
+
+.btn-naver{
+    background: none;
+    border: none;
+
+}
