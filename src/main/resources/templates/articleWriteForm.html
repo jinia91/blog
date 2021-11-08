@@ -6,7 +6,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Jinia's Log - 로그인</title>
+    <title>Jinia's Log - 글 작성</title>
     <!-- SEO -->
     <meta name="description" content=""/>
     <meta name="keyword" content=""/>
@@ -35,10 +35,10 @@
     <link rel="short icon" type="image/x-icon" href=""/>
 
     <!-- CSS RESET -->
+    <link rel="stylesheet" href="https://uicdn.toast.com/editor/latest/toastui-editor.min.css"/>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css"/>
     <link rel="stylesheet" href="/node_modules/bootstrap/dist/css/bootstrap.min.css"/>
     <link rel="stylesheet" href="/css/mainCss.css"/>
-    <link rel="stylesheet" href="/css/login.css"/>
 
     <script src="https://kit.fontawesome.com/233840a552.js" crossorigin="anonymous"></script>
 </head>
@@ -50,39 +50,44 @@
     <div style="margin-bottom: 150px"></div>
 
     <div class="container">
-            <P class="text-center" id="capsAlert" th:text="${errMsg}">로그인 오류</P>
-        <span class="d-flex flex-column align-items-center justify-content-center h-100">
+        <div class="row justify-content-center mt-5 mb-3 g-0">
+
+            <form class="" method="post" enctype="multipart/form-data" th:object="${newArticleDto}"
+                  th:action="@{/article/write}" id="writeArticleForm">
+
+                <div class="form-group">
+                    <input id="title" name="title" type="text" class="form-control"
+                           placeholder="제목을 입력해주세요" required max="30">
+                </div>
+
+                <div class="form-group">
+                    <textarea type="text" name="content" id="content" hidden></textarea>
+                </div>
+
+            </form>
+        </div>
 
 
-            <div class="col">
-                <a href="/oauth2/authorization/google">
-                    <button class="btnCtm btn-google">구글 로그인</button>
-                </a>
-
+        <div class="row justify-content-center mb-3 g-0">
+            <label for="editor"></label>
+            <div class=" d-none d-sm-block">
+                <div id="editor"></div>
             </div>
-
-            <div class="col">
-                <a href="/oauth2/authorization/facebook">
-                    <button class="btnCtm btn-facebook">페이스북 로그인</button>
-                </a>
+            <div class=" d-block d-sm-none">
+                <div id="editorMobile"></div>
             </div>
+        </div>
 
-            <div class="col">
-                <a href="/oauth2/authorization/kakao">
-                    <button class="btn-kakao"><img src="/img/kakao.png"></button>
-                </a>
-            </div>
-
-            <div class="col">
-                <a href="/oauth2/authorization/naver">
-                    <button class="btn-naver"><img src="/img/naver.png"></button>
-                </a>
-            </div>
-        </span>
+        <div class="row justify-content-evenly mb-5 g-0">
+            <button class="btn btn-secondary col-4 d-none d-sm-block" onclick="post()">등 록</button>
+            <button class="btn btn-secondary col-4 d-block d-sm-none" onclick="postMobile()">등 록</button>
+            <button class="btn btn-secondary col-4" onclick="javascript:history.back()">취 소</button>
+        </div>
     </div>
 
-    <div style="margin-bottom:  100px"></div>
-
+    <!--scripts-->
+    <script src="https://uicdn.toast.com/editor/latest/toastui-editor-all.min.js"></script>
+    <script src="/js/editor.js"></script>
 
 </section>
 

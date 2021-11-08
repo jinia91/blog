@@ -17,12 +17,15 @@ button img{
     cursor: pointer;
     font-size: 0.9em;
     line-height: 1em;
+    font-family: 'Noto Sans C JK KR';
+    font-weight: bold;
     padding: 0 2em 0 4em;
     text-decoration: none;
     transition: all 0.5s;
     height: 50px;
     width: 200px;
     margin-bottom: 5px;
+
 }
 
 .btn-google {

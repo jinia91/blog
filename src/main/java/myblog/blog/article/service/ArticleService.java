@@ -2,8 +2,10 @@ package myblog.blog.article.service;
 
 import lombok.RequiredArgsConstructor;
 import myblog.blog.article.domain.Article;
+import myblog.blog.article.dto.NewArticleDto;
 import myblog.blog.article.repository.ArticleRepository;
-import org.modelmapper.ModelMapper;
+import myblog.blog.member.doamin.Member;
+import myblog.blog.member.repository.MemberRepository;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -11,19 +13,27 @@ import org.springframework.stereotype.Service;
 public class ArticleService {
 
     private final ArticleRepository articleRepository;
-    private final ModelMapper modelMapper;
+    private final MemberRepository memberRepository;
 
-    public Long writeArticle(NewArticleDto newArticleDto){
+    public Long writeArticle(NewArticleDto articleDto) {
 
-        Article article = modelMapper.map(newArticleDto, Article.class);
-
-        articleRepository.save(article);
-
-        return article.getId();
+        Article newArticle = createNewArticleFrom(articleDto);
+        articleRepository.save(newArticle);
+        return newArticle.getId();
 
     }
 
+    private Article createNewArticleFrom(NewArticleDto articleDto) {
+        Member member =
+                memberRepository.findById(articleDto.getMemberId()).orElseThrow(() -> {
+                    throw new IllegalArgumentException("작성자를 확인할 수 없습니다");
+                });
 
-
-
+        return Article.builder()
+                .title(articleDto.getTitle())
+                .content(articleDto.getContent())
+                .toc(articleDto.getToc())
+                .member(member)
+                .build();
+    }
 }

@@ -23,6 +23,10 @@ public class PrincipalDetails implements OAuth2User {
         this.attributes = attributes;
     }
 
+    public Long getMemberId(){
+        return member.getId();
+    }
+
     // Oauth2
     @Override
     public Map<String, Object> getAttributes() {

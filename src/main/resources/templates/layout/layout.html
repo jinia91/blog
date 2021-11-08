@@ -1,58 +1,21 @@
 <!DOCTYPE html>
-<html th:fragment="layout (title, content, style)"
+<html th:fragment="layout (head, content)"
       lang="ko" xmlns:th="http://www.thymeleaf.org"
       xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title th:replace="${title}">Jinia's Log</title>
-    <!-- SEO -->
-    <meta name="description" content=""/>
-    <meta name="keyword" content=""/>
-    <meta name="author" content="jinia"/>
-    <meta name="viewport" content="width=device-width,  user-scalable = no, initial-scale=1.0"/>
-    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
-
-    <!-- OPEN GRAPH(FACEBOOK, LINKEDIN) -->
-    <meta property="og:type" content=""/>
-    <meta property="og:description" content=""/>
-    <meta property="og:title" content=""/>
-    <meta property="og:image" content=""/>
-    <meta property="og:url" content=""/>
-    <meta property="og:site_name" content=""/>
-
-    <!-- twitter -->
-    <meta property="twitter:card" content=""/>
-    <meta property="twitter:title" content=""/>
-    <meta property="twitter:description" content=""/>
-    <meta property="twitter:image" content=""/>
-    <meta property="twitter:url" content=""/>
-    <meta property="twitter:creator" content=""/>
-
-    <link rel="icon" href=""/>
-    <link rel="apple-touch-icon" href=""/>
-    <link rel="short icon" type="image/x-icon" href=""/>
-
-    <!-- CSS RESET -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css"/>
-    <link rel="stylesheet" href="/node_modules/bootstrap/dist/css/bootstrap.min.css"/>
-    <link rel="stylesheet" href="/css/mainCss.css"/>
-    <link th:replace="${style}">
-
-    <script src="https://kit.fontawesome.com/233840a552.js" crossorigin="anonymous"></script>
+<head th:replace="${head}">
 </head>
 
 <body>
 <header class="fixed-top d-xxl-none p-0">
     <nav class="navbar navbar-light bg-light">
-        <div class="container-fluid">
+        <div class="container-fluid p-0">
             <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasMenu"
                     aria-controls="offcanvasMenu">
                 <i class="fas fa-bars"></i>
             </button>
             <div id="nav-brand">
-                <a href="#">
+                <a th:href="@{/}">
                     <h4>Blog</h4>
                 </a>
             </div>
@@ -60,7 +23,8 @@
                     class="far fa-address-card"></i></a></div>
             <div sec:authorize="isAuthenticated()">
                 <span sec:authorize="isAuthenticated()" th:text="${#authentication.name} + '님'"></span>
-                <a th:href="@{/article/write}"><span sec:authorize="hasRole('ADMIN')" style="font-size: 21px"><i class="fas fa-edit"></i></span></a>
+                <a th:href="@{/article/write}"><span sec:authorize="hasRole('ADMIN')" style="font-size: 21px"><i
+                        class="fas fa-edit"></i></span></a>
             </div>
         </div>
     </nav>
@@ -106,6 +70,7 @@
                             <li><a href="#" class="link-dark rounded">카테고리1</a></li>
                             <li><a href="#" class="link-dark rounded">카테고리2</a></li>
                             <li><a href="#" class="link-dark rounded">카테고리3</a></li>
+                        </ul>
                     </div>
                 </li>
                 <li class="mb-1">
@@ -118,6 +83,7 @@
                             <li><a href="#" class="link-dark rounded">카테고리1</a></li>
                             <li><a href="#" class="link-dark rounded">카테고리2</a></li>
                             <li><a href="#" class="link-dark rounded">카테고리3</a></li>
+                        </ul>
                     </div>
                 </li>
                 <li class="mb-1">
@@ -130,6 +96,7 @@
                             <li><a href="#" class="link-dark rounded">카테고리1</a></li>
                             <li><a href="#" class="link-dark rounded">카테고리2</a></li>
                             <li><a href="#" class="link-dark rounded">카테고리3</a></li>
+                        </ul>
                     </div>
                 </li>
                 <li class="border-top my-3"></li>
@@ -206,6 +173,7 @@
                             <li><a href="#" class="link-dark rounded">카테고리1</a></li>
                             <li><a href="#" class="link-dark rounded">카테고리2</a></li>
                             <li><a href="#" class="link-dark rounded">카테고리3</a></li>
+                        </ul>
                     </div>
                 </li>
                 <li class="mb-1">
@@ -218,6 +186,7 @@
                             <li><a href="#" class="link-dark rounded">카테고리1</a></li>
                             <li><a href="#" class="link-dark rounded">카테고리2</a></li>
                             <li><a href="#" class="link-dark rounded">카테고리3</a></li>
+                        </ul>
                     </div>
                 </li>
                 <li class="mb-1">
@@ -230,6 +199,7 @@
                             <li><a href="#" class="link-dark rounded">카테고리1</a></li>
                             <li><a href="#" class="link-dark rounded">카테고리2</a></li>
                             <li><a href="#" class="link-dark rounded">카테고리3</a></li>
+                        </ul>
                     </div>
                 </li>
                 <li class="border-top my-3"></li>
@@ -270,6 +240,14 @@
     <div class="col-xxl-10 p-0 sections-container">
 
         <section th:replace="${content}"></section>
+
+        <button class="arrow-up">
+            <i class="fas fa-arrow-up"></i>
+        </button>
+
+        <script src="/node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+        <!-- scripts e -->
+
         <!-- sections e -->
 
         <footer class="footer bg-light">
@@ -277,18 +255,11 @@
                 <h5><span class="text-muted">Copyright ©Jinia</span></h5>
             </div>
         </footer>
+
     </div>
 </section>
 <!-- body e -->
 
-
-<button class="arrow-up">
-    <i class="fas fa-arrow-up"></i>
-</button>
-
-<!-- js -->
-<script src="/node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-<!--  -->
 </body>
 
 </html>

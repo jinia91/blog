@@ -1,10 +1,12 @@
-package myblog.blog.article.service;
+package myblog.blog.article.dto;
 
-import myblog.blog.member.doamin.Member;
+import lombok.Getter;
+import lombok.Setter;
 
-import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 
+@Setter
+@Getter
 public class NewArticleDto {
 
     @NotBlank
@@ -14,5 +16,8 @@ public class NewArticleDto {
     private String toc;
     @NotBlank
     private Long memberId;
+
+    private String thumbnailUrl;
+
 
 }
