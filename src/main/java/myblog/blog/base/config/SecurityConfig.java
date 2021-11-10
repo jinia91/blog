@@ -10,6 +10,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 
 @Configuration
 @EnableWebSecurity
@@ -43,6 +44,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .logoutSuccessUrl("/")
                 .deleteCookies("JSESSIONID","remember-me")
 
+                .and().csrf()
+                .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
+
 
                 .and()
                 .oauth2Login()
@@ -50,6 +54,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .failureHandler(loginFailHandler)
                 .userInfoEndpoint()
                 .userService(oauth2MemberService)
+
+
 
         ;
     }

@@ -15,19 +15,18 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
-public class ImgService {
+public class UploadImgService {
 
     @Value("${git.gitToken}")
     private String gitToken;
-    @Value("${git.imgRepo}")
 
+    @Value("${git.imgRepo}")
     private String gitRepo;
+
     @Value("${git.imgUrl}")
     private String imgUrl;
 
-    private final ModelMapper modelMapper;
-
-    public UploadedImg storeImg(MultipartFile multipartFile) throws IOException {
+    public String storeImg(MultipartFile multipartFile) throws IOException {
         if (multipartFile.isEmpty()) {
             throw new IllegalArgumentException("이미지가 존재하지 않습니다.");
         }
@@ -41,7 +40,9 @@ public class ImgService {
         repository.createContent().path("img/"+storeFileName)
                 .content(multipartFile.getBytes()).message("test").branch("main").commit();
 
-        return new UploadedImg(originalFilename, storeFileName, imgUrl +storeFileName+"?raw=true");
+        UploadedImg uploadedImg = new UploadedImg(originalFilename, storeFileName, imgUrl + storeFileName + "?raw=true");
+
+        return uploadedImg.getUploadUrl();
 
     }
 

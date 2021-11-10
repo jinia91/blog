@@ -77,7 +77,6 @@ public class Oauth2MemberService extends DefaultOAuth2UserService {
         return member;
     }
 
-    @PostConstruct
     public void insertAdmin(){
 
         Member admin = memberRepository.findByEmail(adminEmail);

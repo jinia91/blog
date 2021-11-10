@@ -15,7 +15,7 @@ server:
 
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto:
     properties:
       hibernate:
         #        show_sql: true

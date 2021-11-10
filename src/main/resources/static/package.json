@@ -10,6 +10,7 @@
   "license": "ISC",
   "dependencies": {
     "@toast-ui/editor": "^3.1.1",
+    "@yaireo/tagify": "^4.8.1",
     "bootstrap": "^5.1.3"
   }
 }

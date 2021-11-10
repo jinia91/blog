@@ -1,0 +1,20 @@
+.thumbBox{
+    position: relative;
+    display: none;
+}
+
+.thumbDelBtn{
+    position: absolute;
+    font-size: 60vh;
+    background: transparent;
+    border: transparent;
+    visibility: hidden;
+}
+
+.thumbBox:hover .thumbDelBtn{
+    visibility: visible;
+}
+
+.thumbBox:hover .thumbImg{
+    opacity: 0.5;
+}

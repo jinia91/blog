@@ -89,14 +89,13 @@ const editorMobile = new toastui.Editor({
 editor.setMarkdown(contents.value);
 editorMobile.setMarkdown(contents.value);
 
-
 function uploadImage(blob) {
     let token = getCsrfToken();
     let formData = new FormData();
     formData.append('img', blob);
 
     const xhr = new XMLHttpRequest();
-    xhr.open("POST", "/board/uploadImg", false);
+    xhr.open("POST", "/article/uploadImg", false);
     xhr.setRequestHeader("contentType", "multipart/form-data");
     xhr.setRequestHeader("X-XSRF-TOKEN", token);
     xhr.send(formData);
