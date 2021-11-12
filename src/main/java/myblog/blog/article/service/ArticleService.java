@@ -11,15 +11,14 @@ import myblog.blog.member.repository.MemberRepository;
 import myblog.blog.member.service.Oauth2MemberService;
 import myblog.blog.tags.service.TagsService;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 @Service
 @Transactional
@@ -59,11 +58,43 @@ public class ArticleService {
 
     }
 
-    public Slice<ArticleForMainView> getRecentArticles(int page) {
+    public Slice<ArticleForMainView> getArticles(int page) {
 
-        return articleRepository.findByOrderByCreatedDateDesc(PageRequest.of(page, 5))
-                .map(article -> modelMapper.map(article, ArticleForMainView.class));
+        Slice<ArticleForMainView> articles = articleRepository
+                .findByOrderByIdDesc(PageRequest.of(page, 5))
+                .map(article -> modelMapper
+                        .map(article, ArticleForMainView.class));
+        return articles;
 
+    }
+
+    public Page<ArticleForMainView> getArticles(String category, Integer tier, Integer page) {
+
+        Page<Article> articles = null;
+
+        if (tier.intValue() == 0) {
+            articles = articleRepository
+                    .findAllByOrderByIdDesc(
+                            PageRequest.of(pageResolver(page), 5));
+        } else if (tier.intValue() == 1) {
+            articles = articleRepository
+                    .findByT1CategoryOrderByIdDesc(
+                            PageRequest.of(pageResolver(page), 5), category);
+
+        } else {
+            articles = articleRepository
+                    .findByCategoryOrderByIdDesc(
+                            PageRequest.of(pageResolver(page), 5), category);
+        }
+
+        return articles.map(article -> modelMapper
+                .map(article, ArticleForMainView.class));
+    }
+
+    private int pageResolver(Integer rawPage) {
+        if (rawPage == null || rawPage == 1) {
+            return 0;
+        } else return rawPage - 1;
     }
 
     private Article createNewArticleFrom(NewArticleDto articleDto) {
@@ -76,13 +107,21 @@ public class ArticleService {
                 .title(articleDto.getTitle())
                 .content(articleDto.getContent())
                 .toc(articleDto.getToc())
-                .thumbnailUrl(articleDto.getThumbnailUrl())
+                .thumbnailUrl(makeDefaultThumb(articleDto.getThumbnailUrl()))
                 .category(categoryService.findCategory(articleDto.getCategory()))
                 .member(member)
                 .build();
     }
 
-    /*--------------------------------------------------------------------------------------------*/
+    private String makeDefaultThumb(String thumbnailUrl) {
+        // 메시지로 올리기
+        String defaultThumbUrl = "https://cdn.pixabay.com/photo/2020/11/08/13/28/tree-5723734_1280.jpg";
+
+        if (thumbnailUrl == null || thumbnailUrl.equals("")) {
+            thumbnailUrl = defaultThumbUrl;
+        }
+        return thumbnailUrl;
+    }
 
 
 }

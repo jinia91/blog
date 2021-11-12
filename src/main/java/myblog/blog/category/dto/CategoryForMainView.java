@@ -13,30 +13,33 @@ public class CategoryForMainView {
 
     private int count;
     private String title;
+    private int id;
     private List<CategoryForMainView> categoryTCountList = new ArrayList<>();
 
-
-    public static CategoryForMainView createCategory(List<CategoryCountForRepository> crList) {
+    public static CategoryForMainView createCategory(List<CategoryNormalDto> crList) {
 
         Collections.reverse(crList);
         return recursBuilding(0, crList);
 
     }
 
-    private static CategoryForMainView recursBuilding(int d, List<CategoryCountForRepository> crList) {
+    private CategoryForMainView() {
+    }
+    private static CategoryForMainView recursBuilding(int d, List<CategoryNormalDto> crList) {
 
         CategoryForMainView categoryForMainView = new CategoryForMainView();
 
         while (!crList.isEmpty()) {
-            CategoryCountForRepository cSource = crList.get(0);
+            CategoryNormalDto cSource = crList.get(0);
 
             if (cSource.getTier() == d) {
                 if(categoryForMainView.getTitle() != null
-                        && categoryForMainView.getTitle() != cSource.getTitle()){
+                        && !categoryForMainView.getTitle().equals(cSource.getTitle())){
                     return categoryForMainView;
                 }
                 categoryForMainView.setTitle(cSource.getTitle());
                 categoryForMainView.setCount(cSource.getCount());
+                categoryForMainView.setId(cSource.getId());
                 crList.remove(0);
             } else if (cSource.getTier() > d) {
                 CategoryForMainView sub = recursBuilding(d + 1, crList);

@@ -1,6 +1,6 @@
 package myblog.blog.category.repository;
 
-import myblog.blog.category.dto.CategoryCountForRepository;
+import myblog.blog.category.dto.CategoryNormalDto;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 import org.springframework.stereotype.Repository;
@@ -11,7 +11,7 @@ import java.util.List;
 @Repository
 public interface NaCategoryRepository {
 
-    @Select("select ifnull(f.title,'total') as title,ifnull(tier,0) as tier, count\n" +
+    @Select("select ifnull(f.title,'total') as title,ifnull(tier,0) as tier, ifnull(f.category_id, 0) as id, count\n" +
             "from \n" +
             "(select ifnull(child,parent) as title, count\n" +
             "from\n" +
@@ -22,6 +22,6 @@ public interface NaCategoryRepository {
             "group by parent, child with rollup) d\n" +
             ") e\n" +
             "left join category f on (e.title = f.title)")
-    List<CategoryCountForRepository> getCategoryCount();
+    List<CategoryNormalDto> getCategoryCount();
 
 }

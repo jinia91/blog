@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html th:replace="~{layout/layout.html :: layout(~{::head}, ~{::section})}"
       lang="ko" xmlns:th="http://www.thymeleaf.org"
-      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5"  xmlns="http://www.w3.org/1999/html">
 
 <head>
     <meta charset="UTF-8">
@@ -30,15 +30,18 @@
     <meta property="twitter:url" content=""/>
     <meta property="twitter:creator" content=""/>
 
-    <link rel="icon" href=""/>
-    <link rel="apple-touch-icon" href=""/>
-    <link rel="short icon" type="image/x-icon" href=""/>
-
+    <link rel="icon" href="/img/favicon-16x16.png"/>
+    <link rel="apple-touch-icon" href="/img/favicon-16x16.png"/>
+    <link rel="icon" type="image/png" sizes="16x16"  href="/img/favicon-16x16.png">
+    <meta name="msapplication-TileColor" content="#ffffff">
+    <meta name="theme-color" content="#ffffff">
     <!-- CSS RESET -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css"/>
     <link rel="stylesheet" href="/node_modules/bootstrap/dist/css/bootstrap.min.css"/>
     <link rel="stylesheet" href="/css/mainCss.css"/>
     <link rel="stylesheet" href="/css/login.css"/>
+
+    <link rel="stylesheet" href="/node_modules/wow.js/css/libs/animate.css"/>
 
     <script src="https://kit.fontawesome.com/233840a552.js" crossorigin="anonymous"></script>
 </head>
@@ -46,56 +49,38 @@
 <body>
 
 <section>
-    <div class="main">
 
-        <div id="carouselExampleCaptions" class="carousel slide" data-bs-ride="carousel">
+    <div id="carouselForMain" class="carousel slide carousel-fade" data-bs-ride="carousel">
 
-            <div class="carousel-indicators">
-                <div th:each="article,num : ${popularArticles}">
-                    <button th:if="${num.index}==0"
-                            th:data-bs-slide-to="${num.index}"
-                            th:aria-label="|Slide ${num.index}|"
-                            type="button" data-bs-target="#carouselExampleCaptions" class="active"
-                            aria-current="true"></button>
-                    <button type="button" data-bs-target="#carouselExampleCaptions"
-                            th:if="${num.index}!=0"
-                            th:aria-label="|Slide ${num.index}|"
-                            th:data-bs-slide-to="${num.index}"></button>
-                </div>
+        <div class="carousel-inner">
+            <div class="carousel-item" th:each="article,num : ${popularArticles}"
+                 th:classappend="${num.index}==0? active">
+                <a href="#">
+                    <img th:src="${article.getThumbnailUrl()}"
+                         class="w-100 vh-100 cover" alt="...">
+                    <div class="card-img-overlay text-white text-center row justify-content-center align-content-center text-shadow">
+                        <h1 class="" th:text="${article.getTitle()}">첫번째 이미지</h1>
+                    </div>
+                </a>
             </div>
-
-            <div class="carousel-inner">
-
-                <div class="carousel-item" th:each="article,num : ${popularArticles}" th:classappend="${num.index}==0? active">
-                    <a href="#">
-                        <img th:src="${article.getThumbnailUrl()}"
-                             class="w-100 vh-100 cover" alt="...">
-                        <div class="card-img-overlay text-white text-center row justify-content-center align-content-center">
-                            <h3 class="" th:text="${article.getTitle()}">첫번째 이미지</h3>
-                            <p class="text-truncate w-50" th:text="${article.getContent()}">블로그 아티클 헤으응</p>
-                        </div>
-                    </a>
-                </div>
-            </div>
-
-
-            <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleCaptions"
-                    data-bs-slide="prev">
-                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                <span class="visually-hidden">Previous</span>
-            </button>
-            <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleCaptions"
-                    data-bs-slide="next">
-                <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                <span class="visually-hidden">Next</span>
-            </button>
-
         </div>
+
+        <button class="carousel-control-prev" type="button" data-bs-target="#carouselForMain"
+                data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Previous</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#carouselForMain"
+                data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Next</span>
+        </button>
+
     </div>
 
 
     <div class="mt-5 pt-2 popular-card-section">
-        <div class="cards-container container p-0">
+        <div class="cards-container container p-0 ">
             <div class=" row g-0 row-cols-2 row-cols-md-3">
                 <div class="col g-1 g-md-4" th:each="article,num : ${popularArticles}">
                     <a href="#">
@@ -114,39 +99,40 @@
 
     <hr class="py-1 mt-5" style="color: rgb(212, 200, 184);">
 
-    <div class="recent-cards mt-5">
+    <div class="recent-cards mt-5 ms-2 me-2">
 
         <div class="cards-container container p-0" id="infiniteScrollBox">
             <h1 class="text-center">최신 포스팅</h1>
             <hr>
-
-
             <div id="articlePage-0">
-                <div class="card mb-3 recent-card" th:each="article,num :${recentArticles.getContent()}">
+                <div class="card mb-3 recent-card wow fadeInUp" th:each="article,num :${recentArticles.getContent()}">
                     <a href="#">
                         <div class="row g-0">
                             <div class="col-3">
-                                <div class="ratio ratio-1x1" th:style="|background-image: url(${article.getThumbnailUrl()}); background-size: cover;|"></div>
+                                <div class="ratio ratio-1x1"
+                                     th:style="|background-image: url(${article.getThumbnailUrl()}); background-size: cover;|"></div>
                             </div>
                             <div class="col-9 row row-cols-1 align-self-center">
                                 <h3 class="card-title col mb-3 text-truncate" th:text="${article.getTitle()}">글 제목</h3>
                                 <p class="d-none d-md-block col recent-card-text" th:text="${article.getContent()}">내용</p>
-                                <p class="col mb-0"><small class="text-muted" th:text="|작성일 : ${#temporals.format(article.getCreatedDate(), 'yyyy-MM-dd HH')}|"></small></p>
+                                <p class="col mb-0">
+                                    <small class="text-muted"
+                                           th:text="|작성일 : ${#temporals.format(article.getCreatedDate(), 'yyyy-MM-dd HH')}|"></small>
+                                </p>
                             </div>
                         </div>
                     </a>
                 </div>
             </div>
-
-
+            <!--     infinityScroll     -->
             <div id="nextPagination"></div>
+
         </div>
     </div>
-
-<!--  js  -->
+        <!--  js  -->
+    <script src="/node_modules/wow.js/dist/wow.js"></script>
     <script src="/js/infinityScroll.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.0/moment.min.js"></script>
-    <!--    -->
 </section>
 
 </body>

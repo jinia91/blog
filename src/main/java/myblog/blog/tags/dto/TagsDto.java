@@ -5,10 +5,6 @@ import lombok.Data;
 @Data
 public class TagsDto {
 
-    private String value;
+    private String name;
 
-    @Override
-    public String toString() {
-        return "{ value : " + value + "}";
-    }
-}
+ }

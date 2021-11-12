@@ -14,7 +14,7 @@ import java.util.List;
         sequenceName = "TAGS_SEQ",
         initialValue = 1, allocationSize = 50)
 @Getter
-public class Tags extends BasicEntity {
+public class    Tags extends BasicEntity {
 
     @Id
     @Column(name = "tags_id")

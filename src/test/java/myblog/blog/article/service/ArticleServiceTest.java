@@ -4,7 +4,7 @@ import myblog.blog.article.domain.Article;
 import myblog.blog.article.repository.ArticlePagingRepository;
 import myblog.blog.article.repository.ArticleRepository;
 import myblog.blog.category.domain.Category;
-import myblog.blog.category.dto.CategoryCountForRepository;
+import myblog.blog.category.dto.CategoryNormalDto;
 import myblog.blog.category.dto.CategoryForMainView;
 import myblog.blog.category.repository.CategoryRepository;
 import myblog.blog.category.repository.NaCategoryRepository;
@@ -141,7 +141,7 @@ class ArticleServiceTest {
 
 
 
-        List<CategoryCountForRepository> categoryCountForRepository = naCategoryRepository.getCategoryCount();
+        List<CategoryNormalDto> categoryNormalDto = naCategoryRepository.getCategoryCount();
 
 //        for (CategoryCountForRepository count : categoryCountForRepository) {
 //
@@ -150,7 +150,7 @@ class ArticleServiceTest {
 //        }
 //
 
-        CategoryForMainView category = CategoryForMainView.createCategory(categoryCountForRepository);
+        CategoryForMainView category = CategoryForMainView.createCategory(categoryNormalDto);
 
         System.out.println("t1. " + category.getTitle() + "(" + category.getCount()+")");
 

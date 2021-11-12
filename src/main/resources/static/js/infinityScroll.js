@@ -48,20 +48,20 @@ function makeNextPage() {
 
                     let articleHtmlSource = ' ';
                     articleHtmlSource +=
-                        "<div class=\"card mb-3 recent-card\">\n" +
-                        "                    <a href=\"#\">\n" +
-                        "                        <div class=\"row g-0\">\n" +
-                        "                            <div class=\"col-3\">\n" +
-                        "                                <div class=\"ratio ratio-1x1\" style=\"background-image: url("+listElement.thumbnailUrl+"); background-size: cover;\"></div>\n" +
-                        "                            </div>\n" +
-                        "                            <div class=\"col-9 row row-cols-1 align-self-center\">\n" +
-                        "                                <h3 class=\"card-title col mb-3 text-truncate\">"+listElement.title+"</h3>\n" +
-                        "                                <p class=\"d-none d-md-block col recent-card-text\" >"+listElement.content+"</p>\n" +
-                        "                                <p class=\"col mb-0\"><small class=\"text-muted\">"+date+"</small></p>\n" +
-                        "                            </div>\n" +
-                        "                        </div>\n" +
-                        "                    </a>\n" +
-                        "</div>"
+                        `<div class=\"card mb-3 recent-card wow fadeInUp ">
+                                            <a href="#">
+                                                <div class="row g-0">
+                                                    <div class="col-3">
+                                                        <div class="ratio ratio-1x1\" style="background-image: url(${listElement.thumbnailUrl}); background-size: cover;"></div>
+                                                    </div>
+                                                    <div class="col-9 row row-cols-1 align-self-center">
+                                                        <h3 class="card-title col mb-3 text-truncate">${listElement.title}</h3>
+                                                        <p class="d-none d-md-block col recent-card-text" >${listElement.content}</p>
+                                                        <p class="col mb-0"><small class="text-muted">${date}</small></p>
+                                                    </div>
+                                                </div>
+                                            </a>
+                        </div>`
 
                     article.innerHTML = articleHtmlSource;
                     nextPage.appendChild(article);
@@ -77,4 +77,5 @@ function makeNextPage() {
     }
 }
 
-InfinityScroll()
+InfinityScroll();
+new WOW().init();

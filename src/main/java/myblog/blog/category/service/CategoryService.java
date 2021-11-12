@@ -2,7 +2,7 @@ package myblog.blog.category.service;
 
 import lombok.RequiredArgsConstructor;
 import myblog.blog.category.domain.Category;
-import myblog.blog.category.dto.CategoryCountForRepository;
+import myblog.blog.category.dto.CategoryNormalDto;
 import myblog.blog.category.dto.CategoryForMainView;
 import myblog.blog.category.repository.CategoryRepository;
 import myblog.blog.category.repository.NaCategoryRepository;
@@ -29,19 +29,25 @@ public class CategoryService {
                 .parents(parentCategory)
                 .build();
 
+        categoryRepository.save(category);
+
         return category.getId();
     }
 
-    public Category findCategory(String title){
+    public Category findCategory(String title) {
         return categoryRepository.findByTitle(title);
     }
 
-    public CategoryForMainView getCategoryForView(){
+    public CategoryForMainView getCategoryForView() {
 
-        List<CategoryCountForRepository> categoryCount = naCategoryRepository.getCategoryCount();
+        List<CategoryNormalDto> categoryCount = naCategoryRepository.getCategoryCount();
 
         return CategoryForMainView.createCategory(categoryCount);
 
+    }
+
+    public List<Category> findCategoryByTier(int tier) {
+        return categoryRepository.findAllByTierIs(tier);
     }
 
 }
