@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html th:replace="~{layout/layout.html :: layout(~{::head}, ~{::section})}"
+      lang="ko" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5" xmlns="http://www.w3.org/1999/html">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title></title>
+    <!-- SEO -->
+    <meta name="description" content=""/>
+    <meta name="keyword" content=""/>
+    <meta name="author" content="jinia"/>
+    <meta name="viewport" content="width=device-width,  user-scalable = no, initial-scale=1.0"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+
+    <!-- OPEN GRAPH(FACEBOOK, LINKEDIN) -->
+    <meta property="og:type" content=""/>
+    <meta property="og:description" content=""/>
+    <meta property="og:title" content=""/>
+    <meta property="og:image" content=""/>
+    <meta property="og:url" content=""/>
+    <meta property="og:site_name" content=""/>
+
+    <!-- twitter -->
+    <meta property="twitter:card" content=""/>
+    <meta property="twitter:title" content=""/>
+    <meta property="twitter:description" content=""/>
+    <meta property="twitter:image" content=""/>
+    <meta property="twitter:url" content=""/>
+    <meta property="twitter:creator" content=""/>
+
+    <link rel="icon" href=""/>
+    <link rel="apple-touch-icon" href=""/>
+    <link rel="short icon" type="image/x-icon" href=""/>
+
+    <!-- CSS RESET -->
+    <link rel="stylesheet" href="https://uicdn.toast.com/editor/latest/toastui-editor.min.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css"/>
+    <link rel="stylesheet" href="/node_modules/bootstrap/dist/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="/node_modules/@yaireo/tagify/dist/tagify.css"/>
+    <link rel="stylesheet" href="/css/mainCss.css"/>
+    <link rel="stylesheet" href="/css/articleView.css"/>
+
+    <script src="https://kit.fontawesome.com/233840a552.js" crossorigin="anonymous"></script>
+</head>
+
+<body>
+
+<section>
+
+    <div class="main ">
+        <div class="carousel-inner ">
+            <div class="carousel-item active">
+                <img th:src="${article.getThumbnailUrl()}" class="w-100 vh-100 cover"
+                     alt="...">
+                <div class="card-img-overlay text-shadow text-white text-center row justify-content-center align-content-center p-0">
+                    <h1 style="font-size: 2.5rem;" th:text="${article.getTitle()}">아티클 제목</h1>
+                    <h5 th:text="|작성일 : ${#temporals.format(article.getCreatedDate(), 'yyyy-MM-dd')}|">글쓴 날짜</h5>
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-5 m-2 m-sm-5 d-flex justify-content-center">
+            <textarea name="contents" id="contents" th:text="${article.getContent()}" hidden></textarea>
+            <div class="col paper m-2 p-sm-4 p-2" id="viewer"></div>
+        </div>
+
+        <!-- comment s -->
+        <hr class="py-1" style="color: rgb(212, 200, 184);">
+
+        <div class="container mt-2 mb-5" style="max-width: 1200px;">
+
+            <div sec:authorize="isAuthenticated()" class="ms-2 me-2 mt-3 d-flex align-items-center">
+                <div>
+                    <img th:src="${picUrl}" width="50"
+                         height="50"
+                         class="rounded-circle me-2">
+                </div>
+                <textarea type="text" id="commentContent" name="commentContent"
+                          class="form-control" placeholder="댓글을 작성해주세요..."></textarea>
+            </div>
+            <div sec:authorize="isAuthenticated()" class="d-flex">
+                <div class="ms-auto mt-2 me-2">
+                    <button class="btn btn-secondary btn-sm" onclick="commentWrite()">등 록</button>
+                </div>
+            </div>
+
+            <div class="row justify-content-center align-items-center g-0 wow fadeInUp p-2">
+                <div class="col">
+                    <div id="commentContainer">
+
+                        <!-- comment -->
+                        <div class="mt-2 comment-box" id="commentBox">
+
+                        </div>
+
+                        <!--  -->
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- comment e -->
+
+        <script src="https://uicdn.toast.com/editor/latest/toastui-editor-all.min.js"></script>
+        <script src="/js/getCsrf.js"></script>
+        <script src="/js/articleView.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.0/moment.min.js"></script>
+        <script th:replace="layout/fragments.html :: comment"></script>
+    </div>
+</section>
+
+</body>
+</html>

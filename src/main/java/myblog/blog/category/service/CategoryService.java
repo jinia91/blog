@@ -3,11 +3,12 @@ package myblog.blog.category.service;
 import lombok.RequiredArgsConstructor;
 import myblog.blog.category.domain.Category;
 import myblog.blog.category.dto.CategoryNormalDto;
-import myblog.blog.category.dto.CategoryForMainView;
+import myblog.blog.category.dto.CategoryForView;
 import myblog.blog.category.repository.CategoryRepository;
 import myblog.blog.category.repository.NaCategoryRepository;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.PostConstruct;
 import java.util.List;
 
 @Service
@@ -38,16 +39,32 @@ public class CategoryService {
         return categoryRepository.findByTitle(title);
     }
 
-    public CategoryForMainView getCategoryForView() {
+    public CategoryForView getCategoryForView() {
 
         List<CategoryNormalDto> categoryCount = naCategoryRepository.getCategoryCount();
 
-        return CategoryForMainView.createCategory(categoryCount);
+        return CategoryForView.createCategory(categoryCount);
 
     }
 
     public List<Category> findCategoryByTier(int tier) {
         return categoryRepository.findAllByTierIs(tier);
+    }
+
+    @PostConstruct
+    public void insertCategory() {
+        Category category1 = Category.builder()
+                .tier(1)
+                .title("카테고리 부모")
+                .build();
+        categoryRepository.save(category1);
+        Category category2 = Category.builder()
+                .tier(2)
+                .title("카테고리 자식")
+                .parents(category1)
+                .build();
+        categoryRepository.save(category2);
+
     }
 
 }

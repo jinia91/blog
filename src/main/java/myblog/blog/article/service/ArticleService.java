@@ -2,16 +2,15 @@ package myblog.blog.article.service;
 
 import lombok.RequiredArgsConstructor;
 import myblog.blog.article.domain.Article;
-import myblog.blog.article.dto.ArticleForMainView;
-import myblog.blog.article.dto.NewArticleDto;
+import myblog.blog.article.dto.ArticleDtoForMainView;
+import myblog.blog.article.dto.NewArticleForm;
 import myblog.blog.article.repository.ArticleRepository;
+import myblog.blog.category.dto.CategoryForView;
 import myblog.blog.category.service.CategoryService;
 import myblog.blog.member.doamin.Member;
 import myblog.blog.member.repository.MemberRepository;
-import myblog.blog.member.service.Oauth2MemberService;
 import myblog.blog.tags.service.TagsService;
 import org.modelmapper.ModelMapper;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
@@ -30,10 +29,9 @@ public class ArticleService {
     private final MemberRepository memberRepository;
     private final TagsService tagsService;
     private final CategoryService categoryService;
-    private final Oauth2MemberService memberService;
     private final ModelMapper modelMapper;
 
-    public Long writeArticle(NewArticleDto articleDto) {
+    public Long writeArticle(NewArticleForm articleDto) {
 
         Article newArticle = createNewArticleFrom(articleDto);
 
@@ -44,13 +42,13 @@ public class ArticleService {
 
     }
 
-    public List<ArticleForMainView> getPopularArticles() {
+    public List<ArticleDtoForMainView> getPopularArticles() {
         List<Article> top6ByOrderByHitDesc = articleRepository.findTop6ByOrderByHitDesc();
 
-        List<ArticleForMainView> articles = new ArrayList<>();
+        List<ArticleDtoForMainView> articles = new ArrayList<>();
 
         for (Article article : top6ByOrderByHitDesc) {
-            articles.add(modelMapper.map(article, ArticleForMainView.class));
+            articles.add(modelMapper.map(article, ArticleDtoForMainView.class));
         }
 
 
@@ -58,19 +56,37 @@ public class ArticleService {
 
     }
 
-    public Slice<ArticleForMainView> getArticles(int page) {
+    public Slice<ArticleDtoForMainView> getArticles(int page) {
 
-        Slice<ArticleForMainView> articles = articleRepository
+        Slice<ArticleDtoForMainView> articles = articleRepository
                 .findByOrderByIdDesc(PageRequest.of(page, 5))
                 .map(article -> modelMapper
-                        .map(article, ArticleForMainView.class));
+                        .map(article, ArticleDtoForMainView.class));
         return articles;
 
     }
 
-    public Page<ArticleForMainView> getArticles(String category, Integer tier, Integer page) {
+    public int getTotalArticleCntByCategory(String category, CategoryForView categorys) {
 
-        Page<Article> articles = null;
+        if (categorys.getTitle().equals(category)) {
+            return categorys.getCount();
+        } else {
+            for (CategoryForView categoryCnt :
+                    categorys.getCategoryTCountList()) {
+                if (categoryCnt.getTitle().equals(category))
+                    return categoryCnt.getCount();
+                for (CategoryForView categoryCntSub : categoryCnt.getCategoryTCountList()) {
+                    if (categoryCntSub.getTitle().equals(category))
+                        return categoryCntSub.getCount();
+                }
+            }
+        }
+        throw new IllegalArgumentException("카테고리별 아티클 수 에러");
+    }
+
+    public Slice<ArticleDtoForMainView> getArticles(String category, Integer tier, Integer page) {
+
+        Slice<Article> articles = null;
 
         if (tier.intValue() == 0) {
             articles = articleRepository
@@ -88,8 +104,13 @@ public class ArticleService {
         }
 
         return articles.map(article -> modelMapper
-                .map(article, ArticleForMainView.class));
+                .map(article, ArticleDtoForMainView.class));
     }
+
+    public Article findArticleById(Long id){
+         return articleRepository.findArticleByIdFetchCategory(id);
+    }
+
 
     private int pageResolver(Integer rawPage) {
         if (rawPage == null || rawPage == 1) {
@@ -97,7 +118,7 @@ public class ArticleService {
         } else return rawPage - 1;
     }
 
-    private Article createNewArticleFrom(NewArticleDto articleDto) {
+    private Article createNewArticleFrom(NewArticleForm articleDto) {
         Member member =
                 memberRepository.findById(articleDto.getMemberId()).orElseThrow(() -> {
                     throw new IllegalArgumentException("작성자를 확인할 수 없습니다");
@@ -122,6 +143,8 @@ public class ArticleService {
         }
         return thumbnailUrl;
     }
+
+
 
 
 }

@@ -27,6 +27,12 @@ public class PrincipalDetails implements OAuth2User {
         return member.getId();
     }
 
+    public String getMemberPicUrl(){
+        return member.getPicUrl();
+    }
+
+    public Member getMember(){return member;}
+
     // Oauth2
     @Override
     public Map<String, Object> getAttributes() {

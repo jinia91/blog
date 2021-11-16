@@ -2,7 +2,7 @@ package myblog.blog.member.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import myblog.blog.category.dto.CategoryForMainView;
+import myblog.blog.category.dto.CategoryForView;
 import myblog.blog.category.service.CategoryService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -25,7 +25,7 @@ public class MemberController {
             model.addAttribute("errMsg","이미 가입된 이메일입니다.");
         }
 
-        CategoryForMainView categoryForView = categoryService.getCategoryForView();
+        CategoryForView categoryForView = categoryService.getCategoryForView();
 
         model.addAttribute("category",categoryForView);
 

@@ -1,6 +1,9 @@
 package myblog.blog.member.auth.userinfo;
 
+import org.springframework.stereotype.Component;
+
 import java.util.Map;
+
 
 public class GoogleUserInfo implements Oauth2UserInfo{
 

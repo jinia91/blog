@@ -49,7 +49,7 @@ function makeNextPage() {
                     let articleHtmlSource = ' ';
                     articleHtmlSource +=
                         `<div class=\"card mb-3 recent-card wow fadeInUp ">
-                                            <a href="#">
+                                            <a href="/article/view?articleId=${listElement.id}">
                                                 <div class="row g-0">
                                                     <div class="col-3">
                                                         <div class="ratio ratio-1x1\" style="background-image: url(${listElement.thumbnailUrl}); background-size: cover;"></div>

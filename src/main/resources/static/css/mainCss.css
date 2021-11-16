@@ -361,9 +361,6 @@ body::-webkit-scrollbar-track {
     font-size: 13px;
 }
 
-.comment-reply {
-    background-color: #e0dedd;
-}
 
 .user-feed {
     font-size: 14px;
@@ -376,7 +373,7 @@ body::-webkit-scrollbar-track {
 }
 
 
-.carousel-item:hover {
+.mainItem:hover {
     transform: scale(1.2);
     transition: transform 2s;
     filter: grayscale(50%);
@@ -395,5 +392,5 @@ body::-webkit-scrollbar-track {
 }
 
 .text-shadow {
-    text-shadow: .2em .2em 0 black;
+    text-shadow: .1em .1em 0 black;
 }

@@ -4,6 +4,7 @@ import lombok.Builder;
 import lombok.Getter;
 import myblog.blog.base.domain.BasicEntity;
 import myblog.blog.category.domain.Category;
+import myblog.blog.comment.domain.Comment;
 import myblog.blog.member.doamin.Member;
 import myblog.blog.tags.domain.ArticleTagList;
 
@@ -44,6 +45,9 @@ public class Article extends BasicEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id")
     private Category category;
+
+    @OneToMany(mappedBy = "article")
+    private List<Comment> parentCommentList = new ArrayList<>();
 
     protected Article() {
     }

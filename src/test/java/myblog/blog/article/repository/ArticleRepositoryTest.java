@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Slice;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
@@ -25,7 +26,7 @@ class ArticleRepositoryTest {
 
         // when
 
-        Page<Article> articles = articleRepository.findByCategoryOrderByIdDesc(of, "child");
+        Slice<Article> articles = articleRepository.findByCategoryOrderByIdDesc(of, "child");
 
         // then
 

@@ -4,16 +4,23 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.validation.constraints.NotBlank;
-import java.time.LocalDateTime;
 
-@Getter
 @Setter
-public class ArticleForMainView {
+@Getter
+public class NewArticleForm {
 
-    private Long id;
+    @NotBlank
     private String title;
+    @NotBlank
     private String content;
+    private String toc;
+    @NotBlank
+    private Long memberId;
+
     private String thumbnailUrl;
-    private LocalDateTime createdDate;
+
+    private String category;
+    private String tags;
+
 
 }

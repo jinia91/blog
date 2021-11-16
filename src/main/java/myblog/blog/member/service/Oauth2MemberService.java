@@ -41,7 +41,7 @@ public class Oauth2MemberService extends DefaultOAuth2UserService {
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
 
         Oauth2UserInfo userInfo =
-                userInfoFactory.makeOauth2Userinfo(userRequest, super.loadUser(userRequest));
+                userInfoFactory.makeOauth2UserinfoOf(userRequest, super.loadUser(userRequest));
 
         Member member = getOrJoinMember(userInfo);
 
@@ -77,6 +77,7 @@ public class Oauth2MemberService extends DefaultOAuth2UserService {
         return member;
     }
 
+    @PostConstruct
     public void insertAdmin(){
 
         Member admin = memberRepository.findByEmail(adminEmail);

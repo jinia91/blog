@@ -1,6 +1,9 @@
 package myblog.blog.member.auth.userinfo;
 
+import org.springframework.stereotype.Component;
+
 import java.util.Map;
+
 
 public class KakaoUserInfo implements Oauth2UserInfo {
 

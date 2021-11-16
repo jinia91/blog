@@ -4,8 +4,10 @@ import lombok.Builder;
 import lombok.Getter;
 import myblog.blog.article.domain.Article;
 import myblog.blog.base.domain.BasicEntity;
+import myblog.blog.comment.domain.Comment;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -40,7 +42,10 @@ public class Member extends BasicEntity {
     private String providerId;
 
     @OneToMany(mappedBy = "member")
-    private List<Article> articles;
+    private List<Article> articles = new ArrayList<>();
+
+    @OneToMany(mappedBy = "member")
+    private List<Comment> commentList = new ArrayList<>();
 
     protected Member() {
     }

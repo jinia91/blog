@@ -34,7 +34,7 @@
             </div>
         </li>
 
-        <li class="mb-1 superCategory btn fs-5"><a th:href="@{/article/list(category=total,tier=0)}" th:text="|전체글(${category.getCount()})|">토탈</a></li>
+        <li class="mb-1 superCategory btn fs-5"><a th:href="@{/article/list(category=total,tier=0,page=1)}" th:text="|전체글(${category.getCount()})|">토탈</a></li>
 
         <li class="mb-1" th:each="superCategory : ${category.getCategoryTCountList()}">
             <div class="btn-group">
@@ -43,13 +43,13 @@
                         th:data-bs-target="|#collapse-${superCategory.getId()}-sub|"
                         aria-expanded="true">
                 </button>
-                <a th:href="@{/article/list(category=${superCategory.getTitle()},tier=1)}" class="ms-0 superCategory btn fs-6"
+                <a th:href="@{/article/list(category=${superCategory.getTitle()},tier=1,page=1)}" class="ms-0 superCategory btn fs-6"
                    th:text="|${superCategory.getTitle()}(${superCategory.getCount()})|">슈퍼</a>
             </div>
             <div class="collapse show" th:id="|collapse-${superCategory.getId()}-sub|">
                 <ul class="ms-1 btn-toggle-nav list-unstyled fw-normal pb-1 small"
                     th:each="subCategory : ${superCategory.getCategoryTCountList()}">
-                    <li><a th:href="@{/article/list(category=${subCategory.getTitle()},tier=2)}" class="link-dark rounded"
+                    <li><a th:href="@{/article/list(category=${subCategory.getTitle()},tier=2,page=1)}" class="link-dark rounded"
                            th:text="|${subCategory.getTitle()}(${subCategory.getCount()})|">서브</a></li>
                 </ul>
             </div>

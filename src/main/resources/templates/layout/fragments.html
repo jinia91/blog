@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+
+
+<script th:fragment="comment" th:inline="javascript" type="application/javascript">
+
+    const replyBox = document.getElementById("commentBox");
+
+    document.addEventListener("DOMContentLoaded",
+        function () {
+            let token = getCsrfToken();
+            let urlSearch = new URLSearchParams(location.search);
+            let articleId = urlSearch.get("articleId");
+
+            const xhr = new XMLHttpRequest();
+            xhr.open("GET", "/comment/list/" + articleId);
+            xhr.setRequestHeader("X-XSRF-TOKEN", token);
+            xhr.send();
+
+            xhr.onload = () => {
+                makeCommentBox(xhr, replyBox);
+            }
+        }
+    );
+
+
+    function commentWrite() {
+        let token = getCsrfToken();
+        let content = {content: document.getElementById("commentContent").value};
+
+        const xhr = new XMLHttpRequest();
+        xhr.open("POST", "/comment/write?articleId=" + [[${article.getId()}]] );
+        xhr.setRequestHeader("content-type", "application/json");
+        xhr.setRequestHeader("X-XSRF-TOKEN", token);
+        xhr.send(JSON.stringify(content));
+
+        xhr.onload = () => {
+            makeCommentBox(xhr, replyBox);
+            document.getElementById("commentContent").value = '';
+        }
+    }
+
+    function cCommentWrite(idx) {
+        let token = getCsrfToken();
+        let content = {content: document.getElementById("child-content-"+idx).value};
+
+        const xhr = new XMLHttpRequest();
+        xhr.open("POST", "/comment/write?pOrder="+idx+"&articleId=" + [[${article.getId()}]] );
+        xhr.setRequestHeader("content-type", "application/json");
+        xhr.setRequestHeader("X-XSRF-TOKEN", token);
+        xhr.send(JSON.stringify(content));
+
+        xhr.onload = () => {
+            makeCommentBox(xhr, replyBox);
+            document.getElementById("commentContent").value = '';
+        }
+    }
+
+
+    function makeCommentBox(xhr, replyBox) {
+        if (xhr.status === 200 || xhr.status === 201 || xhr.status === 202) {
+
+            let commentList = JSON.parse(xhr.response);
+
+            console.log(commentList);
+
+            // 초기화
+            replyBox.innerHTML = ' ';
+// 부모 댓글 리스트
+            let idx = 1;
+            for (const parentComment of commentList) {
+                let replyHtmlSource = ' ';
+
+                parentComment.createdDate[1]--;
+                let date = moment(parentComment.createdDate).format('YY-MM-DD HH:mm:ss');
+
+                replyHtmlSource +=
+                    `<div class="mt-2 comment-box" id="commentBox">
+    <div class="d-flex flex-row p-2">
+        <div>
+            <img src="${parentComment.picUrl}" width="40" height="40"
+                 class="rounded-circle me-2">
+        </div>
+        <div class="w-100">
+            <div class="d-flex justify-content-between align-items-center">
+                <span class="me-2">${parentComment.username}</span>
+                <div class="d-flex flex-row align-items-center">
+                    <small>${date}</small>
+                    <i class="fas fa-trash ms-3"></i>
+                </div>
+            </div>
+            <p class="text-justify comment-text mb-0">${parentComment.content}</p>
+            <!-- comment-reply-post -->
+            <div class="comment-reply">
+                <div style="background-color: #ebebeb;">
+                    <button class="btn align-items-center rounded collapsed" data-bs-toggle="collapse"
+                            data-bs-target="#comment-reply-${idx}" aria-expanded="false">
+                        <i class="fa fa-comments-o me-2"></i> 대댓글
+                    </button>
+                </div>`
+
+
+
+                 if([[${picUrl}]] != null){
+                     replyHtmlSource +=
+                `<div class="collapse" id="comment-reply-${idx}">
+                    <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
+                        <li>
+                            <div class="mt-3 d-flex flex-row align-items-center p-2 form-color">
+                                <div>
+                                </div>
+                                <textarea type="text" id="child-content-${idx}" name="child-content-${idx}" class="form-control" placeholder="대댓글을 작성해주세요..."></textarea>
+                            </div>
+                            <div class="d-flex">
+                                <div class="ms-auto ms-1 me-2">
+                                    <button class="btn btn-sm btn-secondary" onclick="cCommentWrite(${idx++})">등 록</button>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                </div>`
+                 }
+
+
+                // 자식 댓글 리스트
+                for (const childComment of parentComment.commentDtoList) {
+
+                    childComment.createdDate[1]--;
+                    let date = moment(childComment.createdDate).format('YY-MM-DD HH:mm:ss');
+
+                    replyHtmlSource +=
+                        `<div class="d-flex flex-row p-2">
+                <div>
+                    <img src="${childComment.picUrl}" width="40"
+                         height="40" class="rounded-circle me-2">
+                </div>
+                <div class="w-100">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span class="me-2">${childComment.username}</span>
+                        <div class="d-flex flex-row align-items-center">
+                            <small>${date}</small>
+                            <i class="fas fa-trash ms-3"></i>
+                        </div>
+                    </div>
+                    <p class="text-justify comment-text mb-0">${childComment.content}</p>
+                </div>
+            </div>`
+                }
+
+                // 부모댓글 리스트 마무리
+                replyHtmlSource +=
+                    `</div>
+            </div>
+        </div>
+    </div> `
+//
+
+                replyBox.innerHTML += replyHtmlSource;
+            }
+        }
+    }
+
+</script>
+
+</html>

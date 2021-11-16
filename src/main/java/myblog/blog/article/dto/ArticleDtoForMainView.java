@@ -4,23 +4,16 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.validation.constraints.NotBlank;
+import java.time.LocalDateTime;
 
-@Setter
 @Getter
-public class NewArticleDto {
+@Setter
+public class ArticleDtoForMainView {
 
-    @NotBlank
+    private Long id;
     private String title;
-    @NotBlank
     private String content;
-    private String toc;
-    @NotBlank
-    private Long memberId;
-
     private String thumbnailUrl;
-
-    private String category;
-    private String tags;
-
+    private LocalDateTime createdDate;
 
 }

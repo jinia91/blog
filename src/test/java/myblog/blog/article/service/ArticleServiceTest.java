@@ -1,11 +1,10 @@
 package myblog.blog.article.service;
 
 import myblog.blog.article.domain.Article;
-import myblog.blog.article.repository.ArticlePagingRepository;
 import myblog.blog.article.repository.ArticleRepository;
 import myblog.blog.category.domain.Category;
 import myblog.blog.category.dto.CategoryNormalDto;
-import myblog.blog.category.dto.CategoryForMainView;
+import myblog.blog.category.dto.CategoryForView;
 import myblog.blog.category.repository.CategoryRepository;
 import myblog.blog.category.repository.NaCategoryRepository;
 import myblog.blog.category.service.CategoryService;
@@ -33,8 +32,6 @@ class ArticleServiceTest {
     ArticleRepository articleRepository;
     @Autowired
     EntityManager entityManager;
-    @Autowired
-    ArticlePagingRepository articlePagingRepository;
     @Autowired
     Oauth2MemberService memberService;
     @Autowired
@@ -150,15 +147,15 @@ class ArticleServiceTest {
 //        }
 //
 
-        CategoryForMainView category = CategoryForMainView.createCategory(categoryNormalDto);
+        CategoryForView category = CategoryForView.createCategory(categoryNormalDto);
 
         System.out.println("t1. " + category.getTitle() + "(" + category.getCount()+")");
 
-        List<CategoryForMainView> categoryTCountList = category.getCategoryTCountList();
-        for (CategoryForMainView categoryForMainView : categoryTCountList) {
-            System.out.println("ㄴt2. " + categoryForMainView.getTitle() + "(" + categoryForMainView.getCount()+")");
-            List<CategoryForMainView> categoryTCountList1 = categoryForMainView.getCategoryTCountList();
-            for (CategoryForMainView countForView : categoryTCountList1) {
+        List<CategoryForView> categoryTCountList = category.getCategoryTCountList();
+        for (CategoryForView categoryForView : categoryTCountList) {
+            System.out.println("ㄴt2. " + categoryForView.getTitle() + "(" + categoryForView.getCount()+")");
+            List<CategoryForView> categoryTCountList1 = categoryForView.getCategoryTCountList();
+            for (CategoryForView countForView : categoryTCountList1) {
                 System.out.println("  ㄴt3. " + countForView.getTitle() + "(" + countForView.getCount() +")");
             }
 

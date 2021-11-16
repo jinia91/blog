@@ -1,0 +1,61 @@
+.form-color {
+    background-color: #e0dedd;
+}
+
+.form-control {
+    border-radius: 25px;
+    height: fit-content;
+    resize: none;
+}
+
+.form-control:focus {
+    color: #495057;
+    background-color: #fcf6f5;
+    border-color: #35b69f;
+    outline: 0;
+    box-shadow: none;
+    text-indent: 10px;
+}
+
+.comment-box{
+    background-color: #ebebeb;
+
+
+}
+
+
+.comment-text {
+    font-size: 13px;
+}
+
+.comment-reply {
+    background-color: #e0dedd;
+}
+
+.user-feed {
+    font-size: 14px;
+    margin-top: 12px;
+}
+
+.paper {
+    background: #fff;
+    box-shadow: 0 0 3px rgba(0, 0, 0, 0.5);
+    position: relative;
+    max-width: 1200px;
+    min-height: 600px;
+    font-size: 0.8em;
+    overflow: auto;
+}
+
+::selection {
+    color: black;
+    background: #e7fd1e;
+}
+
+::-moz-selection {
+    color: black;
+    background: #e7fd1e;
+}
+
+
+

@@ -1,7 +1,6 @@
 package myblog.blog.article.repository;
 
 import myblog.blog.article.domain.Article;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -22,7 +21,7 @@ public interface ArticleRepository extends JpaRepository<Article, Long> {
             "inner join a.category c " +
             "where c.title=:category " +
             "order by a.id desc ")
-    Page<Article> findByCategoryOrderByIdDesc(Pageable pageable, @Param("category") String category);
+    Slice<Article> findByCategoryOrderByIdDesc(Pageable pageable, @Param("category") String category);
 
     @Query("select a " +
             "from Article a " +
@@ -30,7 +29,15 @@ public interface ArticleRepository extends JpaRepository<Article, Long> {
             "left join c.parents p " +
             "where p.title=:category " +
             "order by a.id desc ")
-    Page<Article> findByT1CategoryOrderByIdDesc(Pageable pageable, @Param("category") String category);
+    Slice<Article> findByT1CategoryOrderByIdDesc(Pageable pageable, @Param("category") String category);
 
-    Page<Article> findAllByOrderByIdDesc(Pageable pageable);
+    Slice<Article> findAllByOrderByIdDesc(Pageable pageable);
+
+
+    @Query("select a " +
+            "from Article a " +
+            "join fetch a.category " +
+            "where a.id =:id ")
+    Article findArticleByIdFetchCategory(@Param("id") Long articleId);
+
 }
