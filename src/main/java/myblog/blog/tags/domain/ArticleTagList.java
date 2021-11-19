@@ -1,12 +1,14 @@
 package myblog.blog.tags.domain;
 
 import lombok.Builder;
+import lombok.Getter;
 import myblog.blog.article.domain.Article;
 import myblog.blog.base.domain.BasicEntity;
 
 import javax.persistence.*;
 
 @Entity
+@Getter
 @SequenceGenerator(
         name = "ARTICLE_TAG_LIST_SEQ_GENERATOR",
         sequenceName = "ARTICLE_TAG_LIST_SEQ",

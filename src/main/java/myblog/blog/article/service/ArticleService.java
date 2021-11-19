@@ -2,15 +2,18 @@ package myblog.blog.article.service;
 
 import lombok.RequiredArgsConstructor;
 import myblog.blog.article.domain.Article;
-import myblog.blog.article.dto.ArticleDtoForMainView;
-import myblog.blog.article.dto.NewArticleForm;
+import myblog.blog.article.dto.ArticleDtoForMain;
+import myblog.blog.article.dto.ArticleForm;
 import myblog.blog.article.repository.ArticleRepository;
+import myblog.blog.article.repository.NaArticleRepository;
+import myblog.blog.category.domain.Category;
 import myblog.blog.category.dto.CategoryForView;
 import myblog.blog.category.service.CategoryService;
 import myblog.blog.member.doamin.Member;
 import myblog.blog.member.repository.MemberRepository;
 import myblog.blog.tags.service.TagsService;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
@@ -24,16 +27,16 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ArticleService {
 
-    private final ArticleRepository
-            articleRepository;
+    private final ArticleRepository articleRepository;
     private final MemberRepository memberRepository;
     private final TagsService tagsService;
     private final CategoryService categoryService;
     private final ModelMapper modelMapper;
+    private final NaArticleRepository naArticleRepository;
 
-    public Long writeArticle(NewArticleForm articleDto) {
+    public Long writeArticle(ArticleForm articleDto) {
 
-        Article newArticle = createNewArticleFrom(articleDto);
+        Article newArticle = articleFrom(articleDto);
 
         articleRepository.save(newArticle);
         tagsService.createNewTagsAndArticleTagList(articleDto.getTags(), newArticle);
@@ -42,13 +45,13 @@ public class ArticleService {
 
     }
 
-    public List<ArticleDtoForMainView> getPopularArticles() {
+    public List<ArticleDtoForMain> getPopularArticles() {
         List<Article> top6ByOrderByHitDesc = articleRepository.findTop6ByOrderByHitDesc();
 
-        List<ArticleDtoForMainView> articles = new ArrayList<>();
+        List<ArticleDtoForMain> articles = new ArrayList<>();
 
         for (Article article : top6ByOrderByHitDesc) {
-            articles.add(modelMapper.map(article, ArticleDtoForMainView.class));
+            articles.add(modelMapper.map(article, ArticleDtoForMain.class));
         }
 
 
@@ -56,12 +59,12 @@ public class ArticleService {
 
     }
 
-    public Slice<ArticleDtoForMainView> getArticles(int page) {
+    public Slice<ArticleDtoForMain> getArticles(int page) {
 
-        Slice<ArticleDtoForMainView> articles = articleRepository
+        Slice<ArticleDtoForMain> articles = articleRepository
                 .findByOrderByIdDesc(PageRequest.of(page, 5))
                 .map(article -> modelMapper
-                        .map(article, ArticleDtoForMainView.class));
+                        .map(article, ArticleDtoForMain.class));
         return articles;
 
     }
@@ -84,7 +87,7 @@ public class ArticleService {
         throw new IllegalArgumentException("카테고리별 아티클 수 에러");
     }
 
-    public Slice<ArticleDtoForMainView> getArticles(String category, Integer tier, Integer page) {
+    public Slice<ArticleDtoForMain> getArticles(String category, Integer tier, Integer page) {
 
         Slice<Article> articles = null;
 
@@ -104,13 +107,58 @@ public class ArticleService {
         }
 
         return articles.map(article -> modelMapper
-                .map(article, ArticleDtoForMainView.class));
+                .map(article, ArticleDtoForMain.class));
     }
 
     public Article findArticleById(Long id){
-         return articleRepository.findArticleByIdFetchCategory(id);
+         return articleRepository.findArticleByIdFetchCategoryAndTags(id);
     }
 
+    public void addHit(Article article) {
+
+        article.addHit();
+
+    }
+
+    public Article getArticleForEdit(Long articleId){
+
+        return articleRepository.findArticleByIdFetchCategoryAndArticleTagLists(articleId);
+
+    }
+
+    public void editArticle(Long articleId, ArticleForm articleForm) {
+
+        Article article = articleRepository.findById(articleId).get();
+        Category category = categoryService.findCategory(articleForm.getCategory());
+        tagsService.deleteArticleTags(article);
+        tagsService.createNewTagsAndArticleTagList(articleForm.getTags(), article);
+        articleForm.setThumbnailUrl(makeDefaultThumb(articleForm.getThumbnailUrl()));
+
+        article.editArticle(articleForm,category);
+
+    }
+
+    public void deleteArticle(Long articleId) {
+
+          naArticleRepository.deleteArticle(articleId);
+    }
+
+    public List<Article> getArticlesByCategory(Category category){
+
+        return articleRepository.findTop6ByCategoryOrderByIdDesc(category);
+
+    }
+
+
+    private String makeDefaultThumb(String thumbnailUrl) {
+        // 메시지로 올리기
+        String defaultThumbUrl = "https://cdn.pixabay.com/photo/2020/11/08/13/28/tree-5723734_1280.jpg";
+
+        if (thumbnailUrl == null || thumbnailUrl.equals("")) {
+            thumbnailUrl = defaultThumbUrl;
+        }
+        return thumbnailUrl;
+    }
 
     private int pageResolver(Integer rawPage) {
         if (rawPage == null || rawPage == 1) {
@@ -118,7 +166,7 @@ public class ArticleService {
         } else return rawPage - 1;
     }
 
-    private Article createNewArticleFrom(NewArticleForm articleDto) {
+    private Article articleFrom(ArticleForm articleDto) {
         Member member =
                 memberRepository.findById(articleDto.getMemberId()).orElseThrow(() -> {
                     throw new IllegalArgumentException("작성자를 확인할 수 없습니다");
@@ -134,17 +182,23 @@ public class ArticleService {
                 .build();
     }
 
-    private String makeDefaultThumb(String thumbnailUrl) {
-        // 메시지로 올리기
-        String defaultThumbUrl = "https://cdn.pixabay.com/photo/2020/11/08/13/28/tree-5723734_1280.jpg";
 
-        if (thumbnailUrl == null || thumbnailUrl.equals("")) {
-            thumbnailUrl = defaultThumbUrl;
-        }
-        return thumbnailUrl;
+    public Page<Article> getArticlesByTag(String tag, Integer page) {
+
+        Page<Article> articles =
+                articleRepository
+                        .findAllByArticleTagsOrderById(PageRequest.of(pageResolver(page), 5), tag);
+
+        return articles;
+
     }
 
+    public Page<Article> getArticlesByKeyword(String keyword, Integer page) {
 
+        Page<Article> articles =
+                articleRepository
+                        .findAllByKeywordOrderById(PageRequest.of(pageResolver(page),5), keyword);
 
-
+        return articles;
+    }
 }

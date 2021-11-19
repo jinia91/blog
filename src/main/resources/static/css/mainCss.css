@@ -275,6 +275,10 @@ body::-webkit-scrollbar-track {
 }
 
 @media (max-width: 767.98px) {
+    html{
+        font-size: 13px;
+    }
+
     small {
         font-size: 10px;
     }
@@ -377,8 +381,6 @@ body::-webkit-scrollbar-track {
     transform: scale(1.2);
     transition: transform 2s;
     filter: grayscale(50%);
-    /*filter: brightness(90%);*/
-    /*filter: blur(1px);*/
 }
 
 .searchBox {
@@ -394,3 +396,23 @@ body::-webkit-scrollbar-track {
 .text-shadow {
     text-shadow: .1em .1em 0 black;
 }
+
+.comment-side{
+    max-width: 90%;
+    text-overflow: ellipsis;
+    white-space  : nowrap;
+    overflow     : hidden;
+}
+
+.comment-side:before{
+    content: "\f4ad";
+    font-family: FontAwesome;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    display: inline-block;
+    vertical-align: middle;
+    margin-right: 3px;
+
+}
+
+

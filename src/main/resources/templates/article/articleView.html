@@ -35,7 +35,7 @@
     <link rel="short icon" type="image/x-icon" href=""/>
 
     <!-- CSS RESET -->
-    <link rel="stylesheet" href="https://uicdn.toast.com/editor/latest/toastui-editor.min.css"/>
+    <link rel="stylesheet" href="/node_modules/@toast-ui/editor/dist/toastui-editor.css"/>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css"/>
     <link rel="stylesheet" href="/node_modules/bootstrap/dist/css/bootstrap.min.css"/>
     <link rel="stylesheet" href="/node_modules/@yaireo/tagify/dist/tagify.css"/>
@@ -61,10 +61,45 @@
             </div>
         </div>
 
-        <div class="mt-5 m-2 m-sm-5 d-flex justify-content-center">
-            <textarea name="contents" id="contents" th:text="${article.getContent()}" hidden></textarea>
-            <div class="col paper m-2 p-sm-4 p-2" id="viewer"></div>
+        <textarea name="contents" id="contents" th:text="${article.getContent()}" hidden></textarea>
+
+        <div class="mt-5 ms-2 me-2 ms-sm-5 me-sm-5 mt-sm-5 d-flex justify-content-center">
+
+            <div class="paper">
+                <div class="ms-2 me-2 p-sm-4 p-2" id="viewer"></div>
+
+                <div class="ms-2 me-2 mb-3 p-sm-4 p-2">
+                    <div class="toolbox container pt-4 pb-4">
+                        <div class=" ms-5 me-5 d-flex justify-content-end">
+                            <a sec:authorize="hasRole('ADMIN')" class="btn btn-secondary" style="color: white"
+                               th:href="@{/article/edit(articleId=${article.getId()})}"
+                               type="button">수 정
+                            </a>
+                            <form th:action="@{/article/delete(articleId=${article.getId()})}" id="deleteArticle" method="post">
+                                </form>
+                            <button sec:authorize="hasRole('ADMIN')" class="btn btn-secondary ms-2" onclick="deleteArticle()">삭 제</button>
+                        </div>
+                        <div></div>
+                        <div class="toolbox-head mt-3 ms-5 me-5">
+                            <a th:href="@{/article/list(category=${article.getCategory()},tier=2,page=1)}"
+                               th:text="|'${article.getCategory()}'|"></a>
+                            <span>카테고리의 다른글</span></div>
+                        <ul class="row row-cols-1 row-cols-sm-2 mt-2 ms-5 me-5 toolList">
+                            <li th:each="list:${articlesSortBycategory}" th:if="${list.getTitle()} != ${article.getTitle()}" class="col">
+                                <a th:href="@{/article/view(articleId=${list.getId()})}" th:text="${list.getTitle()}">글목록</a></li>
+                        </ul>
+                        <div class="mt-2 ms-5 me-5">
+                            <a class="me-2" th:each="tag: ${article.tags}" th:href="@{/article/list/tag/{tag}(tag=${tag},page=1)}"><button class="badge rounded-pill bg-secondary" th:text="${tag}">태그</button></a>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+
+
         </div>
+
 
         <!-- comment s -->
         <hr class="py-1" style="color: rgb(212, 200, 184);">
@@ -73,7 +108,7 @@
 
             <div sec:authorize="isAuthenticated()" class="ms-2 me-2 mt-3 d-flex align-items-center">
                 <div>
-                    <img th:src="${picUrl}" width="50"
+                    <img th:src="${member.getPicUrl()}" width="50"
                          height="50"
                          class="rounded-circle me-2">
                 </div>
@@ -82,7 +117,7 @@
             </div>
             <div sec:authorize="isAuthenticated()" class="d-flex">
                 <div class="ms-auto mt-2 me-2">
-                    <button class="btn btn-secondary btn-sm" onclick="commentWrite()">등 록</button>
+                     <button class="btn btn-secondary btn-sm" onclick="commentWrite()">등 록</button>
                 </div>
             </div>
 
@@ -92,7 +127,6 @@
 
                         <!-- comment -->
                         <div class="mt-2 comment-box" id="commentBox">
-
                         </div>
 
                         <!--  -->
@@ -100,6 +134,8 @@
                     </div>
                 </div>
             </div>
+
+
         </div>
 
 

@@ -5,6 +5,7 @@ import lombok.Setter;
 
 import javax.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter @Setter
 public class ArticleDtoForDetail {
@@ -16,7 +17,7 @@ public class ArticleDtoForDetail {
     private Long memberId;
     private String thumbnailUrl;
     private String category;
-    private String tags;
+    private List<String> tags;
     private LocalDateTime createdDate;
 
 

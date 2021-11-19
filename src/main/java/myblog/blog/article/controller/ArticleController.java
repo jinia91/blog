@@ -3,28 +3,31 @@ package myblog.blog.article.controller;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import myblog.blog.article.domain.Article;
-import myblog.blog.article.dto.ArticleDtoForDetail;
-import myblog.blog.article.dto.ArticleDtoForMainView;
-import myblog.blog.article.dto.NewArticleForm;
-import myblog.blog.article.dto.PagingBoxDto;
+import myblog.blog.article.dto.*;
 import myblog.blog.article.service.ArticleService;
 import myblog.blog.category.dto.CategoryForView;
 import myblog.blog.category.dto.CategoryNormalDto;
 import myblog.blog.category.service.CategoryService;
+import myblog.blog.comment.domain.Comment;
+import myblog.blog.comment.dto.CommentDto;
+import myblog.blog.comment.dto.CommentDtoForSide;
+import myblog.blog.comment.service.CommentService;
 import myblog.blog.member.auth.PrincipalDetails;
+import myblog.blog.member.dto.MemberDto;
 import myblog.blog.tags.dto.TagsDto;
 import myblog.blog.tags.service.TagsService;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Slice;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Controller
@@ -36,9 +39,189 @@ public class ArticleController {
     private final ArticleService articleService;
     private final TagsService tagsService;
     private final CategoryService categoryService;
+    private final CommentService commentService;
 
     @GetMapping("article/write")
-    public String writeArticleForm(NewArticleForm newArticleForm, Model model) {
+    public String writeArticleForm(ArticleForm articleForm, Model model) {
+
+        List<CategoryNormalDto> categoryForInput =
+                categoryService
+                        .findCategoryByTier(2)
+                        .stream()
+                        .map(c -> modelMapper.map(c, CategoryNormalDto.class))
+                        .collect(Collectors.toList());
+        model.addAttribute("categoryInput", categoryForInput);
+
+        List<TagsDto> tagsForInput =
+                tagsService
+                        .findAllTags()
+                        .stream()
+                        .map(c -> new TagsDto(c.getName()))
+                        .collect(Collectors.toList());
+        model.addAttribute("tagsInput", tagsForInput);
+
+        CategoryForView categoryForView = categoryService.getCategoryForView();
+        model.addAttribute("category", categoryForView);
+
+        List<CommentDtoForSide> comments = commentService.recentCommentList()
+                .stream()
+                .map(comment ->
+                        new CommentDtoForSide(comment.getId(), comment.getArticle().getId(), comment.getContent()))
+                .collect(Collectors.toList());
+        model.addAttribute("commentsList", comments);
+
+        model.addAttribute("articleDto", articleForm);
+
+        return "article/articleWriteForm";
+    }
+
+    @PostMapping("article/write")
+    @Transactional
+    public String writeArticle(@ModelAttribute ArticleForm articleForm, Authentication authentication) {
+
+        PrincipalDetails principal = (PrincipalDetails) authentication.getPrincipal();
+        articleForm.setMemberId(principal.getMemberId());
+        Long articleId = articleService.writeArticle(articleForm);
+
+        return "redirect:/article/view?articleId=" + articleId;
+
+    }
+
+    @Transactional
+    @GetMapping("article/list")
+    public String getArticlesList(@RequestParam String category,
+                                  @RequestParam Integer tier,
+                                  @RequestParam Integer page,
+                                  Model model) {
+
+        CategoryForView categoryForView = categoryService.getCategoryForView();
+        model.addAttribute("category", categoryForView);
+        List<CommentDtoForSide> comments = commentService.recentCommentList()
+                .stream()
+                .map(comment ->
+                        new CommentDtoForSide(comment.getId(), comment.getArticle().getId(), comment.getContent()))
+                .collect(Collectors.toList());
+        model.addAttribute("commentsList", comments);
+
+        PagingBoxDto pagingBoxDto = PagingBoxDto.createOf(page, articleService.getTotalArticleCntByCategory(category, categoryForView));
+        model.addAttribute("pagingBox", pagingBoxDto);
+
+        Slice<ArticleDtoForMain> articleList = articleService.getArticles(category, tier, pagingBoxDto.getCurPageNum());
+        model.addAttribute("articleList", articleList);
+
+
+        return "article/articleList";
+
+    }
+
+    @Transactional
+    @GetMapping("article/list/tag/{tag}")
+    public String getArticlesListByTag(@RequestParam Integer page,
+                                  @PathVariable String tag,
+                                  Model model) {
+
+        CategoryForView categoryForView = categoryService.getCategoryForView();
+        model.addAttribute("category", categoryForView);
+        List<CommentDtoForSide> comments = commentService.recentCommentList()
+                .stream()
+                .map(comment ->
+                        new CommentDtoForSide(comment.getId(), comment.getArticle().getId(), comment.getContent()))
+                .collect(Collectors.toList());
+        model.addAttribute("commentsList", comments);
+
+
+        Page<ArticleDtoForMain> articleList =
+                articleService.getArticlesByTag(tag, page)
+                        .map(article ->
+                                modelMapper.map(article, ArticleDtoForMain.class));
+        model.addAttribute("articleList", articleList);
+
+        PagingBoxDto pagingBoxDto = PagingBoxDto.createOf(page, articleList.getTotalPages());
+        model.addAttribute("pagingBox", pagingBoxDto);
+
+        return "article/articleListByTag";
+
+    }
+
+    @Transactional
+    @GetMapping("article/list/search/{keyword}")
+    public String getArticlesListByKeyword(@RequestParam Integer page,
+                                  @PathVariable String keyword,
+                                  Model model) {
+
+        CategoryForView categoryForView = categoryService.getCategoryForView();
+        model.addAttribute("category", categoryForView);
+        List<CommentDtoForSide> comments = commentService.recentCommentList()
+                .stream()
+                .map(comment ->
+                        new CommentDtoForSide(comment.getId(), comment.getArticle().getId(), comment.getContent()))
+                .collect(Collectors.toList());
+        model.addAttribute("commentsList", comments);
+
+        Page<ArticleDtoForMain> articleList =
+                articleService.getArticlesByKeyword(keyword, page)
+                        .map(article ->
+                                modelMapper.map(article, ArticleDtoForMain.class));
+        model.addAttribute("articleList", articleList);
+
+        PagingBoxDto pagingBoxDto = PagingBoxDto.createOf(page, articleList.getTotalPages());
+        model.addAttribute("pagingBox", pagingBoxDto);
+
+        return "article/articleListByKeyword";
+
+    }
+
+
+    @GetMapping("/article/view")
+    public String readArticle(@RequestParam Long articleId,
+                              Authentication authentication,
+                              @CookieValue(required = false, name = "view") String cookie, HttpServletResponse response,
+                              Model model) {
+
+        if (authentication != null) {
+            PrincipalDetails principal = (PrincipalDetails) authentication.getPrincipal();
+            MemberDto memberDto = modelMapper.map(principal.getMember(), MemberDto.class);
+            model.addAttribute("member", memberDto);
+        } else {
+            model.addAttribute("member", null);
+        }
+
+        CategoryForView categoryForView = categoryService.getCategoryForView();
+        model.addAttribute("category", categoryForView);
+        List<CommentDtoForSide> comments = commentService.recentCommentList()
+                .stream()
+                .map(comment ->
+                        new CommentDtoForSide(comment.getId(), comment.getArticle().getId(), comment.getContent()))
+                .collect(Collectors.toList());
+        model.addAttribute("commentsList", comments);
+
+        Article article = articleService.findArticleById(articleId);
+        ArticleDtoForDetail articleDtoForDetail = modelMapper.map(article, ArticleDtoForDetail.class);
+        List<String> tags = article.getArticleTagLists()
+                .stream()
+                .map(tag -> tag.getTags().getName())
+                .collect(Collectors.toList());
+
+        articleDtoForDetail.setTags(tags);
+        model.addAttribute("article", articleDtoForDetail);
+
+        List<ArticleDtoByCategory> articleTitlesSortByCategory =
+                articleService
+                        .getArticlesByCategory(article.getCategory())
+                        .stream()
+                        .map(article1 -> modelMapper.map(article1, ArticleDtoByCategory.class))
+                        .collect(Collectors.toList());
+        model.addAttribute("articlesSortBycategory", articleTitlesSortByCategory);
+
+        addHitWithCookie(article, cookie, response);
+
+        return "article/articleView";
+    }
+
+    @GetMapping("/article/edit")
+    public String updateArticle(@RequestParam Long articleId,
+                                Authentication authentication,
+                                Model model) {
 
         List<CategoryNormalDto> categoryForInput =
                 categoryService
@@ -56,72 +239,86 @@ public class ArticleController {
                         .collect(Collectors.toList());
         model.addAttribute("tagsInput", tagsForInput);
 
+
+        Article article = articleService.getArticleForEdit(articleId);
+        ArticleDtoForEdit articleDto = modelMapper.map(article, ArticleDtoForEdit.class);
+
+        List<String> tagList = article.getArticleTagLists()
+                .stream()
+                .map(articleTag -> articleTag.getTags().getName())
+                .collect(Collectors.toList());
+
+        articleDto.setArticleTagList(tagList);
+
+        model.addAttribute("articleDto", articleDto);
+
         CategoryForView categoryForView = categoryService.getCategoryForView();
         model.addAttribute("category", categoryForView);
+        List<CommentDtoForSide> comments = commentService.recentCommentList()
+                .stream()
+                .map(comment ->
+                        new CommentDtoForSide(comment.getId(), comment.getArticle().getId(), comment.getContent()))
+                .collect(Collectors.toList());
+        model.addAttribute("commentsList", comments);
 
-        model.addAttribute("articleDto", newArticleForm);
-
-        return "article/articleWriteForm";
+        return "article/articleEditForm";
     }
 
-    @PostMapping("article/write")
+    @PostMapping("/article/delete")
     @Transactional
-    public String WriteArticle(@ModelAttribute NewArticleForm newArticleForm, Authentication authentication) {
+    public String deleteArticle(@RequestParam Long articleId,
+                                Authentication authentication) {
 
-        PrincipalDetails principal = (PrincipalDetails) authentication.getPrincipal();
-        newArticleForm.setMemberId(principal.getMemberId());
-        articleService.writeArticle(newArticleForm);
+        articleService.deleteArticle(articleId);
 
         return "redirect:/";
 
     }
 
-
+    @PostMapping("/article/edit")
     @Transactional
-    @GetMapping("article/list")
-    public String getArticlesList(@RequestParam String category,
-                                 @RequestParam Integer tier,
-                                 @RequestParam Integer page,
-                                 Model model) {
+    public String editArticle(@RequestParam Long articleId,
+                              @ModelAttribute ArticleForm articleForm, Authentication authentication) {
 
-        CategoryForView categoryForView = categoryService.getCategoryForView();
-        model.addAttribute("category", categoryForView);
+        PrincipalDetails principal = (PrincipalDetails) authentication.getPrincipal();
+        articleForm.setMemberId(principal.getMemberId());
+        articleService.editArticle(articleId, articleForm);
 
-        PagingBoxDto pagingBoxDto = PagingBoxDto.createOf(page, articleService.getTotalArticleCntByCategory(category, categoryForView));
-        model.addAttribute("pagingBox", pagingBoxDto);
+        return "redirect:/article/view?articleId=" + articleId;
 
-        Slice<ArticleDtoForMainView> articleList = articleService.getArticles(category,tier, pagingBoxDto.getCurPageNum());
-        model.addAttribute("articleList", articleList);
-
-
-        return "article/articleList";
-
-    }
-
-
-    @GetMapping("/article/view")
-    public String readArticle(@RequestParam Long articleId,
-                              Authentication authentication,
-                              Model model){
-
-        if(authentication != null) {
-            PrincipalDetails principal = (PrincipalDetails) authentication.getPrincipal();
-            model.addAttribute("picUrl", principal.getMemberPicUrl());
-        }
-        CategoryForView categoryForView = categoryService.getCategoryForView();
-        model.addAttribute("category", categoryForView);
-
-        Article article = articleService.findArticleById(articleId);
-        model.addAttribute("article",modelMapper.map(article, ArticleDtoForDetail.class));
-
-        return "article/articleView";
     }
 
     @GetMapping("/main/article/{pageNum}")
     public @ResponseBody
-    List<ArticleDtoForMainView> mainNextPage(@PathVariable int pageNum) {
+    List<ArticleDtoForMain> mainNextPage(@PathVariable int pageNum) {
 
         return articleService.getArticles(pageNum).getContent();
+    }
+
+    private void addHitWithCookie(Article article, String cookie, HttpServletResponse response) {
+        Long articleId = article.getId();
+        if (cookie == null) {
+            Cookie viewCookie = new Cookie("view", articleId + "/");
+            viewCookie.setComment("게시물 조회 확인용");
+            viewCookie.setMaxAge(60 * 60);
+            articleService.addHit(article);
+            response.addCookie(viewCookie);
+        } else {
+            boolean isRead = false;
+            String[] viewCookieList = cookie.split("/");
+            for (String alreadyRead : viewCookieList) {
+                if (alreadyRead.equals(String.valueOf(articleId))) {
+                    isRead = true;
+                    break;
+                }
+                ;
+            }
+            if (!isRead) {
+                cookie += articleId + "/";
+                articleService.addHit(article);
+            }
+            response.addCookie(new Cookie("view", cookie));
+        }
     }
 
 

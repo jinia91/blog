@@ -9,6 +9,7 @@
     background: transparent;
     border: transparent;
     visibility: hidden;
+    opacity: 0.3;
 }
 
 .thumbBox:hover .thumbDelBtn{

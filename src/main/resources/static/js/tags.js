@@ -9,4 +9,6 @@ const tagify = new Tagify(input, {
         enabled: 0,
         closeOnSelect: true
     }
-})
+});
+
+

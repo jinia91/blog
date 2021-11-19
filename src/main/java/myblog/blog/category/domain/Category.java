@@ -48,4 +48,9 @@ public class Category extends BasicEntity {
 
     protected Category() {
     }
+
+    @Override
+    public String toString() {
+        return title;
+    }
 }

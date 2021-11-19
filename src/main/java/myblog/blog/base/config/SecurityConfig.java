@@ -5,12 +5,17 @@ import myblog.blog.exception.LoginFailHandler;
 import myblog.blog.member.doamin.Role;
 import myblog.blog.member.service.Oauth2MemberService;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.web.authentication.rememberme.JdbcTokenRepositoryImpl;
+import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
+
+import javax.sql.DataSource;
 
 @Configuration
 @EnableWebSecurity
@@ -19,6 +24,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final Oauth2MemberService oauth2MemberService;
     private final LoginFailHandler loginFailHandler;
+    private final DataSource dataSource;
 
     @Override
     public void configure(WebSecurity web) throws Exception {
@@ -44,8 +50,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .logoutSuccessUrl("/")
                 .deleteCookies("JSESSIONID","remember-me")
 
-                .and().csrf()
+                .and()
+                .csrf()
                 .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
+
 
 
                 .and()
@@ -56,7 +64,16 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .userService(oauth2MemberService)
 
 
-
         ;
     }
+
+
+    @Bean
+    public PersistentTokenRepository tokenRepository() {
+        JdbcTokenRepositoryImpl jdbcTokenRepository = new JdbcTokenRepositoryImpl();
+        jdbcTokenRepository.setDataSource(dataSource);
+        return jdbcTokenRepository;
+    }
+
+
 }

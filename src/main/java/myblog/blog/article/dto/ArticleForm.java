@@ -7,7 +7,7 @@ import javax.validation.constraints.NotBlank;
 
 @Setter
 @Getter
-public class NewArticleForm {
+public class ArticleForm {
 
     @NotBlank
     private String title;

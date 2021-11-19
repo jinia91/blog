@@ -43,10 +43,14 @@ public class PagingBoxDto {
         // 페이징 박스 끝번호 계산
         box.boxEndNum = (int) (Math.ceil(box.curPageNum / (double) box.displayPageBoxCnt) * box.displayPageBoxCnt);
 
-        // 끝번호가 최종 번호보다 큰 경우 처리
+        // 끝번호 예외처리
         if (box.boxEndNum > box.lastPageNum) {
             box.boxEndNum = box.lastPageNum;
         }
+        if(box.boxEndNum <= 0){
+            box.boxEndNum = 1;
+        }
+
 
         // 페이징박스 다음버튼 만드는 마지막 페이지 번호
         box.pNumForNextBtn =box.boxEndNum - (box.boxEndNum % box.displayPageBoxCnt);

@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 
 @Getter
 @Setter
-public class ArticleDtoForMainView {
+public class ArticleDtoForMain {
 
     private Long id;
     private String title;

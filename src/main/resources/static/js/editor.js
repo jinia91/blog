@@ -72,22 +72,7 @@ const editor = new toastui.Editor({
         }
     }
 });
-const editorMobile = new toastui.Editor({
-    el: document.querySelector('#editorMobile'),
-    height: 'auto',
-    language: 'ko',
-    initialEditType: 'wysiwyg',
-    previewStyle: 'tab',
-    toolbarItems: [
-        ['heading', 'bold', 'italic', 'strike'],
-        ['hr'],
-        ['ul', 'ol'],
-        ['code']
-    ]
-});
 
-editor.setMarkdown(contents.value);
-editorMobile.setMarkdown(contents.value);
 
 function uploadImage(blob) {
     let token = getCsrfToken();
@@ -131,14 +116,6 @@ function post() {
 
 }
 
-function postMobile() {
 
-    if (!checkTitle()) {
-        alert("제목을 입력해주세요")
-        return;
-    }
 
-    contents.value = editorMobile.getMarkdown();
-    document.getElementById("writeArticleForm").submit();
-
-}
+editor.setMarkdown(contents.value);

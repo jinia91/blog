@@ -2,11 +2,14 @@ package myblog.blog.article.domain;
 
 import lombok.Builder;
 import lombok.Getter;
+import myblog.blog.article.dto.ArticleForm;
 import myblog.blog.base.domain.BasicEntity;
 import myblog.blog.category.domain.Category;
 import myblog.blog.comment.domain.Comment;
 import myblog.blog.member.doamin.Member;
 import myblog.blog.tags.domain.ArticleTagList;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -39,14 +42,16 @@ public class Article extends BasicEntity {
     @JoinColumn(name = "member_id")
     private Member member;
 
-    @OneToMany(mappedBy = "article")
+    @OneToMany(mappedBy = "article", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private List<ArticleTagList> articleTagLists = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id")
     private Category category;
 
-    @OneToMany(mappedBy = "article")
+    @OneToMany(mappedBy = "article", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private List<Comment> parentCommentList = new ArrayList<>();
 
     protected Article() {
@@ -61,5 +66,22 @@ public class Article extends BasicEntity {
         this.thumbnailUrl = thumbnailUrl;
         this.hit = 0L;
         this.category = category;
+    }
+
+    public void addHit(){
+        this.hit++;
+    }
+
+    public void editArticle(ArticleForm articleForm, Category category){
+        this.content = articleForm.getContent();
+        this.title = articleForm.getTitle();
+        this.thumbnailUrl = articleForm.getThumbnailUrl();
+        this.toc = articleForm.getToc();
+        this.category = category;
+    }
+
+    public void deleteArticle(){
+        this.articleTagLists = null;
+        this.parentCommentList = null;
     }
 }

@@ -30,7 +30,7 @@
         let content = {content: document.getElementById("commentContent").value};
 
         const xhr = new XMLHttpRequest();
-        xhr.open("POST", "/comment/write?articleId=" + [[${article.getId()}]] );
+        xhr.open("POST", "/comment/write?articleId=" + [[${article.getId()}]]);
         xhr.setRequestHeader("content-type", "application/json");
         xhr.setRequestHeader("X-XSRF-TOKEN", token);
         xhr.send(JSON.stringify(content));
@@ -41,12 +41,12 @@
         }
     }
 
-    function cCommentWrite(idx) {
+    function cCommentWrite(parentCommentId) {
         let token = getCsrfToken();
-        let content = {content: document.getElementById("child-content-"+idx).value};
+        let content = {content: document.getElementById("child-content-" + parentCommentId).value};
 
         const xhr = new XMLHttpRequest();
-        xhr.open("POST", "/comment/write?pOrder="+idx+"&articleId=" + [[${article.getId()}]] );
+        xhr.open("POST", "/comment/write?parentId=" + parentCommentId + "&articleId=" + [[${article.getId()}]]);
         xhr.setRequestHeader("content-type", "application/json");
         xhr.setRequestHeader("X-XSRF-TOKEN", token);
         xhr.send(JSON.stringify(content));
@@ -57,12 +57,40 @@
         }
     }
 
+    function deleteCommentConfirm(commentId) {
+
+        if (confirm("댓글을 정말 삭제하시겠습니까?") == true) {
+            deleteComment(commentId);
+        } else {
+            return false;
+        }
+    }
+
+    function deleteComment(commentId) {
+        let token = getCsrfToken();
+
+        const xhr = new XMLHttpRequest();
+        xhr.open("POST", "/comment/delete?commentId=" + commentId + "&articleId=" + [[${article.getId()}]]);
+        xhr.setRequestHeader("content-type", "application/json");
+        xhr.setRequestHeader("X-XSRF-TOKEN", token);
+        xhr.send();
+
+        xhr.onload = () => {
+            makeCommentBox(xhr, replyBox);
+        }
+    }
 
     function makeCommentBox(xhr, replyBox) {
         if (xhr.status === 200 || xhr.status === 201 || xhr.status === 202) {
 
             let commentList = JSON.parse(xhr.response);
 
+            let member = null;
+            if ([[${member}]] != null) {
+                member = [[${member}]];
+            }
+
+            console.log(member);
             console.log(commentList);
 
             // 초기화
@@ -86,42 +114,47 @@
             <div class="d-flex justify-content-between align-items-center">
                 <span class="me-2">${parentComment.username}</span>
                 <div class="d-flex flex-row align-items-center">
-                    <small>${date}</small>
-                    <i class="fas fa-trash ms-3"></i>
-                </div>
+                    <small>${date}</small>`
+
+                if (member != null && member.id === parentComment.memberId) {
+                    replyHtmlSource +=
+                        `<button class="btn p-0 m-0 fas fa-trash ms-3"
+                            onclick="deleteCommentConfirm(${parentComment.id});return false">
+                         </button>`
+                }
+                replyHtmlSource +=
+                    `</div>
             </div>
             <p class="text-justify comment-text mb-0">${parentComment.content}</p>
             <!-- comment-reply-post -->
             <div class="comment-reply">
                 <div style="background-color: #ebebeb;">
                     <button class="btn align-items-center rounded collapsed" data-bs-toggle="collapse"
-                            data-bs-target="#comment-reply-${idx}" aria-expanded="false">
+                            data-bs-target="#comment-reply-${parentComment.id}" aria-expanded="false">
                         <i class="fa fa-comments-o me-2"></i> 대댓글
                     </button>
                 </div>`
 
 
-
-                 if([[${picUrl}]] != null){
-                     replyHtmlSource +=
-                `<div class="collapse" id="comment-reply-${idx}">
+                if (member != null) {
+                    replyHtmlSource +=
+                        `<div class="collapse" id="comment-reply-${parentComment.id}">
                     <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
                         <li>
                             <div class="mt-3 d-flex flex-row align-items-center p-2 form-color">
                                 <div>
                                 </div>
-                                <textarea type="text" id="child-content-${idx}" name="child-content-${idx}" class="form-control" placeholder="대댓글을 작성해주세요..."></textarea>
+                                <textarea type="text" id="child-content-${parentComment.id}" name="child-content-${parentComment.id}" class="form-control" placeholder="대댓글을 작성해주세요..."></textarea>
                             </div>
                             <div class="d-flex">
                                 <div class="ms-auto ms-1 me-2">
-                                    <button class="btn btn-sm btn-secondary" onclick="cCommentWrite(${idx++})">등 록</button>
+                                    <button class="btn btn-sm btn-secondary" onclick="cCommentWrite(${parentComment.id})">등 록</button>
                                 </div>
                             </div>
                         </li>
                     </ul>
                 </div>`
-                 }
-
+                }
 
                 // 자식 댓글 리스트
                 for (const childComment of parentComment.commentDtoList) {
@@ -139,9 +172,16 @@
                     <div class="d-flex justify-content-between align-items-center">
                         <span class="me-2">${childComment.username}</span>
                         <div class="d-flex flex-row align-items-center">
-                            <small>${date}</small>
-                            <i class="fas fa-trash ms-3"></i>
-                        </div>
+                            <small>${date}</small>`
+
+                    if (member != null && member.id === childComment.memberId) {
+                        replyHtmlSource +=
+                            `<button class="btn p-0 m-0 fas fa-trash ms-3"
+                                        onclick="deleteCommentConfirm(${childComment.id});return false">
+                                     </button>`
+                    }
+                    replyHtmlSource +=
+                        `</div>
                     </div>
                     <p class="text-justify comment-text mb-0">${childComment.content}</p>
                 </div>
@@ -162,5 +202,141 @@
     }
 
 </script>
+
+
+<script th:fragment="articleEdit" th:inline="javascript" type="application/javascript">
+
+    const contents = document.getElementById("content");
+
+    toastui.Editor.setLanguage(['ko', 'ko-KR'], {
+        Markdown: '마크다운',
+        WYSIWYG: '일반',
+        Write: '편집하기',
+        Preview: '미리보기',
+        Headings: '제목크기',
+        Paragraph: '본문',
+        Bold: '굵게',
+        Italic: '기울임꼴',
+        Strike: '취소선',
+        Code: '인라인 코드',
+        Line: '문단나눔',
+        Blockquote: '인용구',
+        'Unordered list': '글머리 기호',
+        'Ordered list': '번호 매기기',
+        Task: '체크박스',
+        Indent: '들여쓰기',
+        Outdent: '내어쓰기',
+        'Insert link': '링크 삽입',
+        'Insert CodeBlock': '코드블럭 삽입',
+        'Insert table': '표 삽입',
+        'Insert image': '이미지 삽입',
+        Heading: '제목',
+        'Image URL': '이미지 주소',
+        'Select image file': '이미지 파일을 선택하세요.',
+        'Choose a file': '파일 선택',
+        'No file': '선택된 파일 없음',
+        Description: '설명',
+        OK: '확인',
+        More: '더 보기',
+        Cancel: '취소',
+        File: '파일',
+        URL: '주소',
+        'Link text': '링크 텍스트',
+        'Add row to up': '위에 행 추가',
+        'Add row to down': '아래에 행 추가',
+        'Add column to left': '왼쪽에 열 추가',
+        'Add column to right': '오른쪽에 열 추가',
+        'Remove row': '행 삭제',
+        'Remove column': '열 삭제',
+        'Align column to left': '열 왼쪽 정렬',
+        'Align column to center': '열 가운데 정렬',
+        'Align column to right': '열 오른쪽 정렬',
+        'Remove table': '표 삭제',
+        'Would you like to paste as table?': '표형태로 붙여 넣겠습니까?',
+        'Text color': '글자 색상',
+        'Auto scroll enabled': '자동 스크롤 켜짐',
+        'Auto scroll disabled': '자동 스크롤 꺼짐',
+        'Choose language': '언어 선택',
+    })
+
+    const editor = new toastui.Editor({
+        el: document.querySelector('#editor'),
+        height: '500px',
+        initialEditType: 'markdown',
+        previewStyle: 'vertical',
+        language: 'ko',
+        toolbarItems: [
+            ['heading', 'bold', 'italic', 'strike'],
+            ['hr'],
+            ['ul', 'ol'],
+            ['code'],
+            ['table', 'image', 'link']
+        ],
+        hooks: {
+            addImageBlobHook: (blob, callback) => {
+                let imgurl = uploadImage(blob);
+                callback(imgurl, "첨부 이미지")
+            }
+        }
+    });
+
+
+    function uploadImage(blob) {
+        let token = getCsrfToken();
+        let formData = new FormData();
+        formData.append('img', blob);
+
+        const xhr = new XMLHttpRequest();
+        xhr.open("POST", "/article/uploadImg", false);
+        xhr.setRequestHeader("contentType", "multipart/form-data");
+        xhr.setRequestHeader("X-XSRF-TOKEN", token);
+        xhr.send(formData);
+
+        if (xhr.readyState === 4 && xhr.status === 200) {
+            return xhr.response;
+        } else {
+            alert("이미지가 정상적으로 업로드되지 못했습니다.")
+        }
+
+    }
+
+    function checkTitle() {
+
+        let title = document.getElementById("title");
+
+        if (title.value === "") {
+            return false;
+        }
+        return true;
+    }
+
+    function post() {
+
+        if (!checkTitle()) {
+            alert("제목을 입력해주세요")
+            return;
+        }
+
+
+        contents.value = editor.getMarkdown();
+        document.getElementById("writeArticleForm").submit();
+
+    }
+
+
+    editor.setMarkdown([[${articleDto.getContent()}]]);
+
+
+</script>
+
+
+<script th:fragment="tag" th:inline="javascript" type="application/javascript">
+    const tags = [[${tagsInput}]];
+    let whitelist = [];
+    for (let tag of tags) {
+        whitelist.push(tag.name)
+    }
+</script>
+
 
 </html>

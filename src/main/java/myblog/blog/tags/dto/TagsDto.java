@@ -7,4 +7,9 @@ public class TagsDto {
 
     private String name;
 
- }
+    public TagsDto(){}
+
+    public TagsDto(String name) {
+        this.name = name;
+    }
+}

@@ -18,6 +18,7 @@ public class CommentDto {
     private int tier;
     private Long parentId;
     private String username;
+    private Long memberId;
     private String picUrl;
     private String content;
     private boolean secret;
@@ -59,6 +60,7 @@ public class CommentDto {
         this.content = comment.getContent();
         this.secret = comment.isSecret();
         this.createdDate = comment.getCreatedDate();
+        this.memberId = comment.getMember().getId();
     }
 
 

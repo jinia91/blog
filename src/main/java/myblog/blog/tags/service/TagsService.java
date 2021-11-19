@@ -46,4 +46,8 @@ public class TagsService {
     public List<Tags> findAllTags(){
         return tagsRepository.findAll();
     }
+
+    public void deleteArticleTags(Article article){
+        articleTagListsRepository.deleteByArticle(article);
+    }
 }

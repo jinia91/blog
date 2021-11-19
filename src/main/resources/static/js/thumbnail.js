@@ -36,6 +36,7 @@ function uploadImg(input) {
     }
 }
 
+
 uploadThumbBtn.addEventListener("change", e => {
     uploadImg(e.target);
 })

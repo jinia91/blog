@@ -6,6 +6,9 @@ import lombok.Getter;
 import myblog.blog.article.domain.Article;
 import myblog.blog.base.domain.BasicEntity;
 import myblog.blog.member.doamin.Member;
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -40,7 +43,8 @@ public class Comment extends BasicEntity {
     @JoinColumn(name = "parents_id")
     private Comment parents;
 
-    @OneToMany(mappedBy = "parents")
+    @OneToMany(mappedBy = "parents", cascade = CascadeType.REMOVE)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private List<Comment> child = new ArrayList<>();
 
 

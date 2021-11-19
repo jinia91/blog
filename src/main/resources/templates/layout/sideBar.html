@@ -13,10 +13,11 @@
     </div>
 
     <div class="pb-3 mb-3 link-dark border-bottom">
-        <form class="searchBox">
-            <input class="searchInput form-control ps-4" type="search" placeholder="" aria-label="Search">
+        <div class="searchBox">
+            <input id="searchInput" name="searchInput" class="searchInput form-control ps-4" type="text"
+                   onkeyup="if(window.event.keyCode==13){searchKeyword()}">
             <i class="fas fa-search"></i>
-        </form>
+        </div>
     </div>
 
     <ul class="list-unstyled ps-0">
@@ -34,7 +35,8 @@
             </div>
         </li>
 
-        <li class="mb-1 superCategory btn fs-5"><a th:href="@{/article/list(category=total,tier=0,page=1)}" th:text="|전체글(${category.getCount()})|">토탈</a></li>
+        <li class="mb-1 superCategory btn fs-5"><a th:href="@{/article/list(category=total,tier=0,page=1)}"
+                                                   th:text="|전체글(${category.getCount()})|">토탈</a></li>
 
         <li class="mb-1" th:each="superCategory : ${category.getCategoryTCountList()}">
             <div class="btn-group">
@@ -43,14 +45,27 @@
                         th:data-bs-target="|#collapse-${superCategory.getId()}-sub|"
                         aria-expanded="true">
                 </button>
-                <a th:href="@{/article/list(category=${superCategory.getTitle()},tier=1,page=1)}" class="ms-0 superCategory btn fs-6"
-                   th:text="|${superCategory.getTitle()}(${superCategory.getCount()})|">슈퍼</a>
+                <a th:href="@{/article/list(category=${superCategory.getTitle()},tier=1,page=1)}"
+                   class="ms-0 superCategory btn fs-6"
+                   th:text="|${superCategory.getTitle()}(${superCategory.getCount()})|" >슈퍼</a>
             </div>
             <div class="collapse show" th:id="|collapse-${superCategory.getId()}-sub|">
                 <ul class="ms-1 btn-toggle-nav list-unstyled fw-normal pb-1 small"
                     th:each="subCategory : ${superCategory.getCategoryTCountList()}">
-                    <li><a th:href="@{/article/list(category=${subCategory.getTitle()},tier=2,page=1)}" class="link-dark rounded"
+                    <li><a th:href="@{/article/list(category=${subCategory.getTitle()},tier=2,page=1)}"
+                           class="link-dark rounded"
                            th:text="|${subCategory.getTitle()}(${subCategory.getCount()})|">서브</a></li>
+                </ul>
+            </div>
+        </li>
+        <li class="border-top my-3"></li>
+        <li class="mb-1">
+            <button class="btn btn-toggle align-items-center rounded collapsed fs-5" data-bs-toggle="collapse"
+                    data-bs-target="#tag-collapse-xl" aria-expanded="true">최신 댓글
+            </button>
+            <div class="collapse show" id="tag-collapse-xl">
+                <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
+                    <li th:each="comment : ${commentsList}"><a class="comment-side rounded" th:href="|@{/article/view(articleId=${comment.articleId})}#commentBox|" th:text="${comment.content}"></a></li>
                 </ul>
             </div>
         </li>

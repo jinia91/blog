@@ -6,11 +6,13 @@ import myblog.blog.comment.domain.Comment;
 import myblog.blog.comment.dto.CommentDto;
 import myblog.blog.comment.dto.CommentForm;
 import myblog.blog.comment.repository.CommentRepository;
+import myblog.blog.comment.repository.NaCommentRepository;
 import myblog.blog.member.doamin.Member;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -18,6 +20,7 @@ public class CommentService {
 
     private final CommentRepository commentRepository;
     private final ModelMapper modelMapper;
+    private final NaCommentRepository naCommentRepository;
 
     public List<CommentDto> getCommentList(Long articleId){
 
@@ -41,18 +44,30 @@ public class CommentService {
 
     }
 
+    public void deleteComment(Long commentId){
 
-    public void saveCComment(CommentForm commentForm, Member member, Article article, Integer pOrder) {
+        naCommentRepository.deleteComment(commentId);
+
+    }
+
+    public void saveCComment(CommentForm commentForm, Member member, Article article, Long parentId) {
+
+        Comment pComment = commentRepository.findById(parentId).get();
 
         Comment comment = Comment.builder()
                 .article(article)
                 .content(commentForm.getContent())
                 .tier(1)
-                .pOrder(pOrder)
+                .pOrder(pComment.getPOrder())
                 .member(member)
+                .parents(pComment)
                 .build();
 
         commentRepository.save(comment);
 
+    }
+
+    public List<Comment> recentCommentList(){
+       return commentRepository.findTop5ByOrderByIdDesc();
     }
 }

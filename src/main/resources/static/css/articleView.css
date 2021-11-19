@@ -32,19 +32,20 @@
     background-color: #e0dedd;
 }
 
-.user-feed {
-    font-size: 14px;
-    margin-top: 12px;
-}
-
 .paper {
     background: #fff;
     box-shadow: 0 0 3px rgba(0, 0, 0, 0.5);
     position: relative;
     max-width: 1200px;
+    min-width: 60vw;
     min-height: 600px;
     font-size: 0.8em;
     overflow: auto;
+}
+
+.user-feed {
+    font-size: 14px;
+    margin-top: 12px;
 }
 
 ::selection {
@@ -57,5 +58,45 @@
     background: #e7fd1e;
 }
 
+.toolbox{
+    background-color: #ebebeb;
+    font-size: 1.1rem;
 
+}
+
+.toolbox-head{
+    border-bottom: 3px solid #dbdbdb;
+    font-size: 1.2rem;
+    font-weight: bold;
+}
+
+ul.toolList{
+    list-style: none;
+    padding-left: 0;
+    margin-left: 0;
+}
+ul.toolList li{
+    margin-bottom: 5px;
+    border-bottom: 1px solid #dbdbdb;
+}
+
+ul.toolList li:before{
+    content: "\f550";
+    font-family: FontAwesome;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    display: inline-block;
+    vertical-align: middle;
+    margin-right: 3px;
+}
+
+.badge:before{
+    content: "\f02c";
+    font-family: FontAwesome;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    display: inline-block;
+    vertical-align: middle;
+    margin-right: 3px;
+}
 

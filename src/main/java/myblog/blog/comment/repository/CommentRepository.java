@@ -20,4 +20,6 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
     List<Comment> findCommentsByArticleId(@Param("articleId") Long articleId);
 
     int countCommentsByArticleAndTier(Article article,int tier);
+
+    List<Comment> findTop5ByOrderByIdDesc();
 }
