@@ -16,4 +16,5 @@ public interface Oauth2UserInfo {
 
     Map<String, Object> getAttributes();
 
+
 }

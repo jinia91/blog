@@ -1,5 +1,6 @@
 package myblog.blog.member.auth.userinfo;
 
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
@@ -9,8 +10,8 @@ public class NaverUserInfo implements Oauth2UserInfo {
 
     private Map<String, Object> attributes;
 
-    public NaverUserInfo(Map<String, Object> attributes) {
-        this.attributes = attributes;
+    public NaverUserInfo(OAuth2User oAuth2User) {
+        this.attributes = oAuth2User.getAttribute("response");
     }
 
     @Override

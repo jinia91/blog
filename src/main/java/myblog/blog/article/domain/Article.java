@@ -80,8 +80,4 @@ public class Article extends BasicEntity {
         this.category = category;
     }
 
-    public void deleteArticle(){
-        this.articleTagLists = null;
-        this.parentCommentList = null;
-    }
 }

@@ -51,7 +51,7 @@
 
     <div class="main ">
         <div class="carousel-inner ">
-            <div class="carousel-item active">
+            <div class="carousel-item active" style="cursor: default">
                 <img th:src="${article.getThumbnailUrl()}" class="w-100 vh-100 cover"
                      alt="...">
                 <div class="card-img-overlay text-shadow text-white text-center row justify-content-center align-content-center p-0">
@@ -61,7 +61,7 @@
             </div>
         </div>
 
-        <textarea name="contents" id="contents" th:text="${article.getContent()}" hidden></textarea>
+        <textarea name="contents" id="contents" hidden></textarea>
 
         <div class="mt-5 ms-2 me-2 ms-sm-5 me-sm-5 mt-sm-5 d-flex justify-content-center">
 
@@ -140,11 +140,11 @@
 
 
         <!-- comment e -->
-
+        <script src="/node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
         <script src="https://uicdn.toast.com/editor/latest/toastui-editor-all.min.js"></script>
         <script src="/js/getCsrf.js"></script>
-        <script src="/js/articleView.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.0/moment.min.js"></script>
+        <script th:replace="layout/fragments.html :: view"></script>
         <script th:replace="layout/fragments.html :: comment"></script>
     </div>
 </section>

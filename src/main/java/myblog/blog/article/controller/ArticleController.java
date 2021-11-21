@@ -8,8 +8,6 @@ import myblog.blog.article.service.ArticleService;
 import myblog.blog.category.dto.CategoryForView;
 import myblog.blog.category.dto.CategoryNormalDto;
 import myblog.blog.category.service.CategoryService;
-import myblog.blog.comment.domain.Comment;
-import myblog.blog.comment.dto.CommentDto;
 import myblog.blog.comment.dto.CommentDtoForSide;
 import myblog.blog.comment.service.CommentService;
 import myblog.blog.member.auth.PrincipalDetails;

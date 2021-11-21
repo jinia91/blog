@@ -62,14 +62,34 @@
     <div class="container">
         <div class="row justify-content-center mt-5 mb-3 g-0">
 
-            <div class="d-flex">
-                <label class="btn btn-secondary me-auto" for="thumbnail">썸네일 파일</label>
-                <input type="file" id="thumbnail" name="thumbnail" accept="image/*" class="d-none">
-<!--               <div>-->
-<!--                   <input type="text" id="thumbnailUrlSource" name="thumbnail" accept="text">-->
-<!--                   <label class="btn btn-secondary" for="thumbnailUrlSource">썸네일 URL</label>-->
-<!--               </div>-->
+            <div class="d-flex flex-row-reverse">
+
+                <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#thumbnailModal">
+                    썸네일 등록
+                </button>
+
+                <div class="modal fade" id="thumbnailModal" tabindex="-1" aria-labelledby="thumbnailModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="thumbnailModalLabel">썸네일 등록</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-footer">
+
+                                <input type="text" id="thumbnail-url-upload-input" class="form-control">
+                                <button class="btn btn-secondary" id="thumbnail-url-upload-btn">URL 업로드</button>
+                                <label class="btn btn-secondary" for="thumbnail">파일 업로드</label>
+                                <input type="file" id="thumbnail" name="thumbnail" accept="image/*" class="d-none">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
             </div>
+
+
+
 
             <form class="" method="post" enctype="multipart/form-data" th:object="${articleDto}"
                   th:action="|@{/article/edit(articleId=${articleDto.getId()})}|" id="writeArticleForm">
@@ -119,6 +139,7 @@
     </div>
 
     <!--scripts-->
+    <script src="/node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="/node_modules/@yaireo/tagify/dist/tagify.min.js"></script>
     <script th:replace="layout/fragments.html :: tag"></script>
     <script src="https://uicdn.toast.com/editor/latest/toastui-editor-all.min.js"></script>

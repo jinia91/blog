@@ -7,24 +7,27 @@ import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.Supplier;
+import java.util.function.Function;
 
 @Component
 public class UserInfoFactory {
 
+    private final static Map<String, Function<OAuth2User, Oauth2UserInfo>> userInfoFactoryMap;
+
+    static {
+        userInfoFactoryMap = new HashMap<>();
+        userInfoFactoryMap.put("google", GoogleUserInfo::new);
+        userInfoFactoryMap.put("facebook", FacebookUserInfo::new);
+        userInfoFactoryMap.put("kakao", FacebookUserInfo::new);
+        userInfoFactoryMap.put("naver", FacebookUserInfo::new);
+    }
+
     public Oauth2UserInfo makeOauth2UserinfoOf(OAuth2UserRequest oAuth2UserRequest, OAuth2User oAuth2User) {
 
-        if (oAuth2UserRequest.getClientRegistration().getRegistrationId().equals("google")) {
-            return new GoogleUserInfo(oAuth2User.getAttributes());
-        } else if (oAuth2UserRequest.getClientRegistration().getRegistrationId().equals("facebook")) {
-            return new FacebookUserInfo(oAuth2User.getAttributes());
-        } else if (oAuth2UserRequest.getClientRegistration().getRegistrationId().equals("kakao")) {
-            return new KakaoUserInfo(oAuth2User.getAttributes());
-        } else if (oAuth2UserRequest.getClientRegistration().getRegistrationId().equals("naver")) {
-            return new NaverUserInfo(oAuth2User.getAttribute("response"));
-        }
-        else {
-            throw new IllegalArgumentException("지원하지 않는 Oauth 인증 시도입니다");}
+        return userInfoFactoryMap
+                .get(oAuth2UserRequest.getClientRegistration().getRegistrationId())
+                .apply(oAuth2User);
+
     }
 
 

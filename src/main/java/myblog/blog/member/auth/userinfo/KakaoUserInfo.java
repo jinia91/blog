@@ -1,5 +1,6 @@
 package myblog.blog.member.auth.userinfo;
 
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
@@ -9,8 +10,8 @@ public class KakaoUserInfo implements Oauth2UserInfo {
 
     private Map<String, Object> attributes;
 
-    public KakaoUserInfo(Map<String, Object> attributes) {
-        this.attributes = attributes;
+    public KakaoUserInfo(OAuth2User oAuth2User) {
+        this.attributes = oAuth2User.getAttributes();
     }
 
     @Override

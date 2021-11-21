@@ -3,6 +3,36 @@
       xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
 
 
+
+<script th:fragment="view" th:inline="javascript" type="application/javascript">
+    const viewer = toastui.Editor.factory({
+        el: document.querySelector('#viewer'),
+        viewer: true,
+        height: '500px',
+        initialValue: ''
+    });
+
+
+    viewer.setMarkdown([[${article.getContent()}]]);
+
+
+
+    function deleteArticle() {
+
+
+        if (confirm("글을 정말 삭제하시겠습니까?") == true) {
+            document.getElementById("deleteArticle").submit();
+        } else {
+            return false;
+        }
+
+
+    }
+</script>
+
+
+
+
 <script th:fragment="comment" th:inline="javascript" type="application/javascript">
 
     const replyBox = document.getElementById("commentBox");
