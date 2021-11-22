@@ -58,7 +58,7 @@ public class ArticleController {
                         .collect(Collectors.toList());
         model.addAttribute("tagsInput", tagsForInput);
 
-        CategoryForView categoryForView = categoryService.getCategoryForView();
+        CategoryForView categoryForView = CategoryForView.createCategory(categoryService.getCategoryForView());
         model.addAttribute("category", categoryForView);
 
         List<CommentDtoForSide> comments = commentService.recentCommentList()
@@ -92,7 +92,7 @@ public class ArticleController {
                                   @RequestParam Integer page,
                                   Model model) {
 
-        CategoryForView categoryForView = categoryService.getCategoryForView();
+        CategoryForView categoryForView = CategoryForView.createCategory(categoryService.getCategoryForView());
         model.addAttribute("category", categoryForView);
         List<CommentDtoForSide> comments = commentService.recentCommentList()
                 .stream()
@@ -118,7 +118,7 @@ public class ArticleController {
                                   @PathVariable String tag,
                                   Model model) {
 
-        CategoryForView categoryForView = categoryService.getCategoryForView();
+        CategoryForView categoryForView = CategoryForView.createCategory(categoryService.getCategoryForView());
         model.addAttribute("category", categoryForView);
         List<CommentDtoForSide> comments = commentService.recentCommentList()
                 .stream()
@@ -147,7 +147,7 @@ public class ArticleController {
                                   @PathVariable String keyword,
                                   Model model) {
 
-        CategoryForView categoryForView = categoryService.getCategoryForView();
+        CategoryForView categoryForView = CategoryForView.createCategory(categoryService.getCategoryForView());
         model.addAttribute("category", categoryForView);
         List<CommentDtoForSide> comments = commentService.recentCommentList()
                 .stream()
@@ -184,7 +184,7 @@ public class ArticleController {
             model.addAttribute("member", null);
         }
 
-        CategoryForView categoryForView = categoryService.getCategoryForView();
+        CategoryForView categoryForView = CategoryForView.createCategory(categoryService.getCategoryForView());
         model.addAttribute("category", categoryForView);
         List<CommentDtoForSide> comments = commentService.recentCommentList()
                 .stream()
@@ -250,7 +250,7 @@ public class ArticleController {
 
         model.addAttribute("articleDto", articleDto);
 
-        CategoryForView categoryForView = categoryService.getCategoryForView();
+        CategoryForView categoryForView = CategoryForView.createCategory(categoryService.getCategoryForView());
         model.addAttribute("category", categoryForView);
         List<CommentDtoForSide> comments = commentService.recentCommentList()
                 .stream()

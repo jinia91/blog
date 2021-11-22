@@ -29,7 +29,7 @@ public class MemberController {
             model.addAttribute("errMsg","이미 가입된 이메일입니다.");
         }
 
-        CategoryForView categoryForView = categoryService.getCategoryForView();
+        CategoryForView categoryForView = CategoryForView.createCategory(categoryService.getCategoryForView());
         model.addAttribute("category",categoryForView);
         List<CommentDtoForSide> comments = commentService.recentCommentList()
                 .stream()

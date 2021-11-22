@@ -12,12 +12,6 @@ class BlogApplicationTests {
 	@Autowired
 	CategoryService categoryService;
 
-	@Test
-	void contextLoads() {
 
-		String str = null;
-		Long 테스트_부모 = categoryService.createNewCategory("테스트 부모", str);
-		categoryService.createNewCategory("테스트 자식","테스트 부모");
-	}
 
 }

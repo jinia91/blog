@@ -13,12 +13,13 @@ public class CategoryForView {
 
     private int count;
     private String title;
-    private int id;
+    private Long id;
+    private int pOrder;
+    private int cOrder;
     private List<CategoryForView> categoryTCountList = new ArrayList<>();
 
     public static CategoryForView createCategory(List<CategoryNormalDto> crList) {
 
-        Collections.reverse(crList);
         return recursiveBuildFromCategoryDto(0, crList);
 
     }
@@ -40,6 +41,8 @@ public class CategoryForView {
                 categoryForView.setTitle(cSource.getTitle());
                 categoryForView.setCount(cSource.getCount());
                 categoryForView.setId(cSource.getId());
+                categoryForView.setCOrder(cSource.getCOrder());
+                categoryForView.setPOrder(cSource.getPOrder());
                 crList.remove(0);
             } else if (cSource.getTier() > d) {
                 CategoryForView sub = recursiveBuildFromCategoryDto(d + 1, crList);

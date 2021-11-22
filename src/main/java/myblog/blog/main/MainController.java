@@ -28,7 +28,7 @@ public class MainController {
     @GetMapping("/")
     public String main(Model model) {
 
-        CategoryForView categoryForView = categoryService.getCategoryForView();
+        CategoryForView categoryForView = CategoryForView.createCategory(categoryService.getCategoryForView());
 
         model.addAttribute("category",categoryForView);
         List<CommentDtoForSide> comments = commentService.recentCommentList()
