@@ -18,8 +18,8 @@ public class UserInfoFactory {
         userInfoFactoryMap = new HashMap<>();
         userInfoFactoryMap.put("google", GoogleUserInfo::new);
         userInfoFactoryMap.put("facebook", FacebookUserInfo::new);
-        userInfoFactoryMap.put("kakao", FacebookUserInfo::new);
-        userInfoFactoryMap.put("naver", FacebookUserInfo::new);
+        userInfoFactoryMap.put("kakao", KakaoUserInfo::new);
+        userInfoFactoryMap.put("naver", NaverUserInfo::new);
     }
 
     public Oauth2UserInfo makeOauth2UserinfoOf(OAuth2UserRequest oAuth2UserRequest, OAuth2User oAuth2User) {

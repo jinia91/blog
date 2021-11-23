@@ -36,7 +36,7 @@ public class NaverUserInfo implements Oauth2UserInfo {
 
     @Override
     public String getUserName() {
-        return (String) attributes.get("name");
+        return (String) attributes.get("name") + "#"+ ((String) attributes.get("id")).substring(0,5);
     }
 
     @Override

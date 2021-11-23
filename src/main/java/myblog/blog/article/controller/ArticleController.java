@@ -64,7 +64,7 @@ public class ArticleController {
         List<CommentDtoForSide> comments = commentService.recentCommentList()
                 .stream()
                 .map(comment ->
-                        new CommentDtoForSide(comment.getId(), comment.getArticle().getId(), comment.getContent()))
+                        new CommentDtoForSide(comment.getId(), comment.getArticle().getId(), comment.getContent(), comment.isSecret() ))
                 .collect(Collectors.toList());
         model.addAttribute("commentsList", comments);
 
@@ -97,7 +97,7 @@ public class ArticleController {
         List<CommentDtoForSide> comments = commentService.recentCommentList()
                 .stream()
                 .map(comment ->
-                        new CommentDtoForSide(comment.getId(), comment.getArticle().getId(), comment.getContent()))
+                        new CommentDtoForSide(comment.getId(), comment.getArticle().getId(), comment.getContent(), comment.isSecret()))
                 .collect(Collectors.toList());
         model.addAttribute("commentsList", comments);
 
@@ -123,7 +123,7 @@ public class ArticleController {
         List<CommentDtoForSide> comments = commentService.recentCommentList()
                 .stream()
                 .map(comment ->
-                        new CommentDtoForSide(comment.getId(), comment.getArticle().getId(), comment.getContent()))
+                        new CommentDtoForSide(comment.getId(), comment.getArticle().getId(), comment.getContent(), comment.isSecret()))
                 .collect(Collectors.toList());
         model.addAttribute("commentsList", comments);
 
@@ -152,7 +152,7 @@ public class ArticleController {
         List<CommentDtoForSide> comments = commentService.recentCommentList()
                 .stream()
                 .map(comment ->
-                        new CommentDtoForSide(comment.getId(), comment.getArticle().getId(), comment.getContent()))
+                        new CommentDtoForSide(comment.getId(), comment.getArticle().getId(), comment.getContent(),comment.isSecret()))
                 .collect(Collectors.toList());
         model.addAttribute("commentsList", comments);
 
@@ -189,7 +189,7 @@ public class ArticleController {
         List<CommentDtoForSide> comments = commentService.recentCommentList()
                 .stream()
                 .map(comment ->
-                        new CommentDtoForSide(comment.getId(), comment.getArticle().getId(), comment.getContent()))
+                        new CommentDtoForSide(comment.getId(), comment.getArticle().getId(), comment.getContent(),comment.isSecret()))
                 .collect(Collectors.toList());
         model.addAttribute("commentsList", comments);
 
@@ -255,7 +255,7 @@ public class ArticleController {
         List<CommentDtoForSide> comments = commentService.recentCommentList()
                 .stream()
                 .map(comment ->
-                        new CommentDtoForSide(comment.getId(), comment.getArticle().getId(), comment.getContent()))
+                        new CommentDtoForSide(comment.getId(), comment.getArticle().getId(), comment.getContent(),comment.isSecret()))
                 .collect(Collectors.toList());
         model.addAttribute("commentsList", comments);
 

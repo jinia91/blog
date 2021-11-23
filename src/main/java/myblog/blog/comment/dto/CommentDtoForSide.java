@@ -9,9 +9,11 @@ public class CommentDtoForSide {
     private Long id;
     private Long articleId;
     private String content;
+    private boolean secret;
 
-    public CommentDtoForSide(Long id, Long articleId, String content) {
+    public CommentDtoForSide(Long id, Long articleId, String content, boolean secret) {
         this.id = id;
+        this.secret = secret;
         this.articleId = articleId;
         this.content = content;
     }

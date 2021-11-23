@@ -84,7 +84,7 @@ public class Oauth2MemberService extends DefaultOAuth2UserService {
 
         if(admin == null){
             admin = Member.builder()
-                    .username(adminUsername)
+                    .username(adminUsername+"#"+adminProviderId.substring(0,5))
                     .email(adminEmail)
                     .picUrl(adminPicUrl)
                     .userId(adminProviderId)

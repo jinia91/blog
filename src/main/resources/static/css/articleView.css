@@ -100,3 +100,49 @@ ul.toolList li:before{
     margin-right: 3px;
 }
 
+.secretBox {
+    position: relative;
+}
+.lock {
+    cursor:pointer;
+    height:25px;
+}
+.lock input {
+    display:none;
+}
+.lock span:before,
+.lock span:after{
+    content:"";
+}
+.lock span:before {
+    width:64px;
+    height:25px;
+    margin-right:8px;
+    background:#EEE;
+    border-radius:32px;
+    display:inline-block;
+    vertical-align:middle;
+    transition:all .5s cubic-bezier(.175, .885, .32, 1);
+}
+.lock span:after {
+    margin:2px;
+    width:28px;
+    height:20px;
+    background:#FFF;
+    border-radius:28px;
+    position:absolute;
+    left:0;
+    background-image: url("/img/unlock.png");
+    background-size: 16px 16px;
+    background-position: center;
+    background-repeat: no-repeat;
+    z-index:2;
+    transition:all .5s cubic-bezier(.175, .885, .32, 1);
+}
+.lock input:checked + span:after {
+    left:30px;
+    background-image:url("/img/lock.png");
+}
+.lock input:checked + span:before {
+    background-color: #929292;
+}

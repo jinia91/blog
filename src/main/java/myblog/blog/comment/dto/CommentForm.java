@@ -6,4 +6,6 @@ import lombok.Data;
 public class CommentForm {
 
 private String content;
+private boolean secret;
+
 }

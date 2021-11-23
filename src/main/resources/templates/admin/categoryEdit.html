@@ -47,42 +47,54 @@
 
 <section>
 
-    <div style="margin-bottom: 150px"></div>
+    <div style="margin-bottom: 100px"></div>
 
-    <div class="d-flex">
-        <div id="categoryBox" class="list-unstyled ps-0 d-flex flex-column"><th:block th:each="superCategory : ${category.getCategoryTCountList()}"><div class="ms-0 fw-bold btn btn-secondary"
+    <div class="container">
+
+
+        <h1 class="text-center">카테고리 편집</h1>
+        <hr class="mb-5">
+
+        <div class="row g-0">
+        <div id="categoryBox" class=" list-group list-unstyled ps-0 d-flex flex-column col-sm mb-5 text-center"><th:block th:each="superCategory : ${category.getCategoryTCountList()}"><button class="list-group-item list-group-item-action list-group-item-light fw-bold"
                                                                                    th:text="|${superCategory.getTitle()}|"
                                                                                    th:id="|superCategory-${superCategory.getId()}|"
-                                                                                   onclick="clickCategory(this)"></div><th:block
-                th:each="subCategory : ${superCategory.getCategoryTCountList()}"><div class="btn btn-secondary"
+                                                                                   onclick="clickCategory(this)"></button><th:block
+                th:each="subCategory : ${superCategory.getCategoryTCountList()}"><button class="list-group-item-action list-group-item-light list-group-item"
                                                                                       th:text="|${subCategory.getTitle()}|"
                                                                                       th:id="|subCategory-${subCategory.getId()}|"
-                                                                                      onclick="clickCategory(this)"></div></th:block></th:block></div>
+                                                                                      onclick="clickCategory(this)"></button></th:block></th:block></div>
 
-        <div>
-            <div>
+
+            <div class="col-sm g-0 ms-sm-5">
+            <div class="mb-5 ">
+                <label for="categoryName">카테고리 이름 변경</label>
                 <input type="text" class="form-control" id="categoryName">
             </div>
-            <div>
-                <button class="btn btn-secondary" onclick="categoryUp()">orderUp</button>
-                <button class="btn btn-secondary" onclick="categoryDown()">orderDown</button>
+            <div class="d-flex flex-column align-items-center">
+                <div>
+                    <button class="category-nav-btn " onclick="categoryUp()"><i class="fas fa-chevron-circle-up"></i></button>
+                    <button class="category-nav-btn " onclick="categoryDown()"><i class="fas fa-chevron-circle-down"></i></button>
+                </div>
+                <div>
+                    <button class="category-nav-btn " onclick="tierUp()"><i class="far fa-caret-square-left"></i></button>
+                    <button class=" category-nav-btn " onclick="tierDown()"><i class="far fa-caret-square-right"></i></button>
+                </div>
+                <div>
+                    <button class=" category-nav-btn " onclick="addCategory()"><i class="fas fa-plus"></i></button>
+                    <button class="category-nav-btn " onclick="deleteCategory()"><i class="fas fa-minus"></i></button>
+                </div>
             </div>
-            <div>
-                <button class="btn btn-secondary" onclick="tierUp()">tierUp</button>
-                <button class="btn btn-secondary" onclick="tierDown()">tierDown</button>
-            </div>
-            <div>
-                <button class="btn btn-secondary" onclick="addCategory()">add</button>
-                <button class="btn btn-secondary" onclick="deleteCategory()">delete</button>
-            </div>
-
         </div>
-
+        </div>
     </div>
 
-    <button class="btn btn-secondary" onclick="changeCategory()">적 용</button>
-    <button class="btn btn-secondary" onclick="javascript:history.back()">취 소</button>
-
+    <div class="container mt-5">
+        <div class="row justify-content-center g-0">
+        <button class="btn btn-secondary col-3 me-5" onclick="changeCategory()">적 용</button>
+        <button class="btn btn-secondary col-3" onclick="javascript:history.back()">취 소</button>
+        </div>
+    </div>
     <div style="margin-bottom:  100px"></div>
 
 
@@ -92,7 +104,7 @@
 
         // 재사용할 dto
         const categorysList = [[${categoryForEdit}]];
-
+        let idxNewCategoryNum = 0;
         const categoryName = document.getElementById("categoryName");
 
         // 셀렉터
@@ -102,6 +114,14 @@
             console.log(categorysList);
             categoryName.value = selector.innerText;
 
+            const childNodes = selector.parentNode.childNodes;
+            for (const childNode of childNodes) {
+                childNode.classList.remove("active");
+            }
+
+            selector.classList.add("active");
+
+            console.log(selector);
         }
 
         categoryName.addEventListener("keyup", () => {
@@ -175,13 +195,15 @@
 
         }
 
+
+
         function addCategory(){
             const box = document.getElementById("categoryBox");
-            box.innerHTML +=`<div class="btn btn-secondary" onclick="clickCategory(this)">새 카테고리</div>`
+            box.innerHTML +=`<button class="list-group-item-action list-group-item-light list-group-item" onclick="clickCategory(this)">새 카테고리${idxNewCategoryNum}</button>`
 
             let newCategory = new Object();
             newCategory.id = null;
-            newCategory.title = '새 카테고리';
+            newCategory.title = '새 카테고리'+idxNewCategoryNum++;
             newCategory.tier = 2;
             newCategory.count = 0;
             newCategory.porder = 0;
@@ -210,14 +232,13 @@
             xhr.onload = () => {
                 if (xhr.status === 200 || xhr.status === 201 || xhr.status === 202) {
 
-                        alert("성공");
+                       location.href='/';
                 }
                 else{
-
+                        alert("에러발생");
                 }
             }
         }
-
 
     </script>
 

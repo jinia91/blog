@@ -116,8 +116,16 @@
                           class="form-control" placeholder="댓글을 작성해주세요..."></textarea>
             </div>
             <div sec:authorize="isAuthenticated()" class="d-flex">
+
+                <div class="ms-1 mt-2 secretBox">
+                    <label class="lock">
+                        <input type="checkbox" id="isCommentSecret" value="secret" />
+                        <span></span>
+                    </label>
+                </div>
+
                 <div class="ms-auto mt-2 me-2">
-                     <button class="btn btn-secondary btn-sm" onclick="commentWrite()">등 록</button>
+                    <button class="btn btn-secondary btn-sm" onclick="commentWrite()">등 록</button>
                 </div>
             </div>
 

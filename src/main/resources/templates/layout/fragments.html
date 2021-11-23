@@ -57,13 +57,21 @@
 
     function commentWrite() {
         let token = getCsrfToken();
-        let content = {content: document.getElementById("commentContent").value};
+        let content = document.getElementById("commentContent").value;
+        let secret = document.getElementById("isCommentSecret")
+        let isSecret = secret.checked;
+
+        console.log(isSecret);
+
+        let commentForm = new Object();
+        commentForm.content = content;
+        commentForm.secret = isSecret;
 
         const xhr = new XMLHttpRequest();
         xhr.open("POST", "/comment/write?articleId=" + [[${article.getId()}]]);
         xhr.setRequestHeader("content-type", "application/json");
         xhr.setRequestHeader("X-XSRF-TOKEN", token);
-        xhr.send(JSON.stringify(content));
+        xhr.send(JSON.stringify(commentForm));
 
         xhr.onload = () => {
             makeCommentBox(xhr, replyBox);
@@ -73,13 +81,19 @@
 
     function cCommentWrite(parentCommentId) {
         let token = getCsrfToken();
-        let content = {content: document.getElementById("child-content-" + parentCommentId).value};
+        let content = document.getElementById("child-content-" + parentCommentId).value;
+        let isSecret = document.getElementById("isCommentSecret-"+ parentCommentId).checked;
+
+
+        let commentForm = new Object();
+        commentForm.content = content;
+        commentForm.secret = isSecret;
 
         const xhr = new XMLHttpRequest();
         xhr.open("POST", "/comment/write?parentId=" + parentCommentId + "&articleId=" + [[${article.getId()}]]);
         xhr.setRequestHeader("content-type", "application/json");
         xhr.setRequestHeader("X-XSRF-TOKEN", token);
-        xhr.send(JSON.stringify(content));
+        xhr.send(JSON.stringify(commentForm));
 
         xhr.onload = () => {
             makeCommentBox(xhr, replyBox);
@@ -111,6 +125,9 @@
     }
 
     function makeCommentBox(xhr, replyBox) {
+
+    const roleArr = [[${#authentication.authorities}]];
+
         if (xhr.status === 200 || xhr.status === 201 || xhr.status === 202) {
 
             let commentList = JSON.parse(xhr.response);
@@ -119,9 +136,6 @@
             if ([[${member}]] != null) {
                 member = [[${member}]];
             }
-
-            console.log(member);
-            console.log(commentList);
 
             // 초기화
             replyBox.innerHTML = ' ';
@@ -154,10 +168,27 @@
                 }
                 replyHtmlSource +=
                     `</div>
-            </div>
-            <p class="text-justify comment-text mb-0">${parentComment.content}</p>
+            </div>`
+
+                // 비밀댓글 처리
+             if(parentComment.secret === true){
+                 if(roleArr[0].authority === "ROLE_ADMIN") {
+                     replyHtmlSource +=`<p class="text-justify comment-text mb-0">${parentComment.content}(비밀댓글입니다)</p>`
+                 }
+                 else if(member != null &&member.id === parentComment.memberId){
+                     replyHtmlSource +=`<p class="text-justify comment-text mb-0">${parentComment.content}(내가 쓴 비밀댓글입니다)</p>`;
+                 }
+                 else{
+                     replyHtmlSource +=`<p class="text-justify comment-text mb-0">비밀댓글입니다.</p>`;
+                 }
+             }
+            else{
+                 replyHtmlSource +=`<p class="text-justify comment-text mb-0">${parentComment.content}</p>`
+             }
+
             <!-- comment-reply-post -->
-            <div class="comment-reply">
+                replyHtmlSource +=
+            `<div class="comment-reply">
                 <div style="background-color: #ebebeb;">
                     <button class="btn align-items-center rounded collapsed" data-bs-toggle="collapse"
                             data-bs-target="#comment-reply-${parentComment.id}" aria-expanded="false">
@@ -176,7 +207,16 @@
                                 </div>
                                 <textarea type="text" id="child-content-${parentComment.id}" name="child-content-${parentComment.id}" class="form-control" placeholder="대댓글을 작성해주세요..."></textarea>
                             </div>
+
                             <div class="d-flex">
+
+                <div class="ms-1 mt-2 secretBox">
+                    <label class="lock">
+                        <input type="checkbox" id="isCommentSecret-${parentComment.id}" value="true"/>
+                        <span></span>
+                    </label>
+                </div>
+
                                 <div class="ms-auto ms-1 me-2">
                                     <button class="btn btn-sm btn-secondary" onclick="cCommentWrite(${parentComment.id})">등 록</button>
                                 </div>
@@ -212,9 +252,26 @@
                     }
                     replyHtmlSource +=
                         `</div>
-                    </div>
-                    <p class="text-justify comment-text mb-0">${childComment.content}</p>
-                </div>
+                    </div>`
+
+                    // 비밀댓글 처리
+                    if(childComment.secret === true){
+                        if(roleArr[0].authority === "ROLE_ADMIN") {
+                            replyHtmlSource +=`<p class="text-justify comment-text mb-0">${childComment.content}(비밀댓글입니다)</p>`
+                        }
+                        else if(member != null &&member.id === childComment.memberId){
+                            replyHtmlSource +=`<p class="text-justify comment-text mb-0">${childComment.content}(내가 쓴 비밀댓글입니다)</p>`;
+                        }
+                        else{
+                            replyHtmlSource +=`<p class="text-justify comment-text mb-0">비밀댓글입니다.</p>`;
+                        }
+                    }
+                    else{
+                        replyHtmlSource +=`<p class="text-justify comment-text mb-0">${childComment.content}</p>`
+                    }
+
+                    replyHtmlSource +=
+                `</div>
             </div>`
                 }
 

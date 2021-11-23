@@ -38,6 +38,7 @@ public class CommentService {
                 .tier(0)
                 .pOrder(commentRepository.countCommentsByArticleAndTier(article,0)+1)
                 .member(member)
+                .secret(commentForm.isSecret())
                 .build();
 
         commentRepository.save(comment);
@@ -61,6 +62,7 @@ public class CommentService {
                 .pOrder(pComment.getPOrder())
                 .member(member)
                 .parents(pComment)
+                .secret(commentForm.isSecret())
                 .build();
 
         commentRepository.save(comment);

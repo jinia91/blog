@@ -37,6 +37,7 @@
 
         <li class="mb-1 superCategory btn fs-5"><a th:href="@{/article/list(category=total,tier=0,page=1)}"
                                                    th:text="|전체글(${category.getCount()})|">토탈</a></li>
+        <a th:href="@{/edit/category}" sec:authorize="hasRole('ADMIN')" class="me-0 btn"><i class="fas fa-pen"></i></a>
 
         <li class="mb-1" th:each="superCategory : ${category.getCategoryTCountList()}">
             <div class="btn-group">
@@ -65,7 +66,14 @@
             </button>
             <div class="collapse show" id="tag-collapse-xl">
                 <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
-                    <li th:each="comment : ${commentsList}"><a class="comment-side rounded" th:href="|@{/article/view(articleId=${comment.articleId})}#commentBox|" th:text="${comment.content}"></a></li>
+                    <li th:each="comment : ${commentsList}">
+                        <a class="comment-side rounded" th:href="|@{/article/view(articleId=${comment.articleId})}#commentBox|"
+                            th:if="${comment.secret} and ${#authentication.authorities[0].authority == 'ROLE_ADMIN'}" th:text="${comment.content}"></a>
+                        <a class="comment-side rounded" th:href="|@{/article/view(articleId=${comment.articleId})}#commentBox|"
+                           th:if="${comment.secret} and ${#authentication.authorities[0].authority != 'ROLE_ADMIN'}" th:text="비밀댓글입니다."></a>
+                        <a class="comment-side rounded" th:href="|@{/article/view(articleId=${comment.articleId})}#commentBox|"
+                           th:if="${!comment.secret}" th:text="${comment.content}"></a>
+                    </li>
                 </ul>
             </div>
         </li>
@@ -79,8 +87,9 @@
                 <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
                     <li sec:authorize="!isAuthenticated()"><a th:href="@{/login}"
                                                               class="link-dark rounded">로그인</a></li>
-                    <li sec:authorize="hasRole('USER')" th:text="${#authentication.name} + '님 환영합니다'"></li>
-                    <li sec:authorize="hasRole('ADMIN')" th:text="관리자계정입니다"></li>
+
+                    <li sec:authorize="hasRole('USER')" class="ms-3" th:text="${#authentication.name} + '님 환영합니다'"></li>
+                    <li sec:authorize="hasRole('ADMIN')" class="ms-4" th:text="관리자계정"></li>
 
                     <li sec:authorize="isAuthenticated()">
                         <form method="post" id="logout" name="logout" th:action="@{/logout}">
