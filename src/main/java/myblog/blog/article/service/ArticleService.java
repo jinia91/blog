@@ -12,13 +12,18 @@ import myblog.blog.category.service.CategoryService;
 import myblog.blog.member.doamin.Member;
 import myblog.blog.member.repository.MemberRepository;
 import myblog.blog.tags.service.TagsService;
+import org.kohsuke.github.GHRepository;
+import org.kohsuke.github.GitHub;
+import org.kohsuke.github.GitHubBuilder;
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,6 +32,11 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ArticleService {
 
+    @Value("${git.gitToken}")
+    private String gitToken;
+    @Value("${git.repo}")
+    private String gitRepo;
+
     private final ArticleRepository articleRepository;
     private final MemberRepository memberRepository;
     private final TagsService tagsService;
@@ -34,14 +44,14 @@ public class ArticleService {
     private final ModelMapper modelMapper;
     private final NaArticleRepository naArticleRepository;
 
-    public Long writeArticle(ArticleForm articleDto) {
+    public Article writeArticle(ArticleForm articleDto) {
 
         Article newArticle = articleFrom(articleDto);
 
         articleRepository.save(newArticle);
         tagsService.createNewTagsAndArticleTagList(articleDto.getTags(), newArticle);
 
-        return newArticle.getId();
+        return newArticle;
 
     }
 
@@ -59,7 +69,7 @@ public class ArticleService {
 
     }
 
-    public Slice<ArticleDtoForMain> getArticles(int page) {
+    public Slice<ArticleDtoForMain> getRecentArticles(int page) {
 
         Slice<ArticleDtoForMain> articles = articleRepository
                 .findByOrderByIdDesc(PageRequest.of(page, 5))
@@ -87,7 +97,7 @@ public class ArticleService {
         throw new IllegalArgumentException("카테고리별 아티클 수 에러");
     }
 
-    public Slice<ArticleDtoForMain> getArticles(String category, Integer tier, Integer page) {
+    public Slice<ArticleDtoForMain> getArticlesByCategory(String category, Integer tier, Integer page) {
 
         Slice<Article> articles = null;
 
@@ -110,7 +120,7 @@ public class ArticleService {
                 .map(article, ArticleDtoForMain.class));
     }
 
-    public Article findArticleById(Long id){
+    public Article readArticle(Long id){
          return articleRepository.findArticleByIdFetchCategoryAndTags(id);
     }
 
@@ -143,9 +153,44 @@ public class ArticleService {
           naArticleRepository.deleteArticle(articleId);
     }
 
-    public List<Article> getArticlesByCategory(Category category){
+    public List<Article> getArticlesByCategoryForDetailView(Category category){
 
         return articleRepository.findTop6ByCategoryOrderByIdDesc(category);
+
+    }
+
+    public Page<Article> getArticlesByTag(String tag, Integer page) {
+
+        Page<Article> articles =
+                articleRepository
+                        .findAllByArticleTagsOrderById(PageRequest.of(pageResolver(page), 5), tag);
+
+        return articles;
+
+    }
+
+    public Page<Article> getArticlesByKeyword(String keyword, Integer page) {
+
+        Page<Article> articles =
+                articleRepository
+                        .findAllByKeywordOrderById(PageRequest.of(pageResolver(page),5), keyword);
+
+        return articles;
+    }
+
+    public void pushArticleToGithub(Article article) {
+        try {
+            GitHub gitHub = new GitHubBuilder().withOAuthToken(gitToken).build();
+            GHRepository repository = gitHub.getRepository(gitRepo);
+            repository.createContent()
+                    .path(article.getCategory().getParents().getTitle()+"/"+article.getCategory().getTitle()+"/"+article.getTitle()+".md")
+                    .content(article.getContent())
+                    .message("test")
+                    .branch("main")
+                    .commit();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
     }
 
@@ -182,23 +227,4 @@ public class ArticleService {
                 .build();
     }
 
-
-    public Page<Article> getArticlesByTag(String tag, Integer page) {
-
-        Page<Article> articles =
-                articleRepository
-                        .findAllByArticleTagsOrderById(PageRequest.of(pageResolver(page), 5), tag);
-
-        return articles;
-
-    }
-
-    public Page<Article> getArticlesByKeyword(String keyword, Integer page) {
-
-        Page<Article> articles =
-                articleRepository
-                        .findAllByKeywordOrderById(PageRequest.of(pageResolver(page),5), keyword);
-
-        return articles;
-    }
 }

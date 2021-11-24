@@ -35,7 +35,6 @@
     <link rel="short icon" type="image/x-icon" href=""/>
 
     <!-- CSS RESET -->
-    <link rel="stylesheet" href="/node_modules/@toast-ui/editor/dist/toastui-editor.css"/>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css"/>
     <link rel="stylesheet" href="/node_modules/bootstrap/dist/css/bootstrap.min.css"/>
     <link rel="stylesheet" href="/node_modules/@yaireo/tagify/dist/tagify.css"/>
@@ -61,12 +60,13 @@
             </div>
         </div>
 
-        <textarea name="contents" id="contents" hidden></textarea>
-
         <div class="mt-5 ms-2 me-2 ms-sm-5 me-sm-5 mt-sm-5 d-flex justify-content-center">
 
             <div class="paper">
-                <div class="ms-2 me-2 p-sm-4 p-2" id="viewer"></div>
+
+                <div class="container p-3 p-sm-5">
+                <div class="toastui-editor-contents" th:utext="${article.getContent()}"></div>
+                </div>
 
                 <div class="ms-2 me-2 mb-3 p-sm-4 p-2">
                     <div class="toolbox container pt-4 pb-4">
@@ -152,7 +152,6 @@
         <script src="https://uicdn.toast.com/editor/latest/toastui-editor-all.min.js"></script>
         <script src="/js/getCsrf.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.0/moment.min.js"></script>
-        <script th:replace="layout/fragments.html :: view"></script>
         <script th:replace="layout/fragments.html :: comment"></script>
     </div>
 </section>

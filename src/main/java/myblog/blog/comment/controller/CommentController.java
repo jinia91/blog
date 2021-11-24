@@ -11,7 +11,6 @@ import myblog.blog.member.doamin.Member;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
-import java.security.Principal;
 import java.util.List;
 
 @RestController
@@ -38,7 +37,7 @@ public class CommentController {
 
         PrincipalDetails principal = (PrincipalDetails) authentication.getPrincipal();
         Member member = principal.getMember();
-        Article article = articleService.findArticleById(articleId);
+        Article article = articleService.readArticle(articleId);
 
         if(parentId != null){
             commentService.saveCComment(commentForm, member, article, parentId);

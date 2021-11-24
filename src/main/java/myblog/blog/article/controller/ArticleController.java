@@ -14,6 +14,8 @@ import myblog.blog.member.auth.PrincipalDetails;
 import myblog.blog.member.dto.MemberDto;
 import myblog.blog.tags.dto.TagsDto;
 import myblog.blog.tags.service.TagsService;
+import org.commonmark.parser.Parser;
+import org.commonmark.renderer.html.HtmlRenderer;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Slice;
@@ -38,6 +40,8 @@ public class ArticleController {
     private final TagsService tagsService;
     private final CategoryService categoryService;
     private final CommentService commentService;
+    private final Parser parser;
+    private final HtmlRenderer htmlRenderer;
 
     @GetMapping("article/write")
     public String writeArticleForm(ArticleForm articleForm, Model model) {
@@ -79,9 +83,11 @@ public class ArticleController {
 
         PrincipalDetails principal = (PrincipalDetails) authentication.getPrincipal();
         articleForm.setMemberId(principal.getMemberId());
-        Long articleId = articleService.writeArticle(articleForm);
+        Article article = articleService.writeArticle(articleForm);
 
-        return "redirect:/article/view?articleId=" + articleId;
+        articleService.pushArticleToGithub(article);
+
+        return "redirect:/article/view?articleId=" + article.getId();
 
     }
 
@@ -104,7 +110,7 @@ public class ArticleController {
         PagingBoxDto pagingBoxDto = PagingBoxDto.createOf(page, articleService.getTotalArticleCntByCategory(category, categoryForView));
         model.addAttribute("pagingBox", pagingBoxDto);
 
-        Slice<ArticleDtoForMain> articleList = articleService.getArticles(category, tier, pagingBoxDto.getCurPageNum());
+        Slice<ArticleDtoForMain> articleList = articleService.getArticlesByCategory(category, tier, pagingBoxDto.getCurPageNum());
         model.addAttribute("articleList", articleList);
 
 
@@ -193,19 +199,27 @@ public class ArticleController {
                 .collect(Collectors.toList());
         model.addAttribute("commentsList", comments);
 
-        Article article = articleService.findArticleById(articleId);
+        Article article = articleService.readArticle(articleId);
         ArticleDtoForDetail articleDtoForDetail = modelMapper.map(article, ArticleDtoForDetail.class);
+
         List<String> tags = article.getArticleTagLists()
                 .stream()
                 .map(tag -> tag.getTags().getName())
                 .collect(Collectors.toList());
 
-        articleDtoForDetail.setTags(tags);
+        articleDtoForDetail
+                .setTags(tags);
+
+        articleDtoForDetail
+                .setContent(
+                        htmlRenderer.render(parser.parse(article.getContent()))
+                );
+
         model.addAttribute("article", articleDtoForDetail);
 
         List<ArticleDtoByCategory> articleTitlesSortByCategory =
                 articleService
-                        .getArticlesByCategory(article.getCategory())
+                        .getArticlesByCategoryForDetailView(article.getCategory())
                         .stream()
                         .map(article1 -> modelMapper.map(article1, ArticleDtoByCategory.class))
                         .collect(Collectors.toList());
@@ -290,7 +304,7 @@ public class ArticleController {
     public @ResponseBody
     List<ArticleDtoForMain> mainNextPage(@PathVariable int pageNum) {
 
-        return articleService.getArticles(pageNum).getContent();
+        return articleService.getRecentArticles(pageNum).getContent();
     }
 
     private void addHitWithCookie(Article article, String cookie, HttpServletResponse response) {

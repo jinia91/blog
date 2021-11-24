@@ -54,7 +54,7 @@ toastui.Editor.setLanguage(['ko', 'ko-KR'], {
 
 const editor = new toastui.Editor({
     el: document.querySelector('#editor'),
-    height: '500px',
+    height: '800px',
     initialEditType: 'markdown',
     previewStyle: 'vertical',
     language: 'ko',

@@ -41,7 +41,7 @@ public class MainController {
         List<ArticleDtoForMain> popularArticles = articleService.getPopularArticles();
         model.addAttribute("popularArticles", popularArticles);
 
-        Slice<ArticleDtoForMain> recentArticles = articleService.getArticles(0);
+        Slice<ArticleDtoForMain> recentArticles = articleService.getRecentArticles(0);
         model.addAttribute("recentArticles",recentArticles);
 
         return "index";
