@@ -5,35 +5,35 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title></title>
-    <!-- SEO -->
-    <meta name="description" content=""/>
-    <meta name="keyword" content=""/>
-    <meta name="author" content="jinia"/>
     <meta name="viewport" content="width=device-width,  user-scalable = no, initial-scale=1.0"/>
+    <title th:text="|${article.getTitle()} - Jinia's LOG'|"></title>
+    <!-- SEO -->
+    <meta name="description" th:content="${metaContents}"/>
+    <meta name="keyword" th:content="|${metaTags}개발, 테크, IT, 코딩, 알고리즘, 쥬니어, 개발자, 포트폴리오, 블로그, CS, 컴공지식, 컴공, 프로그래밍, 프로그래밍 언어, 비전공, 코딩 테스트, 취업, 취준|"/>
+    <meta name="author" content="Jinia"/>
     <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
 
     <!-- OPEN GRAPH(FACEBOOK, LINKEDIN) -->
-    <meta property="og:type" content=""/>
-    <meta property="og:description" content=""/>
-    <meta property="og:title" content=""/>
-    <meta property="og:image" content=""/>
+    <meta property="og:type" content="website"/>
+    <meta property="og:description" th:content="${metaContents}"/>
+    <meta property="og:title" th:content="|${article.getTitle()} - Jinia's LOG'|"/>
+    <meta property="og:image" th:content="${article.getThumbnailUrl()}"/>
     <meta property="og:url" content=""/>
-    <meta property="og:site_name" content=""/>
+    <meta property="og:site_name" content="Jinia's LOG"/>
 
     <!-- twitter -->
-    <meta property="twitter:card" content=""/>
-    <meta property="twitter:title" content=""/>
-    <meta property="twitter:description" content=""/>
-    <meta property="twitter:image" content=""/>
+    <meta property="twitter:card" th:content="${metaContents}"/>
+    <meta property="twitter:title" th:content="|${article.getTitle()} - Jinia's LOG'|"/>
+    <meta property="twitter:description" th:content="${metaContents}"/>
+    <meta property="twitter:image" th:content="${article.getThumbnailUrl()}"/>
     <meta property="twitter:url" content=""/>
-    <meta property="twitter:creator" content=""/>
+    <meta property="twitter:creator" content="Jinia"/>
 
-    <link rel="icon" href=""/>
-    <link rel="apple-touch-icon" href=""/>
-    <link rel="short icon" type="image/x-icon" href=""/>
-
+    <link rel="icon" href="/img/favicon-16x16.png"/>
+    <link rel="apple-touch-icon" href="/img/favicon-16x16.png"/>
+    <link rel="icon" type="image/png" sizes="16x16"  href="/img/favicon-16x16.png">
+    <meta name="msapplication-TileColor" content="#ffffff">
+    <meta name="theme-color" content="#ffffff">
     <!-- CSS RESET -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css"/>
     <link rel="stylesheet" href="/node_modules/bootstrap/dist/css/bootstrap.min.css"/>
@@ -65,19 +65,54 @@
             <div class="paper">
 
                 <div class="container p-3 p-sm-5">
-                <div class="toastui-editor-contents" th:utext="${article.getContent()}"></div>
+                    <div class="toastui-editor-contents" th:utext="${article.getContent()}"></div>
                 </div>
 
                 <div class="ms-2 me-2 mb-3 p-sm-4 p-2">
                     <div class="toolbox container pt-4 pb-4">
                         <div class=" ms-5 me-5 d-flex justify-content-end">
+
                             <a sec:authorize="hasRole('ADMIN')" class="btn btn-secondary" style="color: white"
                                th:href="@{/article/edit(articleId=${article.getId()})}"
                                type="button">수 정
                             </a>
-                            <form th:action="@{/article/delete(articleId=${article.getId()})}" id="deleteArticle" method="post">
-                                </form>
-                            <button sec:authorize="hasRole('ADMIN')" class="btn btn-secondary ms-2" onclick="deleteArticle()">삭 제</button>
+                            <form th:action="@{/article/delete(articleId=${article.getId()})}" id="deleteArticle"
+                                  method="post">
+                            </form>
+                            <button sec:authorize="hasRole('ADMIN')" class="btn btn-secondary ms-2"
+                                    onclick="deleteArticle()">삭 제
+                            </button>
+
+                            <button class="btn btn-secondary ms-2" data-bs-toggle="modal"
+                                    data-bs-target="#shareContent">
+                                <i class="fas fa-share-alt"></i></button>
+
+                            <div class="modal fade " id="shareContent" tabindex="-1" aria-labelledby="shareContent"
+                                 aria-hidden="true">
+                                <div class="modal-dialog modal-dialog-centered">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="shareContentModalLabel">공유하기</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                    aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <div class="list-unstyled social-icon-wrap d-flex justify-content-around">
+                                                <a href="#" class="social-icon link-icon-facebook">
+                                                    <i class=" fa fa-facebook"></i>
+                                                </a>
+                                                <a href="#" class="social-icon link-icon-kakao">
+                                                    <i class="fa fa-comment"></i>
+                                                </a>
+                                                <a href="#" class="social-icon link-icon-naver">
+                                                </a>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
                         </div>
                         <div></div>
                         <div class="toolbox-head mt-3 ms-5 me-5">
@@ -85,17 +120,21 @@
                                th:text="|'${article.getCategory()}'|"></a>
                             <span>카테고리의 다른글</span></div>
                         <ul class="row row-cols-1 row-cols-sm-2 mt-2 ms-5 me-5 toolList">
-                            <li th:each="list:${articlesSortBycategory}" th:if="${list.getTitle()} != ${article.getTitle()}" class="col">
-                                <a th:href="@{/article/view(articleId=${list.getId()})}" th:text="${list.getTitle()}">글목록</a></li>
+                            <li th:each="list:${articlesSortBycategory}"
+                                th:if="${list.getTitle()} != ${article.getTitle()}" class="col">
+                                <a th:href="@{/article/view(articleId=${list.getId()})}" th:text="${list.getTitle()}">글목록</a>
+                            </li>
                         </ul>
                         <div class="mt-2 ms-5 me-5">
-                            <a class="me-2" th:each="tag: ${article.tags}" th:href="@{/article/list/tag/{tag}(tag=${tag},page=1)}"><button class="badge rounded-pill bg-secondary" th:text="${tag}">태그</button></a>
+                            <a class="me-2" th:each="tag: ${article.tags}"
+                               th:href="@{/article/list/tag/{tag}(tag=${tag},page=1)}">
+                                <button class="badge rounded-pill bg-secondary" th:text="${tag}">태그</button>
+                            </a>
                         </div>
                     </div>
                 </div>
 
             </div>
-
 
 
         </div>
@@ -119,7 +158,7 @@
 
                 <div class="ms-1 mt-2 secretBox">
                     <label class="lock">
-                        <input type="checkbox" id="isCommentSecret" value="secret" />
+                        <input type="checkbox" id="isCommentSecret" value="secret"/>
                         <span></span>
                     </label>
                 </div>
@@ -153,6 +192,7 @@
         <script src="/js/getCsrf.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.0/moment.min.js"></script>
         <script th:replace="layout/fragments.html :: comment"></script>
+        <script th:replace="layout/fragments.html :: view"></script>
     </div>
 </section>
 

@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import myblog.blog.article.domain.Article;
 import myblog.blog.article.dto.*;
 import myblog.blog.article.service.ArticleService;
+import myblog.blog.article.service.TempArticleService;
 import myblog.blog.category.dto.CategoryForView;
 import myblog.blog.category.dto.CategoryNormalDto;
 import myblog.blog.category.service.CategoryService;
@@ -16,6 +17,8 @@ import myblog.blog.tags.dto.TagsDto;
 import myblog.blog.tags.service.TagsService;
 import org.commonmark.parser.Parser;
 import org.commonmark.renderer.html.HtmlRenderer;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Slice;
@@ -42,6 +45,7 @@ public class ArticleController {
     private final CommentService commentService;
     private final Parser parser;
     private final HtmlRenderer htmlRenderer;
+    private final TempArticleService tempArticleService;
 
     @GetMapping("article/write")
     public String writeArticleForm(ArticleForm articleForm, Model model) {
@@ -85,7 +89,8 @@ public class ArticleController {
         articleForm.setMemberId(principal.getMemberId());
         Article article = articleService.writeArticle(articleForm);
 
-        articleService.pushArticleToGithub(article);
+//        articleService.pushArticleToGithub(article);
+        tempArticleService.deleteTemp();
 
         return "redirect:/article/view?articleId=" + article.getId();
 
@@ -217,6 +222,18 @@ public class ArticleController {
 
         model.addAttribute("article", articleDtoForDetail);
 
+//        메타태그 삽입
+        StringBuilder sb = new StringBuilder();
+        for (String tag : tags) {
+            sb.append(tag).append(", ");
+        }
+        model.addAttribute("metaTags",sb);
+
+        String substringContents = articleDtoForDetail.getContent().substring(0, 200);
+
+        model.addAttribute("metaContents",Jsoup.parse(substringContents).text());
+//
+
         List<ArticleDtoByCategory> articleTitlesSortByCategory =
                 articleService
                         .getArticlesByCategoryForDetailView(article.getCategory())
@@ -295,6 +312,7 @@ public class ArticleController {
         PrincipalDetails principal = (PrincipalDetails) authentication.getPrincipal();
         articleForm.setMemberId(principal.getMemberId());
         articleService.editArticle(articleId, articleForm);
+
 
         return "redirect:/article/view?articleId=" + articleId;
 
