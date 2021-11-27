@@ -51,7 +51,7 @@
     <div class="main ">
         <div class="carousel-inner ">
             <div class="carousel-item active" style="cursor: default">
-                <img th:src="${article.getThumbnailUrl()}" class="w-100 vh-100 cover"
+                <img th:src="${article.getThumbnailUrl()}" class="w-100 vh-100 cover main-image"
                      alt="...">
                 <div class="card-img-overlay text-shadow text-white text-center row justify-content-center align-content-center p-0">
                     <h1 style="font-size: 2.5rem;" th:text="${article.getTitle()}">아티클 제목</h1>
@@ -121,13 +121,13 @@
                             <span>카테고리의 다른글</span></div>
                         <ul class="row row-cols-1 row-cols-sm-2 mt-2 ms-5 me-5 toolList">
                             <li th:each="list:${articlesSortBycategory}"
-                                th:if="${list.getTitle()} != ${article.getTitle()}" class="col">
+                                th:if="${list.getTitle()} != ${article.getTitle()}" class="col text-block" >
                                 <a th:href="@{/article/view(articleId=${list.getId()})}" th:text="${list.getTitle()}">글목록</a>
                             </li>
                         </ul>
                         <div class="mt-2 ms-5 me-5">
                             <a class="me-2" th:each="tag: ${article.tags}"
-                               th:href="@{/article/list/tag/{tag}(tag=${tag},page=1)}">
+                               th:href="@{/article/list/tag/(tagName=${tag},page=1)}">
                                 <button class="badge rounded-pill bg-secondary" th:text="${tag}">태그</button>
                             </a>
                         </div>

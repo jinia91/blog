@@ -40,6 +40,8 @@
     <link rel="stylesheet" href="/node_modules/bootstrap/dist/css/bootstrap.min.css"/>
     <link rel="stylesheet" href="/css/mainCss.css"/>
     <link rel="stylesheet" href="/css/login.css"/>
+    <link rel="stylesheet" href="/node_modules/wow.js/css/libs/animate.css"/>
+
 </head>
 
 <body>
@@ -53,7 +55,7 @@
                  th:classappend="${num.index}==0? active">
                 <a th:href="@{/article/view(articleId=${article.getId()})}">
                     <img th:src="${article.getThumbnailUrl()}"
-                         class="w-100 vh-100 cover" alt="...">
+                         class="w-100 vh-100 cover main-image" alt="...">
                     <div class="card-img-overlay text-white text-center row justify-content-center align-content-center text-shadow">
                         <h1 class="" th:text="${article.getTitle()}">첫번째 이미지</h1>
                     </div>
@@ -75,7 +77,7 @@
     </div>
 
 
-    <div class="mt-5 pt-2 popular-card-section">
+    <div class="mt-5 pt-2 popular-card-section ">
         <div class="cards-container container p-0 ">
             <div class=" row g-0 row-cols-2 row-cols-md-3">
                 <div class="col g-1 g-md-4" th:each="article,num : ${popularArticles}">
@@ -125,10 +127,11 @@
     </div>
         <!--  js  -->
     <script src="https://kit.fontawesome.com/233840a552.js" crossorigin="anonymous"></script>
-    <script src="/node_modules/wow.js/dist/wow.js"></script>
     <script src="/js/infinityScroll.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.0/moment.min.js"></script>
     <script src="/node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/node_modules/wow.js/dist/wow.js"></script>
+    <script>new WOW().init()</script>
 </section>
 
 </body>

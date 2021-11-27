@@ -56,7 +56,7 @@
         <hr class="mb-5">
 
         <div class="row g-0">
-        <div id="categoryBox" class=" list-group list-unstyled ps-0 d-flex flex-column col-sm mb-5 text-center"><th:block th:each="superCategory : ${category.getCategoryTCountList()}"><button class="list-group-item list-group-item-action list-group-item-light fw-bold"
+        <div id="categoryBox" class="categoryBox list-group list-unstyled ps-0 d-flex flex-column col-sm mb-5 text-center"><th:block th:each="superCategory : ${category.getCategoryTCountList()}"><button class="list-group-item list-group-item-action list-group-item-light fw-bold"
                                                                                    th:text="|${superCategory.getTitle()}|"
                                                                                    th:id="|superCategory-${superCategory.getId()}|"
                                                                                    onclick="clickCategory(this)"></button><th:block

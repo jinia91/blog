@@ -1,17 +1,9 @@
-/*@font-face {*/
-/*    font-family: "IM_Hyemin-Bold";*/
-/*    src: url("https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2106@1.1/IM_Hyemin-Bold.woff2") format("woff");*/
-/*    font-weight: normal;*/
-/*    font-style: normal;*/
-/*}*/
-
 @font-face {
-    font-family: 'Cafe24SsurroundAir';
-    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2105_2@1.0/Cafe24SsurroundAir.woff') format('woff');
+    font-family: 'RIDIBatang';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_twelve@1.0/RIDIBatang.woff') format('woff');
     font-weight: normal;
     font-style: normal;
 }
-
 a {
     text-decoration: none;
     color: rgb(65, 65, 65);
@@ -34,8 +26,8 @@ a:hover {
 
 
 body {
-    background-color: #fcf6f5;
-    font-family: "Cafe24SsurroundAir";
+    background-color: #f5f5f4;
+    font-family: "RIDIBatang";
 }
 
 body::-webkit-scrollbar {
@@ -377,11 +369,16 @@ body::-webkit-scrollbar-track {
 }
 
 
-.mainItem:hover {
-    transform: scale(1.2);
-    transition: transform 2s;
-    filter: grayscale(50%);
+.main-image{
+    filter: brightness(70%);
 }
+
+
+/*.mainItem:hover {*/
+/*    transform: scale(1.2);*/
+/*    transition: transform 2s;*/
+/*    filter: grayscale(50%);*/
+/*}*/
 
 .searchBox {
     position: relative;
@@ -434,4 +431,8 @@ body::-webkit-scrollbar-track {
     color: #ffffff;
 }
 
+
+.categoryBox .fw-bold{
+    color:  #1f70de !important;
+}
 

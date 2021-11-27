@@ -18,7 +18,6 @@ function InfinityScroll() {
 
         }
     }
-
 }
 
 function makeNextPage() {
@@ -37,6 +36,8 @@ function makeNextPage() {
                 let list = JSON.parse(xhr.response);
 
                 console.log(list);
+
+                if(list.length === 0) return;
 
                 // 다음 페이지 작성
                 const nextPage = document.createElement('div');

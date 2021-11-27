@@ -1,9 +1,10 @@
 
+
 .toastui-editor-contents {
     margin: 0;
     padding: 0;
     font-size: 1.1rem;
-    font-family: 'Open Sans', 'Helvetica Neue', 'Helvetica', 'Arial', '나눔바른고딕',
+    font-family: 'RIDIBatang','Open Sans', 'Helvetica Neue', 'Helvetica', 'Arial', '나눔바른고딕',
     'Nanum Barun Gothic', '맑은고딕', 'Malgun Gothic', sans-serif;
     z-index: 20;
 }
@@ -803,4 +804,10 @@ ul.toolList li:before {
     background-repeat: no-repeat;
     background-size: contain;
 
+}
+
+.text-block{
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
 }

@@ -124,9 +124,9 @@ public class ArticleController {
     }
 
     @Transactional
-    @GetMapping("article/list/tag/{tag}")
+    @GetMapping("article/list/tag/")
     public String getArticlesListByTag(@RequestParam Integer page,
-                                  @PathVariable String tag,
+                                  @RequestParam String tagName,
                                   Model model) {
 
         CategoryForView categoryForView = CategoryForView.createCategory(categoryService.getCategoryForView());
@@ -140,7 +140,7 @@ public class ArticleController {
 
 
         Page<ArticleDtoForMain> articleList =
-                articleService.getArticlesByTag(tag, page)
+                articleService.getArticlesByTag(tagName, page)
                         .map(article ->
                                 modelMapper.map(article, ArticleDtoForMain.class));
         model.addAttribute("articleList", articleList);
@@ -153,9 +153,9 @@ public class ArticleController {
     }
 
     @Transactional
-    @GetMapping("article/list/search/{keyword}")
+    @GetMapping("article/list/search/")
     public String getArticlesListByKeyword(@RequestParam Integer page,
-                                  @PathVariable String keyword,
+                                  @RequestParam String keyword,
                                   Model model) {
 
         CategoryForView categoryForView = CategoryForView.createCategory(categoryService.getCategoryForView());
@@ -229,7 +229,11 @@ public class ArticleController {
         }
         model.addAttribute("metaTags",sb);
 
-        String substringContents = articleDtoForDetail.getContent().substring(0, 200);
+        String substringContents = null;
+        if(articleDtoForDetail.getContent().length()>200) {
+            substringContents = articleDtoForDetail.getContent().substring(0, 200);
+        }
+        else substringContents = articleDtoForDetail.getContent();
 
         model.addAttribute("metaContents",Jsoup.parse(substringContents).text());
 //

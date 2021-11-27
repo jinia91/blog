@@ -10,5 +10,5 @@ function searchKeyword() {
 
     }
 
-    location.href = "/article/list/search/" +keyword+"?page=1";
+    location.href = "/article/list/search/?keyword=" +keyword+"&page=1";
 }
