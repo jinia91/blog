@@ -6,6 +6,7 @@ import myblog.blog.category.dto.CategoryNormalDto;
 import myblog.blog.category.dto.CategoryForView;
 import myblog.blog.category.repository.CategoryRepository;
 import myblog.blog.category.repository.NaCategoryRepository;
+import myblog.blog.member.doamin.Role;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
