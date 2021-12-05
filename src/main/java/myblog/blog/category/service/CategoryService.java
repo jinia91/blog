@@ -168,7 +168,9 @@ public class CategoryService {
     }
 
 
-        @PostConstruct
+
+
+    @PostConstruct
     public void insertCategory() {
 
         Category category0 = Category.builder()

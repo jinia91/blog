@@ -5,10 +5,7 @@ import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Component;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -19,7 +16,7 @@ public class UserInfoFactory {
     private final static Map<ProviderType, Function<OAuth2User, Oauth2UserInfo>> userInfoFactoryMap;
 
     static {
-        userInfoFactoryMap = new HashMap<>();
+        userInfoFactoryMap = new EnumMap<>(ProviderType.class);
         userInfoFactoryMap.put(ProviderType.GOOGLE, GoogleUserInfo::new);
         userInfoFactoryMap.put(ProviderType.FACEBOOK, FacebookUserInfo::new);
         userInfoFactoryMap.put(ProviderType.KAKAO, KakaoUserInfo::new);

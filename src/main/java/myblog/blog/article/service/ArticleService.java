@@ -22,10 +22,10 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -37,34 +37,49 @@ public class ArticleService {
     @Value("${git.repo}")
     private String gitRepo;
 
-    private final ArticleRepository articleRepository;
-    private final MemberRepository memberRepository;
     private final TagsService tagsService;
     private final CategoryService categoryService;
-    private final ModelMapper modelMapper;
+    private final ArticleRepository articleRepository;
     private final NaArticleRepository naArticleRepository;
+    private final ModelMapper modelMapper;
 
-    public Article writeArticle(ArticleForm articleDto) {
+    /*
+        - 아티클 작성 로직
+    */
+    public Article writeArticle(ArticleForm articleDto, Member writer) {
 
-        Article newArticle = articleFrom(articleDto);
-
+        Article newArticle = articleFrom(articleDto, writer);
         articleRepository.save(newArticle);
         tagsService.createNewTagsAndArticleTagList(articleDto.getTags(), newArticle);
 
         return newArticle;
-
     }
 
+    /*
+        - 아티클 수정 로직
+    */
+    public void editArticle(Long articleId, ArticleForm articleForm) {
+
+        Article article = articleRepository.findById(articleId).get();
+        Category category = categoryService.findCategory(articleForm.getCategory());
+        tagsService.deleteArticleTags(article);
+        tagsService.createNewTagsAndArticleTagList(articleForm.getTags(), article);
+        articleForm.setThumbnailUrl(makeDefaultThumb(articleForm.getThumbnailUrl()));
+
+        // 더티 체킹으로 업데이트
+        article.editArticle(articleForm,category);
+    }
+
+    /*
+        - 메인화면 위한 인기 아티클 6개 목록 가져오기
+    */
     public List<ArticleDtoForMain> getPopularArticles() {
         List<Article> top6ByOrderByHitDesc = articleRepository.findTop6ByOrderByHitDesc();
 
-        List<ArticleDtoForMain> articles = new ArrayList<>();
-
-        for (Article article : top6ByOrderByHitDesc) {
-            articles.add(modelMapper.map(article, ArticleDtoForMain.class));
-        }
-
-
+        List<ArticleDtoForMain> articles = top6ByOrderByHitDesc.stream()
+                .map(article -> modelMapper.map(article, ArticleDtoForMain.class))
+                .collect(Collectors.toList());
+ 
         return articles;
 
     }
@@ -101,19 +116,19 @@ public class ArticleService {
 
         Slice<Article> articles = null;
 
-        if (tier.intValue() == 0) {
+        if (tier.equals(0)) {
             articles = articleRepository
-                    .findAllByOrderByIdDesc(
-                            PageRequest.of(pageResolver(page), 5));
-        } else if (tier.intValue() == 1) {
+                    .findByOrderByIdDesc(
+                            PageRequest.of(pageResolve(page), 5));
+        } else if (tier.equals(1)) {
             articles = articleRepository
-                    .findByT1CategoryOrderByIdDesc(
-                            PageRequest.of(pageResolver(page), 5), category);
+                    .findBySupCategoryOrderByIdDesc(
+                            PageRequest.of(pageResolve(page), 5), category);
 
         } else {
             articles = articleRepository
-                    .findByCategoryOrderByIdDesc(
-                            PageRequest.of(pageResolver(page), 5), category);
+                    .findBySubCategoryOrderByIdDesc(
+                            PageRequest.of(pageResolve(page), 5), category);
         }
 
         return articles.map(article -> modelMapper
@@ -132,21 +147,10 @@ public class ArticleService {
 
     public Article getArticleForEdit(Long articleId){
 
-        return articleRepository.findArticleByIdFetchCategoryAndArticleTagLists(articleId);
+        return articleRepository.findArticleByIdFetchCategoryAndTags(articleId);
 
     }
 
-    public void editArticle(Long articleId, ArticleForm articleForm) {
-
-        Article article = articleRepository.findById(articleId).get();
-        Category category = categoryService.findCategory(articleForm.getCategory());
-        tagsService.deleteArticleTags(article);
-        tagsService.createNewTagsAndArticleTagList(articleForm.getTags(), article);
-        articleForm.setThumbnailUrl(makeDefaultThumb(articleForm.getThumbnailUrl()));
-
-        article.editArticle(articleForm,category);
-
-    }
 
     public void deleteArticle(Long articleId) {
 
@@ -163,7 +167,7 @@ public class ArticleService {
 
         Page<Article> articles =
                 articleRepository
-                        .findAllByArticleTagsOrderById(PageRequest.of(pageResolver(page), 5), tag);
+                        .findAllByArticleTagsOrderById(PageRequest.of(pageResolve(page), 5), tag);
 
         return articles;
 
@@ -173,7 +177,7 @@ public class ArticleService {
 
         Page<Article> articles =
                 articleRepository
-                        .findAllByKeywordOrderById(PageRequest.of(pageResolver(page),5), keyword);
+                        .findAllByKeywordOrderById(PageRequest.of(pageResolve(page),5), keyword);
 
         return articles;
     }
@@ -194,7 +198,6 @@ public class ArticleService {
 
     }
 
-
     private String makeDefaultThumb(String thumbnailUrl) {
         // 메시지로 올리기
         String defaultThumbUrl = "https://cdn.pixabay.com/photo/2020/11/08/13/28/tree-5723734_1280.jpg";
@@ -205,25 +208,21 @@ public class ArticleService {
         return thumbnailUrl;
     }
 
-    private int pageResolver(Integer rawPage) {
+    private int pageResolve(Integer rawPage) {
         if (rawPage == null || rawPage == 1) {
             return 0;
         } else return rawPage - 1;
     }
 
-    private Article articleFrom(ArticleForm articleDto) {
-        Member member =
-                memberRepository.findById(articleDto.getMemberId()).orElseThrow(() -> {
-                    throw new IllegalArgumentException("작성자를 확인할 수 없습니다");
-                });
+    private Article articleFrom(ArticleForm articleDto, Member writer) {
 
         return Article.builder()
                 .title(articleDto.getTitle())
                 .content(articleDto.getContent())
                 .toc(articleDto.getToc())
+                .member(writer)
                 .thumbnailUrl(makeDefaultThumb(articleDto.getThumbnailUrl()))
                 .category(categoryService.findCategory(articleDto.getCategory()))
-                .member(member)
                 .build();
     }
 

@@ -30,16 +30,20 @@ public class Article extends BasicEntity {
 
     @Column(nullable = false)
     private String title;
+
     @Column(nullable = false, length = 10000)
     private String content;
+
     @Column(columnDefinition = "bigint default 0",nullable = false)
     private Long hit;
+
     private String toc;
 
+    @Column(nullable = false)
     private String thumbnailUrl;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id")
+    @JoinColumn(name = "member_id", nullable = false)
     private Member member;
 
     @OneToMany(mappedBy = "article", cascade = CascadeType.REMOVE, orphanRemoval = true)
@@ -47,7 +51,7 @@ public class Article extends BasicEntity {
     private List<ArticleTagList> articleTagLists = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "category_id")
+    @JoinColumn(name = "category_id", nullable = false)
     private Category category;
 
     @OneToMany(mappedBy = "article", cascade = CascadeType.REMOVE, orphanRemoval = true)
@@ -64,9 +68,11 @@ public class Article extends BasicEntity {
         this.toc = toc;
         this.member = member;
         this.thumbnailUrl = thumbnailUrl;
-        this.hit = 0L;
         this.category = category;
+        this.hit = 0L;
     }
+
+    // 비지니스 로직 //
 
     public void addHit(){
         this.hit++;

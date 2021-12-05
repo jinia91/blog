@@ -23,6 +23,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Slice;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
@@ -54,7 +55,7 @@ public class ArticleController {
                 categoryService
                         .findCategoryByTier(2)
                         .stream()
-                        .map(c -> modelMapper.map(c, CategoryNormalDto.class))
+                        .map(category -> modelMapper.map(category, CategoryNormalDto.class))
                         .collect(Collectors.toList());
         model.addAttribute("categoryInput", categoryForInput);
 
@@ -62,7 +63,7 @@ public class ArticleController {
                 tagsService
                         .findAllTags()
                         .stream()
-                        .map(c -> new TagsDto(c.getName()))
+                        .map(tag -> new TagsDto(tag.getName()))
                         .collect(Collectors.toList());
         model.addAttribute("tagsInput", tagsForInput);
 
@@ -81,13 +82,15 @@ public class ArticleController {
         return "article/articleWriteForm";
     }
 
+
+    /*
+        - 넘어온 articleForm을 저장
+    */
     @PostMapping("article/write")
     @Transactional
-    public String writeArticle(@ModelAttribute ArticleForm articleForm, Authentication authentication) {
+    public String writeArticle(ArticleForm articleForm, @AuthenticationPrincipal PrincipalDetails principal) {
 
-        PrincipalDetails principal = (PrincipalDetails) authentication.getPrincipal();
-        articleForm.setMemberId(principal.getMemberId());
-        Article article = articleService.writeArticle(articleForm);
+        Article article = articleService.writeArticle(articleForm, principal.getMember());
 
 //        articleService.pushArticleToGithub(article);
         tempArticleService.deleteTemp();
@@ -311,10 +314,8 @@ public class ArticleController {
     @PostMapping("/article/edit")
     @Transactional
     public String editArticle(@RequestParam Long articleId,
-                              @ModelAttribute ArticleForm articleForm, Authentication authentication) {
+                              @ModelAttribute ArticleForm articleForm, @AuthenticationPrincipal PrincipalDetails principal) {
 
-        PrincipalDetails principal = (PrincipalDetails) authentication.getPrincipal();
-        articleForm.setMemberId(principal.getMemberId());
         articleService.editArticle(articleId, articleForm);
 
 
