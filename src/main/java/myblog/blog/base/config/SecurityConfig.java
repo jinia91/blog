@@ -26,6 +26,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private final LoginFailHandler loginFailHandler;
     private final DataSource dataSource;
 
+    /*
+        - 인가 절차 제외 리소스
+    */
     @Override
     public void configure(WebSecurity web) throws Exception {
         web
@@ -37,43 +40,29 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
+                // 인가
                 .authorizeRequests()
-                .antMatchers("/article/write").hasRole(Role.ADMIN.name())
+                .antMatchers("/article/write", "/article/edit","/article/delete","/edit/category", "/category/edit").hasRole(Role.ADMIN.name())
                 .anyRequest().permitAll()
 
-                .and()
-                .formLogin()
-                .loginPage("/login")
-
+                // 로그아웃
                 .and()
                 .logout()
                 .logoutSuccessUrl("/")
                 .deleteCookies("JSESSIONID","remember-me")
 
+                //csrf
                 .and()
                 .csrf()
                 .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
 
-
-
+                // oauth2 로그인 인증
                 .and()
                 .oauth2Login()
                 .loginPage("/login")
                 .failureHandler(loginFailHandler)
                 .userInfoEndpoint()
                 .userService(oauth2MemberService)
-
-
         ;
     }
-
-
-    @Bean
-    public PersistentTokenRepository tokenRepository() {
-        JdbcTokenRepositoryImpl jdbcTokenRepository = new JdbcTokenRepositoryImpl();
-        jdbcTokenRepository.setDataSource(dataSource);
-        return jdbcTokenRepository;
-    }
-
-
 }

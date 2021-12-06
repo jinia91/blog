@@ -356,33 +356,47 @@
         }
     });
 
-
+    // 유효성 검사
     function checkTitle() {
-
-        let title = document.getElementById("title");
-
-        if (title.value === "") {
-            return false;
-        }
-        return true;
+        return document.getElementById("title").value !== "";
     }
 
+    function checkContent() {
+        return contents.value !== "";
+    }
+
+    function checkCategory() {
+        return document.getElementById("category").value !== "카테고리를 선택해주세요";
+    }
+
+    function checkTags() {
+        return document.getElementById("tags").value !== "";
+    }
+
+    // 전송
     function post() {
+
+        contents.value = editor.getMarkdown();
 
         if (!checkTitle()) {
             alert("제목을 입력해주세요")
             return;
         }
+        else if (!checkContent()) {
+            alert("내용을 입력해주세요")
+            return;
+        }else if (!checkCategory()) {
+            alert("카테고리를 입력해주세요")
+            return;
+        }else if (!checkTags()) {
+            alert("태그를 입력해주세요")
+            return;
+        }
 
-        console.log(thumbUrl.value + "????????")
-        contents.value = editor.getMarkdown();
         document.getElementById("writeArticleForm").submit();
-
     }
 
-
     editor.setMarkdown([[${articleDto.getContent()}]]);
-
 
 </script>
 
@@ -394,10 +408,6 @@
         whitelist.push(tag.name)
     }
 </script>
-
-
-
-
 
 
 <script th:fragment="articleWrite" th:inline="javascript" type="application/javascript">
@@ -476,7 +486,6 @@
         }
     });
 
-
     function uploadImage(blob) {
         let token = getCsrfToken();
         let formData = new FormData();
@@ -496,29 +505,45 @@
 
     }
 
+    // 유효성 검사
     function checkTitle() {
-
-        let title = document.getElementById("title");
-
-        if (title.value === "") {
-            return false;
-        }
-        return true;
+        return document.getElementById("title").value !== "";
     }
 
+    function checkContent() {
+        return contents.value !== "";
+    }
+
+    function checkCategory() {
+        return document.getElementById("category").value !== "카테고리를 선택해주세요";
+    }
+
+    function checkTags() {
+        return document.getElementById("tags").value !== "";
+    }
+
+    // 전송
     function post() {
+
+        contents.value = editor.getMarkdown();
 
         if (!checkTitle()) {
             alert("제목을 입력해주세요")
             return;
         }
+        else if (!checkContent()) {
+            alert("내용을 입력해주세요")
+            return;
+        }else if (!checkCategory()) {
+            alert("카테고리를 입력해주세요")
+            return;
+        }else if (!checkTags()) {
+            alert("태그를 입력해주세요")
+            return;
+        }
 
-
-        contents.value = editor.getMarkdown();
         document.getElementById("writeArticleForm").submit();
-
     }
-
 
     // 자동 저장 기능
     function autoSave(){
@@ -557,7 +582,7 @@
 
               let tmp = JSON.parse(xhr.response);
 
-                if(tmp.content != null&& tmp.content != ''){
+                if(tmp.content != null&& tmp.content !== ''){
                     let isLoadTmp = confirm("이전에 작성하던 글이 있습니다. 이어서 작성하시겠습니까?");
                     if(isLoadTmp){
                         editor.setMarkdown(tmp.content);

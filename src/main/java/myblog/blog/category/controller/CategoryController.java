@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Controller
 @RequiredArgsConstructor
@@ -26,41 +25,49 @@ public class CategoryController {
     private final CommentService commentService;
     private final ModelMapper modelMapper;
 
+    /*
+    - 카테고리 수정폼 조회
+    */
     @GetMapping("/edit/category")
     public String editCategoryForm(Model model) {
 
+        // DTO 매핑 전처리
         List<CategoryNormalDto> categoryList = categoryService.getCategoryForView();
-        List<CategoryNormalDto> copyList = categoryList
-                .stream()
-                .map(categoryNormalDto ->
-                        modelMapper.map(categoryNormalDto, CategoryNormalDto.class))
-                .collect(Collectors.toList());
+
+        List<CategoryNormalDto> copyList = cloneList(categoryList);
         copyList.remove(0);
 
-        model.addAttribute("categoryForEdit", copyList);
-
         CategoryForView categoryForView = CategoryForView.createCategory(categoryList);
-        model.addAttribute("category", categoryForView);
 
         List<CommentDtoForSide> comments = commentService.recentCommentList()
                 .stream()
                 .map(comment ->
                         new CommentDtoForSide(comment.getId(), comment.getArticle().getId(), comment.getContent(),comment.isSecret()))
                 .collect(Collectors.toList());
+        //
+
+        model.addAttribute("categoryForEdit", copyList);
+        model.addAttribute("category", categoryForView);
         model.addAttribute("commentsList", comments);
 
         return "admin/categoryEdit";
 
     }
 
+    /*
+    - 카테고리 수정 요청
+    */
     @PostMapping("/category/edit")
     public @ResponseBody String editCategory(@RequestBody List<CategoryNormalDto> categoryList){
-
         categoryService.changeCategory(categoryList);
-
-        return "ok";
-
+        return "변경 성공";
     }
 
-
+    private List<CategoryNormalDto> cloneList(List<CategoryNormalDto> categoryList) {
+        return categoryList
+                .stream()
+                .map(categoryNormalDto ->
+                        modelMapper.map(categoryNormalDto, CategoryNormalDto.class))
+                .collect(Collectors.toList());
+    }
 }

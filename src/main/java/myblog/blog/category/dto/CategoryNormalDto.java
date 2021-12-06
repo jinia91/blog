@@ -3,7 +3,9 @@ package myblog.blog.category.dto;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-
+/*
+    - 범용 카테고리 DTO
+*/
 @Getter
 @Setter
 @ToString

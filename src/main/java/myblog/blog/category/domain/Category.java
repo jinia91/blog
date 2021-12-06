@@ -10,6 +10,9 @@ import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
+/*
+    - 카테고리 엔티티
+*/
 @Entity
 @Getter
 @SequenceGenerator(
@@ -23,6 +26,7 @@ public class Category extends BasicEntity {
     @Column(name = "category_id")
     private Long id;
 
+    @Column(nullable = false, unique = true)
     private String title;
 
     @OneToMany(mappedBy = "category")
@@ -59,14 +63,17 @@ public class Category extends BasicEntity {
         return title;
     }
 
-    public void updateCategory(String title, int tier, int pSortNum, int cSortNum, Category parents){
+    // 도메인 비지니스 로직
 
+    /*
+        - 카테고리 더티체킹 업데이트
+    */
+    public void updateCategory(String title, int tier, int pSortNum, int cSortNum, Category parents){
         this.title = title;
         this.tier = tier;
         this.pSortNum = pSortNum;
         this.cSortNum = cSortNum;
         this.parents = parents;
-
     }
 
 }

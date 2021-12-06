@@ -6,40 +6,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Jinia's Log - 카테고리 편집</title>
-    <!-- SEO -->
-    <meta name="description" content=""/>
-    <meta name="keyword" content=""/>
-    <meta name="author" content="jinia"/>
+    <title>카테고리 편집 - Jinia's Log</title>
     <meta name="viewport" content="width=device-width,  user-scalable = no, initial-scale=1.0"/>
     <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
 
-    <!-- OPEN GRAPH(FACEBOOK, LINKEDIN) -->
-    <meta property="og:type" content=""/>
-    <meta property="og:description" content=""/>
-    <meta property="og:title" content=""/>
-    <meta property="og:image" content=""/>
-    <meta property="og:url" content=""/>
-    <meta property="og:site_name" content=""/>
-
-    <!-- twitter -->
-    <meta property="twitter:card" content=""/>
-    <meta property="twitter:title" content=""/>
-    <meta property="twitter:description" content=""/>
-    <meta property="twitter:image" content=""/>
-    <meta property="twitter:url" content=""/>
-    <meta property="twitter:creator" content=""/>
-
-    <link rel="icon" href=""/>
-    <link rel="apple-touch-icon" href=""/>
-    <link rel="short icon" type="image/x-icon" href=""/>
+    <link rel="icon" href="/img/favicon-16x16.png"/>
+    <link rel="apple-touch-icon" href="/img/favicon-16x16.png"/>
+    <link rel="icon" type="image/png" sizes="16x16"  href="/img/favicon-16x16.png">
+    <meta name="msapplication-TileColor" content="#ffffff">
+    <meta name="theme-color" content="#ffffff">
 
     <!-- CSS RESET -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css"/>
     <link rel="stylesheet" href="/node_modules/bootstrap/dist/css/bootstrap.min.css"/>
     <link rel="stylesheet" href="/css/mainCss.css"/>
     <link rel="stylesheet" href="/css/login.css"/>
-
     <script src="https://kit.fontawesome.com/233840a552.js" crossorigin="anonymous"></script>
 </head>
 
@@ -64,7 +45,6 @@
                                                                                       th:text="|${subCategory.getTitle()}|"
                                                                                       th:id="|subCategory-${subCategory.getId()}|"
                                                                                       onclick="clickCategory(this)"></button></th:block></th:block></div>
-
 
             <div class="col-sm g-0 ms-sm-5">
             <div class="mb-5 ">
@@ -107,54 +87,72 @@
         let idxNewCategoryNum = 0;
         const categoryName = document.getElementById("categoryName");
 
-        // 셀렉터
-        let seclector;
-        function clickCategory(div) {
-            selector = div;
-            console.log(categorysList);
-            categoryName.value = selector.innerText;
+        // DIV 셀렉터
+        let selector;
+        // DTO 카테고리 셀렉터
+        let category;
 
+        // 카테고리명 중복 검사
+        function isDuplicatedCategoryName(){
+            const categoryList = document.getElementById("categoryBox").childNodes;
+            for (let i = 0; i<categoryList.length; i++) {
+                const curNode = categoryList[i];
+
+                for(let j = i+1; j<categoryList.length; j++){
+                    if(curNode.textContent === categoryList[j].textContent){
+                        alert("카테고리 명이 중복되면 안됩니다.");
+                        return  true;
+                    }
+                }
+            }
+            return false;
+        }
+
+        function clickCategory(div) {
+
+            if(isDuplicatedCategoryName()){
+                return;
+            }
+
+            selector = div;
+            categoryName.value = selector.innerText;
+            category = categorysList.find(x => x.title === selector.innerText);
             const childNodes = selector.parentNode.childNodes;
+
             for (const childNode of childNodes) {
                 childNode.classList.remove("active");
             }
 
             selector.classList.add("active");
 
-            console.log(selector);
         }
 
         categoryName.addEventListener("keyup", () => {
-            const category = categorysList.find(x => x.title == selector.innerText);
             selector.innerText = categoryName.value;
             category.title = selector.innerText;
-
         })
 
         function swapToPrevious(title){
 
-            const index = categorysList.findIndex(x=>x.title == title);
+            const index = categorysList.findIndex(x=>x.title === title);
 
             let tmp = categorysList[index-1];
             categorysList[index-1] = categorysList[index];
             categorysList[index] = tmp;
         }
 
-
         function swapToNextInDto(title){
 
-            const index = categorysList.findIndex(x=>x.title == title);
+            const index = categorysList.findIndex(x=>x.title === title);
 
             let tmp = categorysList[index+1];
             categorysList[index+1] = categorysList[index];
             categorysList[index] = tmp;
         }
 
-
         function categoryUp() {
 
             const categoryTitle = selector.innerText;
-            const category = categorysList.find(x => x.title == selector.innerText);
 
             // 선택 카테고리가 부모일때
             if (selector.previousSibling != null) {
@@ -168,7 +166,6 @@
         function categoryDown() {
 
             const categoryTitle = selector.innerText;
-            const category = categorysList.find(x => x.title == selector.innerText);
 
             // 선택 카테고리가 부모일때
             if (selector.nextSibling.nextSibling != null) {
@@ -183,25 +180,22 @@
         }
 
         function tierUp(){
-            const category = categorysList.find(x => x.title == selector.innerText);
             category.tier = 1;
             selector.classList.add("fw-bold");
 
         }
+
         function tierDown(){
-            const category = categorysList.find(x => x.title == selector.innerText);
             category.tier = 2;
             selector.classList.remove("fw-bold");
 
         }
 
-
-
         function addCategory(){
             const box = document.getElementById("categoryBox");
             box.innerHTML +=`<button class="list-group-item-action list-group-item-light list-group-item" onclick="clickCategory(this)">새 카테고리${idxNewCategoryNum}</button>`
 
-            let newCategory = new Object();
+            let newCategory = {};
             newCategory.id = null;
             newCategory.title = '새 카테고리'+idxNewCategoryNum++;
             newCategory.tier = 2;
@@ -212,17 +206,19 @@
             categorysList.push(newCategory);
 
         }
-        function deleteCategory(){
-            const categoryIndex = categorysList.findIndex(x=>x.title == selector.innerText);
 
+        function deleteCategory(){
+            const categoryIndex = categorysList.findIndex(x=>x.title === selector.innerText);
             categorysList.splice(categoryIndex,1);
             selector.remove();
         }
 
         function changeCategory(){
+            if(isDuplicatedCategoryName()){
+                return;
+            }
 
             let token = getCsrfToken();
-
             const xhr = new XMLHttpRequest();
             xhr.open("POST", "/category/edit");
             xhr.setRequestHeader("content-type", "application/json");
@@ -231,7 +227,6 @@
 
             xhr.onload = () => {
                 if (xhr.status === 200 || xhr.status === 201 || xhr.status === 202) {
-
                        location.href='/';
                 }
                 else{
@@ -241,7 +236,6 @@
         }
 
     </script>
-
 
 </section>
 

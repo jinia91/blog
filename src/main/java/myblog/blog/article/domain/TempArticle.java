@@ -1,20 +1,14 @@
 package myblog.blog.article.domain;
 
-import lombok.Builder;
 import lombok.Getter;
-import myblog.blog.article.dto.ArticleForm;
 import myblog.blog.base.domain.BasicEntity;
-import myblog.blog.category.domain.Category;
-import myblog.blog.comment.domain.Comment;
-import myblog.blog.member.doamin.Member;
-import myblog.blog.tags.domain.ArticleTagList;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
 
+/*
+    - 임시 아티클 저장 Entity
+       - 임시 아티클은 한개만 유지할 예정
+*/
 @Entity
 @Getter
 public class TempArticle extends BasicEntity {

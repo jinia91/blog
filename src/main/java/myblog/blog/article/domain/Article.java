@@ -15,6 +15,11 @@ import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
+
+/*
+    - 아티클 Entity
+        -  toc 추후 개발 예정
+*/
 @Entity
 @Getter
 @SequenceGenerator(
@@ -37,6 +42,7 @@ public class Article extends BasicEntity {
     @Column(columnDefinition = "bigint default 0",nullable = false)
     private Long hit;
 
+    // 추후 개발 예정
     private String toc;
 
     @Column(nullable = false)
@@ -67,23 +73,42 @@ public class Article extends BasicEntity {
         this.content = content;
         this.toc = toc;
         this.member = member;
-        this.thumbnailUrl = thumbnailUrl;
+        this.thumbnailUrl = makeDefaultThumb(thumbnailUrl);
         this.category = category;
         this.hit = 0L;
     }
 
     // 비지니스 로직 //
 
+    /*
+        - 아티클 수정을 위한 로직
+    */
+    public void editArticle(ArticleForm articleForm, Category category){
+        this.content = articleForm.getContent();
+        this.title = articleForm.getTitle();
+        this.toc = articleForm.getToc();
+        this.category = category;
+
+        if(articleForm.getThumbnailUrl() != null){
+            this.thumbnailUrl = articleForm.getThumbnailUrl();
+        }
+    }
+    /*
+        - 아티클 조회수 증가
+    */
     public void addHit(){
         this.hit++;
     }
 
-    public void editArticle(ArticleForm articleForm, Category category){
-        this.content = articleForm.getContent();
-        this.title = articleForm.getTitle();
-        this.thumbnailUrl = articleForm.getThumbnailUrl();
-        this.toc = articleForm.getToc();
-        this.category = category;
-    }
+    /*
+        - 썸네일 기본 작성
+    */
+    private String makeDefaultThumb(String thumbnailUrl) {
+        String defaultThumbUrl = "https://cdn.pixabay.com/photo/2020/11/08/13/28/tree-5723734_1280.jpg";
 
+        if (thumbnailUrl == null || thumbnailUrl.equals("")) {
+            thumbnailUrl = defaultThumbUrl;
+        }
+        return thumbnailUrl;
+    }
 }

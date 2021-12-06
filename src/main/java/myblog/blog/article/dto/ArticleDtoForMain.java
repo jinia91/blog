@@ -6,6 +6,9 @@ import lombok.Setter;
 import javax.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
 
+/*
+    - 메인 화면 출력용 아티클 DTO
+*/
 @Getter
 @Setter
 public class ArticleDtoForMain {

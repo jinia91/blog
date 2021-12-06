@@ -1,7 +1,6 @@
 package myblog.blog.article.controller;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import myblog.blog.article.domain.Article;
 import myblog.blog.article.dto.*;
 import myblog.blog.article.service.ArticleService;
@@ -18,15 +17,15 @@ import myblog.blog.tags.service.TagsService;
 import org.commonmark.parser.Parser;
 import org.commonmark.renderer.html.HtmlRenderer;
 import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Slice;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
+import org.springframework.validation.Errors;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.Cookie;
@@ -36,210 +35,222 @@ import java.util.stream.Collectors;
 
 @Controller
 @RequiredArgsConstructor
-@Slf4j
 public class ArticleController {
 
-    private final ModelMapper modelMapper;
     private final ArticleService articleService;
     private final TagsService tagsService;
     private final CategoryService categoryService;
     private final CommentService commentService;
-    private final Parser parser;
-    private final HtmlRenderer htmlRenderer;
     private final TempArticleService tempArticleService;
 
+    private final ModelMapper modelMapper;
+    private final Parser parser;
+    private final HtmlRenderer htmlRenderer;
+
+    /*
+        - 아티클 작성 폼 조회
+    */
     @GetMapping("article/write")
-    public String writeArticleForm(ArticleForm articleForm, Model model) {
+    public String writeArticleForm(Model model) {
 
-        List<CategoryNormalDto> categoryForInput =
-                categoryService
-                        .findCategoryByTier(2)
-                        .stream()
-                        .map(category -> modelMapper.map(category, CategoryNormalDto.class))
-                        .collect(Collectors.toList());
-        model.addAttribute("categoryInput", categoryForInput);
-
-        List<TagsDto> tagsForInput =
-                tagsService
-                        .findAllTags()
-                        .stream()
-                        .map(tag -> new TagsDto(tag.getName()))
-                        .collect(Collectors.toList());
-        model.addAttribute("tagsInput", tagsForInput);
-
-        CategoryForView categoryForView = CategoryForView.createCategory(categoryService.getCategoryForView());
-        model.addAttribute("category", categoryForView);
-
-        List<CommentDtoForSide> comments = commentService.recentCommentList()
-                .stream()
-                .map(comment ->
-                        new CommentDtoForSide(comment.getId(), comment.getArticle().getId(), comment.getContent(), comment.isSecret() ))
-                .collect(Collectors.toList());
-        model.addAttribute("commentsList", comments);
-
-        model.addAttribute("articleDto", articleForm);
+        modelsForArticleForm(model);
+        modelsForLayout(model);
+        model.addAttribute("articleDto", new ArticleForm());
 
         return "article/articleWriteForm";
     }
 
-
     /*
-        - 넘어온 articleForm을 저장
+        - 아티클 작성 post 요청
     */
     @PostMapping("article/write")
     @Transactional
-    public String writeArticle(ArticleForm articleForm, @AuthenticationPrincipal PrincipalDetails principal) {
+    public String writeArticle(@Validated ArticleForm articleForm,
+                               Errors errors,
+                               @AuthenticationPrincipal PrincipalDetails principal,
+                               Model model) {
 
-        Article article = articleService.writeArticle(articleForm, principal.getMember());
+        if (errors.hasErrors()) {
+            modelsForArticleForm(model);
+            modelsForLayout(model);
+            model.addAttribute("articleDto", new ArticleForm());
+            return "article/articleWriteForm";
+        }
 
+        Long articleId = articleService.writeArticle(articleForm, principal.getMember());
 //        articleService.pushArticleToGithub(article);
         tempArticleService.deleteTemp();
 
-        return "redirect:/article/view?articleId=" + article.getId();
+        return "redirect:/article/view?articleId=" + articleId;
+    }
+
+    /*
+        - 아티클 수정 폼 조회
+    */
+    @GetMapping("/article/edit")
+    public String updateArticle(@RequestParam Long articleId,
+                                Model model) {
+
+        // 기존 아티클 DTO 전처리
+        Article article = articleService.readArticle(articleId);
+
+        ArticleDtoForEdit articleDto = modelMapper.map(article, ArticleDtoForEdit.class);
+        articleDto.setArticleTagList(article.getArticleTagLists()
+                .stream()
+                .map(articleTag -> articleTag.getTags().getName())
+                .collect(Collectors.toList()));
+        //
+
+        modelsForArticleForm(model);
+        modelsForLayout(model);
+        model.addAttribute("articleDto", articleDto);
+
+        return "article/articleEditForm";
+    }
+
+    /*
+        - 아티클 수정 요청
+    */
+    @PostMapping("/article/edit")
+    @Transactional
+    public String editArticle(@RequestParam Long articleId,
+                              @ModelAttribute ArticleForm articleForm) {
+
+        articleService.editArticle(articleId, articleForm);
+
+        return "redirect:/article/view?articleId=" + articleId;
 
     }
 
+    /*
+        - 아티클 삭제 요청
+    */
+    @PostMapping("/article/delete")
+    @Transactional
+    public String deleteArticle(@RequestParam Long articleId) {
+
+        articleService.deleteArticle(articleId);
+
+        return "redirect:/";
+    }
+
+    /*
+        - 카테고리별 게시물 조회하기
+    */
     @Transactional
     @GetMapping("article/list")
-    public String getArticlesList(@RequestParam String category,
-                                  @RequestParam Integer tier,
-                                  @RequestParam Integer page,
-                                  Model model) {
+    public String getArticlesListByCategory(@RequestParam String category,
+                                            @RequestParam Integer tier,
+                                            @RequestParam Integer page,
+                                            Model model) {
 
-        CategoryForView categoryForView = CategoryForView.createCategory(categoryService.getCategoryForView());
-        model.addAttribute("category", categoryForView);
-        List<CommentDtoForSide> comments = commentService.recentCommentList()
-                .stream()
-                .map(comment ->
-                        new CommentDtoForSide(comment.getId(), comment.getArticle().getId(), comment.getContent(), comment.isSecret()))
-                .collect(Collectors.toList());
-        model.addAttribute("commentsList", comments);
+        // DTO 매핑 전처리
+        CategoryForView categoryForView = modelsForLayout(model);
 
-        PagingBoxDto pagingBoxDto = PagingBoxDto.createOf(page, articleService.getTotalArticleCntByCategory(category, categoryForView));
+        PagingBoxDto pagingBoxDto = PagingBoxDto
+                .createOf(page, getTotalArticleCntByCategory(category, categoryForView));
+
+        Slice<ArticleDtoForMain> articleList = articleService.getArticlesByCategory(category, tier, pagingBoxDto.getCurPageNum())
+                .map(article ->
+                        modelMapper.map(article, ArticleDtoForMain.class));
+        //
+
         model.addAttribute("pagingBox", pagingBoxDto);
-
-        Slice<ArticleDtoForMain> articleList = articleService.getArticlesByCategory(category, tier, pagingBoxDto.getCurPageNum());
         model.addAttribute("articleList", articleList);
 
-
         return "article/articleList";
-
     }
 
+    /*
+        - 태그별 게시물 조회하기
+    */
     @Transactional
     @GetMapping("article/list/tag/")
     public String getArticlesListByTag(@RequestParam Integer page,
                                   @RequestParam String tagName,
                                   Model model) {
-
-        CategoryForView categoryForView = CategoryForView.createCategory(categoryService.getCategoryForView());
-        model.addAttribute("category", categoryForView);
-        List<CommentDtoForSide> comments = commentService.recentCommentList()
-                .stream()
-                .map(comment ->
-                        new CommentDtoForSide(comment.getId(), comment.getArticle().getId(), comment.getContent(), comment.isSecret()))
-                .collect(Collectors.toList());
-        model.addAttribute("commentsList", comments);
-
+        // DTO 매핑 전처리
 
         Page<ArticleDtoForMain> articleList =
                 articleService.getArticlesByTag(tagName, page)
                         .map(article ->
                                 modelMapper.map(article, ArticleDtoForMain.class));
-        model.addAttribute("articleList", articleList);
 
         PagingBoxDto pagingBoxDto = PagingBoxDto.createOf(page, articleList.getTotalPages());
+
+        modelsForLayout(model);
+        //
+
+        model.addAttribute("articleList", articleList);
         model.addAttribute("pagingBox", pagingBoxDto);
 
         return "article/articleListByTag";
-
     }
 
+    /*
+        - 검색어별 게시물 조회하기
+    */
     @Transactional
     @GetMapping("article/list/search/")
     public String getArticlesListByKeyword(@RequestParam Integer page,
                                   @RequestParam String keyword,
                                   Model model) {
-
-        CategoryForView categoryForView = CategoryForView.createCategory(categoryService.getCategoryForView());
-        model.addAttribute("category", categoryForView);
-        List<CommentDtoForSide> comments = commentService.recentCommentList()
-                .stream()
-                .map(comment ->
-                        new CommentDtoForSide(comment.getId(), comment.getArticle().getId(), comment.getContent(),comment.isSecret()))
-                .collect(Collectors.toList());
-        model.addAttribute("commentsList", comments);
+        // DTO 매핑 전처리
 
         Page<ArticleDtoForMain> articleList =
                 articleService.getArticlesByKeyword(keyword, page)
                         .map(article ->
                                 modelMapper.map(article, ArticleDtoForMain.class));
-        model.addAttribute("articleList", articleList);
 
         PagingBoxDto pagingBoxDto = PagingBoxDto.createOf(page, articleList.getTotalPages());
+
+        modelsForLayout(model);
+        //
+
+        model.addAttribute("articleList", articleList);
         model.addAttribute("pagingBox", pagingBoxDto);
 
         return "article/articleListByKeyword";
 
     }
 
-
+    /*
+        - 아티클 상세 조회
+            1. 로그인여부 검토
+            2. 게시물 상세조회에 필요한 Dto 전처리
+            3. 메타태그 작성위한 Dto 전처리
+            4. Dto 담기
+            5. 조회수 증가 검토
+    */
     @GetMapping("/article/view")
     public String readArticle(@RequestParam Long articleId,
-                              Authentication authentication,
-                              @CookieValue(required = false, name = "view") String cookie, HttpServletResponse response,
+                              @AuthenticationPrincipal PrincipalDetails principal,
+                              @CookieValue(required = false, name = "view") String cookie,
+                              HttpServletResponse response,
                               Model model) {
-
-        if (authentication != null) {
-            PrincipalDetails principal = (PrincipalDetails) authentication.getPrincipal();
-            MemberDto memberDto = modelMapper.map(principal.getMember(), MemberDto.class);
-            model.addAttribute("member", memberDto);
+        // 1. 로그인 여부에 따라 뷰단에 출력 여부 결정
+        if (principal != null) {
+            model.addAttribute("member", modelMapper.map(principal.getMember(), MemberDto.class));
         } else {
             model.addAttribute("member", null);
         }
 
-        CategoryForView categoryForView = CategoryForView.createCategory(categoryService.getCategoryForView());
-        model.addAttribute("category", categoryForView);
-        List<CommentDtoForSide> comments = commentService.recentCommentList()
-                .stream()
-                .map(comment ->
-                        new CommentDtoForSide(comment.getId(), comment.getArticle().getId(), comment.getContent(),comment.isSecret()))
-                .collect(Collectors.toList());
-        model.addAttribute("commentsList", comments);
-
+        /*
+            DTO 매핑 전처리
+            2. 게시물 상세조회용
+        */
         Article article = articleService.readArticle(articleId);
-        ArticleDtoForDetail articleDtoForDetail = modelMapper.map(article, ArticleDtoForDetail.class);
+
+        ArticleDtoForDetail articleDtoForDetail =
+                modelMapper.map(article, ArticleDtoForDetail.class);
 
         List<String> tags = article.getArticleTagLists()
                 .stream()
                 .map(tag -> tag.getTags().getName())
                 .collect(Collectors.toList());
 
-        articleDtoForDetail
-                .setTags(tags);
-
-        articleDtoForDetail
-                .setContent(
-                        htmlRenderer.render(parser.parse(article.getContent()))
-                );
-
-        model.addAttribute("article", articleDtoForDetail);
-
-//        메타태그 삽입
-        StringBuilder sb = new StringBuilder();
-        for (String tag : tags) {
-            sb.append(tag).append(", ");
-        }
-        model.addAttribute("metaTags",sb);
-
-        String substringContents = null;
-        if(articleDtoForDetail.getContent().length()>200) {
-            substringContents = articleDtoForDetail.getContent().substring(0, 200);
-        }
-        else substringContents = articleDtoForDetail.getContent();
-
-        model.addAttribute("metaContents",Jsoup.parse(substringContents).text());
-//
+        articleDtoForDetail.setTags(tags);
+        articleDtoForDetail.setContent(htmlRenderer.render(parser.parse(article.getContent())));
 
         List<ArticleDtoByCategory> articleTitlesSortByCategory =
                 articleService
@@ -247,96 +258,80 @@ public class ArticleController {
                         .stream()
                         .map(article1 -> modelMapper.map(article1, ArticleDtoByCategory.class))
                         .collect(Collectors.toList());
+
+        // 3. 메타 태그용 Dto 전처리
+        StringBuilder metaTags = new StringBuilder();
+        for (String tag : tags) {
+            metaTags.append(tag).append(", ");
+        }
+
+        String substringContents = null;
+        if(articleDtoForDetail.getContent().length()>200) {
+            substringContents = articleDtoForDetail.getContent().substring(0, 200);
+        }
+        else substringContents = articleDtoForDetail.getContent();
+
+        // 4. 모델 담기
+        modelsForLayout(model);
+        model.addAttribute("article", articleDtoForDetail);
+        model.addAttribute("metaTags",metaTags);
+        model.addAttribute("metaContents",Jsoup.parse(substringContents).text());
         model.addAttribute("articlesSortBycategory", articleTitlesSortByCategory);
 
+        // 5. 조회수 증가 검토
         addHitWithCookie(article, cookie, response);
 
         return "article/articleView";
     }
 
-    @GetMapping("/article/edit")
-    public String updateArticle(@RequestParam Long articleId,
-                                Authentication authentication,
-                                Model model) {
-
-        List<CategoryNormalDto> categoryForInput =
+    /*
+        - 아티클 폼에 필요한 모델 담기
+    */
+    private void modelsForArticleForm(Model model) {
+        List<CategoryNormalDto> categoryForForm =
                 categoryService
                         .findCategoryByTier(2)
                         .stream()
-                        .map(c -> modelMapper.map(c, CategoryNormalDto.class))
+                        .map(category -> modelMapper.map(category, CategoryNormalDto.class))
                         .collect(Collectors.toList());
-        model.addAttribute("categoryInput", categoryForInput);
+        model.addAttribute("categoryInput", categoryForForm);
 
-        List<TagsDto> tagsForInput =
+        List<TagsDto> tagsForForm =
                 tagsService
                         .findAllTags()
                         .stream()
-                        .map(c -> modelMapper.map(c, TagsDto.class))
+                        .map(tag -> new TagsDto(tag.getName()))
                         .collect(Collectors.toList());
-        model.addAttribute("tagsInput", tagsForInput);
-
-
-        Article article = articleService.getArticleForEdit(articleId);
-        ArticleDtoForEdit articleDto = modelMapper.map(article, ArticleDtoForEdit.class);
-
-        List<String> tagList = article.getArticleTagLists()
-                .stream()
-                .map(articleTag -> articleTag.getTags().getName())
-                .collect(Collectors.toList());
-
-        articleDto.setArticleTagList(tagList);
-
-        model.addAttribute("articleDto", articleDto);
-
+        model.addAttribute("tagsInput", tagsForForm);
+    }
+    /*
+        - 레이아웃에 필요한 모델 담기
+    */
+    private CategoryForView modelsForLayout(Model model) {
         CategoryForView categoryForView = CategoryForView.createCategory(categoryService.getCategoryForView());
         model.addAttribute("category", categoryForView);
+
         List<CommentDtoForSide> comments = commentService.recentCommentList()
                 .stream()
                 .map(comment ->
-                        new CommentDtoForSide(comment.getId(), comment.getArticle().getId(), comment.getContent(),comment.isSecret()))
+                        new CommentDtoForSide(comment.getId(), comment.getArticle().getId(), comment.getContent(), comment.isSecret()))
                 .collect(Collectors.toList());
         model.addAttribute("commentsList", comments);
 
-        return "article/articleEditForm";
-    }
-
-    @PostMapping("/article/delete")
-    @Transactional
-    public String deleteArticle(@RequestParam Long articleId,
-                                Authentication authentication) {
-
-        articleService.deleteArticle(articleId);
-
-        return "redirect:/";
+        return categoryForView;
 
     }
 
-    @PostMapping("/article/edit")
-    @Transactional
-    public String editArticle(@RequestParam Long articleId,
-                              @ModelAttribute ArticleForm articleForm, @AuthenticationPrincipal PrincipalDetails principal) {
-
-        articleService.editArticle(articleId, articleForm);
-
-
-        return "redirect:/article/view?articleId=" + articleId;
-
-    }
-
-    @GetMapping("/main/article/{pageNum}")
-    public @ResponseBody
-    List<ArticleDtoForMain> mainNextPage(@PathVariable int pageNum) {
-
-        return articleService.getRecentArticles(pageNum).getContent();
-    }
-
+    /*
+        - 쿠키 추가 검토
+    */
     private void addHitWithCookie(Article article, String cookie, HttpServletResponse response) {
         Long articleId = article.getId();
         if (cookie == null) {
             Cookie viewCookie = new Cookie("view", articleId + "/");
             viewCookie.setComment("게시물 조회 확인용");
             viewCookie.setMaxAge(60 * 60);
-            articleService.addHit(article);
+            article.addHit();
             response.addCookie(viewCookie);
         } else {
             boolean isRead = false;
@@ -346,15 +341,33 @@ public class ArticleController {
                     isRead = true;
                     break;
                 }
-                ;
             }
             if (!isRead) {
                 cookie += articleId + "/";
-                articleService.addHit(article);
+                article.addHit();
             }
             response.addCookie(new Cookie("view", cookie));
         }
     }
 
+    /*
+        - 카테고리별 아티클 갯수 구하기
+    */
+    private int getTotalArticleCntByCategory(String category, CategoryForView categorys) {
 
+        if (categorys.getTitle().equals(category)) {
+            return categorys.getCount();
+        } else {
+            for (CategoryForView categoryCnt :
+                    categorys.getCategoryTCountList()) {
+                if (categoryCnt.getTitle().equals(category))
+                    return categoryCnt.getCount();
+                for (CategoryForView categoryCntSub : categoryCnt.getCategoryTCountList()) {
+                    if (categoryCntSub.getTitle().equals(category))
+                        return categoryCntSub.getCount();
+                }
+            }
+        }
+        throw new IllegalArgumentException("카테고리별 아티클 수 에러");
+    }
 }

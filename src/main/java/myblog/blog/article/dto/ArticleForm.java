@@ -11,17 +11,17 @@ import java.util.Objects;
 @Getter
 public class ArticleForm {
 
-    @NotBlank
+    @NotBlank(message = "제목을 입력해주세요")
     private String title;
-    @NotBlank
+    @NotBlank(message = "내용을 입력해주세요")
     private String content;
+
     private String toc;
 
     private String thumbnailUrl;
-
-    @NotBlank
+    @NotBlank(message = "카테고리를 입력해주세요")
     private String category;
-    @NotBlank
+    @NotBlank(message = "태그를 하나이상 입력해주세요")
     private String tags;
 
 }

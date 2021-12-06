@@ -9,6 +9,9 @@ import myblog.blog.tags.dto.TagsDto;
 import java.util.ArrayList;
 import java.util.List;
 
+/*
+    - 아티클 수정 폼을 위한 DTO
+*/
 @Getter @Setter
 public class ArticleDtoForEdit {
 
@@ -20,6 +23,4 @@ public class ArticleDtoForEdit {
 
     private List<String> articleTagList = new ArrayList<>();
     private Category category;
-
-
 }

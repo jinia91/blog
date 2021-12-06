@@ -9,7 +9,9 @@ import javax.persistence.Column;
 import javax.persistence.EntityListeners;
 import javax.persistence.MappedSuperclass;
 import java.time.LocalDateTime;
-
+/*
+    - auditing 용 추상 엔티티
+*/
 @EntityListeners(AuditingEntityListener.class)
 @MappedSuperclass
 @Getter

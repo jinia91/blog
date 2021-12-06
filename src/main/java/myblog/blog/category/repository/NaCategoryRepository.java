@@ -11,6 +11,9 @@ import java.util.List;
 @Repository
 public interface NaCategoryRepository {
 
+    /*
+        - 카테고리별 아티클 갯수 통계 쿼리
+    */
     @Select("select ifnull(f.title,'total') as title, ifnull(tier,0) as tier, ifnull(f.category_id, 0) as id, ifnull(count,0) as count, ifnull(f.p_sort_num, 0) as pOrder, ifnull(f.c_sort_num, 0) as cOrder\n" +
             "            from \n" +
             "            (select ifnull(ifnull(b.title, c.title),'total') as title, count(*) as 'count'\n" +

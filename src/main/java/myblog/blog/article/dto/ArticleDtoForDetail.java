@@ -7,6 +7,9 @@ import javax.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
 import java.util.List;
 
+/*
+    - 아티클 상세조회용 DTO
+*/
 @Getter @Setter
 public class ArticleDtoForDetail {
 
@@ -19,6 +22,4 @@ public class ArticleDtoForDetail {
     private String category;
     private List<String> tags;
     private LocalDateTime createdDate;
-
-
 }
