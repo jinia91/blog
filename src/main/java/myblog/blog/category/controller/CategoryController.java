@@ -1,20 +1,24 @@
 package myblog.blog.category.controller;
 
 import lombok.RequiredArgsConstructor;
+import myblog.blog.exception.CustomFormException;
+import myblog.blog.exception.ListValidator;
 import myblog.blog.category.dto.CategoryForView;
 import myblog.blog.category.dto.CategoryNormalDto;
 import myblog.blog.category.service.CategoryService;
-import myblog.blog.comment.dto.CommentDtoForSide;
+import myblog.blog.comment.dto.CommentDtoForLayout;
 import myblog.blog.comment.service.CommentService;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Controller
@@ -24,6 +28,7 @@ public class CategoryController {
     private final CategoryService categoryService;
     private final CommentService commentService;
     private final ModelMapper modelMapper;
+    private final ListValidator listValidator;
 
     /*
     - 카테고리 수정폼 조회
@@ -39,10 +44,10 @@ public class CategoryController {
 
         CategoryForView categoryForView = CategoryForView.createCategory(categoryList);
 
-        List<CommentDtoForSide> comments = commentService.recentCommentList()
+        List<CommentDtoForLayout> comments = commentService.recentCommentList()
                 .stream()
                 .map(comment ->
-                        new CommentDtoForSide(comment.getId(), comment.getArticle().getId(), comment.getContent(),comment.isSecret()))
+                        new CommentDtoForLayout(comment.getId(), comment.getArticle().getId(), comment.getContent(), comment.isSecret()))
                 .collect(Collectors.toList());
         //
 
@@ -58,11 +63,18 @@ public class CategoryController {
     - 카테고리 수정 요청
     */
     @PostMapping("/category/edit")
-    public @ResponseBody String editCategory(@RequestBody List<CategoryNormalDto> categoryList){
+    public @ResponseBody
+    String editCategory(@RequestBody List<CategoryNormalDto> categoryList, Errors errors) {
+       // List DTO 검증을 위한 커스텀 validator
+        listValidator.validate(categoryList, errors);
+
+        if (errors.hasErrors()) {
+            throw new CustomFormException(Objects.requireNonNull(errors.getFieldError()).getDefaultMessage());
+        }
+
         categoryService.changeCategory(categoryList);
         return "변경 성공";
     }
-
     private List<CategoryNormalDto> cloneList(List<CategoryNormalDto> categoryList) {
         return categoryList
                 .stream()

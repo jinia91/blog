@@ -10,6 +10,9 @@ import java.util.List;
 
 public interface CommentRepository extends JpaRepository<Comment, Long> {
 
+    /*
+        - 특정 아티클에 해당하는 댓글 리스트 가져오기
+    */
     @Query("select c " +
             "from Comment c " +
             "left join fetch c.member " +
@@ -19,7 +22,13 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
             "order by c.pOrder, c.id asc")
     List<Comment> findCommentsByArticleId(@Param("articleId") Long articleId);
 
+    /*
+        - 특정 아티클의 부모 댓글 총 갯수
+    */
     int countCommentsByArticleAndTier(Article article,int tier);
 
+    /*
+        - 전체 댓글중 최신 댓글 5개
+    */
     List<Comment> findTop5ByOrderByIdDesc();
 }

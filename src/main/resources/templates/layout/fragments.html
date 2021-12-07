@@ -43,16 +43,18 @@
         }
     );
 
-
     function commentWrite() {
         let token = getCsrfToken();
         let content = document.getElementById("commentContent").value;
-        let secret = document.getElementById("isCommentSecret")
-        let isSecret = secret.checked;
+        let isSecret = document.getElementById("isCommentSecret").checked;
 
-        console.log(isSecret);
+        // 댓글 내용 유효성 검사
+        if(content === ""|| content ===" "){
+            alert("댓글을 작성해주세요");
+            return;
+        }
 
-        let commentForm = new Object();
+        let commentForm = {};
         commentForm.content = content;
         commentForm.secret = isSecret;
 
@@ -63,8 +65,13 @@
         xhr.send(JSON.stringify(commentForm));
 
         xhr.onload = () => {
-            makeCommentBox(xhr, replyBox);
-            document.getElementById("commentContent").value = '';
+            if (xhr.status === 200 || xhr.status === 201 || xhr.status === 202) {
+                makeCommentBox(xhr, replyBox);
+                document.getElementById("commentContent").value = '';
+            }
+            else{
+                alert(xhr.response);
+            }
         }
     }
 
@@ -74,7 +81,7 @@
         let isSecret = document.getElementById("isCommentSecret-"+ parentCommentId).checked;
 
 
-        let commentForm = new Object();
+        let commentForm = {};
         commentForm.content = content;
         commentForm.secret = isSecret;
 
@@ -92,7 +99,7 @@
 
     function deleteCommentConfirm(commentId) {
 
-        if (confirm("댓글을 정말 삭제하시겠습니까?") == true) {
+        if (confirm("댓글을 정말 삭제하시겠습니까?") === true) {
             deleteComment(commentId);
         } else {
             return false;
@@ -141,7 +148,7 @@
     <div class="d-flex flex-row p-2">
         <div>
             <img src="${parentComment.picUrl}" width="40" height="40"
-                 class="rounded-circle me-2">
+                 class="rounded-circle me-2" alt="">
         </div>
         <div class="w-100">
             <div class="d-flex justify-content-between align-items-center">
@@ -159,20 +166,20 @@
                     `</div>
             </div>`
 
-                // 비밀댓글 처리
+                // 부모 댓글 비밀댓글 처리
              if(parentComment.secret === true){
                  if(roleArr[0].authority === "ROLE_ADMIN") {
-                     replyHtmlSource +=`<p class="text-justify comment-text mb-0">${parentComment.content}(비밀댓글입니다)</p>`
+                     replyHtmlSource +=`<p class="text-justify comment-text mb-0" style="white-space:pre-wrap;">${parentComment.content}(비밀댓글입니다)</p>`
                  }
                  else if(member != null &&member.id === parentComment.memberId){
-                     replyHtmlSource +=`<p class="text-justify comment-text mb-0">${parentComment.content}(내가 쓴 비밀댓글입니다)</p>`;
+                     replyHtmlSource +=`<p class="text-justify comment-text mb-0" style="white-space:pre-wrap;">${parentComment.content}(내가 쓴 비밀댓글입니다)</p>`;
                  }
                  else{
-                     replyHtmlSource +=`<p class="text-justify comment-text mb-0">비밀댓글입니다.</p>`;
+                     replyHtmlSource +=`<p class="text-justify comment-text mb-0" style="white-space:pre-wrap;">비밀댓글입니다.</p>`;
                  }
              }
             else{
-                 replyHtmlSource +=`<p class="text-justify comment-text mb-0">${parentComment.content}</p>`
+                 replyHtmlSource +=`<p class="text-justify comment-text mb-0" style="white-space:pre-wrap;">${parentComment.content}</p>`
              }
 
             <!-- comment-reply-post -->
@@ -194,7 +201,7 @@
                             <div class="mt-3 d-flex flex-row align-items-center p-2 form-color">
                                 <div>
                                 </div>
-                                <textarea type="text" id="child-content-${parentComment.id}" name="child-content-${parentComment.id}" class="form-control" placeholder="대댓글을 작성해주세요..."></textarea>
+                                <textarea id="child-content-${parentComment.id}" name="child-content-${parentComment.id}" class="form-control" placeholder="대댓글을 작성해주세요..."></textarea>
                             </div>
 
                             <div class="d-flex">
@@ -225,7 +232,7 @@
                         `<div class="d-flex flex-row p-2">
                 <div>
                     <img src="${childComment.picUrl}" width="40"
-                         height="40" class="rounded-circle me-2">
+                         height="40" class="rounded-circle me-2" alt="">
                 </div>
                 <div class="w-100">
                     <div class="d-flex justify-content-between align-items-center">
@@ -243,20 +250,20 @@
                         `</div>
                     </div>`
 
-                    // 비밀댓글 처리
+                    // 자식댓글 비밀댓글 처리
                     if(childComment.secret === true){
-                        if(roleArr[0].authority === "ROLE_ADMIN") {
-                            replyHtmlSource +=`<p class="text-justify comment-text mb-0">${childComment.content}(비밀댓글입니다)</p>`
+                        if(roleArr[0].authority === "ROLE_ADMIN"||member != null &&member.id === parentComment.memberId) {
+                            replyHtmlSource +=`<p class="text-justify comment-text mb-0" style="white-space:pre-wrap;">${childComment.content}(비밀댓글입니다)</p>`
                         }
                         else if(member != null &&member.id === childComment.memberId){
-                            replyHtmlSource +=`<p class="text-justify comment-text mb-0">${childComment.content}(내가 쓴 비밀댓글입니다)</p>`;
+                            replyHtmlSource +=`<p class="text-justify comment-text mb-0" style="white-space:pre-wrap;">${childComment.content}(내가 쓴 비밀댓글입니다)</p>`;
                         }
                         else{
-                            replyHtmlSource +=`<p class="text-justify comment-text mb-0">비밀댓글입니다.</p>`;
+                            replyHtmlSource +=`<p class="text-justify comment-text mb-0" style="white-space:pre-wrap;">비밀댓글입니다.</p>`;
                         }
                     }
                     else{
-                        replyHtmlSource +=`<p class="text-justify comment-text mb-0">${childComment.content}</p>`
+                        replyHtmlSource +=`<p class="text-justify comment-text mb-0" style="white-space:pre-wrap;">${childComment.content}</p>`
                     }
 
                     replyHtmlSource +=
@@ -402,11 +409,26 @@
 
 
 <script th:fragment="tag" th:inline="javascript" type="application/javascript">
+
     const tags = [[${tagsInput}]];
     let whitelist = [];
     for (let tag of tags) {
         whitelist.push(tag.name)
     }
+
+    const input = document.querySelector('input[name="tags"]');
+
+    const tagify = new Tagify(input, {
+        whitelist:whitelist,
+        maxTags: 10,
+        dropdown: {
+            maxItems: 100,
+            classname: "tags-look",
+            enabled: 0,
+            closeOnSelect: true
+        }
+    });
+
 </script>
 
 
@@ -549,7 +571,7 @@
     function autoSave(){
 
         let token = getCsrfToken();
-        let tempDto = new Object();
+        let tempDto = {};
         tempDto.content = editor.getMarkdown();
 
         const xhr = new XMLHttpRequest();

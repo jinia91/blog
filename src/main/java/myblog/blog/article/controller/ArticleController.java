@@ -8,7 +8,7 @@ import myblog.blog.article.service.TempArticleService;
 import myblog.blog.category.dto.CategoryForView;
 import myblog.blog.category.dto.CategoryNormalDto;
 import myblog.blog.category.service.CategoryService;
-import myblog.blog.comment.dto.CommentDtoForSide;
+import myblog.blog.comment.dto.CommentDtoForLayout;
 import myblog.blog.comment.service.CommentService;
 import myblog.blog.member.auth.PrincipalDetails;
 import myblog.blog.member.dto.MemberDto;
@@ -311,10 +311,10 @@ public class ArticleController {
         CategoryForView categoryForView = CategoryForView.createCategory(categoryService.getCategoryForView());
         model.addAttribute("category", categoryForView);
 
-        List<CommentDtoForSide> comments = commentService.recentCommentList()
+        List<CommentDtoForLayout> comments = commentService.recentCommentList()
                 .stream()
                 .map(comment ->
-                        new CommentDtoForSide(comment.getId(), comment.getArticle().getId(), comment.getContent(), comment.isSecret()))
+                        new CommentDtoForLayout(comment.getId(), comment.getArticle().getId(), comment.getContent(), comment.isSecret()))
                 .collect(Collectors.toList());
         model.addAttribute("commentsList", comments);
 

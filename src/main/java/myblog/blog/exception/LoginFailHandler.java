@@ -13,19 +13,21 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+/*
+    - 회원가입 실패 핸들러
+        이메일 중복시 간편 회원가입 실패
+*/
 @Component
-@Slf4j
 public class LoginFailHandler extends SimpleUrlAuthenticationFailureHandler {
 
     @Override
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
 
-        String errMsg = "error";
+        String errMsg = "";
 
         if(exception instanceof OAuth2AuthenticationException){
             errMsg = "duplicatedEmail";
             request.setAttribute("errMsg", errMsg);
-
         }
 
         setDefaultFailureUrl("/login?error="+errMsg);

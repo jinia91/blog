@@ -1,6 +1,5 @@
 package myblog.blog.comment.dto;
 
-import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import myblog.blog.comment.domain.Comment;
@@ -10,6 +9,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+
+/*
+    - 트리구조 댓글 DTO
+*/
 @Getter
 @Setter
 public class CommentDto {
@@ -22,26 +25,33 @@ public class CommentDto {
     private String picUrl;
     private String content;
     private boolean secret;
-    private List<CommentDto> commentDtoList = new ArrayList<>();
     private LocalDateTime createdDate;
 
-    public static List<CommentDto> createFrom(List<Comment> commentList, int dept) {
+    // 트리 구조를 갖기위한 리스트
+    private List<CommentDto> commentDtoList = new ArrayList<>();
+
+    /*
+        - 재귀 호출용 스태틱 생성 메서드
+                1. DTO객체 생성후 소스를 큐처리로 순차적 매핑
+                2. Depth 변화시 재귀 호출 / 재귀 탈출
+                3. 탈출시 상위 카테고리 list로 삽입하여 트리구조 작성
+    */
+    public static List<CommentDto> listCreateFrom(List<Comment> commentSource, int dept) {
 
         ArrayList<CommentDto> commentDtoList = new ArrayList<>();
 
         while (true) {
-
-            if (commentList.isEmpty()) {
+            if (commentSource.isEmpty()) {
                 return commentDtoList;
             }
 
-            Comment comment = commentList.get(0);
+            Comment comment = commentSource.get(0);
 
             if (comment.getTier() == dept) {
                 commentDtoList.add(new CommentDto(comment));
-                commentList.remove(0);
+                commentSource.remove(0);
             } else if (comment.getTier() > dept) {
-                List<CommentDto> childList = createFrom(commentList, dept + 1);
+                List<CommentDto> childList = listCreateFrom(commentSource, dept + 1);
                 commentDtoList.get(commentDtoList.size() - 1)
                         .setCommentDtoList(childList);
             } else {
@@ -50,7 +60,7 @@ public class CommentDto {
         }
     }
 
-
+    // 매핑 생성
     public CommentDto(Comment comment) {
         this.id = comment.getId();
         this.tier = comment.getTier();
@@ -62,6 +72,5 @@ public class CommentDto {
         this.createdDate = comment.getCreatedDate();
         this.memberId = comment.getMember().getId();
     }
-
 
 }

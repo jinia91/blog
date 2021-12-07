@@ -5,6 +5,9 @@ import lombok.Setter;
 
 import javax.persistence.Column;
 
+/*
+    - 뷰단에 사용할 멈버 DTO
+*/
 @Getter @Setter
 public class MemberDto {
 
@@ -17,6 +20,5 @@ public class MemberDto {
     private String email;
 
     private String picUrl;
-
 
 }

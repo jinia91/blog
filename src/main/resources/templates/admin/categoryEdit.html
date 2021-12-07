@@ -92,11 +92,16 @@
         // DTO 카테고리 셀렉터
         let category;
 
-        // 카테고리명 중복 검사
-        function isDuplicatedCategoryName(){
+        // 카테고리명 유효성 검사
+        function checkCategoryName(){
             const categoryList = document.getElementById("categoryBox").childNodes;
             for (let i = 0; i<categoryList.length; i++) {
                 const curNode = categoryList[i];
+
+                if(curNode.textContent === ""||curNode.textContent === " "){
+                    alert("카테고리 명이 공백이면 안됩니다.");
+                    return  true;
+                }
 
                 for(let j = i+1; j<categoryList.length; j++){
                     if(curNode.textContent === categoryList[j].textContent){
@@ -110,7 +115,7 @@
 
         function clickCategory(div) {
 
-            if(isDuplicatedCategoryName()){
+            if(checkCategoryName()){
                 return;
             }
 
@@ -188,7 +193,6 @@
         function tierDown(){
             category.tier = 2;
             selector.classList.remove("fw-bold");
-
         }
 
         function addCategory(){
@@ -204,7 +208,6 @@
             newCategory.corder = 0;
 
             categorysList.push(newCategory);
-
         }
 
         function deleteCategory(){
@@ -214,7 +217,7 @@
         }
 
         function changeCategory(){
-            if(isDuplicatedCategoryName()){
+            if(checkCategoryName()){
                 return;
             }
 
@@ -230,7 +233,7 @@
                        location.href='/';
                 }
                 else{
-                        alert("에러발생");
+                        alert(xhr.response);
                 }
             }
         }

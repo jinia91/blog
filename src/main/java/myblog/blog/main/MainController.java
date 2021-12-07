@@ -6,7 +6,7 @@ import myblog.blog.article.dto.ArticleDtoForMain;
 import myblog.blog.article.service.ArticleService;
 import myblog.blog.category.dto.CategoryForView;
 import myblog.blog.category.service.CategoryService;
-import myblog.blog.comment.dto.CommentDtoForSide;
+import myblog.blog.comment.dto.CommentDtoForLayout;
 import myblog.blog.comment.service.CommentService;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Slice;
@@ -29,33 +29,41 @@ public class MainController {
     private final CommentService commentService;
     private final ModelMapper modelMapper;
 
+    /*
+        - 메인 화면 제어용 컨트롤러
+    */
     @GetMapping("/")
     public String main(Model model) {
 
+        // Dto 전처리
         CategoryForView categoryForView = CategoryForView.createCategory(categoryService.getCategoryForView());
 
-        model.addAttribute("category",categoryForView);
-        List<CommentDtoForSide> comments = commentService.recentCommentList()
+        List<CommentDtoForLayout> comments = commentService.recentCommentList()
                 .stream()
                 .map(comment ->
-                        new CommentDtoForSide(comment.getId(), comment.getArticle().getId(), comment.getContent(),comment.isSecret()))
+                        new CommentDtoForLayout(comment.getId(), comment.getArticle().getId(), comment.getContent(),comment.isSecret()))
                 .collect(Collectors.toList());
-        model.addAttribute("commentsList", comments);
 
         List<ArticleDtoForMain> popularArticles = articleService.getPopularArticles()
                 .stream()
                 .map(article -> modelMapper.map(article, ArticleDtoForMain.class))
                 .collect(Collectors.toList());
-        model.addAttribute("popularArticles", popularArticles);
 
         Slice<ArticleDtoForMain> recentArticles = articleService.getRecentArticles(0)
                 .map(article -> modelMapper.map(article, ArticleDtoForMain.class));
+        //
+
+        model.addAttribute("category",categoryForView);
+        model.addAttribute("commentsList", comments);
+        model.addAttribute("popularArticles", popularArticles);
         model.addAttribute("recentArticles",recentArticles);
 
         return "index";
-
     }
 
+    /*
+        - 최신 아티클 무한스크롤로 조회
+    */
     @GetMapping("/main/article/{pageNum}")
     public @ResponseBody
     List<ArticleDtoForMain> mainNextPage(@PathVariable int pageNum) {
@@ -65,6 +73,5 @@ public class MainController {
                 .map(article -> modelMapper.map(article, ArticleDtoForMain.class))
                 .collect(Collectors.toList());
     }
-
 
 }

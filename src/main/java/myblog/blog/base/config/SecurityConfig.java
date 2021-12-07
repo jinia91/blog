@@ -43,6 +43,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 // 인가
                 .authorizeRequests()
                 .antMatchers("/article/write", "/article/edit","/article/delete","/edit/category", "/category/edit").hasRole(Role.ADMIN.name())
+                .antMatchers("/comment/write","/comment/delete").authenticated()
                 .anyRequest().permitAll()
 
                 // 로그아웃

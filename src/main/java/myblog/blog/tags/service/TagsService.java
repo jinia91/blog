@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Service
 @Transactional
@@ -22,31 +23,42 @@ public class TagsService {
     private final TagsRepository tagsRepository;
     private final ArticleTagListsRepository articleTagListsRepository;
 
+    /*
+        - Json 객체로 넘어온 태그들을 파싱해서 신규 태그인경우 저장
+    */
     public void createNewTagsAndArticleTagList(String names, Article article) {
 
         Gson gson = new Gson();
-        ArrayList<Map> tagsDtoArrayList = gson.fromJson(names, ArrayList.class);
+        ArrayList<Map<String,String>> tagsDtoArrayList = gson.fromJson(names, ArrayList.class);
 
         // JsonString -> tag
-        for (Map tags : tagsDtoArrayList) {
+        for (Map<String,String> tags : tagsDtoArrayList) {
 
-            Tags tag = tagsRepository.findByName(tags.get("value").toString());
-            if (tag == null) {
-                tag = tagsRepository.save(Tags.builder().name(tags.get("value").toString()).build());
+            // 신규태그인경우 저장 아닌경우 그대로 조회
+            Tags tag =
+                    tagsRepository
+                    .findByName(tags.get("value"))
+                    .orElseGet(() ->
+                            tagsRepository
+                            .save(Tags.builder().name(tags.get("value")).build()));
 
-            }
+            // 아티클 연관 태그로 저장
             articleTagListsRepository.save(ArticleTagList.builder()
                     .article(article)
-                    .tags(tag)
-                    .build());
+                    .tags(tag).build());
         }
-
     }
 
+    /*
+        - 전체 태그 조회
+    */
     public List<Tags> findAllTags(){
         return tagsRepository.findAll();
     }
 
+    /*
+        - 아티클 연관 태그 모두 삭제
+    */
     public void deleteArticleTags(Article article){
         articleTagListsRepository.deleteByArticle(article);
     }

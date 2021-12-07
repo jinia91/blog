@@ -30,7 +30,5 @@ public class    Tags extends BasicEntity {
         this.name = name;
     }
 
-    protected Tags() {
-
-    }
+    protected Tags() {}
 }

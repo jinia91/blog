@@ -7,6 +7,9 @@ import myblog.blog.base.domain.BasicEntity;
 
 import javax.persistence.*;
 
+/*
+    - 다 대 다 연관관계 해소 엔티티
+*/
 @Entity
 @Getter
 @SequenceGenerator(
@@ -14,6 +17,7 @@ import javax.persistence.*;
         sequenceName = "ARTICLE_TAG_LIST_SEQ",
         initialValue = 1, allocationSize = 50)
 public class ArticleTagList extends BasicEntity {
+
     @Id
     @Column(name = "article_tag_list_id")
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "ARTICLE_TAG_LIST_SEQ_GENERATOR")
@@ -33,7 +37,5 @@ public class ArticleTagList extends BasicEntity {
         this.tags = tags;
     }
 
-    protected ArticleTagList() {
-
-    }
+    protected ArticleTagList() {}
 }

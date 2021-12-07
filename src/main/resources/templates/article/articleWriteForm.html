@@ -104,7 +104,6 @@
         </div>
         <!--        -->
 
-
         <div class="row justify-content-evenly mt-4 mb-5 g-0">
             <button class="btn btn-secondary col-4" onclick="post()">등 록</button>
             <button class="btn btn-secondary col-4" onclick="javascript:history.back()">취 소</button>
@@ -113,20 +112,14 @@
 
     <!--scripts-->
 
-    <script th:inline="javascript">
-        const tags = [[${tagsInput}]];
-        let whitelist = [];
-        for (let tag of tags) {
-            whitelist.push(tag.name)
-        }
     </script>
     <script src="/node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="/node_modules/@yaireo/tagify/dist/tagify.min.js"></script>
+    <script th:replace="layout/fragments.html :: tag"></script>
     <script src="https://uicdn.toast.com/editor/latest/toastui-editor-all.min.js"></script>
     <script src="/js/getCsrf.js"></script>
-    <script th:replace="layout/fragments.html :: articleWrite"></script>
-    <script src="/js/tags.js"></script>
     <script src="/js/thumbnail.js"></script>
+    <script th:replace="layout/fragments.html :: articleWrite"></script>
 
 </section>
 

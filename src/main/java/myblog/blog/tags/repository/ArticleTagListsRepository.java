@@ -10,12 +10,13 @@ import org.springframework.transaction.annotation.Transactional;
 
 public interface ArticleTagListsRepository extends JpaRepository<ArticleTagList, Long> {
 
-
+    /*
+        - 아티클 연관 태그 삭제 쿼리
+            - cascade 필요시에는 아티클 삭제로 일괄 삭제하므로 해당쿼리는 연관태그 수정용
+    */
     @Transactional
     @Modifying
     @Query("delete from ArticleTagList t " +
             "where t.article =:article")
     void deleteByArticle(@Param("article") Article article);
-
-
 }

@@ -1,6 +1,5 @@
 package myblog.blog.comment.domain;
 
-
 import lombok.Builder;
 import lombok.Getter;
 import myblog.blog.article.domain.Article;
@@ -35,7 +34,7 @@ public class Comment extends BasicEntity {
 
     private int tier;
 
-    // 댓글 표시 순서
+    // 댓글 표시 순서 - 자식댓글은 ID순으로 처리
     private int pOrder;
 
     // 셀프조인
@@ -47,7 +46,6 @@ public class Comment extends BasicEntity {
     @OnDelete(action = OnDeleteAction.CASCADE)
     private List<Comment> child = new ArrayList<>();
 
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
@@ -56,8 +54,6 @@ public class Comment extends BasicEntity {
 
     @Column(columnDefinition = "boolean default false")
     private boolean secret;
-
-
 
     @Builder
     public Comment(Article article, int tier, Comment parents,int pOrder, Member member, String content, boolean secret) {
@@ -71,7 +67,5 @@ public class Comment extends BasicEntity {
         this.secret = secret;
     }
 
-    protected Comment() {
-
-    }
+    protected Comment() {}
 }

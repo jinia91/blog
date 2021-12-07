@@ -10,6 +10,10 @@ import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
+
+/*
+    - 회원 엔티티
+*/
 @Entity
 @SequenceGenerator(
         name = "MEMBER_SEQ_GENERATOR",
@@ -47,8 +51,7 @@ public class Member extends BasicEntity {
     @OneToMany(mappedBy = "member")
     private List<Comment> commentList = new ArrayList<>();
 
-    protected Member() {
-    }
+    protected Member() {}
 
     @Builder
     public Member(String username, String email, String picUrl, Role role,String userId, String provider, String providerId) {
@@ -61,6 +64,11 @@ public class Member extends BasicEntity {
         this.providerId = providerId;
     }
 
+    //비지니스로직
+
+    /*
+        - 유저명 변경 더티체킹 로직
+    */
     public void changeUsername(String username) {
         this.username = username;
     }

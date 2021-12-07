@@ -36,6 +36,10 @@ public class Oauth2MemberService extends DefaultOAuth2UserService {
     @Value("${admin.provider}")
     private String adminProvider;
 
+
+    /*
+        - OAuth2 인증 로그인
+    */
     @Override
     @Transactional
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
@@ -49,12 +53,17 @@ public class Oauth2MemberService extends DefaultOAuth2UserService {
         return new PrincipalDetails(member, userInfo.getAttributes());
     }
 
+    /*
+        - 회원가입 or 로그인 로직
+    */
     private Member getOrJoinMember(Oauth2UserInfo userInfo) {
 
+        //DB에서 조회해서 존재시 로그인처리, 미존재시 가입처리
         Member member = memberRepository.findByUserId(userInfo.getProviderId());
 
         if(member == null) {
 
+            //Email 중복검증
             if(memberRepository.findByEmail(userInfo.getEmail()) != null)
                 throw new OAuth2AuthenticationException("duplicateEmail");
 
@@ -71,6 +80,7 @@ public class Oauth2MemberService extends DefaultOAuth2UserService {
             memberRepository.save(member);
         }
 
+        // 유저 네임 변경시 더티체킹으로 유저네임 변경
         if(!member.getUsername().equals(userInfo.getUserName())){
             member.changeUsername(userInfo.getUserName());
         }
@@ -78,6 +88,9 @@ public class Oauth2MemberService extends DefaultOAuth2UserService {
         return member;
     }
 
+    /*
+        - 앱 구동시 ADMIN 계정 INSERT
+    */
     @PostConstruct
     public void insertAdmin(){
 

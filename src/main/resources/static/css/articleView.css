@@ -7,6 +7,7 @@
     font-family: 'RIDIBatang','Open Sans', 'Helvetica Neue', 'Helvetica', 'Arial', '나눔바른고딕',
     'Nanum Barun Gothic', '맑은고딕', 'Malgun Gothic', sans-serif;
     z-index: 20;
+    word-break: break-all;
 }
 
 .toastui-editor-contents *:not(table) {
