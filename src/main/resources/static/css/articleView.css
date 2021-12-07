@@ -777,7 +777,6 @@ ul.toolList li:before {
     width: 80px;
     height: 80px;
     margin: 10px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3), 0 2px 0px rgba(255,255,255,0.4) inset, 0 -2px 0px rgba(0,0,0,0.5) inset;
     border-radius: 25px;
 }
 

@@ -98,13 +98,13 @@
                                         </div>
                                         <div class="modal-body">
                                             <div class="list-unstyled social-icon-wrap d-flex justify-content-around">
-                                                <a href="#" class="social-icon link-icon-facebook">
+                                                <a href="javascript:shareFaceBook()" class="social-icon link-icon-facebook">
                                                     <i class=" fa fa-facebook"></i>
                                                 </a>
-                                                <a href="#" class="social-icon link-icon-kakao">
+                                                <a href="javascript:shareKakao()" class="social-icon link-icon-kakao">
                                                     <i class="fa fa-comment"></i>
                                                 </a>
-                                                <a href="#" class="social-icon link-icon-naver">
+                                                <a href="javascript:shareNaver()" class="social-icon link-icon-naver">
                                                 </a>
                                             </div>
 
@@ -193,6 +193,49 @@
         <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.0/moment.min.js"></script>
         <script th:replace="layout/fragments.html :: comment"></script>
         <script th:replace="layout/fragments.html :: view"></script>
+        <script src="https://developers.kakao.com/sdk/js/kakao.js"></script>
+        <script th:inline="javascript">
+
+            Kakao.init('d54eaaa9b048d0af953ea821a1e55769');
+
+                function shareKakao() {
+                Kakao.Link.sendDefault({
+                    objectType: 'feed',
+                    content: {
+                        title: `[[${article.getTitle()}]] - Jinia's LOG`,
+                        description: [[${metaContents}]],
+                        imageUrl:
+                        [[${article.getThumbnailUrl()}]],
+                        link: {
+                            mobileWebUrl: window.location.href,
+                            webUrl: window.location.href,
+                        },
+                    },
+
+                    buttons: [
+                        {
+                            title: '웹으로 보기',
+                            link: {
+                                mobileWebUrl: window.location.href ,
+                                webUrl: window.location.href,
+                            },
+                        }
+                    ],
+                })
+            }
+
+            function shareNaver() {
+                    let url = encodeURIComponent(window.location.href);
+                    let title = encodeURIComponent(`[[${article.getTitle()}]] - Jinia's LOG`);
+                    let link = "https://share.naver.com/web/shareView.nhn?url=" + url + "&title=" + title;
+                    window.open( link, 'share', 'width=500, height=500' );
+            }
+
+            function shareFaceBook(){
+                window.open( 'http://www.facebook.com/sharer.php?u=' + encodeURIComponent(window.location.href));
+            }
+
+        </script>
     </div>
 </section>
 

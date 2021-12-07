@@ -119,6 +119,13 @@ public class ArticleService {
     }
 
     /*
+        - 모든 게시물 조회
+    */
+    public List<Article> getTotalArticle(){
+        return articleRepository.findAllByOrderByIdDesc();
+    }
+
+    /*
         - 카테고리별 최신게시물 6개만 아티클 상세뷰 위해 가져오는로직
     */
     public List<Article> getArticlesByCategoryForDetailView(Category category){

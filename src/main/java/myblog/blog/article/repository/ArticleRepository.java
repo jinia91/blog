@@ -5,6 +5,7 @@ import myblog.blog.category.domain.Category;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -84,4 +85,9 @@ public interface ArticleRepository extends JpaRepository<Article, Long> {
             "order by a.id desc ")
     Page<Article> findAllByKeywordOrderById(Pageable pageable, @Param("keyword") String keyword);
 
+    /*
+        - 모든 게시물 조회
+    */
+    @EntityGraph(attributePaths = {"category"})
+    List<Article> findAllByOrderByIdDesc();
 }

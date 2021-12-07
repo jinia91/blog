@@ -369,6 +369,10 @@
     }
 
     function checkContent() {
+
+        if(contents.value.length >=  65535 ){
+            return false;
+        }
         return contents.value !== "";
     }
 
@@ -390,7 +394,7 @@
             return;
         }
         else if (!checkContent()) {
-            alert("내용을 입력해주세요")
+            alert("내용은 1~ 65535자 이하여야합니다.")
             return;
         }else if (!checkCategory()) {
             alert("카테고리를 입력해주세요")
@@ -508,31 +512,16 @@
         }
     });
 
-    function uploadImage(blob) {
-        let token = getCsrfToken();
-        let formData = new FormData();
-        formData.append('img', blob);
-
-        const xhr = new XMLHttpRequest();
-        xhr.open("POST", "/article/uploadImg", false);
-        xhr.setRequestHeader("contentType", "multipart/form-data");
-        xhr.setRequestHeader("X-XSRF-TOKEN", token);
-        xhr.send(formData);
-
-        if (xhr.readyState === 4 && xhr.status === 200) {
-            return xhr.response;
-        } else {
-            alert("이미지가 정상적으로 업로드되지 못했습니다.")
-        }
-
-    }
-
     // 유효성 검사
     function checkTitle() {
         return document.getElementById("title").value !== "";
     }
 
     function checkContent() {
+
+        if(contents.value.length >=  65535 ){
+            return false;
+        }
         return contents.value !== "";
     }
 
@@ -554,7 +543,7 @@
             return;
         }
         else if (!checkContent()) {
-            alert("내용을 입력해주세요")
+            alert("내용은 1~ 65535자 이하여야합니다.")
             return;
         }else if (!checkCategory()) {
             alert("카테고리를 입력해주세요")
