@@ -4,6 +4,10 @@ import org.commonmark.ext.gfm.tables.TablesExtension;
 import org.commonmark.parser.Parser;
 import org.commonmark.renderer.html.HtmlRenderer;
 import org.modelmapper.ModelMapper;
+import org.springframework.cache.CacheManager;
+import org.springframework.cache.concurrent.ConcurrentMapCache;
+import org.springframework.cache.ehcache.EhCacheCacheManager;
+import org.springframework.cache.support.SimpleCacheManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -41,6 +45,5 @@ public class AppConfig {
             .extensions(List.of(TablesExtension.create()))
             .build();
     }
-
 
 }

@@ -3,13 +3,17 @@ package myblog.blog.comment.service;
 import lombok.RequiredArgsConstructor;
 import myblog.blog.article.domain.Article;
 import myblog.blog.comment.domain.Comment;
+import myblog.blog.comment.dto.CommentDtoForLayout;
 import myblog.blog.comment.dto.CommentForm;
 import myblog.blog.comment.repository.CommentRepository;
 import myblog.blog.comment.repository.NaCommentRepository;
 import myblog.blog.member.doamin.Member;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -28,6 +32,7 @@ public class CommentService {
     /*
         - 부모 댓글 저장
     */
+    @CacheEvict(value = "layoutRecentCommentCaching", allEntries = true)
     public void savePComment(CommentForm commentForm, Member member, Article article){
 
         Comment comment = Comment.builder()
@@ -46,6 +51,7 @@ public class CommentService {
     /*
         - 자식 댓글 저장
     */
+    @CacheEvict(value = "layoutRecentCommentCaching", allEntries = true)
     public void saveCComment(CommentForm commentForm, Member member, Article article, Long parentId) {
 
         Comment pComment = commentRepository.findById(parentId).get();
@@ -67,15 +73,24 @@ public class CommentService {
     /*
         - 댓글 삭제
     */
+    @CacheEvict(value = "layoutRecentCommentCaching", allEntries = true)
     public void deleteComment(Long commentId){
         naCommentRepository.deleteComment(commentId);
     }
 
     /*
         - 최신 댓글 5개 가져오기
+          - 레이아웃 렌더링 성능 향상을 위해 캐싱작업
+             카테고리 변경 / 아티클 변경이 존재할경우 레이아웃 캐시 초기화
+             DTO 매핑 로직 서비스단에서 처리
     */
-    public List<Comment> recentCommentList(){
-       return commentRepository.findTop5ByOrderByIdDesc();
+    @Cacheable(value = "layoutRecentCommentCaching", key = "0")
+    public List<CommentDtoForLayout> recentCommentList(){
+       return commentRepository.findTop5ByOrderByIdDesc()
+               .stream()
+                .map(comment ->
+                        new CommentDtoForLayout(comment.getId(), comment.getArticle().getId(), comment.getContent(), comment.isSecret()))
+                .collect(Collectors.toList());
     }
 
     /*

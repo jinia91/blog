@@ -36,21 +36,12 @@ public class MainController {
     public String main(Model model) {
 
         // Dto 전처리
-        CategoryForView categoryForView = CategoryForView.createCategory(categoryService.getCategoryForView());
+        CategoryForView categoryForView = categoryService.getCategoryForView();
 
-        List<CommentDtoForLayout> comments = commentService.recentCommentList()
-                .stream()
-                .map(comment ->
-                        new CommentDtoForLayout(comment.getId(), comment.getArticle().getId(), comment.getContent(),comment.isSecret()))
-                .collect(Collectors.toList());
+        List<CommentDtoForLayout> comments = commentService.recentCommentList();
 
-        List<ArticleDtoForMain> popularArticles = articleService.getPopularArticles()
-                .stream()
-                .map(article -> modelMapper.map(article, ArticleDtoForMain.class))
-                .collect(Collectors.toList());
-
-        Slice<ArticleDtoForMain> recentArticles = articleService.getRecentArticles(0)
-                .map(article -> modelMapper.map(article, ArticleDtoForMain.class));
+        List<ArticleDtoForMain> popularArticles = articleService.getPopularArticles();
+        Slice<ArticleDtoForMain> recentArticles = articleService.getRecentArticles(0);
         //
 
         model.addAttribute("category",categoryForView);
@@ -68,10 +59,7 @@ public class MainController {
     public @ResponseBody
     List<ArticleDtoForMain> mainNextPage(@PathVariable int pageNum) {
 
-        return articleService.getRecentArticles(pageNum).getContent()
-                .stream()
-                .map(article -> modelMapper.map(article, ArticleDtoForMain.class))
-                .collect(Collectors.toList());
+        return articleService.getRecentArticles(pageNum).getContent();
     }
 
 }

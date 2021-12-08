@@ -35,12 +35,8 @@ public class MemberController {
         }
 
         // 레이아웃 DTO 전처리
-        CategoryForView categoryForView = CategoryForView.createCategory(categoryService.getCategoryForView());
-        List<CommentDtoForLayout> comments = commentService.recentCommentList()
-                .stream()
-                .map(comment ->
-                        new CommentDtoForLayout(comment.getId(), comment.getArticle().getId(), comment.getContent(),comment.isSecret()))
-                .collect(Collectors.toList());
+        CategoryForView categoryForView = categoryService.getCategoryForView();
+        List<CommentDtoForLayout> comments = commentService.recentCommentList();
         //
 
         model.addAttribute("category",categoryForView);

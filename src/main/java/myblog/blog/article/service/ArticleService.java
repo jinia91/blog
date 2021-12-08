@@ -2,6 +2,7 @@ package myblog.blog.article.service;
 
 import lombok.RequiredArgsConstructor;
 import myblog.blog.article.domain.Article;
+import myblog.blog.article.dto.ArticleDtoForMain;
 import myblog.blog.category.domain.Category;
 import myblog.blog.member.doamin.Member;
 import myblog.blog.article.dto.ArticleForm;
@@ -12,6 +13,9 @@ import myblog.blog.tags.service.TagsService;
 import org.kohsuke.github.GHRepository;
 import org.kohsuke.github.GitHub;
 import org.kohsuke.github.GitHubBuilder;
+import org.modelmapper.ModelMapper;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Slice;
@@ -20,6 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.beans.factory.annotation.Value;
 import java.io.IOException;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -35,10 +40,13 @@ public class ArticleService {
     private final CategoryService categoryService;
     private final ArticleRepository articleRepository;
     private final NaArticleRepository naArticleRepository;
+    private final ModelMapper modelMapper;
 
     /*
         - 아티클 작성 로직
+            - 글작성시 아티클 캐싱 초기화
     */
+    @CacheEvict(value = {"layoutCaching", "layoutRecentArticleCaching","rssCaching"}, allEntries = true)
     public Long writeArticle(ArticleForm articleDto, Member writer) {
 
         Article newArticle = articleFrom(articleDto, writer);
@@ -50,7 +58,9 @@ public class ArticleService {
 
     /*
         - 아티클 수정 로직
+            - 글 수정시 아티클 캐싱 초기화
     */
+    @CacheEvict(value = {"layoutCaching", "layoutRecentArticleCaching","rssCaching"}, allEntries = true)
     public void editArticle(Long articleId, ArticleForm articleForm) {
 
         Article article = articleRepository.findById(articleId).get();
@@ -63,20 +73,40 @@ public class ArticleService {
     }
 
     /*
-        - 메인화면 위한 인기 아티클 6개 목록 가져오기
+        - 아티클 삭제 로직
+            - 글 삭제시 아티클 캐싱 초기화
     */
-    public List<Article> getPopularArticles() {
+    @CacheEvict(value = {"layoutCaching", "layoutRecentArticleCaching","rssCaching"}, allEntries = true)
+    public void deleteArticle(Long articleId) {
 
-        return articleRepository.findTop6ByOrderByHitDesc();
+        naArticleRepository.deleteArticle(articleId);
+    }
 
+    /*
+        - 메인화면 위한 인기 아티클 6개 목록 가져오기
+           - 레이아웃 렌더링 성능 향상을 위해 캐싱작업
+             카테고리 변경 / 아티클 변경이 존재할경우 레이아웃 캐시 초기화
+             DTO 매핑 로직 서비스단에서 처리
+    */
+    @Cacheable(value = "layoutCaching", key = "1")
+    public List<ArticleDtoForMain> getPopularArticles() {
+        return articleRepository.findTop6ByOrderByHitDesc()
+                .stream()
+                .map(article -> modelMapper.map(article, ArticleDtoForMain.class))
+                .collect(Collectors.toList());
     }
 
     /*
         - 메인화면 위한 최신 아티클 페이징처리해서 가져오기
+           - 레이아웃 렌더링 성능 향상을 위해 캐싱작업
+             카테고리 변경 / 아티클 변경이 존재할경우 레이아웃 캐시 초기화
+             DTO 매핑 로직 서비스단에서 처리
     */
-    public Slice<Article> getRecentArticles(int page) {
+    @Cacheable(value = "layoutRecentArticleCaching", key = "#page")
+    public Slice<ArticleDtoForMain> getRecentArticles(int page) {
         return articleRepository
-                .findByOrderByIdDesc(PageRequest.of(page, 5));
+                .findByOrderByIdDesc(PageRequest.of(page, 5))
+                .map(article -> modelMapper.map(article, ArticleDtoForMain.class));
     }
 
     /*
@@ -109,13 +139,6 @@ public class ArticleService {
     */
     public Article readArticle(Long id){
          return articleRepository.findArticleByIdFetchCategoryAndTags(id);
-    }
-    /*
-        - 아티클 삭제 로직
-    */
-    public void deleteArticle(Long articleId) {
-
-          naArticleRepository.deleteArticle(articleId);
     }
 
     /*

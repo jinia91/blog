@@ -308,14 +308,10 @@ public class ArticleController {
         - 레이아웃에 필요한 모델 담기
     */
     private CategoryForView modelsForLayout(Model model) {
-        CategoryForView categoryForView = CategoryForView.createCategory(categoryService.getCategoryForView());
+        CategoryForView categoryForView = categoryService.getCategoryForView();
         model.addAttribute("category", categoryForView);
 
-        List<CommentDtoForLayout> comments = commentService.recentCommentList()
-                .stream()
-                .map(comment ->
-                        new CommentDtoForLayout(comment.getId(), comment.getArticle().getId(), comment.getContent(), comment.isSecret()))
-                .collect(Collectors.toList());
+        List<CommentDtoForLayout> comments = commentService.recentCommentList();
         model.addAttribute("commentsList", comments);
 
         return categoryForView;

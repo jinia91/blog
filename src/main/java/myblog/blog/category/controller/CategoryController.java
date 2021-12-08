@@ -37,18 +37,14 @@ public class CategoryController {
     public String editCategoryForm(Model model) {
 
         // DTO 매핑 전처리
-        List<CategoryNormalDto> categoryList = categoryService.getCategoryForView();
+        List<CategoryNormalDto> categoryList = categoryService.getCategorytCountList();
 
         List<CategoryNormalDto> copyList = cloneList(categoryList);
         copyList.remove(0);
 
         CategoryForView categoryForView = CategoryForView.createCategory(categoryList);
 
-        List<CommentDtoForLayout> comments = commentService.recentCommentList()
-                .stream()
-                .map(comment ->
-                        new CommentDtoForLayout(comment.getId(), comment.getArticle().getId(), comment.getContent(), comment.isSecret()))
-                .collect(Collectors.toList());
+        List<CommentDtoForLayout> comments = commentService.recentCommentList();
         //
 
         model.addAttribute("categoryForEdit", copyList);
