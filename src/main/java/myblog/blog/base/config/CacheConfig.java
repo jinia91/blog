@@ -32,7 +32,11 @@ public class CacheConfig {
     @Bean
     public EhCacheCacheManager ehCacheCacheManager(){
 
-        // 1. 레이아웃에 필요한 단건 dto 캐시
+        /*
+            1. 레이아웃에 필요한 단건 dto 캐시
+                - key 0 : 레이아웃 카테고리
+                - key 1 : 메인화면 인기 아티클
+        */
         CacheConfiguration layoutCacheConfiguration = new CacheConfiguration()
                 .eternal(false)
                 .timeToIdleSeconds(0)

@@ -228,7 +228,7 @@ public class ArticleController {
                               @CookieValue(required = false, name = "view") String cookie,
                               HttpServletResponse response,
                               Model model) {
-        // 1. 로그인 여부에 따라 뷰단에 출력 여부 결정
+        // 1. 로그인 여부에 따라 뷰단에 회원정보 출력 여부 결정
         if (principal != null) {
             model.addAttribute("member", modelMapper.map(principal.getMember(), MemberDto.class));
         } else {

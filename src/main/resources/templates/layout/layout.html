@@ -16,10 +16,10 @@
                 <i class="fas fa-bars"></i>
             </button>
             <div id="nav-brand">
-                <a th:href="@{/}"><h4>Blog</h4></a>
+                <a th:href="@{/}"><h4>Jinia's LOG</h4></a>
             </div>
             <div id="nav-login" sec:authorize="!isAuthenticated()">
-                <a th:href="@{/login}"><i class="far fa-address-card pe-2"></i></a>
+                <a th:href="@{/login}"><i class="fas fa-sign-in-alt pe-2 fs-4"></i></a>
             </div>
             <div sec:authorize="isAuthenticated()" class="pe-2">
                 <span sec:authorize="hasRole('USER')" th:text="${#authentication.name} + '님'"></span>

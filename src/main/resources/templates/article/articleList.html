@@ -51,7 +51,7 @@
     <div class="recent-cards mt-5 ms-4 me-4">
 
         <div class="cards-container container p-0" id="infiniteScrollBox">
-            <h1 class="text-center" th:text="${param.category}">최신 포스팅</h1>
+            <h1 class="text-center" th:text="${param.category}">카테고리 명</h1>
             <hr>
             <div id="articlePage-0">
                 <div class="card mb-3 recent-card wow fadeInUp" th:each="article :${articleList.getContent()}">
@@ -77,7 +77,6 @@
 
         </div>
     </div>
-
 
     <!-- page s -->
     <div class="pagination-section mt-4">
