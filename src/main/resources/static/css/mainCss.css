@@ -161,7 +161,6 @@ body::-webkit-scrollbar-track {
     color: aliceblue;
     width: 100%;
     opacity: 0.8;
-
     transition-property: all;
     transition-duration: 0.7s;
 }
@@ -438,4 +437,3 @@ body::-webkit-scrollbar-track {
 .categoryBox .fw-bold{
     color:  #1f70de !important;
 }
-

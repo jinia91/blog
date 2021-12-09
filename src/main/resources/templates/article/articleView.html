@@ -154,7 +154,18 @@
                 <textarea type="text" id="commentContent" name="commentContent"
                           class="form-control" placeholder="댓글을 작성해주세요..."></textarea>
             </div>
-            <div sec:authorize="isAuthenticated()" class="d-flex">
+
+            <div sec:authorize="!isAuthenticated()" class="ms-2 me-2 mt-3 d-flex align-items-center">
+                <div>
+                    <img src="/img/guest.png" width="50"
+                         height="50"
+                         class="rounded-circle me-2">
+                </div>
+                <textarea readonly type="text" name="commentContent"
+                          class="form-control" placeholder="로그인이 필요합니다"></textarea>
+            </div>
+
+            <div class="d-flex">
 
                 <div class="ms-1 mt-2 secretBox">
                     <label class="lock">
@@ -172,7 +183,7 @@
                 <div class="col">
                     <div id="commentContainer">
 
-                        <!-- comment -->
+                        <!-- comment 자바스크립트로 작성 -->
                         <div class="mt-2 comment-box" id="commentBox">
                         </div>
 

@@ -6,7 +6,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,  user-scalable = no, initial-scale=1.0"/>
-    <title>Jinia's Log - 로그인</title>
+    <title> 해당 서비스에 접근할 수 없습니다 - Jinia's Log</title>
     <!-- SEO -->
     <meta name="description" content="비전공 출신, 개발자 지망생의 공부 내용을 기록하는 블로그입니다."/>
     <meta name="keyword" content="개발, 테크, IT, 코딩, 알고리즘, 쥬니어, 개발자, 포트폴리오, 블로그, CS, 컴공지식, 컴공, 프로그래밍, 프로그래밍 언어, 비전공, 코딩 테스트, 취업, 취준"/>
@@ -22,46 +22,36 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css"/>
     <link rel="stylesheet" href="/node_modules/bootstrap/dist/css/bootstrap.min.css"/>
     <link rel="stylesheet" href="/css/mainCss.css"/>
-    <link rel="stylesheet" href="/css/login.css"/>
-
+    <link rel="stylesheet" href="/css/error.css"/>
     <script src="https://kit.fontawesome.com/233840a552.js" crossorigin="anonymous"></script>
 </head>
 
 <body>
 
-<section class="login-section">
+<section class="error-section">
 
-    <div class="card container login-box">
-        <P class="text-center alert" id="capsAlert" th:text="${errMsg}">로그인 오류</P>
-        <div class="d-flex flex-column card-body align-items-center justify-content-center">
-            <h5>
-                SNS 간편 가입/로그인
-            </h5>
+    <div class="mainbox">
+        <div class="err">4</div>
+        <i class="far fa-question-circle fa-spin"></i>
+        <div class="err2">4</div>
+        <div class="msg"><p>존재하지 않는 페이지입니다.</p>
+            <div class="row mt-5 justify-content-center text-center">
 
-            <hr/>
+                <div class="col-5 mt-5 move-main">
+                    <a th:href="@{/}" class="btn btn-secondary">메인페이지</a>
+                </div>
 
-            <div class="col m-2">
-                <a href="/oauth2/authorization/google">
-                    <button class="btnCtm btn-google">구글 로그인</button>
-                </a>
-            </div>
+                <div class="col-5 mt-5">
+                    <a onclick="javascript:history.back()" class="btn btn-secondary">이전 페이지</a>
+                </div>
 
-            <div class="col m-2">
-                <a href="/oauth2/authorization/facebook">
-                    <button class="btnCtm btn-facebook">페이스북 로그인</button>
-                </a>
-            </div>
-
-            <div class="col m-2">
-                <a href="/oauth2/authorization/naver">
-                    <button class="btnCtm btn-naver">네이버 로그인</button>
-                </a>
             </div>
         </div>
+
     </div>
 
-    <script src="/node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 
+    <script src="/node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 </section>
 
 </body>

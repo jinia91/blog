@@ -26,8 +26,7 @@ public class CacheConfig {
     /*
         - Ehcache 등록
           - 메모리 <-> 성능 트레이드 오프를 고려할때 1)레이아웃 캐싱과 2)매핑 비용이 비싼 rss정도만 캐시처리
-            1) 레이아웃은 무기한 캐싱, 갱신
-            2) rss는 12시간마다 캐시 갱신
+            - 캐시 폐기는 6시간마다
     */
     @Bean
     public EhCacheCacheManager ehCacheCacheManager(){
@@ -40,7 +39,7 @@ public class CacheConfig {
         CacheConfiguration layoutCacheConfiguration = new CacheConfiguration()
                 .eternal(false)
                 .timeToIdleSeconds(0)
-                .timeToLiveSeconds(0)
+                .timeToLiveSeconds(21600)
                 .maxEntriesLocalHeap(0)
                 .memoryStoreEvictionPolicy("LRU")
                 .name("layoutCaching");
@@ -52,7 +51,7 @@ public class CacheConfig {
         CacheConfiguration recentArticleCacheConfiguration = new CacheConfiguration()
                 .eternal(false)
                 .timeToIdleSeconds(0)
-                .timeToLiveSeconds(0)
+                .timeToLiveSeconds(21600)
                 .maxEntriesLocalHeap(0)
                 .memoryStoreEvictionPolicy("LRU")
                 .name("layoutRecentArticleCaching");
@@ -64,7 +63,7 @@ public class CacheConfig {
         CacheConfiguration recentCommentCacheConfiguration = new CacheConfiguration()
                 .eternal(false)
                 .timeToIdleSeconds(0)
-                .timeToLiveSeconds(0)
+                .timeToLiveSeconds(21600)
                 .maxEntriesLocalHeap(0)
                 .memoryStoreEvictionPolicy("LRU")
                 .name("layoutRecentCommentCaching");
@@ -72,14 +71,18 @@ public class CacheConfig {
         Cache recentCommentCache = new net.sf.ehcache.Cache(recentCommentCacheConfiguration);
         Objects.requireNonNull(cacheManagerFactoryBean().getObject()).addCache(recentCommentCache);
 
-        // 4. rss 발행 캐시
+        /*
+            - 4. seo 캐시
+                - key 0 : rss
+                - key 1 : sitemap
+        */
         CacheConfiguration rssConfiguration = new CacheConfiguration()
                 .eternal(false)
-                .timeToIdleSeconds(43200)
-                .timeToLiveSeconds(0)
+                .timeToIdleSeconds(0)
+                .timeToLiveSeconds(21600)
                 .maxEntriesLocalHeap(0)
                 .memoryStoreEvictionPolicy("LRU")
-                .name("rssCaching");
+                .name("seoCaching");
 
         Cache rssCache = new net.sf.ehcache.Cache(rssConfiguration);
         Objects.requireNonNull(cacheManagerFactoryBean().getObject()).addCache(rssCache);

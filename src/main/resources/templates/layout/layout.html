@@ -19,7 +19,7 @@
                 <a th:href="@{/}"><h4>Jinia's LOG</h4></a>
             </div>
             <div id="nav-login" sec:authorize="!isAuthenticated()">
-                <a th:href="@{/login}"><i class="fas fa-sign-in-alt pe-2 fs-4"></i></a>
+                <a th:href="@{/login}"><span class="pe-2">로그인</span></a>
             </div>
             <div sec:authorize="isAuthenticated()" class="pe-2">
                 <span sec:authorize="hasRole('USER')" th:text="${#authentication.name} + '님'"></span>
@@ -72,7 +72,7 @@
         <!-- scripts e -->
     <!-- sections e -->
 
-        <footer class="footer bg-light">
+        <footer class="footer bg-light mt-5">
             <div class="container text-center p-2">
                 <h5><span class="text-muted">Copyright ©Jinia</span></h5>
             </div>

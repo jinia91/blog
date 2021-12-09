@@ -1,4 +1,4 @@
-package myblog.blog.rss.service;
+package myblog.blog.seo.service;
 
 import lombok.RequiredArgsConstructor;
 import myblog.blog.article.domain.Article;
@@ -33,7 +33,7 @@ public class RssService {
           3. 모든 게시물 item 변환후 xml에 삽입
           4. 발행
     */
-    @Cacheable(value = "rssCaching", key = "0")
+    @Cacheable(value = "seoCaching", key = "0")
     public String makeRssFeed(){
 
         List<Article> articles = articleService.getTotalArticle();
@@ -80,7 +80,7 @@ public class RssService {
     }
 
     /*
-        - item 작성 밑 채널에 추가
+        - item 작성 , 채널에 추가
     */
     private void addItemToChannel(List<Article> articles, SimpleDateFormat dateFormat, Element channel) {
         for (Article article : articles) {

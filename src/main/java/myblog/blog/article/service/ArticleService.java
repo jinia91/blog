@@ -46,7 +46,7 @@ public class ArticleService {
         - 아티클 작성 로직
             - 글작성시 아티클 캐싱 초기화
     */
-    @CacheEvict(value = {"layoutCaching", "layoutRecentArticleCaching","rssCaching"}, allEntries = true)
+    @CacheEvict(value = {"layoutCaching", "layoutRecentArticleCaching","seoCaching"}, allEntries = true)
     public Long writeArticle(ArticleForm articleDto, Member writer) {
 
         Article newArticle = articleFrom(articleDto, writer);
@@ -60,7 +60,7 @@ public class ArticleService {
         - 아티클 수정 로직
             - 글 수정시 아티클 캐싱 초기화
     */
-    @CacheEvict(value = {"layoutCaching", "layoutRecentArticleCaching","rssCaching"}, allEntries = true)
+    @CacheEvict(value = {"layoutCaching", "layoutRecentArticleCaching","seoCaching"}, allEntries = true)
     public void editArticle(Long articleId, ArticleForm articleForm) {
 
         Article article = articleRepository.findById(articleId).get();
@@ -76,7 +76,7 @@ public class ArticleService {
         - 아티클 삭제 로직
             - 글 삭제시 아티클 캐싱 초기화
     */
-    @CacheEvict(value = {"layoutCaching", "layoutRecentArticleCaching","rssCaching"}, allEntries = true)
+    @CacheEvict(value = {"layoutCaching", "layoutRecentArticleCaching","seoCaching"}, allEntries = true)
     public void deleteArticle(Long articleId) {
 
         naArticleRepository.deleteArticle(articleId);

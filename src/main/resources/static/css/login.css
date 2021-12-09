@@ -1,4 +1,23 @@
 
+.login-section{
+    width: 100%;
+    height: 90vh;
+    display: -webkit-box;
+    display: -moz-box;
+    display: -ms-flexbox;
+    display: flex;
+
+    -webkit-box-align: center;
+    -moz-box-align: center;
+    -ms-flex-align: center;
+    align-items: center; /* 수직 정렬 */
+
+    -webkit-box-pack: center;
+    -moz-box-pack: center;
+    -ms-flex-pack: center;
+    justify-content: center; /* 수평 정렬 */
+}
+
 button img{
     width: 200px;
     height:50px;
@@ -12,19 +31,17 @@ button img{
     background-repeat: no-repeat;
     background-size: 2em;
     border-radius: 0.5em;
-    border: none;
     color: white;
     cursor: pointer;
-    font-size: 0.9em;
+    font-size: 15px;
     line-height: 1em;
-    font-family: 'Noto Sans C JK KR';
-    font-weight: bold;
     padding: 0 2em 0 4em;
     text-decoration: none;
     transition: all 0.5s;
     height: 50px;
     width: 200px;
     margin-bottom: 5px;
+    box-shadow: 0px 4px 8px rgba(38, 38, 38, 0.2);
 
 }
 
@@ -49,8 +66,27 @@ button img{
     background-color: #2d4373;
 }
 
-.btn-naver{
-    background: none;
-    border: none;
+.btn-naver {
+    background-color: #3e983b;
+    background-image: url("/img/naver.svg");
+}
+.btn-naver:hover {
+    background-color: #56b13e;
+}
+.btn-naver:active {
+    background-color: #56b13e;
+}
 
+hr{
+    border:3px; height: 1px !important; display: block !important; width: 100% !important;
+}
+
+.login-box{
+    padding-top: 2rem;
+    padding-bottom: 2rem;
+    width: 30rem;
+}
+
+.alert{
+    color: red;
 }

@@ -27,7 +27,6 @@ public class MainController {
     private final ArticleService articleService;
     private final CategoryService categoryService;
     private final CommentService commentService;
-    private final ModelMapper modelMapper;
 
     /*
         - 메인 화면 제어용 컨트롤러

@@ -54,15 +54,12 @@ public class CategoryService {
         return categoryRepository.findByTitle(title);
     }
 
+
     /*
-        - 캐싱을 위한 전처리 매핑 로직
-            - 본래는 컨트롤러단에서 존재해야할 dto 매핑코드지만 캐싱을 위해 서비스단으로 이동
-            - 레이아웃 렌더링 성능 향상을 위해 캐싱작업
-              카테고리 변경 / 아티클 변경이 존재할경우 레이아웃 캐시 초기화
+        - 카테고리 이름으로 카테고리 찾기
     */
-    @Cacheable(value = "layoutCaching", key = "0")
-    public CategoryForView getCategoryForView() {
-        return CategoryForView.createCategory(naCategoryRepository.getCategoryCount());
+    public List<Category> getAllCategories() {
+        return categoryRepository.findAll();
     }
 
     /*
@@ -70,6 +67,17 @@ public class CategoryService {
     */
     public List<CategoryNormalDto> getCategorytCountList(){
         return naCategoryRepository.getCategoryCount();
+    }
+
+    /*
+        - getCategorytCountList()의 캐싱을 위한 전처리 매핑 로직
+            - 본래는 컨트롤러단에서 존재해야할 dto 매핑코드지만 캐싱을 위해 서비스단으로 이동
+            - 레이아웃 렌더링 성능 향상을 위해 캐싱작업
+              카테고리 변경 / 아티클 변경이 존재할경우 레이아웃 캐시 초기화
+    */
+    @Cacheable(value = "layoutCaching", key = "0")
+    public CategoryForView getCategoryForView() {
+        return CategoryForView.createCategory(naCategoryRepository.getCategoryCount());
     }
 
     /*
@@ -89,7 +97,7 @@ public class CategoryService {
                 3-3 DB에만 존재하는 카테고리는 삭제처리
     */
     @Transactional
-    @CacheEvict(value = "layoutCaching", allEntries = true)
+    @CacheEvict(value = {"layoutCaching","seoCaching"}, allEntries = true)
     public void changeCategory(List<CategoryNormalDto> categoryList) {
 
         // 1.카테고리 리스트 순서 작성
@@ -198,7 +206,7 @@ public class CategoryService {
     /*
         - 최초 더미 카테고리 추가 코드
     */
-    @PostConstruct
+//    @PostConstruct
     public void insertCategory() {
 
         Category category0 = Category.builder()

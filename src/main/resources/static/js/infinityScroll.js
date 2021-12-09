@@ -57,7 +57,6 @@ function makeNextPage() {
                                                     </div>
                                                     <div class="col-9 row row-cols-1 align-self-center">
                                                         <h3 class="card-title col mb-3 text-truncate">${listElement.title}</h3>
-                                                        <p class="d-none d-md-block col recent-card-text" >${listElement.content}</p>
                                                         <p class="col mb-0"><small class="text-muted">${date}</small></p>
                                                     </div>
                                                 </div>

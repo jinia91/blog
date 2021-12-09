@@ -84,8 +84,9 @@
                     <a th:href="@{/article/view(articleId=${article.getId()})}">
                         <div class=" card ratio ratio-1x1 popular-card "
                              th:style="|background-image: url(${article.getThumbnailUrl()}); background-size: cover;|">
-                            <div class="card-description">
-                                <p th:text="${article.getTitle()}">타이틀</p>
+                            <div class="card-description text-center">
+                                <small><small th:text="|작성일 : ${#temporals.format(article.getCreatedDate(), 'yyyy-MM-dd')}|"></small></small>
+                                <p class="text-truncate" th:text="${article.getTitle()}">타이틀</p>
                             </div>
                         </div>
                     </a>
@@ -127,11 +128,11 @@
     </div>
         <!--  js  -->
     <script src="https://kit.fontawesome.com/233840a552.js" crossorigin="anonymous"></script>
-    <script src="/js/infinityScroll.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.0/moment.min.js"></script>
     <script src="/node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="/node_modules/wow.js/dist/wow.js"></script>
     <script>new WOW().init()</script>
+    <script src="/js/infinityScroll.js"></script>
 </section>
 
 </body>

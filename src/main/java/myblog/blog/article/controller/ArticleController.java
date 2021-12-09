@@ -176,7 +176,7 @@ public class ArticleController {
                         .map(article ->
                                 modelMapper.map(article, ArticleDtoForMain.class));
 
-        PagingBoxDto pagingBoxDto = PagingBoxDto.createOf(page, articleList.getTotalPages());
+        PagingBoxDto pagingBoxDto = PagingBoxDto.createOf(page, (int)articleList.getTotalElements());
 
         modelsForLayout(model);
         //
@@ -202,7 +202,7 @@ public class ArticleController {
                         .map(article ->
                                 modelMapper.map(article, ArticleDtoForMain.class));
 
-        PagingBoxDto pagingBoxDto = PagingBoxDto.createOf(page, articleList.getTotalPages());
+        PagingBoxDto pagingBoxDto = PagingBoxDto.createOf(page, (int)articleList.getTotalElements());
 
         modelsForLayout(model);
         //
@@ -222,6 +222,7 @@ public class ArticleController {
             4. Dto 담기
             5. 조회수 증가 검토
     */
+    @Transactional
     @GetMapping("/article/view")
     public String readArticle(@RequestParam Long articleId,
                               @AuthenticationPrincipal PrincipalDetails principal,
@@ -319,9 +320,10 @@ public class ArticleController {
     }
 
     /*
-        - 쿠키 추가 검토
+        - 쿠키 추가 / 조회수 증가 검토
     */
-    private void addHitWithCookie(Article article, String cookie, HttpServletResponse response) {
+    @Transactional
+    public void addHitWithCookie(Article article, String cookie, HttpServletResponse response) {
         Long articleId = article.getId();
         if (cookie == null) {
             Cookie viewCookie = new Cookie("view", articleId + "/");

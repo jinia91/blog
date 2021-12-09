@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
     - REST 컨트롤러 요청 에러 제어
 */
 @RestControllerAdvice
-public class ExceptionRestController {
+public class ExceptionRestControllerAdvice {
     @ExceptionHandler(CustomFormException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public String handleCategoryControllerException(RuntimeException e) {
