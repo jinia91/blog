@@ -118,6 +118,15 @@ body::-webkit-scrollbar-track {
 
 .navbar {
     opacity: 0.98;
+    height: 50px;
+}
+
+.nav-brand{
+    position: absolute;
+    left: 50%;
+    margin-left: -50px;
+    font-size: 20px;
+
 }
 
 .navbar-toggler {
@@ -436,4 +445,8 @@ body::-webkit-scrollbar-track {
 
 .categoryBox .fw-bold{
     color:  #1f70de !important;
+}
+
+.fa-bars{
+    font-size: 20px;
 }

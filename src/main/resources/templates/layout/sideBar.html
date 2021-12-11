@@ -4,11 +4,11 @@
 
 <div th:fragment="sideBar">
 
-    <div class="m-4 sidebar-header">
-        <a th:href="@{/}"><h3 class="text-black-50" style="white-space: nowrap">Jinia's LOG</h3></a>
-        <a href="#"><h5 class="text-black-50">ABOUT ME</h5></a>
+    <div class="m-4 sidebar-header" style="white-space: nowrap">
+        <a th:href="@{/}"><h3 class="text-black-50">Jinia's LOG</h3></a>
+        <a th:href="@{/aboutMe}"><h5 class="text-black-50">ABOUT ME(작성중)</h5></a>
         <a sec:authorize="hasRole('ADMIN')" th:href="@{/article/write}" href="#">
-            <h5 class="text-black-50" style="white-space: nowrap">NEW ARTICLE</h5>
+            <h5 class="text-black-50">NEW ARTICLE</h5>
         </a>
 
     </div>
@@ -38,8 +38,8 @@
             </div>
         </li>
 
+        <!--   카테고리 s   -->
         <li class="border-top my-3"></li>
-
         <li class="mb-1 superCategory btn fs-5"><a th:href="@{/article/list(category=total,tier=0,page=1)}"
                                                    th:text="|전체글(${category.getCount()})|">토탈</a></li>
         <a th:href="@{/edit/category}" sec:authorize="hasRole('ADMIN')" class="me-0 ps-0 btn"><i class="fas fa-pen"></i></a>
@@ -52,11 +52,11 @@
                         aria-expanded="true">
                 </button>
                 <a th:href="@{/article/list(category=${superCategory.getTitle()},tier=1,page=1)}"
-                   class="ms-0 superCategory btn fs-6"
+                   class="ms-0 superCategory btn fs-5"
                    th:text="|${superCategory.getTitle()}(${superCategory.getCount()})|" >슈퍼</a>
             </div>
             <div class="collapse show" th:id="|collapse-${superCategory.getId()}-sub|">
-                <ul class="ms-1 btn-toggle-nav list-unstyled fw-normal pb-1 small"
+                <ul class="ms-1 btn-toggle-nav list-unstyled fw-normal pb-1"
                     th:each="subCategory : ${superCategory.getCategoryTCountList()}">
                     <li><a th:href="@{/article/list(category=${subCategory.getTitle()},tier=2,page=1)}"
                            class="link-dark rounded"
@@ -64,6 +64,8 @@
                 </ul>
             </div>
         </li>
+        <!--    카테고리 e    -->
+        <!--   최신 댓글 s    -->
         <li class="border-top my-3"></li>
         <li class="mb-1">
             <button class="btn btn-toggle align-items-center rounded collapsed fs-5" data-bs-toggle="collapse"
@@ -82,9 +84,9 @@
                 </ul>
             </div>
         </li>
+        <!--    최신 댓글 e    -->
 
         <li class="border-top my-3"></li>
-
         <li class="mb-1">
             <div >
                 <ul class="btn-toggle-nav list-unstyled fw-normal pb-1">

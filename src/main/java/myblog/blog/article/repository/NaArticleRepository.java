@@ -12,4 +12,5 @@ public interface NaArticleRepository {
     @Delete("delete from article " +
             "where article_id = #{articleId} ")
     void deleteArticle(Long articleId);
+
 }

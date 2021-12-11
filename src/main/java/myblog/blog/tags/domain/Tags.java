@@ -20,7 +20,7 @@ public class    Tags extends BasicEntity {
     @Column(name = "tags_id")
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "TAGS_SEQ_GENERATOR")
     private Long id;
-    @Column(unique = true, nullable = false)
+    @Column(unique = true, nullable = false, length = 20)
     private String name;
     @OneToMany(mappedBy = "tags")
     private List<ArticleTagList> articleTagLists = new ArrayList<>();

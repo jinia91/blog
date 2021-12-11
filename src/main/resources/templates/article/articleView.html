@@ -120,10 +120,16 @@
                                th:text="|'${article.getCategory()}'|"></a>
                             <span>카테고리의 다른글</span></div>
                         <ul class="row row-cols-1 row-cols-sm-2 mt-2 ms-5 me-5 toolList">
-                            <li th:each="list:${articlesSortBycategory}"
-                                th:if="${list.getTitle()} != ${article.getTitle()}" class="col text-block" >
-                                <a th:href="@{/article/view(articleId=${list.getId()})}" th:text="${list.getTitle()}">글목록</a>
-                            </li>
+
+                           <th:block th:each="list:${articlesSortBycategory}">
+                               <li class="col text-block otherArticle" th:if="${list.getTitle()} != ${article.getTitle()}">
+                                   <a th:href="@{/article/view(articleId=${list.getId()})}" th:text="${list.getTitle()}">글목록</a>
+                               </li>
+                               <li class="col text-block fw-bold curArticle" th:if="${list.getTitle()} == ${article.getTitle()}">
+                                   <a th:text="${list.getTitle()}">글목록</a>
+                               </li>
+                           </th:block>
+
                         </ul>
                         <div class="mt-2 ms-5 me-5">
                             <a class="me-2" th:each="tag: ${article.tags}"

@@ -695,7 +695,7 @@ ul.toolList li {
     border-bottom: 1px solid #dbdbdb;
 }
 
-ul.toolList li:before {
+ul.toolList .otherArticle:before {
     content: "\f550";
     font-family: FontAwesome;
     -webkit-font-smoothing: antialiased;
@@ -704,6 +704,17 @@ ul.toolList li:before {
     vertical-align: middle;
     margin-right: 3px;
 }
+
+ul.toolList .curArticle:before  {
+    content: "\f518";
+    font-family: FontAwesome;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    display: inline-block;
+    vertical-align: middle;
+    margin-right: 3px;
+}
+
 
 .badge:before {
     content: "\f02c";
@@ -811,3 +822,4 @@ ul.toolList li:before {
     text-overflow:ellipsis;
     white-space:nowrap;
 }
+

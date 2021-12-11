@@ -15,8 +15,8 @@
                     aria-controls="offcanvasMenu">
                 <i class="fas fa-bars"></i>
             </button>
-            <div id="nav-brand">
-                <a th:href="@{/}"><h4>Jinia's LOG</h4></a>
+            <div id="nav-brand" class="nav-brand">
+                <a th:href="@{/}">Jinia's LOG</a>
             </div>
             <div id="nav-login" sec:authorize="!isAuthenticated()">
                 <a th:href="@{/login}"><span class="pe-2">로그인</span></a>

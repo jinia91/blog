@@ -51,7 +51,7 @@
     <div class="recent-cards mt-5 ms-4 me-4">
 
         <div class="cards-container container p-0" id="infiniteScrollBox">
-            <h1 class="text-center" th:text="|${param.keyword} 검색 결과|"></h1>
+            <h1 class="text-center" th:text="|'${param.keyword}' 검색 결과|"></h1>
             <hr>
             <div id="articlePage-0">
                 <div class="card mb-3 recent-card wow fadeInUp" th:each="article :${articleList.getContent()}">
@@ -63,6 +63,7 @@
                             </div>
                             <div class="col-9 row row-cols-1 align-self-center">
                                 <h3 class="card-title col mb-3 text-truncate" th:text="${article.getTitle()}">글 제목</h3>
+                                <p class="d-none d-md-block col recent-card-text" th:text="${article.getContent()}"></p>
                                 <p class="col mb-0">
                                     <small class="text-muted"
                                            th:text="|작성일 : ${#temporals.format(article.getCreatedDate(), 'yyyy-MM-dd')}|"></small>
@@ -72,8 +73,6 @@
                     </a>
                 </div>
             </div>
-            <!--     infinityScroll     -->
-            <div id="nextPagination"></div>
 
         </div>
     </div>
@@ -85,7 +84,7 @@
             <ul class="pagination">
                 <li class="page-item">
                     <a class="page-link" aria-label="First"
-                       th:href="@{/article/list/tag/(tag=(${param.keyword}),page=(1))}"
+                       th:href="@{/article/list/search/(keyword=(${param.keyword}),page=(1))}"
                        th:if="${pagingBox.getCurPageNum()}>5">
                         <span>«</span>
                     </a>
@@ -93,7 +92,7 @@
 
                 <li class="page-item">
                     <a class="page-link" aria-label="Previous"
-                       th:href="@{/article/list/tag/(tag=(${param.keyword}),page=(${pagingBox.getCurPageNum()}-5))}"
+                       th:href="@{/article/list/search/(keyword=(${param.keyword}),page=(${pagingBox.getCurPageNum()}-5))}"
                        th:if="${pagingBox.getCurPageNum()}>5">
                 <span>
                   < </span>
@@ -103,16 +102,16 @@
                 <th:block th:each="page : ${#numbers.sequence(pagingBox.getBoxStartNum(), pagingBox.getBoxEndNum())}">
                     <li th:if="${pagingBox.getCurPageNum()==page}" class="page-item active">
                         <a th:text="${page}" class="page-link"
-                           th:href="@{/article/list/tag/(tag=(${param.keyword}),page=(${page}))}"></a>
+                           th:href="@{/article/list/search/(keyword=(${param.keyword}),page=(${page}))}"></a>
                     </li>
                     <li th:unless="${pagingBox.getCurPageNum()==page}" class="page-item">
                         <a th:text="${page}" class="page-link"
-                           th:href="@{/article/list/tag/(tag=(${param.keyword}),page=(${page}))}"></a>
+                           th:href="@{/article/list/search/(keyword=(${param.keyword}),page=(${page}))}"></a>
                     </li>
                 </th:block>
                 <li class="page-item">
                     <a class="page-link" aria-label="Next"
-                       th:href="@{/article/list/tag/(tag=(${param.keyword}),page=(${pagingBox.getCurPageNum()}+5))}"
+                       th:href="@{/article/list/search/(keyword=(${param.keyword}),page=(${pagingBox.getCurPageNum()}+5))}"
                        th:if="${pagingBox.getCurPageNum()<=pagingBox.getPNumForNextBtn()}"
                     >
                         <span aria-hidden="true">></span>
@@ -121,7 +120,7 @@
 
                 <li class="page-item">
                     <a class="page-link" aria-label="Last"
-                       th:href="@{/article/list/tag/(tag=(${param.keyword}),page=(${pagingBox.getLastPageNum()}))}"
+                       th:href="@{/article/list/search/(keyword=(${param.keyword}),page=(${pagingBox.getLastPageNum()}))}"
                        th:if="${pagingBox.getCurPageNum()<=pagingBox.getPNumForNextBtn()}"
                     >
                         <span aria-hidden="true">»</span>

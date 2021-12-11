@@ -153,6 +153,11 @@ public class ArticleController {
         Slice<ArticleDtoForMain> articleList = articleService.getArticlesByCategory(category, tier, pagingBoxDto.getCurPageNum())
                 .map(article ->
                         modelMapper.map(article, ArticleDtoForMain.class));
+
+        for(ArticleDtoForMain article : articleList){
+            article.setContent(Jsoup.parse(htmlRenderer.render(parser.parse(article.getContent()))).text());
+        }
+
         //
 
         model.addAttribute("pagingBox", pagingBoxDto);
@@ -179,6 +184,11 @@ public class ArticleController {
         PagingBoxDto pagingBoxDto = PagingBoxDto.createOf(page, (int)articleList.getTotalElements());
 
         modelsForLayout(model);
+
+        for(ArticleDtoForMain article : articleList){
+            article.setContent(Jsoup.parse(htmlRenderer.render(parser.parse(article.getContent()))).text());
+        }
+
         //
 
         model.addAttribute("articleList", articleList);
@@ -205,6 +215,11 @@ public class ArticleController {
         PagingBoxDto pagingBoxDto = PagingBoxDto.createOf(page, (int)articleList.getTotalElements());
 
         modelsForLayout(model);
+
+        for(ArticleDtoForMain article : articleList){
+            article.setContent(Jsoup.parse(htmlRenderer.render(parser.parse(article.getContent()))).text());
+        }
+
         //
 
         model.addAttribute("articleList", articleList);
@@ -255,7 +270,7 @@ public class ArticleController {
 
         List<ArticleDtoByCategory> articleTitlesSortByCategory =
                 articleService
-                        .getArticlesByCategoryForDetailView(article.getCategory())
+                        .getArticlesByCategoryForDetailView(article.getCategory(), article)
                         .stream()
                         .map(article1 -> modelMapper.map(article1, ArticleDtoByCategory.class))
                         .collect(Collectors.toList());

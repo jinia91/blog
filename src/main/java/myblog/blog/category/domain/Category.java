@@ -26,7 +26,7 @@ public class Category extends BasicEntity {
     @Column(name = "category_id")
     private Long id;
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false, unique = true, length = 20)
     private String title;
 
     @OneToMany(mappedBy = "category")

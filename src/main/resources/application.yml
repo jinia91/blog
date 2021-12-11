@@ -19,9 +19,9 @@ server:
     properties:
       hibernate:
         #        show_sql: true
-        format_sql: true
+        format_sql:
         jdbc:
-          batch_size: 100
+          batch_size:
 
 
 git:

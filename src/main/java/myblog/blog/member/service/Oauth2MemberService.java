@@ -95,7 +95,6 @@ public class Oauth2MemberService extends DefaultOAuth2UserService {
     public void insertAdmin(){
 
         Member admin = memberRepository.findByEmail(adminEmail);
-
         if(admin == null){
             admin = Member.builder()
                     .username(adminUsername+"#"+adminProviderId.substring(0,5))

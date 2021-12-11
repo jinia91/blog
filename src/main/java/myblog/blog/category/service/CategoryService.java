@@ -65,7 +65,7 @@ public class CategoryService {
     /*
         - 카테고리와 카테고리별 아티클 수 찾기
     */
-    public List<CategoryNormalDto> getCategorytCountList(){
+    public List<CategoryNormalDto> getCategorytCountList() {
         return naCategoryRepository.getCategoryCount();
     }
 
@@ -97,7 +97,7 @@ public class CategoryService {
                 3-3 DB에만 존재하는 카테고리는 삭제처리
     */
     @Transactional
-    @CacheEvict(value = {"layoutCaching","seoCaching"}, allEntries = true)
+    @CacheEvict(value = {"layoutCaching", "seoCaching"}, allEntries = true)
     public void changeCategory(List<CategoryNormalDto> categoryList) {
 
         // 1.카테고리 리스트 순서 작성
@@ -204,73 +204,19 @@ public class CategoryService {
     }
 
     /*
-        - 최초 더미 카테고리 추가 코드
+        - 최초 필수 더미 카테고리 추가 코드
     */
-//    @PostConstruct
-    public void insertCategory() {
-
-        Category category0 = Category.builder()
-                .tier(0)
-                .title("total")
-                .pSortNum(0)
-                .cSortNum(0)
-                .build();
+    @PostConstruct
+    public void insertDummyCategory() {
+        if(categoryRepository.findByTitle("total")==null) {
+            Category category0 = Category.builder()
+                    .tier(0)
+                    .title("total")
+                    .pSortNum(0)
+                    .cSortNum(0)
+                    .build();
             categoryRepository.save(category0);
-
-            Category category1 = Category.builder()
-                .tier(1)
-                .title("카테고리 부모")
-                .pSortNum(1)
-                .cSortNum(0)
-                .build();
-        categoryRepository.save(category1);
-        Category category2 = Category.builder()
-                .tier(2)
-                .title("카테고리 자식")
-                .pSortNum(1)
-                .cSortNum(1)
-                .parents(category1)
-                .build();
-        categoryRepository.save(category2);
-        Category category3 = Category.builder()
-                .tier(1)
-                .title("카테고리 부모2")
-                .pSortNum(2)
-                .cSortNum(0)
-                .build();
-        categoryRepository.save(category3);
-        Category category4 = Category.builder()
-                .tier(1)
-                .title("카테고리 부모3")
-                .pSortNum(3)
-                .cSortNum(0)
-                .build();
-        categoryRepository.save(category4);
-        Category category5 = Category.builder()
-                .tier(2)
-                .title("카테고리 자식2")
-                .pSortNum(2)
-                .cSortNum(1)
-                .parents(category3)
-                .build();
-        categoryRepository.save(category5);
-        Category category6 = Category.builder()
-                .tier(2)
-                .title("카테고리 자식3")
-                .pSortNum(2)
-                .cSortNum(2)
-                .parents(category3)
-                .build();
-        categoryRepository.save(category6);
-        Category category7 = Category.builder()
-                .tier(2)
-                .title("카테고리 자식4")
-                .pSortNum(3)
-                .cSortNum(1)
-                .parents(category4)
-                .build();
-        categoryRepository.save(category7);
-
+        }
     }
 
 }

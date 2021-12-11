@@ -63,6 +63,7 @@
                             </div>
                             <div class="col-9 row row-cols-1 align-self-center">
                                 <h3 class="card-title col mb-3 text-truncate" th:text="${article.getTitle()}">글 제목</h3>
+                                <p class="d-none d-md-block col recent-card-text" th:text="${article.getContent()}"></p>
                                 <p class="col mb-0">
                                     <small class="text-muted"
                                            th:text="|작성일 : ${#temporals.format(article.getCreatedDate(), 'yyyy-MM-dd')}|"></small>
