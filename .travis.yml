@@ -35,6 +35,20 @@ deploy:
     on:
       all_branches: true
 
+  - provider: codedeploy
+    access_key_id: $AWS_ACESS_KEY
+    secret_access_key: $AWS_SECRET_KEY
+    bucket: blog-build-bucket
+    key: springboot-blog.zip
+    bundle_type: zip
+    application: springboot-blog
+    deployment_group: springboot-blog-group
+    region: ap-northeast-2
+    wait-until-deployed: true
+    on:
+      all_branches: true
+
+
 # CI 실행 완료 시 메일로 알람
 notifications:
   email:
