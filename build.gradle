@@ -95,6 +95,6 @@ copyFrontLib.dependsOn npmInstall
 compileJava.dependsOn copyFrontLib
 
 
-jar {
+tasks.getByName<Jar>("jar") {
 	enabled = false
 }
