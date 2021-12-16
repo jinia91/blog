@@ -37,4 +37,5 @@ out/
 #src/main/resources/static/node_modules
 
 ### config ###
+src/main/resources/application.yml
 src/main/resources/application-dev.yml
