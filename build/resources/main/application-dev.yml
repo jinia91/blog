@@ -1,0 +1,25 @@
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: jinia
+    password: 1234
+    url: jdbc:mysql://localhost:3306/board?serverTimezone=Asia/Seoul
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id:
+            client-secret:
+            scope:
+
+  profiles:
+    include: oauth
+
+git:
+  gitId: jinia91
+  gitToken: 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
+  imgUrl: https://github.com/jinia91/blogTest/blob/main/img/
+  repo: jinia91/blogTest
+  imgRepo: jinia91/blogTest
+
