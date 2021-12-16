@@ -93,3 +93,8 @@ task copyFrontLib(type: Copy) {
 }
 copyFrontLib.dependsOn npmInstall
 compileJava.dependsOn copyFrontLib
+
+
+jar {
+	enabled = false
+}
