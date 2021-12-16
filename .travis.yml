@@ -18,9 +18,9 @@ before_install:
   - chmod +x gradlew
 
 before_deploy:
-  - zip -r blog *
+  - zip -r springboot-blog blog
   - mkdir -p deploy
-  - mv blog.zip deploy/blog.zip
+  - mv springboot-blog.zip deploy/springboot-blog.zip
 
 deploy:
   - provider: s3
