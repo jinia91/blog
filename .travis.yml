@@ -14,3 +14,20 @@ cache:
 
 script: "./gradlew clean build"
 
+before_deploy:
+  - zip -r springboot-blog *
+  - mkdir -p deploy
+  - mv springboot-blog.zip deploy/springboot-blog.zip
+
+deploy:
+  - provider: s3
+    access_key_id: $AWS_ACESS_KEY
+    secret_access_key: $AWS_SECRET_KEY
+    bucket: blog-build-bucket
+    region: ap-northeast-2
+    skip_cleanup: true
+    acl: private
+    local_dir: deploy
+    wait-until-deployed: true
+
+
