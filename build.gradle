@@ -7,6 +7,11 @@ plugins {
 
 }
 
+
+jar {
+	enabled = false
+}
+
 group = 'myblog'
 version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '11'
@@ -94,7 +99,3 @@ task copyFrontLib(type: Copy) {
 copyFrontLib.dependsOn npmInstall
 compileJava.dependsOn copyFrontLib
 
-
-tasks.getByName<Jar>("jar") {
-	enabled = false
-}
