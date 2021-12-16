@@ -18,7 +18,7 @@ before_install:
   - chmod +x gradlew
 
 before_deploy:
-  - zip -r springboot-blog blog
+  - zip -r springboot-blog ./*
   - mkdir -p deploy
   - mv springboot-blog.zip deploy/springboot-blog.zip
 
@@ -35,4 +35,9 @@ deploy:
     on:
       all_branches: true
 
+# CI 실행 완료 시 메일로 알람
+notifications:
+  email:
+    recipients:
+      - creee77@gmail.com
 
