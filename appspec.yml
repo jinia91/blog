@@ -2,7 +2,7 @@ version: 0.0
 os: linux
 files:
   - source: /
-    destination: /home/ec2-user/app/step2/zip/
+    destination: /home/ec2-user/app/step3/zip/
     overwrite: yes
 
 permissions:
@@ -13,6 +13,17 @@ permissions:
 
 hooks:
   AfterInstall:
-    - location: ./deploy.sh
+    - location: stop.sh
       timeout: 600
       runas: root
+
+  ApplicationStart:
+    - location: start.sh
+      timeout: 600
+      runas: root
+
+  ValidateService:
+    - location: health.sh
+      timeout: 600
+      runas: root
+
