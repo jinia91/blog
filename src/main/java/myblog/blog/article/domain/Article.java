@@ -29,7 +29,6 @@ import java.util.List;
         initialValue = 1, allocationSize = 50)
 /*
     - fts 구현을 위한 인덱스 설정
-        -
 */
 @Table(indexes = {
         @Index(name="i_article_title", columnList = "title"),

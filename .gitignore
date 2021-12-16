@@ -38,7 +38,7 @@ out/
 
 
 ### NPM ###
-src/main/resources/static/node_modules
+#src/main/resources/static/node_modules
 
 ### config ###
 src/main/resources/application-dev.yml
