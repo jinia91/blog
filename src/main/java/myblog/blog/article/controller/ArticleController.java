@@ -78,7 +78,7 @@ public class ArticleController {
         }
 
         Long articleId = articleService.writeArticle(articleForm, principal.getMember());
-//        articleService.pushArticleToGithub(article);
+        articleService.pushArticleToGithub(articleId);
         tempArticleService.deleteTemp();
 
         return "redirect:/article/view?articleId=" + articleId;

@@ -179,8 +179,9 @@ public class ArticleService {
     /*
         - 깃헙에 아티클 푸시하기
     */
-    public void pushArticleToGithub(Article article) {
+    public void pushArticleToGithub(Long articleId) {
         try {
+            Article article = articleRepository.findById(articleId).get();
             GitHub gitHub = new GitHubBuilder().withOAuthToken(gitToken).build();
             GHRepository repository = gitHub.getRepository(gitRepo);
             repository.createContent()

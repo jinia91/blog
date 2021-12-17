@@ -16,6 +16,7 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 @Service
 @RequiredArgsConstructor
@@ -37,7 +38,7 @@ public class SiteMapService {
     public String makeSiteMap(){
         List<Article> articles = articleService.getTotalArticle();
         List<Category> allCategories = categoryService.getAllCategories();
-        SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
+        SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss Z", Locale.ENGLISH);
 
         // siteMap 레이아웃 루트 작성
         Element siteMap = new Element("urlset", NAMESPACE);
