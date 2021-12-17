@@ -31,6 +31,8 @@
 
 <section class="login-section">
 
+    <div class=""></div>
+
     <div class="card container login-box">
         <P class="text-center alert" id="capsAlert" th:text="${errMsg}">로그인 오류</P>
         <div class="d-flex flex-column card-body align-items-center justify-content-center">
@@ -43,12 +45,6 @@
             <div class="col m-2">
                 <a href="/oauth2/authorization/google">
                     <button class="btnCtm btn-google">구글 로그인</button>
-                </a>
-            </div>
-
-            <div class="col m-2">
-                <a href="/oauth2/authorization/facebook">
-                    <button class="btnCtm btn-facebook">페이스북 로그인</button>
                 </a>
             </div>
 

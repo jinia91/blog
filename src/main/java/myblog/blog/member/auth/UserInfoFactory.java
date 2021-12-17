@@ -22,7 +22,6 @@ public class UserInfoFactory {
     static {
         userInfoFactoryMap = new EnumMap<>(ProviderType.class);
         userInfoFactoryMap.put(ProviderType.GOOGLE, GoogleUserInfo::new);
-        userInfoFactoryMap.put(ProviderType.FACEBOOK, FacebookUserInfo::new);
         userInfoFactoryMap.put(ProviderType.NAVER, NaverUserInfo::new);
     }
 

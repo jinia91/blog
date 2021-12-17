@@ -11,7 +11,6 @@ import lombok.RequiredArgsConstructor;
 @Getter
 public enum ProviderType {
 
-    FACEBOOK("facebook"),
     GOOGLE("google"),
     NAVER("naver");
 
