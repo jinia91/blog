@@ -57,10 +57,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .csrf()
                 .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
 
-                //https
-                .and()
-                .requiresChannel()
-                .antMatchers("/login*").requiresSecure()
 
                 // oauth2 로그인 인증
                 .and()
