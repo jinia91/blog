@@ -12,7 +12,9 @@ import org.jdom2.output.XMLOutputter;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -23,7 +25,7 @@ public class SiteMapService {
     private final CategoryService categoryService;
 
     static final String NAMESPACE = "http://www.sitemaps.org/schemas/sitemap/0.9";
-    static final String ROOT = "http://localhost:8080";
+    static final String ROOT = "https://www.jiniaslog.co.kr";
     static final String CATEGORYPRE = "/article/list?";
     static final String CATEGORYPRO = "&page=1";
     static final String ARTICLEPREV = "/article/view?articleId=";
@@ -35,6 +37,7 @@ public class SiteMapService {
     public String makeSiteMap(){
         List<Article> articles = articleService.getTotalArticle();
         List<Category> allCategories = categoryService.getAllCategories();
+        SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
 
         // siteMap 레이아웃 루트 작성
         Element siteMap = new Element("urlset", NAMESPACE);
@@ -42,7 +45,7 @@ public class SiteMapService {
         // 메인화면
         Element main = new Element("url",NAMESPACE);
         main.addContent(new Element("loc",NAMESPACE).setText(ROOT));
-        main.addContent(new Element("lastmod",NAMESPACE).setText(LocalDateTime.now().toString()));
+        main.addContent(new Element("lastmod",NAMESPACE).setText(fmt.format(new Date())));
         main.addContent(new Element("priority",NAMESPACE).setText("1.0"));
         siteMap.addContent(main);
 

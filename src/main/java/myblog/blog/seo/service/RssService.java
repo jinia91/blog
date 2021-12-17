@@ -64,7 +64,7 @@ public class RssService {
     private Element buildChannel() {
         Element channel = new Element("channel");
         channel.addContent(new Element("title").addContent(new CDATA("Jinia's LOG")));
-        channel.addContent(new Element("link").setText("http://218.38.91.194:10250/"));
+        channel.addContent(new Element("link").setText("https://www.jiniaslog.co.kr"));
         channel.addContent(new Element("description").addContent(new CDATA("비전공 출신, 개발자 지망생의 공부 내용을 기록하는 블로그입니다.")));
         return channel;
     }
@@ -88,10 +88,10 @@ public class RssService {
             Element item = new Element("item");
 
             item.addContent(new Element("title").addContent(new CDATA(article.getTitle())));
-            item.addContent(new Element("link").setText("http://218.38.91.194:10250/article/view?articleId=" + article.getId()));
+            item.addContent(new Element("link").setText("https://www.jiniaslog.co.kr/article/view?articleId=" + article.getId()));
             item.addContent(new Element("description").addContent(new CDATA(htmlRenderer.render(parser.parse(article.getContent())))));
             item.addContent(new Element("pubDate").setText(dateFormat.format(Timestamp.valueOf(article.getCreatedDate()))));
-            item.addContent(new Element("guid").setText("http://218.38.91.194:10250/article/view?articleId=" + article.getId()));
+            item.addContent(new Element("guid").setText("https://www.jiniaslog.co.kr/article/view?articleId=" + article.getId()));
 
             channel.addContent(item);
         }
