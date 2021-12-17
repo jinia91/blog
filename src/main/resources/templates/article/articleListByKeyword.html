@@ -18,7 +18,7 @@
     <meta property="og:description" th:content="|${param.keyword} 검색 결과|"/>
     <meta property="og:title" th:content="|${param.keyword} 검색 결과 - Jinia's LOG'|"/>
     <meta property="og:image" content="https://github.com/jinia91/blogTest/blob/main/img/a341399c-494f-4a1b-9c03-8d566a3a4097.png?raw=true"/>
-    <meta property="og:url" content=""/>
+    <meta property="og:url" th:content="|https://www.jiniaslog.co.kr/article/list/search/?keyword=${param.keyword}&page=${param.page}|"/>
     <meta property="og:site_name" content="|__${keyword}__ 검색 결과 - Jinia's LOG'|"/>
 
     <!-- twitter -->
@@ -26,7 +26,7 @@
     <meta property="twitter:title" th:content="|${param.keyword} 검색 결과 - Jinia's LOG'|"/>
     <meta property="twitter:description" th:content="|${param.keyword} 검색 결과|"/>
     <meta property="twitter:image" content="https://github.com/jinia91/blogTest/blob/main/img/a341399c-494f-4a1b-9c03-8d566a3a4097.png?raw=true"/>
-    <meta property="twitter:url" content=""/>
+    <meta property="twitter:url" th:content="|https://www.jiniaslog.co.kr/article/list/search/?keyword=${param.keyword}&page=${param.page}|"/>
     <meta property="twitter:creator" content="Jinia"/>
 
     <link rel="icon" href="/img/favicon-16x16.png"/>

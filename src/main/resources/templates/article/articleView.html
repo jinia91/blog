@@ -18,7 +18,7 @@
     <meta property="og:description" th:content="${metaContents}"/>
     <meta property="og:title" th:content="|${article.getTitle()} - Jinia's LOG'|"/>
     <meta property="og:image" th:content="${article.getThumbnailUrl()}"/>
-    <meta property="og:url" content=""/>
+    <meta property="og:url" th:content="|https://www.jiniaslog.co.kr/article/view?articleId=${article.getId()}|"/>
     <meta property="og:site_name" content="Jinia's LOG"/>
 
     <!-- twitter -->
@@ -26,7 +26,7 @@
     <meta property="twitter:title" th:content="|${article.getTitle()} - Jinia's LOG'|"/>
     <meta property="twitter:description" th:content="${metaContents}"/>
     <meta property="twitter:image" th:content="${article.getThumbnailUrl()}"/>
-    <meta property="twitter:url" content=""/>
+    <meta property="twitter:url" th:content="|https://www.jiniaslog.co.kr/article/view?articleId=${article.getId()}|"/>
     <meta property="twitter:creator" content="Jinia"/>
 
     <link rel="icon" href="/img/favicon-16x16.png"/>
