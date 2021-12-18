@@ -1,6 +1,8 @@
 # Jinia's LOG
 나만의 블로그 웹 사이트 개발 프로젝트
 
+https://www.jiniaslog.co.kr/
+
 ## 목차
 
 ## 개발 환경
