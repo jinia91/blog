@@ -13,12 +13,14 @@ import org.jdom2.output.Format;
 import org.jdom2.output.XMLOutputter;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class RssService {
 

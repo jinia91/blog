@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.annotation.PostConstruct;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class Oauth2MemberService extends DefaultOAuth2UserService {
 

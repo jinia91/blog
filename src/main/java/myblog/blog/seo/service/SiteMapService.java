@@ -11,6 +11,7 @@ import org.jdom2.output.Format;
 import org.jdom2.output.XMLOutputter;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
@@ -19,6 +20,7 @@ import java.util.List;
 import java.util.Locale;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class SiteMapService {
 

@@ -25,7 +25,7 @@ public class ExceptionController implements ErrorController {
     private final CommentService commentService;
 
     @GetMapping("/error")
-    public String errorView(Model model, HttpServletRequest request){
+    public String errorView(Model model){
 
         CategoryForView categoryForView = categoryService.getCategoryForView();
         List<CommentDtoForLayout> comments = commentService.recentCommentList();

@@ -180,8 +180,10 @@ public class ArticleService {
         - 깃헙에 아티클 푸시하기
     */
     public void pushArticleToGithub(Long articleId) {
+        Article article = articleRepository.findById(articleId).get();
+
         try {
-            Article article = articleRepository.findById(articleId).get();
+
             GitHub gitHub = new GitHubBuilder().withOAuthToken(gitToken).build();
             GHRepository repository = gitHub.getRepository(gitRepo);
             repository.createContent()
@@ -190,6 +192,7 @@ public class ArticleService {
                     .message("test")
                     .branch("main")
                     .commit();
+
         } catch (IOException e) {
             e.printStackTrace();
         }
