@@ -17,7 +17,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 @Service
@@ -40,6 +39,7 @@ public class RssService {
     public String makeRssFeed(){
 
         List<Article> articles = articleService.getTotalArticle();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss Z", Locale.ENGLISH);
 
         // rss 레이아웃 루트 작성
         Element rss = new Element("rss");
@@ -50,7 +50,7 @@ public class RssService {
         rss.addContent(channel);
 
         // 채널에 아이템 삽입
-        addItemToChannel(articles, channel);
+        addItemToChannel(articles, dateFormat, channel);
 
         // 포매팅해서 발행
         Document doc = new Document();
@@ -84,19 +84,15 @@ public class RssService {
     /*
         - item 작성 , 채널에 추가
     */
-    private void addItemToChannel(List<Article> articles, Element channel) {
+    private void addItemToChannel(List<Article> articles, SimpleDateFormat dateFormat, Element channel) {
         for (Article article : articles) {
 
             Element item = new Element("item");
 
             item.addContent(new Element("title").addContent(new CDATA(article.getTitle())));
             item.addContent(new Element("link").setText("https://www.jiniaslog.co.kr/article/view?articleId=" + article.getId()));
-            item.addContent(new Element("description").addContent(
-                    new CDATA(htmlRenderer.render(parser.parse(article.getContent())))));
-            item.addContent(new Element("pubDate").setText(
-                    article.getCreatedDate()
-                            .format(DateTimeFormatter
-                                    .ofPattern("EEE, d MMM yyyy HH:mm:ss Z", Locale.ENGLISH))));
+            item.addContent(new Element("description").addContent(new CDATA(htmlRenderer.render(parser.parse(article.getContent())))));
+            item.addContent(new Element("pubDate").setText(dateFormat.format(Timestamp.valueOf(article.getCreatedDate()))));
             item.addContent(new Element("guid").setText("https://www.jiniaslog.co.kr/article/view?articleId=" + article.getId()));
 
             channel.addContent(item);
