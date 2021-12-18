@@ -63,7 +63,7 @@ public class CategoryController {
     String editCategory(@RequestBody List<CategoryNormalDto> categoryList, Errors errors) {
        // List DTO 검증을 위한 커스텀 validator
         listValidator.validate(categoryList, errors);
-
+        // 유효성 검사
         if (errors.hasErrors()) {
             throw new CustomFormException(Objects.requireNonNull(errors.getFieldError()).getDefaultMessage());
         }

@@ -381,6 +381,6 @@ public class ArticleController {
                 }
             }
         }
-        throw new IllegalArgumentException("카테고리별 아티클 수 에러");
+        throw new IllegalArgumentException("'"+category+"' 라는 카테고리는 존재하지 않습니다.");
     }
 }

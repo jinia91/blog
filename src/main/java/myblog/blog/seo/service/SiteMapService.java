@@ -15,6 +15,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -40,7 +42,6 @@ public class SiteMapService {
     public String makeSiteMap(){
         List<Article> articles = articleService.getTotalArticle();
         List<Category> allCategories = categoryService.getAllCategories();
-        SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss Z", Locale.ENGLISH);
 
         // siteMap 레이아웃 루트 작성
         Element siteMap = new Element("urlset", NAMESPACE);
@@ -48,7 +49,10 @@ public class SiteMapService {
         // 메인화면
         Element main = new Element("url",NAMESPACE);
         main.addContent(new Element("loc",NAMESPACE).setText(ROOT));
-        main.addContent(new Element("lastmod",NAMESPACE).setText(fmt.format(new Date())));
+        main.addContent(new Element("lastmod",NAMESPACE).setText(
+                LocalDateTime.now()
+                        .format(DateTimeFormatter
+                                .ofPattern("yyyy-MM-dd",Locale.ENGLISH))));
         main.addContent(new Element("priority",NAMESPACE).setText("1.0"));
         siteMap.addContent(main);
 
