@@ -24,7 +24,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final Oauth2MemberService oauth2MemberService;
     private final LoginFailHandler loginFailHandler;
-    private final DataSource dataSource;
 
     /*
         - 인가 절차 제외 리소스
@@ -58,7 +57,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
 
 
-                // oauth2 로그인 인증
+                // OAuth2 로그인 인증
                 .and()
                 .oauth2Login()
                 .loginPage("/login")
