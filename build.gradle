@@ -49,8 +49,6 @@ dependencies {
 	implementation group: 'org.jdom', name: 'jdom2', version: '2.0.6'
 	implementation group: 'net.sf.ehcache', name: 'ehcache', version: '2.10.9.2'
 
-
-
 	compileOnly 'org.projectlombok:lombok'
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
 	runtimeOnly 'mysql:mysql-connector-java'
