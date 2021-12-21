@@ -25,8 +25,6 @@ function makeNextPage() {
     const xhr = new XMLHttpRequest();
     // 페이지 요청보내기
     xhr.open('GET', "/main/article/" + lastArticleId);
-    console.log("/main/article/" + lastArticleId)
-    // xhr.setRequestHeader("X-XSRF-TOKEN", token);
     xhr.send();
 
     xhr.onload = () => {
@@ -36,8 +34,6 @@ function makeNextPage() {
 
 
                 let list = JSON.parse(xhr.response);
-
-                console.log(list);
 
                 // flag 더이상 갱신 x 무한스크롤 동작 정지
                 if(list.length === 0) return;
