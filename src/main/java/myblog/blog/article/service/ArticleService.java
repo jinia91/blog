@@ -100,7 +100,7 @@ public class ArticleService {
     @Cacheable(value = "layoutRecentArticleCaching", key = "#lastArticleId")
     public List<Article> getRecentArticles(Long lastArticleId) {
 
-        return lastArticleId==0?
+        return lastArticleId.equals(0L)?
                 articleRepository
                         .findByOrderByIdDescWithList(PageRequest.of(0, 5)):
                 articleRepository

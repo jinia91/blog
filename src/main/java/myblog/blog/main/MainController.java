@@ -63,7 +63,9 @@ public class MainController {
     */
     @GetMapping("/main/article/{lastArticleId}")
     public @ResponseBody
-    List<ArticleDtoForMain> mainNextPage(@PathVariable Long lastArticleId) {
+    List<ArticleDtoForMain> mainNextPage(@PathVariable(required = false) Long lastArticleId) {
+
+        System.out.println(lastArticleId);
 
         // Entity to Dto
         List<ArticleDtoForMain> articles = articleService.getRecentArticles(lastArticleId)
