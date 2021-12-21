@@ -65,8 +65,6 @@ public class MainController {
     public @ResponseBody
     List<ArticleDtoForMain> mainNextPage(@PathVariable(required = false) Long lastArticleId) {
 
-        System.out.println(lastArticleId);
-
         // Entity to Dto
         List<ArticleDtoForMain> articles = articleService.getRecentArticles(lastArticleId)
                 .stream()

@@ -25,6 +25,7 @@ function makeNextPage() {
     const xhr = new XMLHttpRequest();
     // 페이지 요청보내기
     xhr.open('GET', "/main/article/" + lastArticleId);
+    console.log("/main/article/" + lastArticleId)
     // xhr.setRequestHeader("X-XSRF-TOKEN", token);
     xhr.send();
 
