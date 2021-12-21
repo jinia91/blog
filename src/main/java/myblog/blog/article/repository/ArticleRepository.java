@@ -24,10 +24,28 @@ public interface ArticleRepository extends JpaRepository<Article, Long> {
     List<Article> findTop6ByCategoryOrderByIdDesc(Category category);
 
     /*
-       - 가장 최신 게시물순으로 페이징처리해서 Slice로 가져오기
-         토탈 카운트 쿼리 안날라감
+       - 전체게시물 최신순으로 오프셋 페이징처리해서 가져오기
      */
     Slice<Article> findByOrderByIdDesc(Pageable pageable);
+
+    /*
+       - 커서페이징으로 최신 게시물 가져오기
+           - 첫번째 페이지용 쿼리
+     */
+    @Query("select a " +
+            "from Article a " +
+            "order by a.id desc")
+    List<Article> findByOrderByIdDescWithList(Pageable pageable);
+
+    /*
+       - 커서페이징으로 최신 게시물 가져오기
+           - 커서 적용
+     */
+    @Query("select a " +
+            "from Article a " +
+            "where a.id < :articleId " +
+            "order by a.id desc")
+    List<Article> findByOrderByIdDesc(@Param("articleId") Long articleId,Pageable pageable);
 
     /*
         - 카테고리별(하위 카테고리) 페이징 처리해서 최신게시물순으로 Slice 가져오기

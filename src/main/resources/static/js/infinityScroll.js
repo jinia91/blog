@@ -1,4 +1,5 @@
-let pageNum = 1;
+let pageNum = 0;
+let lastArticleId = 0;
 let flag = false;
 const container = document.getElementById("infiniteScrollBox");
 
@@ -23,7 +24,7 @@ function InfinityScroll() {
 function makeNextPage() {
     const xhr = new XMLHttpRequest();
     // 페이지 요청보내기
-    xhr.open('GET', "/main/article/" + pageNum);
+    xhr.open('GET', "/main/article/" + lastArticleId);
     // xhr.setRequestHeader("X-XSRF-TOKEN", token);
     xhr.send();
 
@@ -37,6 +38,7 @@ function makeNextPage() {
 
                 console.log(list);
 
+                // flag 더이상 갱신 x 무한스크롤 동작 정지
                 if(list.length === 0) return;
 
                 // 다음 페이지 작성
@@ -66,6 +68,7 @@ function makeNextPage() {
 
                     article.innerHTML = articleHtmlSource;
                     nextPage.appendChild(article);
+                    lastArticleId = listElement.id;
                 }
 
                 container.appendChild(nextPage);

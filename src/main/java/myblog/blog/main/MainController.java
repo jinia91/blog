@@ -32,6 +32,7 @@ public class MainController {
     private final CommentService commentService;
     private final HtmlRenderer htmlRenderer;
     private final Parser parser;
+    private final ModelMapper modelMapper;
 
     /*
         - 메인 화면 제어용 컨트롤러
@@ -44,19 +45,15 @@ public class MainController {
 
         List<CommentDtoForLayout> comments = commentService.recentCommentList();
 
-        List<ArticleDtoForMain> popularArticles = articleService.getPopularArticles();
-        Slice<ArticleDtoForMain> recentArticles = articleService.getRecentArticles(0);
-
-        for(ArticleDtoForMain article : recentArticles){
-            article.setContent(Jsoup.parse(htmlRenderer.render(parser.parse(article.getContent()))).text());
-        }
-
+        List<ArticleDtoForMain> popularArticles = articleService.getPopularArticles()
+                .stream()
+                .map(article -> modelMapper.map(article, ArticleDtoForMain.class))
+                .collect(Collectors.toList());
         //
 
         model.addAttribute("category",categoryForView);
         model.addAttribute("commentsList", comments);
         model.addAttribute("popularArticles", popularArticles);
-        model.addAttribute("recentArticles",recentArticles);
 
         return "index";
     }
@@ -64,13 +61,18 @@ public class MainController {
     /*
         - 최신 아티클 무한스크롤로 조회
     */
-    @GetMapping("/main/article/{pageNum}")
+    @GetMapping("/main/article/{lastArticleId}")
     public @ResponseBody
-    List<ArticleDtoForMain> mainNextPage(@PathVariable int pageNum) {
+    List<ArticleDtoForMain> mainNextPage(@PathVariable Long lastArticleId) {
 
+        // Entity to Dto
+        List<ArticleDtoForMain> articles = articleService.getRecentArticles(lastArticleId)
+                .stream()
+                .map(article -> modelMapper.map(article, ArticleDtoForMain.class))
+                .collect(Collectors.toList());
+        ;
 
-        List<ArticleDtoForMain> articles = articleService.getRecentArticles(pageNum).getContent();
-
+        // 화면렌더링을 위한 파싱
         for(ArticleDtoForMain article : articles){
             String content = Jsoup.parse(htmlRenderer.render(parser.parse(article.getContent()))).text();
             if(content.length()>300) {

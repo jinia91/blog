@@ -40,7 +40,6 @@ public class ArticleService {
     private final CategoryService categoryService;
     private final ArticleRepository articleRepository;
     private final NaArticleRepository naArticleRepository;
-    private final ModelMapper modelMapper;
 
     /*
         - 아티클 작성 로직
@@ -89,24 +88,24 @@ public class ArticleService {
              DTO 매핑 로직 서비스단에서 처리
     */
     @Cacheable(value = "layoutCaching", key = "1")
-    public List<ArticleDtoForMain> getPopularArticles() {
-        return articleRepository.findTop6ByOrderByHitDesc()
-                .stream()
-                .map(article -> modelMapper.map(article, ArticleDtoForMain.class))
-                .collect(Collectors.toList());
+    public List<Article> getPopularArticles() {
+        return articleRepository.findTop6ByOrderByHitDesc();
     }
 
     /*
-        - 메인화면 위한 최신 아티클 페이징처리해서 가져오기
+        - 메인화면 위한 최신 아티클 커서 페이징해서 가져오기
            - 레이아웃 렌더링 성능 향상을 위해 캐싱작업
              카테고리 변경 / 아티클 변경이 존재할경우 레이아웃 캐시 초기화
-             DTO 매핑 로직 서비스단에서 처리
     */
-    @Cacheable(value = "layoutRecentArticleCaching", key = "#page")
-    public Slice<ArticleDtoForMain> getRecentArticles(int page) {
-        return articleRepository
-                .findByOrderByIdDesc(PageRequest.of(page, 5))
-                .map(article -> modelMapper.map(article, ArticleDtoForMain.class));
+    @Cacheable(value = "layoutRecentArticleCaching", key = "#lastArticleId")
+    public List<Article> getRecentArticles(Long lastArticleId) {
+
+        return lastArticleId==0?
+                articleRepository
+                        .findByOrderByIdDescWithList(PageRequest.of(0, 5)):
+                articleRepository
+                        .findByOrderByIdDesc(lastArticleId, PageRequest.of(0, 5));
+
     }
 
     /*
