@@ -384,6 +384,26 @@
         return document.getElementById("tags").value !== "";
     }
 
+    //내부 이미지 업로드
+    function uploadImage(blob) {
+        let token = getCsrfToken();
+        let formData = new FormData();
+        formData.append('img', blob);
+
+        const xhr = new XMLHttpRequest();
+        xhr.open("POST", "/article/uploadImg", false);
+        xhr.setRequestHeader("contentType", "multipart/form-data");
+        xhr.setRequestHeader("X-XSRF-TOKEN", token);
+        xhr.send(formData);
+
+        if (xhr.readyState === 4 && xhr.status === 200) {
+            return xhr.response;
+        } else {
+            alert("이미지가 정상적으로 업로드되지 못했습니다.")
+        }
+    }
+
+
     // 전송
     function post() {
 
@@ -511,6 +531,26 @@
             }
         }
     });
+
+    //내부 이미지 업로드
+    function uploadImage(blob) {
+        let token = getCsrfToken();
+        let formData = new FormData();
+        formData.append('img', blob);
+
+        const xhr = new XMLHttpRequest();
+        xhr.open("POST", "/article/uploadImg", false);
+        xhr.setRequestHeader("contentType", "multipart/form-data");
+        xhr.setRequestHeader("X-XSRF-TOKEN", token);
+        xhr.send(formData);
+
+        if (xhr.readyState === 4 && xhr.status === 200) {
+            return xhr.response;
+        } else {
+            alert("이미지가 정상적으로 업로드되지 못했습니다.")
+        }
+    }
+
 
     // 유효성 검사
     function checkTitle() {

@@ -2,7 +2,6 @@ package myblog.blog.article.service;
 
 import lombok.RequiredArgsConstructor;
 import myblog.blog.article.domain.Article;
-import myblog.blog.article.dto.ArticleDtoForMain;
 import myblog.blog.category.domain.Category;
 import myblog.blog.member.doamin.Member;
 import myblog.blog.article.dto.ArticleForm;
@@ -13,7 +12,6 @@ import myblog.blog.tags.service.TagsService;
 import org.kohsuke.github.GHRepository;
 import org.kohsuke.github.GitHub;
 import org.kohsuke.github.GitHubBuilder;
-import org.modelmapper.ModelMapper;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
@@ -24,7 +22,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.beans.factory.annotation.Value;
 import java.io.IOException;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -102,7 +99,8 @@ public class ArticleService {
 
         return lastArticleId.equals(0L)?
                 articleRepository
-                        .findByOrderByIdDescWithList(PageRequest.of(0, 5)):
+                        .findByOrderByIdDescWithList(PageRequest.of(0, 5))
+                :
                 articleRepository
                         .findByOrderByIdDesc(lastArticleId, PageRequest.of(0, 5));
 

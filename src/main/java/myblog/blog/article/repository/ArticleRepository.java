@@ -34,7 +34,7 @@ public interface ArticleRepository extends JpaRepository<Article, Long> {
      */
     @Query("select a " +
             "from Article a " +
-            "order by a.id desc")
+            "order by a.id desc ")
     List<Article> findByOrderByIdDescWithList(Pageable pageable);
 
     /*

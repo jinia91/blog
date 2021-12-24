@@ -40,6 +40,7 @@ https://www.jiniaslog.co.kr/
 - Javascript
 - Html/Css
 - Thymeleaf
+- Bootstrap 5
 
 ### 기타 주요 라이브러리
 - Lombok
@@ -275,6 +276,7 @@ tagify 라이브러리를 사용하여 태그 기능을 구현하였고 태그�
 
 [자바스크립트 무한 스크롤 렌더링 로직](https://github.com/jinia91/blog/blob/a1d9381d8675ef01fbe3cf7371fe642a1847a943/src/main/resources/static/js/infinityScroll.js#L5)
 
+[오프셋 페이징을 커서페이징으로 리팩토링하기](https://www.jiniaslog.co.kr/article/view?articleId=202)
 
 ### CI/CD 무중단 배포
 
