@@ -136,13 +136,18 @@
     padding: 2px 3px;
     letter-spacing: -0.3px;
     border-radius: 2px;
+
 }
 
 .toastui-editor-contents pre code {
     padding: 0;
     color: inherit;
-    white-space: pre-wrap;
+    /*white-space: pre-wrap;*/
     background-color: transparent;
+    /*모바일 코드 블록 가로 스크롤 생성*/
+    white-space: pre;
+    word-wrap: normal;
+    overflow-x: auto;
 }
 
 .toastui-editor-contents img {
@@ -382,6 +387,7 @@
     border-radius: 2px;
     background-size: 30px 30px;
     cursor: pointer;
+
 }
 
 .toastui-editor-ww-code-block-language {
