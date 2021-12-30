@@ -113,7 +113,7 @@
                 <li class="page-item">
                     <a class="page-link" aria-label="Next"
                        th:href="@{/article/list(category=(${param.category}),tier=(${param.tier}),page=(${pagingBox.getCurPageNum()}+5))}"
-                       th:if="${pagingBox.getCurPageNum()<=pagingBox.getPNumForNextBtn()}"
+                       th:if="${pagingBox.getBoxEndNum()<pagingBox.getLastPageNum()}"
                     >
                         <span aria-hidden="true">></span>
                     </a>
@@ -122,7 +122,7 @@
                 <li class="page-item">
                     <a class="page-link" aria-label="Last"
                        th:href="@{/article/list(category=(${param.category}),tier=(${param.tier}),page=(${pagingBox.getLastPageNum()}))}"
-                       th:if="${pagingBox.getCurPageNum()<=pagingBox.getPNumForNextBtn()}"
+                       th:if="${pagingBox.getBoxEndNum()<pagingBox.getLastPageNum()}"
                     >
                         <span aria-hidden="true">»</span>
                     </a>

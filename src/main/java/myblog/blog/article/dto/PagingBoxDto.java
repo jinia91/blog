@@ -12,7 +12,6 @@ public class PagingBoxDto {
 
     private int curPageNum;
     private int lastPageNum;
-    private int pNumForNextBtn;
 
     private int boxStartNum;
     private int boxEndNum;
@@ -52,9 +51,6 @@ public class PagingBoxDto {
         if(box.boxEndNum <= 0){
             box.boxEndNum = 1;
         }
-
-        // 페이징박스 다음버튼 만드는 마지막 페이지 번호
-        box.pNumForNextBtn =box.boxEndNum - (box.boxEndNum % box.displayPageBoxCnt);
 
         return box;
     }
