@@ -450,3 +450,20 @@ body::-webkit-scrollbar-track {
 .fa-bars{
     font-size: 20px;
 }
+
+.git-chart {
+    height: 100px;
+    position: relative;
+    top: 0;
+    left: -410px;
+}
+
+.git-box{
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+.git-chart div img {
+    position: absolute;
+    clip: rect( 0px, 700px, 700px, 410px );
+}
