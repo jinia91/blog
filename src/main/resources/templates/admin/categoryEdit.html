@@ -18,9 +18,9 @@
 
     <!-- CSS RESET -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css"/>
-    <link rel="stylesheet" href="/node_modules/bootstrap/dist/css/bootstrap.min.css"/>
-    <link rel="stylesheet" href="/css/mainCss.css?ver=1.1"/>
-    <link rel="stylesheet" href="/css/login.css"/>
+    <link rel="stylesheet" th:href="@{/node_modules/bootstrap/dist/css/bootstrap.min.css}"/>
+    <link rel="stylesheet" th:href="@{/css/mainCss.css?ver=1.1}"/>
+    <link rel="stylesheet" th:href="@{/css/login.css}"/>
     <script src="https://kit.fontawesome.com/233840a552.js" crossorigin="anonymous"></script>
 </head>
 
@@ -78,8 +78,8 @@
     <div style="margin-bottom:  100px"></div>
 
 
-    <script src="/node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="/js/getCsrf.js"></script>
+    <script th:src="@{/node_modules/bootstrap/dist/js/bootstrap.bundle.min.js}"></script>
+    <script th:src="@{/js/getCsrf.js}"></script>
     <script th:inline="javascript">
 
         // 재사용할 dto

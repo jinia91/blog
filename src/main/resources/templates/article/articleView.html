@@ -36,10 +36,10 @@
     <meta name="theme-color" content="#ffffff">
     <!-- CSS RESET -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css"/>
-    <link rel="stylesheet" href="/node_modules/bootstrap/dist/css/bootstrap.min.css"/>
-    <link rel="stylesheet" href="/node_modules/@yaireo/tagify/dist/tagify.css"/>
-    <link rel="stylesheet" href="/css/mainCss.css?ver=1.1"/>
-    <link rel="stylesheet" href="/css/articleView.css"/>
+    <link rel="stylesheet" th:href="@{/node_modules/bootstrap/dist/css/bootstrap.min.css}"/>
+    <link rel="stylesheet" th:href="@{/node_modules/@yaireo/tagify/dist/tagify.css}"/>
+    <link rel="stylesheet" th:href="@{/css/mainCss.css?ver=1.1}"/>
+    <link rel="stylesheet" th:href="@{/css/articleView.css}"/>
 
     <script src="https://kit.fontawesome.com/233840a552.js" crossorigin="anonymous"></script>
 </head>
@@ -204,9 +204,9 @@
 
 
         <!-- comment e -->
-        <script src="/node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-        <script src="https://uicdn.toast.com/editor/latest/toastui-editor-all.min.js"></script>
-        <script src="/js/getCsrf.js"></script>
+        <script th:src="@{/node_modules/bootstrap/dist/js/bootstrap.bundle.min.js}"></script>
+        <script th:src="@{https://uicdn.toast.com/editor/latest/toastui-editor-all.min.js}"></script>
+        <script th:src="@{/js/getCsrf.js}"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.0/moment.min.js"></script>
         <script th:replace="layout/fragments.html :: comment"></script>
         <script th:replace="layout/fragments.html :: view"></script>
