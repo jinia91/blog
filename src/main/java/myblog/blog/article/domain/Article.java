@@ -82,7 +82,7 @@ public class Article extends BasicEntity {
         this.content = content;
         this.toc = toc;
         this.member = member;
-        this.thumbnailUrl = makeDefaultThumb(thumbnailUrl);
+        this.thumbnailUrl = makeDefaultThumbOf(thumbnailUrl);
         this.category = category;
         this.hit = 0L;
     }
@@ -92,7 +92,7 @@ public class Article extends BasicEntity {
     /*
         - 아티클 수정을 위한 로직
     */
-    public void editArticle(ArticleForm articleForm, Category category){
+    public void isEditedFrom(ArticleForm articleForm, Category category){
         this.content = articleForm.getContent();
         this.title = articleForm.getTitle();
         this.toc = articleForm.getToc();
@@ -112,7 +112,7 @@ public class Article extends BasicEntity {
     /*
         - 썸네일 기본 작성
     */
-    private String makeDefaultThumb(String thumbnailUrl) {
+    private String makeDefaultThumbOf(String thumbnailUrl) {
         String defaultThumbUrl = "https://cdn.pixabay.com/photo/2020/11/08/13/28/tree-5723734_1280.jpg";
 
         if (thumbnailUrl == null || thumbnailUrl.equals("")) {

@@ -8,12 +8,11 @@ import myblog.blog.article.service.TempArticleService;
 import myblog.blog.category.dto.CategoryForView;
 import myblog.blog.category.dto.CategoryNormalDto;
 import myblog.blog.category.service.CategoryService;
-import myblog.blog.comment.dto.CommentDtoForLayout;
-import myblog.blog.comment.service.CommentService;
 import myblog.blog.member.auth.PrincipalDetails;
 import myblog.blog.member.dto.MemberDto;
 import myblog.blog.tags.dto.TagsDto;
 import myblog.blog.tags.service.TagsService;
+import myblog.blog.utils.LayoutDtoFactory;
 import org.commonmark.parser.Parser;
 import org.commonmark.renderer.html.HtmlRenderer;
 import org.jsoup.Jsoup;
@@ -40,8 +39,9 @@ public class ArticleController {
     private final ArticleService articleService;
     private final TagsService tagsService;
     private final CategoryService categoryService;
-    private final CommentService commentService;
     private final TempArticleService tempArticleService;
+
+    private final LayoutDtoFactory layoutDtoFactory;
 
     private final ModelMapper modelMapper;
     private final Parser parser;
@@ -51,12 +51,11 @@ public class ArticleController {
         - 아티클 작성 폼 조회
     */
     @GetMapping("article/write")
-    public String writeArticleForm(Model model) {
-
-        modelsForArticleForm(model);
-        modelsForLayout(model);
+    public String getWriteArticleForm(Model model) {
+        layoutDtoFactory.AddLayoutTo(model);
+        model.addAttribute("categoryInput", getCategoryDtosForForm());
+        model.addAttribute("tagsInput", getTagsDtosForForm());
         model.addAttribute("articleDto", new ArticleForm());
-
         return "article/articleWriteForm";
     }
 
@@ -71,12 +70,8 @@ public class ArticleController {
                                Model model) {
 
         if (errors.hasErrors()) {
-            modelsForArticleForm(model);
-            modelsForLayout(model);
-            model.addAttribute("articleDto", new ArticleForm());
-            return "article/articleWriteForm";
+            getWriteArticleForm(model);
         }
-
         Long articleId = articleService.writeArticle(articleForm, principal.getMember());
         articleService.pushArticleToGithub(articleId);
         tempArticleService.deleteTemp();
@@ -93,18 +88,20 @@ public class ArticleController {
 
         // 기존 아티클 DTO 전처리
         Article article = articleService.readArticle(articleId);
+        ArticleDtoForEdit articleDto =
+                modelMapper.map(article, ArticleDtoForEdit.class);
 
-        ArticleDtoForEdit articleDto = modelMapper.map(article, ArticleDtoForEdit.class);
-        articleDto.setArticleTagList(article.getArticleTagLists()
-                .stream()
-                .map(articleTag -> articleTag.getTags().getName())
-                .collect(Collectors.toList()));
+        articleDto.setArticleTagList(
+                article.getArticleTagLists()
+                        .stream()
+                        .map(articleTag -> articleTag.getTags().getName())
+                        .collect(Collectors.toList()));
         //
 
-        modelsForArticleForm(model);
-        modelsForLayout(model);
+        layoutDtoFactory.AddLayoutTo(model);
+        model.addAttribute("categoryInput", getCategoryDtosForForm());
+        model.addAttribute("tagsInput", getTagsDtosForForm());;
         model.addAttribute("articleDto", articleDto);
-
         return "article/articleEditForm";
     }
 
@@ -117,9 +114,7 @@ public class ArticleController {
                               @ModelAttribute ArticleForm articleForm) {
 
         articleService.editArticle(articleId, articleForm);
-
         return "redirect:/article/view?articleId=" + articleId;
-
     }
 
     /*
@@ -130,7 +125,6 @@ public class ArticleController {
     public String deleteArticle(@RequestParam Long articleId) {
 
         articleService.deleteArticle(articleId);
-
         return "redirect:/";
     }
 
@@ -145,23 +139,21 @@ public class ArticleController {
                                             Model model) {
 
         // DTO 매핑 전처리
-        CategoryForView categoryForView = modelsForLayout(model);
+        PagingBoxDto pagingBoxDto =
+                PagingBoxDto.createOf(page, getTotalArticleCntByCategory(category, categoryService.getCategoryForView()));
 
-        PagingBoxDto pagingBoxDto = PagingBoxDto
-                .createOf(page, getTotalArticleCntByCategory(category, categoryForView));
-
-        Slice<ArticleDtoForMain> articleList = articleService.getArticlesByCategory(category, tier, pagingBoxDto.getCurPageNum())
-                .map(article ->
-                        modelMapper.map(article, ArticleDtoForMain.class));
-
-        for(ArticleDtoForMain article : articleList){
-            article.setContent(Jsoup.parse(htmlRenderer.render(parser.parse(article.getContent()))).text());
-        }
-
+        Slice<ArticleDtoForMain> articleDtoList =
+                articleService.getArticlesByCategory(category, tier, pagingBoxDto.getCurPageNum())
+                        .map(article -> modelMapper.map(article, ArticleDtoForMain.class));
         //
 
+        for(ArticleDtoForMain articleDto : articleDtoList){
+            articleDto.setContent(Jsoup.parse(htmlRenderer.render(parser.parse(articleDto.getContent()))).text());
+        }
+
+        layoutDtoFactory.AddLayoutTo(model);
         model.addAttribute("pagingBox", pagingBoxDto);
-        model.addAttribute("articleList", articleList);
+        model.addAttribute("articleList", articleDtoList);
 
         return "article/articleList";
     }
@@ -175,22 +167,19 @@ public class ArticleController {
                                   @RequestParam String tagName,
                                   Model model) {
         // DTO 매핑 전처리
-
         Page<ArticleDtoForMain> articleList =
                 articleService.getArticlesByTag(tagName, page)
                         .map(article ->
                                 modelMapper.map(article, ArticleDtoForMain.class));
 
-        PagingBoxDto pagingBoxDto = PagingBoxDto.createOf(page, (int)articleList.getTotalElements());
-
-        modelsForLayout(model);
-
         for(ArticleDtoForMain article : articleList){
             article.setContent(Jsoup.parse(htmlRenderer.render(parser.parse(article.getContent()))).text());
         }
 
-        //
+        PagingBoxDto pagingBoxDto =
+                PagingBoxDto.createOf(page, (int)articleList.getTotalElements());
 
+        layoutDtoFactory.AddLayoutTo(model);
         model.addAttribute("articleList", articleList);
         model.addAttribute("pagingBox", pagingBoxDto);
 
@@ -206,22 +195,19 @@ public class ArticleController {
                                   @RequestParam String keyword,
                                   Model model) {
         // DTO 매핑 전처리
-
         Page<ArticleDtoForMain> articleList =
                 articleService.getArticlesByKeyword(keyword, page)
                         .map(article ->
                                 modelMapper.map(article, ArticleDtoForMain.class));
 
-        PagingBoxDto pagingBoxDto = PagingBoxDto.createOf(page, (int)articleList.getTotalElements());
-
-        modelsForLayout(model);
-
         for(ArticleDtoForMain article : articleList){
             article.setContent(Jsoup.parse(htmlRenderer.render(parser.parse(article.getContent()))).text());
         }
 
-        //
+        PagingBoxDto pagingBoxDto =
+                PagingBoxDto.createOf(page, (int)articleList.getTotalElements());
 
+        layoutDtoFactory.AddLayoutTo(model);
         model.addAttribute("articleList", articleList);
         model.addAttribute("pagingBox", pagingBoxDto);
 
@@ -260,10 +246,11 @@ public class ArticleController {
         ArticleDtoForDetail articleDtoForDetail =
                 modelMapper.map(article, ArticleDtoForDetail.class);
 
-        List<String> tags = article.getArticleTagLists()
-                .stream()
-                .map(tag -> tag.getTags().getName())
-                .collect(Collectors.toList());
+        List<String> tags =
+                article.getArticleTagLists()
+                    .stream()
+                    .map(tag -> tag.getTags().getName())
+                    .collect(Collectors.toList());
 
         articleDtoForDetail.setTags(tags);
         articleDtoForDetail.setContent(htmlRenderer.render(parser.parse(article.getContent())));
@@ -288,7 +275,7 @@ public class ArticleController {
         else substringContents = articleDtoForDetail.getContent();
 
         // 4. 모델 담기
-        modelsForLayout(model);
+        layoutDtoFactory.AddLayoutTo(model);
         model.addAttribute("article", articleDtoForDetail);
         model.addAttribute("metaTags",metaTags);
         model.addAttribute("metaContents",Jsoup.parse(substringContents).text());
@@ -300,39 +287,6 @@ public class ArticleController {
         return "article/articleView";
     }
 
-    /*
-        - 아티클 폼에 필요한 모델 담기
-    */
-    private void modelsForArticleForm(Model model) {
-        List<CategoryNormalDto> categoryForForm =
-                categoryService
-                        .findCategoryByTier(2)
-                        .stream()
-                        .map(category -> modelMapper.map(category, CategoryNormalDto.class))
-                        .collect(Collectors.toList());
-        model.addAttribute("categoryInput", categoryForForm);
-
-        List<TagsDto> tagsForForm =
-                tagsService
-                        .findAllTags()
-                        .stream()
-                        .map(tag -> new TagsDto(tag.getName()))
-                        .collect(Collectors.toList());
-        model.addAttribute("tagsInput", tagsForForm);
-    }
-    /*
-        - 레이아웃에 필요한 모델 담기
-    */
-    private CategoryForView modelsForLayout(Model model) {
-        CategoryForView categoryForView = categoryService.getCategoryForView();
-        model.addAttribute("category", categoryForView);
-
-        List<CommentDtoForLayout> comments = commentService.recentCommentList();
-        model.addAttribute("commentsList", comments);
-
-        return categoryForView;
-
-    }
 
     /*
         - 쿠키 추가 / 조회수 증가 검토
@@ -383,4 +337,28 @@ public class ArticleController {
         }
         throw new IllegalArgumentException("'"+category+"' 라는 카테고리는 존재하지 않습니다.");
     }
+
+    /*
+- 아티클 폼에 필요한 태그 dtos
+*/
+    private List<TagsDto> getTagsDtosForForm() {
+        return tagsService
+                .findAllTags()
+                .stream()
+                .map(tag -> new TagsDto(tag.getName()))
+                .collect(Collectors.toList());
+    }
+
+    /*
+    - 아티클 폼에 필요한 카테고리 dtos
+    */
+    private List<CategoryNormalDto> getCategoryDtosForForm() {
+        return categoryService
+                .findCategoryByTier(2)
+                .stream()
+                .map(category -> modelMapper.map(category, CategoryNormalDto.class))
+                .collect(Collectors.toList());
+    }
+
+
 }

@@ -65,7 +65,7 @@ public class ArticleService {
         tagsService.createNewTagsAndArticleTagList(articleForm.getTags(), article);
 
         // 더티 체킹으로 업데이트
-        article.editArticle(articleForm,category);
+        article.isEditedFrom(articleForm,category);
     }
 
     /*

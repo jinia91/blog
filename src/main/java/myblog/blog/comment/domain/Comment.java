@@ -5,7 +5,6 @@ import lombok.Getter;
 import myblog.blog.article.domain.Article;
 import myblog.blog.base.domain.BasicEntity;
 import myblog.blog.member.doamin.Member;
-import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 

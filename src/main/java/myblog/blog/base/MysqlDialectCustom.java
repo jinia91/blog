@@ -1,6 +1,5 @@
 package myblog.blog.base;
 
-import org.hibernate.dialect.MySQL57Dialect;
 import org.hibernate.dialect.MySQL8Dialect;
 import org.hibernate.dialect.function.SQLFunctionTemplate;
 import org.hibernate.type.StandardBasicTypes;
