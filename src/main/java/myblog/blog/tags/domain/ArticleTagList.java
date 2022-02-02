@@ -3,7 +3,7 @@ package myblog.blog.tags.domain;
 import lombok.Builder;
 import lombok.Getter;
 import myblog.blog.article.domain.Article;
-import myblog.blog.base.domain.BasicEntity;
+import myblog.blog.base.BasicEntity;
 
 import javax.persistence.*;
 

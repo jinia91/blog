@@ -1,24 +1,25 @@
 package myblog.blog.article.controller;
 
 import lombok.RequiredArgsConstructor;
+
 import myblog.blog.article.domain.Article;
+import myblog.blog.article.service.*;
 import myblog.blog.article.dto.*;
-import myblog.blog.article.service.ArticleService;
-import myblog.blog.article.service.TempArticleService;
-import myblog.blog.category.dto.CategoryForView;
-import myblog.blog.category.dto.CategoryNormalDto;
 import myblog.blog.category.service.CategoryService;
+import myblog.blog.category.dto.*;
 import myblog.blog.member.auth.PrincipalDetails;
 import myblog.blog.member.dto.MemberDto;
-import myblog.blog.tags.dto.TagsDto;
 import myblog.blog.tags.service.TagsService;
-import myblog.blog.utils.LayoutDtoFactory;
+import myblog.blog.tags.dto.TagsDto;
+import myblog.blog.layout.LayoutDtoFactory;
+
 import org.commonmark.parser.Parser;
 import org.commonmark.renderer.html.HtmlRenderer;
 import org.jsoup.Jsoup;
+
 import org.modelmapper.ModelMapper;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Slice;
+
+import org.springframework.data.domain.*;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,6 +30,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
+
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -65,10 +67,8 @@ public class ArticleController {
     @PostMapping("article/write")
     @Transactional
     public String writeArticle(@Validated ArticleForm articleForm,
-                               Errors errors,
                                @AuthenticationPrincipal PrincipalDetails principal,
-                               Model model) {
-
+                               Errors errors, Model model) {
         if (errors.hasErrors()) {
             getWriteArticleForm(model);
         }
@@ -85,19 +85,15 @@ public class ArticleController {
     @GetMapping("/article/edit")
     public String updateArticle(@RequestParam Long articleId,
                                 Model model) {
-
         // 기존 아티클 DTO 전처리
         Article article = articleService.readArticle(articleId);
-        ArticleDtoForEdit articleDto =
-                modelMapper.map(article, ArticleDtoForEdit.class);
-
-        articleDto.setArticleTagList(
-                article.getArticleTagLists()
-                        .stream()
-                        .map(articleTag -> articleTag.getTags().getName())
-                        .collect(Collectors.toList()));
+        ArticleDtoForEdit articleDto = modelMapper.map(article, ArticleDtoForEdit.class);
+        List<String> articleTagStrings = article.getArticleTagLists()
+                .stream()
+                .map(articleTag -> articleTag.getTags().getName())
+                .collect(Collectors.toList());
+        articleDto.setArticleTagList(articleTagStrings);
         //
-
         layoutDtoFactory.AddLayoutTo(model);
         model.addAttribute("categoryInput", getCategoryDtosForForm());
         model.addAttribute("tagsInput", getTagsDtosForForm());;
@@ -112,7 +108,6 @@ public class ArticleController {
     @Transactional
     public String editArticle(@RequestParam Long articleId,
                               @ModelAttribute ArticleForm articleForm) {
-
         articleService.editArticle(articleId, articleForm);
         return "redirect:/article/view?articleId=" + articleId;
     }
@@ -123,7 +118,6 @@ public class ArticleController {
     @PostMapping("/article/delete")
     @Transactional
     public String deleteArticle(@RequestParam Long articleId) {
-
         articleService.deleteArticle(articleId);
         return "redirect:/";
     }
@@ -137,17 +131,16 @@ public class ArticleController {
                                             @RequestParam Integer tier,
                                             @RequestParam Integer page,
                                             Model model) {
-
         // DTO 매핑 전처리
         PagingBoxDto pagingBoxDto =
                 PagingBoxDto.createOf(page, getTotalArticleCntByCategory(category, categoryService.getCategoryForView()));
 
-        Slice<ArticleDtoForMain> articleDtoList =
+        Slice<ArticleDtoForCardBox> articleDtoList =
                 articleService.getArticlesByCategory(category, tier, pagingBoxDto.getCurPageNum())
-                        .map(article -> modelMapper.map(article, ArticleDtoForMain.class));
+                        .map(article -> modelMapper.map(article, ArticleDtoForCardBox.class));
         //
 
-        for(ArticleDtoForMain articleDto : articleDtoList){
+        for(ArticleDtoForCardBox articleDto : articleDtoList){
             articleDto.setContent(Jsoup.parse(htmlRenderer.render(parser.parse(articleDto.getContent()))).text());
         }
 
@@ -167,12 +160,12 @@ public class ArticleController {
                                   @RequestParam String tagName,
                                   Model model) {
         // DTO 매핑 전처리
-        Page<ArticleDtoForMain> articleList =
+        Page<ArticleDtoForCardBox> articleList =
                 articleService.getArticlesByTag(tagName, page)
                         .map(article ->
-                                modelMapper.map(article, ArticleDtoForMain.class));
+                                modelMapper.map(article, ArticleDtoForCardBox.class));
 
-        for(ArticleDtoForMain article : articleList){
+        for(ArticleDtoForCardBox article : articleList){
             article.setContent(Jsoup.parse(htmlRenderer.render(parser.parse(article.getContent()))).text());
         }
 
@@ -195,12 +188,12 @@ public class ArticleController {
                                   @RequestParam String keyword,
                                   Model model) {
         // DTO 매핑 전처리
-        Page<ArticleDtoForMain> articleList =
+        Page<ArticleDtoForCardBox> articleList =
                 articleService.getArticlesByKeyword(keyword, page)
                         .map(article ->
-                                modelMapper.map(article, ArticleDtoForMain.class));
+                                modelMapper.map(article, ArticleDtoForCardBox.class));
 
-        for(ArticleDtoForMain article : articleList){
+        for(ArticleDtoForCardBox article : articleList){
             article.setContent(Jsoup.parse(htmlRenderer.render(parser.parse(article.getContent()))).text());
         }
 
@@ -257,7 +250,7 @@ public class ArticleController {
 
         List<ArticleDtoByCategory> articleTitlesSortByCategory =
                 articleService
-                        .getArticlesByCategoryForDetailView(article.getCategory(), article)
+                        .getArticlesByCategoryForDetailView(article.getCategory())
                         .stream()
                         .map(article1 -> modelMapper.map(article1, ArticleDtoByCategory.class))
                         .collect(Collectors.toList());
@@ -291,14 +284,13 @@ public class ArticleController {
     /*
         - 쿠키 추가 / 조회수 증가 검토
     */
-    @Transactional
-    public void addHitWithCookie(Article article, String cookie, HttpServletResponse response) {
+    private void addHitWithCookie(Article article, String cookie, HttpServletResponse response) {
         Long articleId = article.getId();
         if (cookie == null) {
             Cookie viewCookie = new Cookie("view", articleId + "/");
             viewCookie.setComment("게시물 조회 확인용");
             viewCookie.setMaxAge(60 * 60);
-            article.addHit();
+            articleService.addHit(article);
             response.addCookie(viewCookie);
         } else {
             boolean isRead = false;
@@ -340,7 +332,7 @@ public class ArticleController {
 
     /*
 - 아티클 폼에 필요한 태그 dtos
-*/
+    */
     private List<TagsDto> getTagsDtosForForm() {
         return tagsService
                 .findAllTags()
@@ -359,6 +351,4 @@ public class ArticleController {
                 .map(category -> modelMapper.map(category, CategoryNormalDto.class))
                 .collect(Collectors.toList());
     }
-
-
 }

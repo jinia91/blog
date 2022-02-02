@@ -8,7 +8,6 @@ import lombok.Setter;
 */
 @Getter @Setter
 public class ArticleDtoByCategory {
-
     private String title;
     private Long id;
 }

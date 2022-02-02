@@ -41,7 +41,6 @@ public class CommentController {
                                            @RequestParam(required = false) Long parentId,
                                            @Validated @RequestBody CommentForm commentForm, Errors errors,
                                            @AuthenticationPrincipal PrincipalDetails principal){
-
         if (errors.hasErrors()) {
             throw new CustomFormException(Objects.requireNonNull(errors.getFieldError()).getDefaultMessage());
         }

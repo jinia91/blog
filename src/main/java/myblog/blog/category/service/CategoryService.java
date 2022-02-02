@@ -25,36 +25,11 @@ public class CategoryService {
     private final NaCategoryRepository naCategoryRepository;
 
     /*
-        - 새로운 카테고리 생성하기
-            - 상위 카테고리 존재 유무 분기
-    */
-    public Category createNewCategory(String title, String parent, int pOrder, int cOrder, int tier) {
-
-        Category parentCategory = null;
-        if (parent != null) {
-            parentCategory = categoryRepository.findByTitle(parent);
-        }
-
-        Category category = Category.builder()
-                .title(title)
-                .pSortNum(pOrder)
-                .cSortNum(cOrder)
-                .tier(tier)
-                .parents(parentCategory)
-                .build();
-
-        categoryRepository.save(category);
-
-        return category;
-    }
-
-    /*
         - 카테고리 이름으로 카테고리 찾기
     */
     public Category findCategory(String title) {
         return categoryRepository.findByTitle(title);
     }
-
 
     /*
         - 카테고리 이름으로 카테고리 찾기
@@ -103,13 +78,11 @@ public class CategoryService {
 
         // 1.카테고리 리스트 순서 작성
         sortingOrder(categoryList);
-
         // 2. 기존 DB 저장된 카테고리 리스트 불러오기
         List<Category> allWithoutDummy = categoryRepository.findAllWithoutDummy();
 
         // 3. 카테고리 변경 루프
         while (!categoryList.isEmpty()) {
-
             CategoryNormalDto categoryNormalDto = categoryList.get(0);
             categoryList.remove(0);
 
@@ -120,13 +93,7 @@ public class CategoryService {
 
                 // 부모카테고리가 기존에 존재 x
                 if (categoryNormalDto.getId() == null) {
-                    pCategory
-                            = createNewCategory(categoryNormalDto.getTitle(),
-                            null,
-                            categoryNormalDto.getPOrder(),
-                            categoryNormalDto.getCOrder(),
-                            categoryNormalDto.getTier());
-
+                    pCategory = createNewCategory(categoryNormalDto, null);
                 }
                 // 부모카테고리가 기존에 존재 o
                 else {
@@ -137,43 +104,41 @@ public class CategoryService {
                             break;
                         }
                     }
-                    pCategory.updateCategory(categoryNormalDto.getTitle(),
+                    pCategory.updateCategory(
+                            categoryNormalDto.getTitle(),
                             categoryNormalDto.getTier(),
                             categoryNormalDto.getPOrder(),
                             categoryNormalDto.getCOrder(),
-                            null);
+                            null
+                    );
                 }
 
                 while (!categoryList.isEmpty()) {
 
-                    CategoryNormalDto subCategoryDto = categoryList.get(0);
-                    if (subCategoryDto.getTier() == 1) break;
+                    CategoryNormalDto subCategoryNormalDto = categoryList.get(0);
+                    if (subCategoryNormalDto.getTier() == 1) break;
                     categoryList.remove(0);
 
                     // 자식 카테고리인경우
                     Category cCategory = null;
                     // 카테고리가 기존에 존재 x
-                    if (subCategoryDto.getId() == null) {
-                        cCategory = createNewCategory(subCategoryDto.getTitle(),
-                                pCategory.getTitle(),
-                                subCategoryDto.getPOrder(),
-                                subCategoryDto.getCOrder(),
-                                subCategoryDto.getTier());
-
+                    if (subCategoryNormalDto.getId() == null) {
+                        cCategory = createNewCategory(subCategoryNormalDto, pCategory.getTitle());
                     }
                     // 카테고리가 기존에 존재 o
                     else {
                         for (int i = 0; i < allWithoutDummy.size(); i++) {
-                            if (allWithoutDummy.get(i).getId().equals(subCategoryDto.getId())) {
+                            if (allWithoutDummy.get(i).getId().equals(subCategoryNormalDto.getId())) {
                                 cCategory = allWithoutDummy.get(i);
                                 allWithoutDummy.remove(i);
                                 break;
                             }
                         }
-                        cCategory.updateCategory(subCategoryDto.getTitle(),
-                                subCategoryDto.getTier(),
-                                subCategoryDto.getPOrder(),
-                                subCategoryDto.getCOrder(),
+                        cCategory.updateCategory(
+                                subCategoryNormalDto.getTitle(),
+                                subCategoryNormalDto.getTier(),
+                                subCategoryNormalDto.getPOrder(),
+                                subCategoryNormalDto.getCOrder(),
                                 pCategory);
                     }
                 }
@@ -181,6 +146,27 @@ public class CategoryService {
         }
         // 3-3 불일치 카테고리 전부 삭제
         categoryRepository.deleteAll(allWithoutDummy);
+    }
+
+    /*
+    - 새로운 카테고리 생성하기
+        - 상위 카테고리 존재 유무 분기
+    */
+    private Category createNewCategory(CategoryNormalDto categoryNormalDto, String parent) {
+        Category parentCategory = null;
+        if (parent != null) {
+            parentCategory = categoryRepository.findByTitle(parent);
+        }
+
+        Category category = Category.builder()
+                .title(categoryNormalDto.getTitle())
+                .pSortNum(categoryNormalDto.getPOrder())
+                .cSortNum(categoryNormalDto.getCOrder())
+                .tier(categoryNormalDto.getTier())
+                .parents(parentCategory)
+                .build();
+        categoryRepository.save(category);
+        return category;
     }
 
     /*
@@ -208,7 +194,7 @@ public class CategoryService {
         - 최초 필수 더미 카테고리 추가 코드
     */
     @PostConstruct
-    public void insertDummyCategory() {
+    private void insertDummyCategory() {
         if(categoryRepository.findByTitle("total")==null) {
             Category category0 = Category.builder()
                     .tier(0)
@@ -219,5 +205,4 @@ public class CategoryService {
             categoryRepository.save(category0);
         }
     }
-
 }

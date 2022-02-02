@@ -1,7 +1,7 @@
 package myblog.blog.article.domain;
 
 import lombok.Getter;
-import myblog.blog.base.domain.BasicEntity;
+import myblog.blog.base.BasicEntity;
 
 import javax.persistence.*;
 

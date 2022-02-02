@@ -47,7 +47,7 @@ public class Oauth2MemberService extends DefaultOAuth2UserService {
 
         OAuth2User oAuth2User = super.loadUser(userRequest);
         Oauth2UserInfo userInfo =
-                userInfoFactory.makeOauth2UserinfoOf(userRequest, oAuth2User);
+                userInfoFactory.makeOauth2UserInfoOf(userRequest, oAuth2User);
 
         Member member = getOrJoinMember(userInfo);
 

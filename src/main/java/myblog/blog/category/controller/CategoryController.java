@@ -38,12 +38,9 @@ public class CategoryController {
 
         // DTO 매핑 전처리
         List<CategoryNormalDto> categoryList = categoryService.getCategorytCountList();
-
         List<CategoryNormalDto> copyList = cloneList(categoryList);
         copyList.remove(0);
-
         CategoryForView categoryForView = CategoryForView.createCategory(categoryList);
-
         List<CommentDtoForLayout> comments = commentService.recentCommentList();
         //
 

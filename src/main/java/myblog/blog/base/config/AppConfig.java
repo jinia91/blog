@@ -40,5 +40,4 @@ public class AppConfig {
             .extensions(List.of(TablesExtension.create()))
             .build();
     }
-
 }

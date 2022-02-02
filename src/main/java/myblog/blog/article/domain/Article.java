@@ -3,7 +3,7 @@ package myblog.blog.article.domain;
 import lombok.Builder;
 import lombok.Getter;
 import myblog.blog.article.dto.ArticleForm;
-import myblog.blog.base.domain.BasicEntity;
+import myblog.blog.base.BasicEntity;
 import myblog.blog.category.domain.Category;
 import myblog.blog.comment.domain.Comment;
 import myblog.blog.member.doamin.Member;
@@ -12,8 +12,7 @@ import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 
 /*
@@ -51,7 +50,7 @@ public class Article extends BasicEntity {
     @Column(columnDefinition = "bigint default 0",nullable = false)
     private Long hit;
 
-    // 추후 개발 예정
+    // TODO: 추후 개발 예정
     private String toc;
 
     @Column(nullable = false)
@@ -86,8 +85,6 @@ public class Article extends BasicEntity {
         this.category = category;
         this.hit = 0L;
     }
-
-    // 비지니스 로직 //
 
     /*
         - 아티클 수정을 위한 로직

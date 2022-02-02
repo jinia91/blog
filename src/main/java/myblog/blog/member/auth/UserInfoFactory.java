@@ -36,7 +36,7 @@ public class UserInfoFactory {
     /*
         - 팩토리 메소드
     */
-    public Oauth2UserInfo makeOauth2UserinfoOf(OAuth2UserRequest oAuth2UserRequest, OAuth2User oAuth2User) {
+    public Oauth2UserInfo makeOauth2UserInfoOf(OAuth2UserRequest oAuth2UserRequest, OAuth2User oAuth2User) {
 
         Optional<ProviderType> providerTypeOptional = fromString(oAuth2UserRequest.getClientRegistration().getRegistrationId());
 

@@ -16,7 +16,6 @@ import java.util.stream.Collectors;
 
 @Controller
 @RequiredArgsConstructor
-@Slf4j
 public class MemberController {
 
     private final CategoryService categoryService;

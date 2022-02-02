@@ -1,4 +1,4 @@
-package myblog.blog.utils;
+package myblog.blog.layout;
 
 import lombok.RequiredArgsConstructor;
 import myblog.blog.category.dto.CategoryForView;
@@ -22,11 +22,9 @@ public class LayoutDtoFactory {
     */
     public void AddLayoutTo(Model model) {
         CategoryForView categoryForView = categoryService.getCategoryForView();
-        model.addAttribute("category", categoryForView);
-
         List<CommentDtoForLayout> comments = commentService.recentCommentList();
+        model.addAttribute("category", categoryForView);
         model.addAttribute("commentsList", comments);
-
     }
 
 

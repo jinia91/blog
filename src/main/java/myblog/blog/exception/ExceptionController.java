@@ -1,39 +1,28 @@
 package myblog.blog.exception;
 
 import lombok.RequiredArgsConstructor;
-import myblog.blog.article.dto.ArticleDtoForMain;
-import myblog.blog.category.dto.CategoryForView;
-import myblog.blog.category.service.CategoryService;
-import myblog.blog.comment.dto.CommentDtoForLayout;
-import myblog.blog.comment.service.CommentService;
+import lombok.extern.slf4j.Slf4j;
+import myblog.blog.layout.LayoutDtoFactory;
 import org.springframework.boot.web.servlet.error.ErrorController;
-import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.context.request.WebRequest;
 
+import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
-import java.util.List;
+import java.security.Principal;
 
 @Controller
 @RequiredArgsConstructor
+@Slf4j
 public class ExceptionController implements ErrorController {
 
-    private static final String ERROR_PATH = "/error";
-
-    private final CategoryService categoryService;
-    private final CommentService commentService;
+    private final LayoutDtoFactory layoutDtoFactory;
 
     @GetMapping("/error")
-    public String errorView(Model model){
-
-        CategoryForView categoryForView = categoryService.getCategoryForView();
-        List<CommentDtoForLayout> comments = commentService.recentCommentList();
-        //
-
-        model.addAttribute("category",categoryForView);
-        model.addAttribute("commentsList", comments);
-
+    public String errorView(Model model) {
+        layoutDtoFactory.AddLayoutTo(model);
         return "error";
     }
 
