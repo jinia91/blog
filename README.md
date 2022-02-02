@@ -16,6 +16,7 @@ https://www.jiniaslog.co.kr/
     * [블로그 프로젝트를 기획한 이유?](#블로그-프로젝트를-기획한-이유?)
 - [핵심 기능](#핵심-기능)
     * [소셜 로그인](#소셜-로그인)
+    * [로그 추적기](#로그-추적기)
     * [반응형 웹](#반응형-웹)
     * [Toast Ui editor](#toast-ui-editor)
         + [글작성은 마크다운으로](#글작성은-마크다운으로)
@@ -134,6 +135,26 @@ https://www.jiniaslog.co.kr/
 또한 확장성 있는 객체 생성을 위해, 객체 생성을 담당하는 클래스를 익명 인터페이스를 사용한 팩토리 메서드 패턴으로 구현하였습니다. 
 
 [UserInfoFactory 클래스](https://github.com/jinia91/blog/blob/a1d9381d8675ef01fbe3cf7371fe642a1847a943/src/main/java/myblog/blog/member/auth/UserInfoFactory.java#L18)
+
+### 로그 추적기(2022.02.03 기능 추가)
+
+스프링 AOP 기술을 사용하여 프로젝트의 *Controller, *Service, *Repository 에 포인트컷을 지정, 로그를 찍고
+
+요청별로 로그를 추적하기 위해 쓰레드 로컬을 사용하여 로그 추적기를 구현 및 운영서버에 기능을 추가하였습니다.
+
+![첨부 이미지](https://github.com/jinia91/blogBackUp/blob/main/img/f5152bcc-dc6e-4f80-812d-dc3bfb9545f0.png?raw=true)
+
+[ec2 서버에서 저장된 로그를 실제로 확인하는 모습]
+
+![첨부 이미지](https://github.com/jinia91/blogBackUp/blob/main/img/c8906aeb-6c41-40fa-a580-514e1da1d640.png?raw=true)
+
+로그 구조는 각 요청별로 쓰레드의 고유 난수번호가 찍히게 되어있으며, 각 계층별 호출에 따른 깊이표현과 응답속도가 표시되도록 되어있습니다. 
+
+또한 롤링 정책을 하루단위로 발행하여 로그파일 관리를 편리하게 했으며, 에러발생시 해당 로그를 바로 캐치하여 별도의 로그파일에 기록하도록 하고
+
+서버 장애 발생시 로그 확인을 훨씬 쉽게 하였습니다.
+
+AOP 학습과 해당 기능 개발을 위해 [인프런, 김영한님의 스프링 핵심 원리 - 고급편](https://www.inflearn.com/course/%EC%8A%A4%ED%94%84%EB%A7%81-%ED%95%B5%EC%8B%AC-%EC%9B%90%EB%A6%AC-%EA%B3%A0%EA%B8%89%ED%8E%B8/dashboard) 을 참고했습니다.
 
 ### 반응형 웹
 
