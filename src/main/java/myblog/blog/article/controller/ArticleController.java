@@ -77,7 +77,6 @@ public class ArticleController {
 
         return "redirect:/article/view?articleId=" + articleId;
     }
-
     /*
         - 아티클 수정 폼 조회
     */
