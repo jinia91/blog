@@ -60,7 +60,6 @@ public class ArticleController {
         model.addAttribute("articleDto", new ArticleForm());
         return "article/articleWriteForm";
     }
-
     /*
         - 아티클 작성 post 요청
     */
