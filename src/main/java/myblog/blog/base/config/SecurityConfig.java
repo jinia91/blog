@@ -59,7 +59,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .failureHandler(loginFailHandler)
                 .userInfoEndpoint()
                 .userService(oauth2MemberService)
-
         ;
     }
 }

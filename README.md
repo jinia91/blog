@@ -1,6 +1,8 @@
 # Jinia's LOG
 나만의 블로그 웹 사이트 개발 프로젝트
 
+※ 본 문서 원본은 gif를 포함하고 있습니다. https://github.com/jinia91/blog 를 통해 보시는것을 추천드립니다.
+
 https://www.jiniaslog.co.kr/
 
 # 목차

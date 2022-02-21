@@ -1,5 +1,6 @@
 package myblog.blog.base.config;
 
+import com.google.gson.Gson;
 import org.commonmark.ext.gfm.tables.TablesExtension;
 import org.commonmark.parser.Parser;
 import org.commonmark.renderer.html.HtmlRenderer;
@@ -39,5 +40,10 @@ public class AppConfig {
         return HtmlRenderer.builder()
             .extensions(List.of(TablesExtension.create()))
             .build();
+    }
+
+    @Bean
+    public Gson gson(){
+        return new Gson();
     }
 }

@@ -22,13 +22,12 @@ public class TagsService {
 
     private final TagsRepository tagsRepository;
     private final ArticleTagListsRepository articleTagListsRepository;
-
+    private final Gson gson;
     /*
         - Json 객체로 넘어온 태그들을 파싱해서 신규 태그인경우 저장
     */
     public void createNewTagsAndArticleTagList(String names, Article article) {
 
-        Gson gson = new Gson();
         ArrayList<Map<String,String>> tagsDtoArrayList = gson.fromJson(names, ArrayList.class);
 
         // JsonString -> tag

@@ -79,7 +79,7 @@ public class CategoryService {
         // 1.카테고리 리스트 순서 작성
         sortingOrder(categoryList);
         // 2. 기존 DB 저장된 카테고리 리스트 불러오기
-        List<Category> allWithoutDummy = categoryRepository.findAllWithoutDummy();
+        List<Category> categoryListFromDb = categoryRepository.findAllWithoutDummy();
 
         // 3. 카테고리 변경 루프
         while (!categoryList.isEmpty()) {
@@ -97,10 +97,10 @@ public class CategoryService {
                 }
                 // 부모카테고리가 기존에 존재 o
                 else {
-                    for (int i = 0; i < allWithoutDummy.size(); i++) {
-                        if (allWithoutDummy.get(i).getId().equals(categoryNormalDto.getId())) {
-                            pCategory = allWithoutDummy.get(i);
-                            allWithoutDummy.remove(i);
+                    for (int i = 0; i < categoryListFromDb.size(); i++) {
+                        if (categoryListFromDb.get(i).getId().equals(categoryNormalDto.getId())) {
+                            pCategory = categoryListFromDb.get(i);
+                            categoryListFromDb.remove(i);
                             break;
                         }
                     }
@@ -127,10 +127,10 @@ public class CategoryService {
                     }
                     // 카테고리가 기존에 존재 o
                     else {
-                        for (int i = 0; i < allWithoutDummy.size(); i++) {
-                            if (allWithoutDummy.get(i).getId().equals(subCategoryNormalDto.getId())) {
-                                cCategory = allWithoutDummy.get(i);
-                                allWithoutDummy.remove(i);
+                        for (int i = 0; i < categoryListFromDb.size(); i++) {
+                            if (categoryListFromDb.get(i).getId().equals(subCategoryNormalDto.getId())) {
+                                cCategory = categoryListFromDb.get(i);
+                                categoryListFromDb.remove(i);
                                 break;
                             }
                         }
@@ -145,7 +145,7 @@ public class CategoryService {
             }
         }
         // 3-3 불일치 카테고리 전부 삭제
-        categoryRepository.deleteAll(allWithoutDummy);
+        categoryRepository.deleteAll(categoryListFromDb);
     }
 
     /*

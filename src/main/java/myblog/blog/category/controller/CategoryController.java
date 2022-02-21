@@ -49,7 +49,6 @@ public class CategoryController {
         model.addAttribute("commentsList", comments);
 
         return "admin/categoryEdit";
-
     }
 
     /*

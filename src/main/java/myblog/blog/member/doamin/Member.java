@@ -2,6 +2,7 @@ package myblog.blog.member.doamin;
 
 import lombok.Builder;
 import lombok.Getter;
+import lombok.Setter;
 import myblog.blog.article.domain.Article;
 import myblog.blog.base.BasicEntity;
 import myblog.blog.comment.domain.Comment;
@@ -20,6 +21,7 @@ import java.util.List;
         sequenceName = "MEMBER_SEQ",
         initialValue = 1, allocationSize = 50)
 @Getter
+@Setter
 public class Member extends BasicEntity {
 
     @Id
