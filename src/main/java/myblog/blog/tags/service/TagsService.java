@@ -28,7 +28,7 @@ public class TagsService {
     */
     public void createNewTagsAndArticleTagList(String names, Article article) {
 
-        ArrayList<Map<String,String>> tagsDtoArrayList = gson.fromJson(names, ArrayList.class);
+        List<Map<String,String>> tagsDtoArrayList = gson.fromJson(names, ArrayList.class);
 
         // JsonString -> tag
         for (Map<String,String> tags : tagsDtoArrayList) {

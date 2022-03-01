@@ -1,5 +1,6 @@
 package myblog.blog.log;
 
+import io.sentry.Sentry;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
@@ -49,6 +50,8 @@ public class LogTracer {
         } else {
             log.info("[{}] {} {} time = {}ms ex={}", traceId.getId(), addSpace(EX_PREFIX, traceId.getLevel()),
                     traceStatus.getMessage(), resultTimeMs, ex.toString());
+            Sentry.captureMessage(String.format("[%s] %s %s time = %sms ex = %s",
+                    traceId.getId(),addSpace(START_PREFIX, traceId.getLevel()),traceStatus.getMessage(), resultTimeMs, ex.toString()));
         }
         releaseTraceId();
     }
