@@ -13,8 +13,6 @@ import myblog.blog.tags.service.TagsService;
 import myblog.blog.tags.dto.TagsDto;
 import myblog.blog.layout.LayoutDtoFactory;
 
-import org.commonmark.parser.Parser;
-import org.commonmark.renderer.html.HtmlRenderer;
 import org.jsoup.Jsoup;
 
 import org.modelmapper.ModelMapper;
@@ -34,6 +32,8 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static myblog.blog.utils.MarkdownUtils.*;
+
 @Controller
 @RequiredArgsConstructor
 public class ArticleController {
@@ -46,8 +46,6 @@ public class ArticleController {
     private final LayoutDtoFactory layoutDtoFactory;
 
     private final ModelMapper modelMapper;
-    private final Parser parser;
-    private final HtmlRenderer htmlRenderer;
 
     /*
         - 아티클 작성 폼 조회
@@ -94,7 +92,7 @@ public class ArticleController {
         //
         layoutDtoFactory.AddLayoutTo(model);
         model.addAttribute("categoryInput", getCategoryDtosForForm());
-        model.addAttribute("tagsInput", getTagsDtosForForm());;
+        model.addAttribute("tagsInput", getTagsDtosForForm());
         model.addAttribute("articleDto", articleDto);
         return "article/articleEditForm";
     }
@@ -139,7 +137,7 @@ public class ArticleController {
         //
 
         for(ArticleDtoForCardBox articleDto : articleDtoList){
-            articleDto.setContent(Jsoup.parse(htmlRenderer.render(parser.parse(articleDto.getContent()))).text());
+            articleDto.setContent(Jsoup.parse(getHtmlRenderer().render(getParser().parse(articleDto.getContent()))).text());
         }
 
         layoutDtoFactory.AddLayoutTo(model);
@@ -164,7 +162,7 @@ public class ArticleController {
                                 modelMapper.map(article, ArticleDtoForCardBox.class));
 
         for(ArticleDtoForCardBox article : articleList){
-            article.setContent(Jsoup.parse(htmlRenderer.render(parser.parse(article.getContent()))).text());
+            article.setContent(Jsoup.parse(getHtmlRenderer().render(getParser().parse(article.getContent()))).text());
         }
 
         PagingBoxDto pagingBoxDto =
@@ -192,7 +190,7 @@ public class ArticleController {
                                 modelMapper.map(article, ArticleDtoForCardBox.class));
 
         for(ArticleDtoForCardBox article : articleList){
-            article.setContent(Jsoup.parse(htmlRenderer.render(parser.parse(article.getContent()))).text());
+            article.setContent(Jsoup.parse(getHtmlRenderer().render(getParser().parse(article.getContent()))).text());
         }
 
         PagingBoxDto pagingBoxDto =
@@ -244,7 +242,7 @@ public class ArticleController {
                     .collect(Collectors.toList());
 
         articleDtoForDetail.setTags(tags);
-        articleDtoForDetail.setContent(htmlRenderer.render(parser.parse(article.getContent())));
+        articleDtoForDetail.setContent(getHtmlRenderer().render(getParser().parse(article.getContent())));
 
         List<ArticleDtoByCategory> articleTitlesSortByCategory =
                 articleService

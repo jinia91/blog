@@ -25,23 +25,6 @@ public class AppConfig {
         return modelMapper;
     }
 
-    /*
-        - HTML -> 마크다운 파싱 & 렌더러 빈등록
-    */
-    @Bean
-    public Parser parser(){
-        return Parser.builder()
-            .extensions(List.of(TablesExtension.create()))
-            .build();
-    }
-
-    @Bean
-    public HtmlRenderer htmlRenderer(){
-        return HtmlRenderer.builder()
-            .extensions(List.of(TablesExtension.create()))
-            .build();
-    }
-
     @Bean
     public Gson gson(){
         return new Gson();

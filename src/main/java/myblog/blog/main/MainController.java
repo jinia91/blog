@@ -1,27 +1,20 @@
 package myblog.blog.main;
 
-import ch.qos.logback.core.Layout;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import myblog.blog.article.dto.ArticleDtoForCardBox;
 import myblog.blog.article.service.ArticleService;
-import myblog.blog.category.dto.CategoryForView;
-import myblog.blog.category.service.CategoryService;
-import myblog.blog.comment.dto.CommentDtoForLayout;
-import myblog.blog.comment.service.CommentService;
 import myblog.blog.layout.LayoutDtoFactory;
-import org.commonmark.parser.Parser;
-import org.commonmark.renderer.html.HtmlRenderer;
 import org.jsoup.Jsoup;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static myblog.blog.utils.MarkdownUtils.*;
 
 @Controller
 @RequiredArgsConstructor
@@ -29,8 +22,6 @@ import java.util.stream.Collectors;
 public class MainController {
 
     private final ArticleService articleService;
-    private final HtmlRenderer htmlRenderer;
-    private final Parser parser;
     private final ModelMapper modelMapper;
     private final LayoutDtoFactory layoutDtoFactory;
     /*
@@ -61,11 +52,11 @@ public class MainController {
                 .stream()
                 .map(article -> modelMapper.map(article, ArticleDtoForCardBox.class))
                 .collect(Collectors.toList());
-        ;
+
 
         // 화면렌더링을 위한 파싱
         for(ArticleDtoForCardBox article : articles){
-            String content = Jsoup.parse(htmlRenderer.render(parser.parse(article.getContent()))).text();
+            String content = Jsoup.parse(getHtmlRenderer().render(getParser().parse(article.getContent()))).text();
             if(content.length()>300) {
                 content = content.substring(0, 300);
             }
