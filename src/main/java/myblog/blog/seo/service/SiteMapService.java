@@ -2,7 +2,9 @@ package myblog.blog.seo.service;
 
 import lombok.RequiredArgsConstructor;
 import myblog.blog.article.domain.Article;
+import myblog.blog.article.service.ArticleService;
 import myblog.blog.category.domain.Category;
+import myblog.blog.category.service.CategoryService;
 import org.jdom2.*;
 import org.jdom2.output.*;
 import org.springframework.stereotype.Service;
@@ -23,7 +25,12 @@ public class SiteMapService {
     static final String CATEGORYPRO = "&page=1";
     static final String ARTICLEPREV = "/article/view?articleId=";
 
-    public String getSiteMap(List<Article> articles, List<Category> allCategories){
+    private final ArticleService articleService;
+    private final CategoryService categoryService;
+
+    public String getSiteMap(){
+        List<Article> articles = articleService.getTotalArticle();
+        List<Category> allCategories = categoryService.getAllCategories();
         Document doc = makeSiteMapDocument(articles, allCategories);
         XMLOutputter xmlOutputter = getXmlOutputter();
         return xmlOutputter.outputString(doc);

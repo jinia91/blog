@@ -2,8 +2,10 @@ package myblog.blog.seo.service;
 
 import lombok.RequiredArgsConstructor;
 import myblog.blog.article.domain.Article;
+import myblog.blog.article.service.ArticleService;
 import org.jdom2.*;
 import org.jdom2.output.*;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,13 +28,17 @@ public class RssService {
 
     static final String ITEM_ROOT = "https://www.jiniaslog.co.kr/article/view?articleId=";
 
-    public String getRssFeed(List<Article> articles) {
-        Document doc = makeRssFeedDocument(articles);
+    private final ArticleService articleService;
+
+    @Cacheable(value = "seoCaching", key = "0")
+    public String getRssFeed() {
+        List<Article> articles = articleService.getTotalArticle();
+        Document doc = makeRssFeedDocumentFrom(articles);
         XMLOutputter xmlOutputter = getXmlOutputter();
         return xmlOutputter.outputString(doc);
     }
 
-    private Document makeRssFeedDocument(List<Article> articles) {
+    private Document makeRssFeedDocumentFrom(List<Article> articles) {
         Document doc = new Document();
         Element rss = buildRssRoot();
         doc.setRootElement(rss);
