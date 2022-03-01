@@ -1,17 +1,22 @@
 package myblog.blog.seo.controller;
 
 import lombok.RequiredArgsConstructor;
+import myblog.blog.article.domain.Article;
+import myblog.blog.article.service.ArticleService;
 import myblog.blog.seo.service.RssService;
+import myblog.blog.seo.service.SeoFacadeService;
 import myblog.blog.seo.service.SiteMapService;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.util.List;
+
 @Controller
 @RequiredArgsConstructor
 public class SEOController {
 
-    private final RssService rssService;
+    private final SeoFacadeService seoFacadeService;
     private final SiteMapService siteMapService;
 
     /*
@@ -21,7 +26,7 @@ public class SEOController {
     */
     @GetMapping(value = "/rss",produces = "application/xml;charset=utf-8")
     public @ResponseBody String rssFeed() {
-        return rssService.makeRssFeed();
+        return seoFacadeService.getRssFeed();
     }
 
     /*

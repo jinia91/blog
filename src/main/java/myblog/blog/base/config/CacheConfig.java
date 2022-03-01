@@ -75,6 +75,7 @@ public class CacheConfig {
             - 4. seo 캐시
                 - key 0 : rss
                 - key 1 : sitemap
+                - key 2 :
         */
         CacheConfiguration rssConfiguration = new CacheConfiguration()
                 .eternal(false)
