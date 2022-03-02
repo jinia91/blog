@@ -1,9 +1,8 @@
 package myblog.blog.tags.domain;
 
-import lombok.Builder;
-import lombok.Getter;
+import lombok.*;
 import myblog.blog.article.domain.Article;
-import myblog.blog.base.BasicEntity;
+import myblog.blog.infra.BasicEntity;
 
 import javax.persistence.*;
 
@@ -31,7 +30,6 @@ public class ArticleTagList extends BasicEntity {
     @JoinColumn(name = "tags_id")
     private Tags tags;
 
-    @Builder
     public ArticleTagList(Article article, Tags tags) {
         this.article = article;
         this.tags = tags;

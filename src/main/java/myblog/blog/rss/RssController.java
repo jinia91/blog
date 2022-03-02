@@ -1,10 +1,8 @@
-package myblog.blog.seo.controller;
+package myblog.blog.rss;
 
 import lombok.RequiredArgsConstructor;
-import myblog.blog.seo.service.RssService;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
     /*
         - rss 피드 발행 요청

@@ -1,4 +1,4 @@
-package myblog.blog.seo.service;
+package myblog.blog.sitemap;
 
 import lombok.RequiredArgsConstructor;
 import myblog.blog.article.domain.Article;

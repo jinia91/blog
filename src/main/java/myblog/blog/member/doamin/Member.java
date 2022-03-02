@@ -4,7 +4,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import myblog.blog.article.domain.Article;
-import myblog.blog.base.BasicEntity;
+import myblog.blog.infra.BasicEntity;
 import myblog.blog.comment.domain.Comment;
 
 import javax.persistence.*;

@@ -1,10 +1,8 @@
-package myblog.blog.seo.controller;
+package myblog.blog.sitemap;
 
 import lombok.RequiredArgsConstructor;
-import myblog.blog.seo.service.SiteMapService;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 /*
     - siteMap.xml 요청

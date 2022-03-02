@@ -1,14 +1,9 @@
-package myblog.blog.base.config;
+package myblog.blog.infra.config;
 
 import com.google.gson.Gson;
-import org.commonmark.ext.gfm.tables.TablesExtension;
-import org.commonmark.parser.Parser;
-import org.commonmark.renderer.html.HtmlRenderer;
 import org.modelmapper.ModelMapper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
-import java.util.List;
 
 @Configuration
 public class AppConfig {

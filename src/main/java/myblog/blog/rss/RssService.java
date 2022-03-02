@@ -1,4 +1,4 @@
-package myblog.blog.seo.service;
+package myblog.blog.rss;
 
 import lombok.RequiredArgsConstructor;
 import myblog.blog.article.domain.Article;
@@ -13,7 +13,7 @@ import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
-import static myblog.blog.utils.MarkdownUtils.*;
+import static myblog.blog.infra.utils.MarkdownUtils.*;
 
 /*
         - rss 서비스 로직

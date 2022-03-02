@@ -58,7 +58,7 @@ public class ArticleService {
     public void editArticle(Long articleId, ArticleForm articleForm) {
         Article article = articleRepository.findById(articleId).get();
         Category category = categoryService.findCategory(articleForm.getCategory());
-        tagsService.deleteArticleTags(article);
+        tagsService.deleteAllTagsWith(article);
         tagsService.createNewTagsAndArticleTagList(articleForm.getTags(), article);
         article.isEditedFrom(articleForm,category);
     }

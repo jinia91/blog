@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static myblog.blog.utils.MarkdownUtils.*;
+import static myblog.blog.infra.utils.MarkdownUtils.*;
 
 @Controller
 @RequiredArgsConstructor

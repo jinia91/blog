@@ -1,12 +1,10 @@
 package myblog.blog.tags.domain;
 
-import lombok.Builder;
-import lombok.Getter;
-import myblog.blog.base.BasicEntity;
+import lombok.*;
+import myblog.blog.infra.BasicEntity;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 @Entity
 @SequenceGenerator(
@@ -14,21 +12,22 @@ import java.util.List;
         sequenceName = "TAGS_SEQ",
         initialValue = 1, allocationSize = 50)
 @Getter
-public class    Tags extends BasicEntity {
+public class Tags extends BasicEntity {
+
+    protected Tags() {}
 
     @Id
     @Column(name = "tags_id")
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "TAGS_SEQ_GENERATOR")
     private Long id;
+
     @Column(unique = true, nullable = false, length = 20)
     private String name;
+
     @OneToMany(mappedBy = "tags")
     private List<ArticleTagList> articleTagLists = new ArrayList<>();
 
-    @Builder
     public Tags(String name) {
         this.name = name;
     }
-
-    protected Tags() {}
 }

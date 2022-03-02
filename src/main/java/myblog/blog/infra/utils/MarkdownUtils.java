@@ -1,4 +1,4 @@
-package myblog.blog.utils;
+package myblog.blog.infra.utils;
 
 import org.commonmark.ext.gfm.tables.TablesExtension;
 import org.commonmark.parser.Parser;
