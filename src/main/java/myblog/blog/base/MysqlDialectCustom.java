@@ -1,4 +1,4 @@
-package myblog.blog.infra;
+package myblog.blog.base;
 
 import org.hibernate.dialect.MySQL8Dialect;
 import org.hibernate.dialect.function.SQLFunctionTemplate;

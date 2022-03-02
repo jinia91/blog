@@ -3,7 +3,7 @@ package myblog.blog.article.domain;
 import lombok.Builder;
 import lombok.Getter;
 import myblog.blog.article.dto.ArticleForm;
-import myblog.blog.infra.BasicEntity;
+import myblog.blog.base.BasicEntity;
 import myblog.blog.category.domain.Category;
 import myblog.blog.comment.domain.Comment;
 import myblog.blog.member.doamin.Member;

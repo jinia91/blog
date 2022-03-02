@@ -1,4 +1,4 @@
-package myblog.blog.infra.config;
+package myblog.blog.base.config;
 
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.config.CacheConfiguration;

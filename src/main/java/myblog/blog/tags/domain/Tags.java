@@ -1,7 +1,7 @@
 package myblog.blog.tags.domain;
 
 import lombok.*;
-import myblog.blog.infra.BasicEntity;
+import myblog.blog.base.BasicEntity;
 
 import javax.persistence.*;
 import java.util.*;

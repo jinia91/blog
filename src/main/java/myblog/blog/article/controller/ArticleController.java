@@ -32,7 +32,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static myblog.blog.infra.utils.MarkdownUtils.*;
+import static myblog.blog.base.utils.MarkdownUtils.*;
 
 @Controller
 @RequiredArgsConstructor

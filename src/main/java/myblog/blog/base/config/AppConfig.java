@@ -1,4 +1,4 @@
-package myblog.blog.infra.config;
+package myblog.blog.base.config;
 
 import com.google.gson.Gson;
 import org.modelmapper.ModelMapper;

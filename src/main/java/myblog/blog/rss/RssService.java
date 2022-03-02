@@ -13,7 +13,7 @@ import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
-import static myblog.blog.infra.utils.MarkdownUtils.*;
+import static myblog.blog.base.utils.MarkdownUtils.*;
 
 /*
         - rss 서비스 로직
