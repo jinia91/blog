@@ -222,9 +222,9 @@ SEO 문제도 직면하게됨을 깨달았습니다. 이를 해결하기 위해 
 
 댓글과 대댓글의 경우 엔티티 구조는 셀프조인으로 참조하되 계층 레벨을 표현하는 컬럼을 두어 구분토록하였고, 게시물에 달린 댓글들을 조회하는 경우
 
-해당 댓글들을 백트래킹 알고리즘으로 계층화된 트리구조로 객체생성하여 대댓글은 물론 차후 정책에 따라 무한히 계층을 내려갈수 있도록 설계하였습니다.
+해당 댓글들을 dfs 알고리즘으로 계층화된 트리구조로 객체생성하여 대댓글은 물론 차후 정책에 따라 무한히 계층을 내려갈수 있도록 설계하였습니다.
 
-[백트래킹 알고리즘으로 계층화 트리구조 생성 static factory method](https://github.com/jinia91/blog/blob/a1d9381d8675ef01fbe3cf7371fe642a1847a943/src/main/java/myblog/blog/comment/dto/CommentDto.java#L39)
+[dfs 알고리즘으로 계층화 트리구조 생성 static factory method](https://github.com/jinia91/blog/blob/a1d9381d8675ef01fbe3cf7371fe642a1847a943/src/main/java/myblog/blog/comment/dto/CommentDto.java#L39)
 
 #### 트러블 슈팅~개행 반복 입력 문제
 
@@ -238,9 +238,9 @@ SEO 문제도 직면하게됨을 깨달았습니다. 이를 해결하기 위해 
 
 카테고리 역시 위의 댓글처럼 계층 레벨을 표현하는 컬럼을 사용하고 셀프조인으로 계층을 형성하도록 엔티티 구조를 설계하였으며 레이아웃상에 카테고리를 보여주기 위하여
 
-조회된 카테고리들을 백트래킹 알고리즘으로 계층화된 트리구조로 객체생성, 차후 정책에 따라 무한히 계층으로 표현할수 있도록 설계했습니다.
+조회된 카테고리들을 dfs 알고리즘으로 계층화된 트리구조로 객체생성, 차후 정책에 따라 무한히 계층으로 표현할수 있도록 설계했습니다.
 
-[백트래킹 알고리즘으로 계층화 트리구조 생성 static factory method](https://github.com/jinia91/blog/blob/a1d9381d8675ef01fbe3cf7371fe642a1847a943/src/main/java/myblog/blog/category/dto/CategoryForView.java#L38)
+[dfs 알고리즘으로 계층화 트리구조 생성 static factory method](https://github.com/jinia91/blog/blob/a1d9381d8675ef01fbe3cf7371fe642a1847a943/src/main/java/myblog/blog/category/dto/CategoryForView.java#L38)
 
 
 ### 카테고리 편집기 구현
