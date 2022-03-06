@@ -1,6 +1,7 @@
 plugins {
 	id 'org.springframework.boot' version '2.5.6'
 	id 'io.spring.dependency-management' version '1.0.11.RELEASE'
+	id "org.jetbrains.kotlin.jvm" version "1.5.0-RC"
 //	id "com.ewerk.gradle.plugins.querydsl" version "1.0.10"
 	id "com.github.node-gradle.node" version "3.1.0"
 	id 'java'
@@ -25,6 +26,11 @@ repositories {
 	mavenCentral()
 	gradlePluginPortal()
 }
+
+ext {
+	kotlin_version = '1.5.0-RC'
+}
+
 
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
@@ -54,9 +60,15 @@ dependencies {
 	runtimeOnly 'mysql:mysql-connector-java'
 	annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
 	annotationProcessor 'org.projectlombok:lombok'
-	testImplementation 'org.springframework.boot:spring-boot-starter-test'
-	testImplementation 'org.springframework.security:spring-security-test'
 	testImplementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter-test:2.2.0'
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testImplementation 'io.projectreactor:reactor-test'
+	testImplementation 'org.springframework.security:spring-security-test'
+
+	testImplementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
+	testImplementation "org.jetbrains.kotlin:kotlin-test:$kotlin_version"
+	testImplementation "org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version"
+	testImplementation "com.nhaarman:mockito-kotlin-kt1.1:1.5.0"
 }
 
 test {
@@ -79,6 +91,13 @@ test {
 //compileQuerydsl {
 //	options.annotationProcessorPath = configurations.querydsl
 //}
+
+
+compileTestKotlin {
+	kotlinOptions {
+		jvmTarget = "1.8"
+	}
+}
 
 
 // NPM 설정
