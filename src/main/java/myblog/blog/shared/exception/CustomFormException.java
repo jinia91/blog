@@ -1,4 +1,4 @@
-package myblog.blog.exception;
+package myblog.blog.shared.exception;
 /*
     - REST 컨트롤러 상태 메세지 전송용 커스텀 에러
 */

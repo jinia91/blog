@@ -1,4 +1,4 @@
-package myblog.blog.exception;
+package myblog.blog.shared.exception;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.ControllerAdvice;

@@ -1,10 +1,8 @@
-package myblog.blog.sitemap
+package myblog.blog.rss
 
 import com.nhaarman.mockito_kotlin.whenever
 import myblog.blog.article.domain.Article
 import myblog.blog.article.service.ArticleService
-import myblog.blog.category.domain.Category
-import myblog.blog.category.service.CategoryService
 import myblog.blog.rss.RssService
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -21,31 +19,25 @@ import java.util.*
 
 
 @ExtendWith(MockitoExtension::class)
-class SiteMapServiceTests {
+class RssServiceTests {
 
     @Mock
     lateinit var articleService: ArticleService
-    @Mock
-    lateinit var categoryService: CategoryService
     @InjectMocks
-    lateinit var siteMapService: SiteMapService
+    lateinit var rssService: RssService
 
     @Test
-    fun `정상적으로 siteMap을 가져오는 테스트`() {
+    fun `정상적으로 rssFeed를 가져오는 테스트`() {
         // given
         whenever(articleService.totalArticle)
                 .thenReturn(Arrays.asList(buildArticle("테스트용", "1호", 1L), buildArticle("테스트용이에용", "2호", 2L)))
-        whenever(categoryService.allCategories)
-                .thenReturn(Arrays.asList(buildCategory("목 카테고리")))
         // when
-        val siteMap = siteMapService.siteMap
+        val rssFeed = rssService.rssFeed
         // then
-        siteMapRootBuildlAssert(siteMap)
-        siteMapCategoryUrlBuildAssert(siteMap)
-        siteMapArticleUrlBuildAssert(siteMap)
+        firstArticleAssert(rssFeed)
+        secondArticleAssert(rssFeed)
     }
 
-    private fun buildCategory(title: String) = Category.builder().title(title).tier(1).build()
     private fun buildArticle(title: String, content: String, id: Long): Article? {
         val article = Article.builder().title(title).content(content).build()
         setArticlePrivateFieldId(id, article)
@@ -67,17 +59,18 @@ class SiteMapServiceTests {
         field.set(article, id)
     }
 
-    private fun siteMapRootBuildlAssert(rssFeed: String?) {
-        assertThat(rssFeed).contains("<loc>https://www.jiniaslog.co.kr</loc>")
-                .contains("<priority>1.0</priority>")
+    private fun secondArticleAssert(rssFeed: String?) {
+        assertThat(rssFeed).contains("<title><![CDATA[테스트용이에용]]></title>")
+                .contains("<link>https://www.jiniaslog.co.kr/article/view?articleId=2</link>")
+                .contains("<description><![CDATA[<p>2호</p>]]></description>")
+                .contains("<guid>https://www.jiniaslog.co.kr/article/view?articleId=2</guid>")
     }
 
-    private fun siteMapCategoryUrlBuildAssert(rssFeed: String?) {
-        assertThat(rssFeed).contains("<loc>https://www.jiniaslog.co.kr/article/list?category=목 카테고리&amp;tier=1&amp;page=1</loc>")
+    private fun firstArticleAssert(rssFeed: String?) {
+        assertThat(rssFeed).contains("<title><![CDATA[테스트용]]></title>")
+                .contains("<link>https://www.jiniaslog.co.kr/article/view?articleId=1</link>")
+                .contains("<description><![CDATA[<p>1호</p>]]></description>")
+                .contains("<guid>https://www.jiniaslog.co.kr/article/view?articleId=1</guid>")
     }
 
-    private fun siteMapArticleUrlBuildAssert(rssFeed: String?) {
-        assertThat(rssFeed).contains("<loc>https://www.jiniaslog.co.kr/article/view?articleId=1</loc>")
-                .contains("<loc>https://www.jiniaslog.co.kr/article/view?articleId=2</loc>")
-    }
 }

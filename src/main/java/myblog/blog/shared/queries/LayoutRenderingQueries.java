@@ -1,4 +1,4 @@
-package myblog.blog.layout;
+package myblog.blog.shared.queries;
 
 import lombok.RequiredArgsConstructor;
 import myblog.blog.category.dto.CategoryForView;
@@ -12,7 +12,7 @@ import java.util.List;
 
 @Component
 @RequiredArgsConstructor
-public class LayoutDtoFactory {
+public class LayoutRenderingQueries {
 
     private final CategoryService categoryService;
     private final CommentService commentService;
@@ -26,6 +26,4 @@ public class LayoutDtoFactory {
         model.addAttribute("category", categoryForView);
         model.addAttribute("commentsList", comments);
     }
-
-
 }

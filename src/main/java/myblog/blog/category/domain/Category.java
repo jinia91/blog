@@ -4,7 +4,7 @@ package myblog.blog.category.domain;
 import lombok.Builder;
 import lombok.Getter;
 import myblog.blog.article.domain.Article;
-import myblog.blog.base.BasicEntity;
+import myblog.blog.shared.BasicEntity;
 
 import javax.persistence.*;
 import java.util.ArrayList;

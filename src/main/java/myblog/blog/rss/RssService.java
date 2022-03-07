@@ -1,19 +1,19 @@
 package myblog.blog.rss;
 
 import lombok.RequiredArgsConstructor;
-import myblog.blog.article.domain.Article;
-import myblog.blog.article.service.ArticleService;
-import org.jdom2.*;
-import org.jdom2.output.*;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import myblog.blog.article.domain.Article;
+import myblog.blog.article.service.ArticleService;
+import org.jdom2.*;
+import org.jdom2.output.*;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
-import static myblog.blog.base.utils.MarkdownUtils.*;
+import static myblog.blog.shared.utils.MarkdownUtils.*;
 
 /*
         - rss 서비스 로직

@@ -1,4 +1,4 @@
-package myblog.blog.exception;
+package myblog.blog.shared.exception;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;

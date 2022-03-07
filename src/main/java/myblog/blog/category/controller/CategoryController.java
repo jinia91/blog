@@ -1,8 +1,8 @@
 package myblog.blog.category.controller;
 
 import lombok.RequiredArgsConstructor;
-import myblog.blog.exception.CustomFormException;
-import myblog.blog.exception.ListValidator;
+import myblog.blog.shared.exception.CustomFormException;
+import myblog.blog.shared.exception.ListValidator;
 import myblog.blog.category.dto.CategoryForView;
 import myblog.blog.category.dto.CategoryNormalDto;
 import myblog.blog.category.service.CategoryService;

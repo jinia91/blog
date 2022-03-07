@@ -9,9 +9,9 @@ import myblog.blog.category.service.CategoryService;
 import myblog.blog.category.dto.*;
 import myblog.blog.member.auth.PrincipalDetails;
 import myblog.blog.member.dto.MemberDto;
+import myblog.blog.tags.queries.TagsQueries;
 import myblog.blog.tags.service.TagsService;
-import myblog.blog.tags.dto.TagsDto;
-import myblog.blog.layout.LayoutDtoFactory;
+import myblog.blog.shared.queries.LayoutRenderingQueries;
 
 import org.jsoup.Jsoup;
 
@@ -32,7 +32,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static myblog.blog.base.utils.MarkdownUtils.*;
+import static myblog.blog.shared.utils.MarkdownUtils.*;
 
 @Controller
 @RequiredArgsConstructor
@@ -43,7 +43,8 @@ public class ArticleController {
     private final CategoryService categoryService;
     private final TempArticleService tempArticleService;
 
-    private final LayoutDtoFactory layoutDtoFactory;
+    private final TagsQueries tagsQueries;
+    private final LayoutRenderingQueries layoutRenderingQueries;
 
     private final ModelMapper modelMapper;
 
@@ -52,9 +53,9 @@ public class ArticleController {
     */
     @GetMapping("article/write")
     public String getWriteArticleForm(Model model) {
-        layoutDtoFactory.AddLayoutTo(model);
+        layoutRenderingQueries.AddLayoutTo(model);
         model.addAttribute("categoryInput", getCategoryDtosForForm());
-        model.addAttribute("tagsInput", getTagsDtosForForm());
+        model.addAttribute("tagsInput", tagsQueries.findAllTagDtos());
         model.addAttribute("articleDto", new ArticleForm());
         return "article/articleWriteForm";
     }
@@ -89,9 +90,9 @@ public class ArticleController {
                 .collect(Collectors.toList());
         articleDto.setArticleTagList(articleTagStrings);
         //
-        layoutDtoFactory.AddLayoutTo(model);
+        layoutRenderingQueries.AddLayoutTo(model);
         model.addAttribute("categoryInput", getCategoryDtosForForm());
-        model.addAttribute("tagsInput", getTagsDtosForForm());
+        model.addAttribute("tagsInput", tagsQueries.findAllTagDtos());
         model.addAttribute("articleDto", articleDto);
         return "article/articleEditForm";
     }
@@ -139,7 +140,7 @@ public class ArticleController {
             articleDto.setContent(Jsoup.parse(getHtmlRenderer().render(getParser().parse(articleDto.getContent()))).text());
         }
 
-        layoutDtoFactory.AddLayoutTo(model);
+        layoutRenderingQueries.AddLayoutTo(model);
         model.addAttribute("pagingBox", pagingBoxDto);
         model.addAttribute("articleList", articleDtoList);
 
@@ -167,7 +168,7 @@ public class ArticleController {
         PagingBoxDto pagingBoxDto =
                 PagingBoxDto.createOf(page, (int)articleList.getTotalElements());
 
-        layoutDtoFactory.AddLayoutTo(model);
+        layoutRenderingQueries.AddLayoutTo(model);
         model.addAttribute("articleList", articleList);
         model.addAttribute("pagingBox", pagingBoxDto);
 
@@ -195,7 +196,7 @@ public class ArticleController {
         PagingBoxDto pagingBoxDto =
                 PagingBoxDto.createOf(page, (int)articleList.getTotalElements());
 
-        layoutDtoFactory.AddLayoutTo(model);
+        layoutRenderingQueries.AddLayoutTo(model);
         model.addAttribute("articleList", articleList);
         model.addAttribute("pagingBox", pagingBoxDto);
 
@@ -263,7 +264,7 @@ public class ArticleController {
         else substringContents = articleDtoForDetail.getContent();
 
         // 4. 모델 담기
-        layoutDtoFactory.AddLayoutTo(model);
+        layoutRenderingQueries.AddLayoutTo(model);
         model.addAttribute("article", articleDtoForDetail);
         model.addAttribute("metaTags",metaTags);
         model.addAttribute("metaContents",Jsoup.parse(substringContents).text());
@@ -323,17 +324,6 @@ public class ArticleController {
             }
         }
         throw new IllegalArgumentException("'"+category+"' 라는 카테고리는 존재하지 않습니다.");
-    }
-
-    /*
-- 아티클 폼에 필요한 태그 dtos
-    */
-    private List<TagsDto> getTagsDtosForForm() {
-        return tagsService
-                .findAllTags()
-                .stream()
-                .map(tag -> new TagsDto(tag.getName()))
-                .collect(Collectors.toList());
     }
 
     /*

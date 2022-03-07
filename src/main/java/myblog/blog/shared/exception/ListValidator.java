@@ -1,4 +1,4 @@
-package myblog.blog.exception;
+package myblog.blog.shared.exception;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;

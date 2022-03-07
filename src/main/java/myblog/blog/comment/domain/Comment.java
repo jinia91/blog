@@ -3,7 +3,7 @@ package myblog.blog.comment.domain;
 import lombok.Builder;
 import lombok.Getter;
 import myblog.blog.article.domain.Article;
-import myblog.blog.base.BasicEntity;
+import myblog.blog.shared.BasicEntity;
 import myblog.blog.member.doamin.Member;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;

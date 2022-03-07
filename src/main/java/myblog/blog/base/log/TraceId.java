@@ -1,4 +1,4 @@
-package myblog.blog.log;
+package myblog.blog.base.log;
 
 import lombok.Getter;
 

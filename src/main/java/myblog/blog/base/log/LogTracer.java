@@ -1,4 +1,4 @@
-package myblog.blog.log;
+package myblog.blog.base.log;
 
 import io.sentry.Sentry;
 import lombok.extern.slf4j.Slf4j;

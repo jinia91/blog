@@ -1,4 +1,4 @@
-package myblog.blog.base;
+package myblog.blog.shared;
 
 import lombok.Getter;
 import org.springframework.data.annotation.CreatedDate;

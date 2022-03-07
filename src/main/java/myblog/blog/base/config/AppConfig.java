@@ -19,9 +19,4 @@ public class AppConfig {
                 .setFieldMatchingEnabled(true);
         return modelMapper;
     }
-
-    @Bean
-    public Gson gson(){
-        return new Gson();
-    }
 }

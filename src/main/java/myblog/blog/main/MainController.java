@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import myblog.blog.article.dto.ArticleDtoForCardBox;
 import myblog.blog.article.service.ArticleService;
-import myblog.blog.layout.LayoutDtoFactory;
+import myblog.blog.shared.queries.LayoutRenderingQueries;
 import org.jsoup.Jsoup;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Controller;
@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static myblog.blog.base.utils.MarkdownUtils.*;
+import static myblog.blog.shared.utils.MarkdownUtils.*;
 
 @Controller
 @RequiredArgsConstructor
@@ -23,7 +23,7 @@ public class MainController {
 
     private final ArticleService articleService;
     private final ModelMapper modelMapper;
-    private final LayoutDtoFactory layoutDtoFactory;
+    private final LayoutRenderingQueries layoutRenderingQueries;
     /*
         - 메인 화면 제어용 컨트롤러
     */
@@ -35,7 +35,7 @@ public class MainController {
                 .map(article -> modelMapper.map(article, ArticleDtoForCardBox.class))
                 .collect(Collectors.toList());
         //
-        layoutDtoFactory.AddLayoutTo(model);
+        layoutRenderingQueries.AddLayoutTo(model);
         model.addAttribute("popularArticles", popularArticles);
         return "index";
     }
