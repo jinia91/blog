@@ -83,7 +83,7 @@
                 <div class="col g-1 g-md-4" th:each="article,num : ${popularArticles}">
                     <a th:href="@{/article/view(articleId=${article.getId()})}">
                         <div class=" card ratio ratio-1x1 popular-card "
-                             th:style="|background-image: url(${article.getThumbnailUrl()}); background-size: cover;|">
+                             th:style="|background-image: url(${article.getThumbnailUrl()}); background-position: center; background-size: cover;|">
                             <div class="card-description text-center">
                                 <small><small th:text="|작성일 : ${#temporals.format(article.getCreatedDate(), 'yyyy-MM-dd')}|"></small></small>
                                 <p class="text-truncate" th:text="${article.getTitle()}">타이틀</p>

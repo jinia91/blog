@@ -3,20 +3,15 @@ package myblog.blog.rss
 import com.nhaarman.mockito_kotlin.whenever
 import myblog.blog.article.domain.Article
 import myblog.blog.article.service.ArticleService
-import myblog.blog.rss.RssService
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-//import org.junit.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.InjectMocks
 import org.mockito.Mock
-import org.mockito.Mockito
-import org.mockito.junit.MockitoJUnitRunner
 import org.mockito.junit.jupiter.MockitoExtension
 import java.lang.reflect.Field
 import java.time.LocalDateTime
 import java.util.*
-
 
 @ExtendWith(MockitoExtension::class)
 class RssServiceTests {
@@ -46,24 +41,17 @@ class RssServiceTests {
     }
 
     private fun setArticleCreatedTimeStamp(article: Article) {
-        val clazz = Class.forName("myblog.blog.article.domain.Article").superclass
+        val clazz = article.javaClass.superclass
         val field: Field = clazz.getDeclaredField("createdDate")
         field.setAccessible(true)
         field.set(article, LocalDateTime.now())
     }
 
     private fun setArticlePrivateFieldId(id: Long, article: Article) {
-        val clazz = Class.forName("myblog.blog.article.domain.Article")
+        val clazz = article.javaClass
         val field: Field = clazz.getDeclaredField("id")
         field.setAccessible(true)
         field.set(article, id)
-    }
-
-    private fun secondArticleAssert(rssFeed: String?) {
-        assertThat(rssFeed).contains("<title><![CDATA[테스트용이에용]]></title>")
-                .contains("<link>https://www.jiniaslog.co.kr/article/view?articleId=2</link>")
-                .contains("<description><![CDATA[<p>2호</p>]]></description>")
-                .contains("<guid>https://www.jiniaslog.co.kr/article/view?articleId=2</guid>")
     }
 
     private fun firstArticleAssert(rssFeed: String?) {
@@ -73,4 +61,10 @@ class RssServiceTests {
                 .contains("<guid>https://www.jiniaslog.co.kr/article/view?articleId=1</guid>")
     }
 
+    private fun secondArticleAssert(rssFeed: String?) {
+        assertThat(rssFeed).contains("<title><![CDATA[테스트용이에용]]></title>")
+                .contains("<link>https://www.jiniaslog.co.kr/article/view?articleId=2</link>")
+                .contains("<description><![CDATA[<p>2호</p>]]></description>")
+                .contains("<guid>https://www.jiniaslog.co.kr/article/view?articleId=2</guid>")
+    }
 }

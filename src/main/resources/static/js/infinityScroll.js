@@ -52,7 +52,7 @@ function makeNextPage() {
                                             <a href="/article/view?articleId=${listElement.id}">
                                                 <div class="row g-0">
                                                     <div class="col-3">
-                                                        <div class="ratio ratio-1x1\" style="background-image: url(${listElement.thumbnailUrl}); background-size: cover;"></div>
+                                                        <div class="ratio ratio-1x1\" style="background-image: url(${listElement.thumbnailUrl}); background-position: center; background-size: cover;"></div>
                                                     </div>
                                                     <div class="col-9 row row-cols-1 align-self-center">
                                                         <h3 class="card-title col mb-3 text-truncate">${listElement.title}</h3>
