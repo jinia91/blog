@@ -1,6 +1,5 @@
 package myblog.blog.sitemap
 
-import com.nhaarman.mockito_kotlin.whenever
 import myblog.blog.article.domain.Article
 import myblog.blog.article.service.ArticleService
 import myblog.blog.category.domain.Category
@@ -15,6 +14,7 @@ import org.mockito.Mock
 import org.mockito.Mockito
 import org.mockito.junit.MockitoJUnitRunner
 import org.mockito.junit.jupiter.MockitoExtension
+import org.mockito.kotlin.whenever
 import java.lang.reflect.Field
 import java.time.LocalDateTime
 import java.util.*

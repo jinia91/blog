@@ -1,6 +1,5 @@
 package myblog.blog.rss
 
-import com.nhaarman.mockito_kotlin.whenever
 import myblog.blog.article.domain.Article
 import myblog.blog.article.service.ArticleService
 import org.assertj.core.api.Assertions.assertThat
@@ -9,6 +8,7 @@ import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.InjectMocks
 import org.mockito.Mock
 import org.mockito.junit.jupiter.MockitoExtension
+import org.mockito.kotlin.whenever
 import java.lang.reflect.Field
 import java.time.LocalDateTime
 import java.util.*
