@@ -17,7 +17,6 @@ import java.util.Arrays;
 @Slf4j
 @RequiredArgsConstructor
 @Component
-@Profile({"local","dev"})
 public class LogAspect {
 
     private final LogTracer logTracer;
