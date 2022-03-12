@@ -193,7 +193,7 @@ public class CategoryService {
     /*
         - 최초 필수 더미 카테고리 추가 코드
     */
-    @PostConstruct
+//    @PostConstruct
     private void insertDummyCategory() {
         if(categoryRepository.findByTitle("total")==null) {
             Category category0 = Category.builder()

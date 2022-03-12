@@ -92,7 +92,7 @@ public class Oauth2MemberService extends DefaultOAuth2UserService {
     /*
         - 앱 구동시 ADMIN 계정 INSERT
     */
-    @PostConstruct
+//    @PostConstruct
     public void insertAdmin(){
 
         Member admin = memberRepository.findByEmail(adminEmail);
