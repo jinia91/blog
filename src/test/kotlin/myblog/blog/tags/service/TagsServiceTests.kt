@@ -3,16 +3,15 @@ package myblog.blog.tags.service
 import myblog.blog.article.domain.Article
 import myblog.blog.tags.domain.ArticleTagList
 import myblog.blog.tags.domain.Tags
-import org.junit.jupiter.api.extension.ExtendWith
-import org.mockito.junit.jupiter.MockitoExtension
 import myblog.blog.tags.repository.ArticleTagListsRepository
 import myblog.blog.tags.repository.TagsRepository
+
+import org.junit.jupiter.api.extension.ExtendWith
+import org.mockito.junit.jupiter.MockitoExtension
 import org.junit.jupiter.api.Test
 import org.mockito.*
 import org.mockito.kotlin.*
-import java.lang.reflect.Method
 import java.util.*
-import kotlin.test.expect
 
 @ExtendWith(MockitoExtension::class)
 class TagsServiceTests {
@@ -29,10 +28,10 @@ class TagsServiceTests {
         // given
         val article = Article.builder().build()
         val names = "[{\"value\":\"1\"},{\"value\":\"2\"}]"
-        whenever(tagsRepository.findByName("1"))
-            .thenReturn(Optional.of(Tags("1")))
-        whenever(tagsRepository.findByName("2"))
-            .thenReturn(Optional.of(Tags("2")))
+//        whenever(tagsRepository.findByName("1"))
+//            .thenReturn(Optional.of(Tags("1")))
+//        whenever(tagsRepository.findByName("2"))
+//            .thenReturn(Optional.of(Tags("2")))
         // when
         tagsService.createNewTagsAndArticleTagList(names, article);
         //then
@@ -45,18 +44,18 @@ class TagsServiceTests {
         // given
         val article = Article.builder().build()
         val names = "[{\"value\":\"1\"},{\"value\":\"2\"}]"
-        whenever(tagsRepository.findByName("1"))
-            .thenReturn(Optional.empty())
+//        whenever(tagsRepository.findByName("1"))
+//            .thenReturn(Optional.empty())
 
         val tags1 = Tags("1")
         val tags2 = Tags("2")
 
-        val mock1 = mock<TagsRepository>(lenient = true){
-            on {save(tags1) } doReturn tags1
-        }
-        val mock2 = mock<TagsRepository>(lenient = true){
-            on {save(tags2) } doReturn tags2
-        }
+//        val mock1 = mock<TagsRepository>(lenient = true){
+//            on {save(tags1) } doReturn tags1
+//        }
+//        val mock2 = mock<TagsRepository>(lenient = true){
+//            on {save(tags2) } doReturn tags2
+//        }
         // when
         tagsService.createNewTagsAndArticleTagList(names, article);
         //then

@@ -4,6 +4,15 @@
       xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5" xmlns="http://www.w3.org/1999/html">
 
 <head>
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-VQ2HWM6VCF"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'G-VQ2HWM6VCF');
+    </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,  user-scalable = no, initial-scale=1.0"/>
     <title th:text="|${param.category} 카테고리 글 목록 - Jinia's LOG'|"></title>
