@@ -1,6 +1,5 @@
 package myblog.blog.base.log;
 
-import io.sentry.Sentry;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
@@ -14,45 +13,42 @@ public class LogTracer {
 
     private ThreadLocal<TraceId> traceIdHolder = new ThreadLocal<>();
 
-    public TraceStatus begin(String message){
-        syncTraceId();
+    public TraceStatusVO begin(String message, String args, String clientIP){
+        syncTraceId(clientIP);
         TraceId traceId = traceIdHolder.get();
         Long startTimeMs = System.currentTimeMillis();
-        log.info("[{}] {}{}",traceId.getId(), addSpace(START_PREFIX,
-                traceId.getLevel()), message);
-        return new TraceStatus(traceId, startTimeMs, message);
+        log.info("[{}] {}{} ,args = {}",traceId.getId(), addSpace(START_PREFIX, traceId.getLevel()), message, args);
+        return new TraceStatusVO(traceId, startTimeMs, message);
     }
 
-    private void syncTraceId() {
+    private void syncTraceId(String clientIP) {
         TraceId traceId = traceIdHolder.get();
         if (traceId == null) {
-            traceIdHolder.set(new TraceId());
+            traceIdHolder.set(new TraceId(clientIP));
         } else {
             traceIdHolder.set(traceId.createNextId());
         }
     }
 
-    public void end(TraceStatus traceStatus){
-        complete(traceStatus, null);
+    public void end(TraceStatusVO traceStatusVO){
+        complete(traceStatusVO, null);
     }
 
-    public void exception(TraceStatus traceStatus, Exception ex){
-        complete(traceStatus, ex);
+    public void exception(TraceStatusVO traceStatusVO, Exception ex){
+        complete(traceStatusVO, ex);
     }
 
-    private void complete(TraceStatus traceStatus, Exception ex) {
+    private void complete(TraceStatusVO traceStatusVO, Exception ex) {
         Long stopTimeMs = System.currentTimeMillis();
-        Long resultTimeMs = stopTimeMs - traceStatus.getStartTimesMs();
-        TraceId traceId = traceStatus.getTraceId();
+        Long resultTimeMs = stopTimeMs - traceStatusVO.getStartTimesMs();
+        TraceId traceId = traceStatusVO.getTraceId();
         if(ex == null){
             log.info("[{}] {} {} time = {}ms", traceId.getId(), addSpace(COMPLETE_PREFIX, traceId.getLevel()),
-                    traceStatus.getMessage(), resultTimeMs);
+                    traceStatusVO.getMessage(), resultTimeMs);
         } else {
             log.info("[{}] {} {} time = {}ms ex={}", traceId.getId(), addSpace(EX_PREFIX, traceId.getLevel()),
-                    traceStatus.getMessage(), resultTimeMs, ex.toString());
-            Sentry.captureMessage(String.format("[%s] %s %s time = %sms ex = %s",
-                    traceId.getId(),addSpace(START_PREFIX, traceId.getLevel()),traceStatus.getMessage(), resultTimeMs, ex.toString()));
-        }
+                    traceStatusVO.getMessage(), resultTimeMs, ex.toString());
+          }
         releaseTraceId();
     }
 
