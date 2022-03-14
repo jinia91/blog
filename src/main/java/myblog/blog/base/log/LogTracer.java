@@ -2,6 +2,10 @@ package myblog.blog.base.log;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
+
+import javax.servlet.http.HttpServletRequest;
 
 @Slf4j
 @Component
@@ -13,17 +17,22 @@ public class LogTracer {
 
     private ThreadLocal<TraceId> traceIdHolder = new ThreadLocal<>();
 
-    public TraceStatusVO begin(String message, String args, String clientIP){
-        syncTraceId(clientIP);
+    public TraceStatusVO begin(String message, String args){
+        syncTraceId();
         TraceId traceId = traceIdHolder.get();
         Long startTimeMs = System.currentTimeMillis();
+        if(traceId.isFirstLevel()) {
+            log.info("------------------------------"+traceId.getId()+"'s transaction start------------------------------");
+        }
         log.info("[{}] {}{} ,args = {}",traceId.getId(), addSpace(START_PREFIX, traceId.getLevel()), message, args);
         return new TraceStatusVO(traceId, startTimeMs, message);
     }
 
-    private void syncTraceId(String clientIP) {
+    private void syncTraceId() {
         TraceId traceId = traceIdHolder.get();
         if (traceId == null) {
+            HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
+            String clientIP = IpGetHelper.getClientIP(request);
             traceIdHolder.set(new TraceId(clientIP));
         } else {
             traceIdHolder.set(traceId.createNextId());
@@ -34,7 +43,7 @@ public class LogTracer {
         complete(traceStatusVO, null);
     }
 
-    public void exception(TraceStatusVO traceStatusVO, Exception ex){
+    public void handleException(TraceStatusVO traceStatusVO, Exception ex){
         complete(traceStatusVO, ex);
     }
 
@@ -43,12 +52,15 @@ public class LogTracer {
         Long resultTimeMs = stopTimeMs - traceStatusVO.getStartTimesMs();
         TraceId traceId = traceStatusVO.getTraceId();
         if(ex == null){
-            log.info("[{}] {} {} time = {}ms", traceId.getId(), addSpace(COMPLETE_PREFIX, traceId.getLevel()),
+            log.info("[{}] {}{} time = {}ms", traceId.getId(), addSpace(COMPLETE_PREFIX, traceId.getLevel()),
                     traceStatusVO.getMessage(), resultTimeMs);
         } else {
             log.info("[{}] {} {} time = {}ms ex={}", traceId.getId(), addSpace(EX_PREFIX, traceId.getLevel()),
                     traceStatusVO.getMessage(), resultTimeMs, ex.toString());
-          }
+        }
+        if(traceStatusVO.getTraceId().isFirstLevel()) {
+            log.info("-------------------------------"+traceId.getId()+"'s transaction end/"+resultTimeMs+"ms-------------------------");
+        }
         releaseTraceId();
     }
 

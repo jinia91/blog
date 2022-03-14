@@ -2,13 +2,15 @@ package myblog.blog.base.log;
 
 import lombok.Getter;
 
+import java.util.UUID;
+
 @Getter
 public class TraceId {
     private final String id;
     private final int level;
 
-    public TraceId(String clientIP) {
-        this.id = clientIP;
+    public TraceId(String id) {
+        this.id = id +"/"+ createdTransactionId();
         this.level = 0;
     }
 
@@ -17,9 +19,9 @@ public class TraceId {
         this.level = level;
     }
 
-//    private String createdId() {
-//        return UUID.randomUUID().toString().substring(0,8);
-//    }
+    private String createdTransactionId() {
+        return UUID.randomUUID().toString().substring(0,8);
+    }
 
     public TraceId createNextId(){
         return new TraceId(id, level+1);
