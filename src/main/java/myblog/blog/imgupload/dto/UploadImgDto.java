@@ -1,4 +1,4 @@
-package myblog.blog.img.dto;
+package myblog.blog.imgupload.dto;
 
 import lombok.Getter;
 import lombok.Setter;

@@ -1,4 +1,4 @@
-package myblog.blog.img.service;
+package myblog.blog.imgupload.service;
 
 import lombok.RequiredArgsConstructor;
 import org.kohsuke.github.GHRepository;
@@ -15,38 +15,20 @@ import java.util.UUID;
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class UploadImgService {
+public class ImgUploadServiceImpl {
 
-    /*
-        - 설정 파일로 잡아놓은 깃헙 이미지 레포지토리와 토큰
-    */
-    @Value("${git.gitToken}")
-    private String gitToken;
+    private final ImgUploadStrategy imgUploadStrategy;
 
-    @Value("${git.imgRepo}")
-    private String gitRepo;
-
-    @Value("${git.imgUrl}")
-    private String imgUrl;
-
-    /*
-        - 이미지 저장 로직
-            1. 깃허브 Repo에 이미지 업로드
-            2. 업로드된 Url 반환
-    */
     public String storeImg(MultipartFile multipartFile) throws IOException {
+        validateFile(multipartFile);
+        String storeFileName = createStoreFileName(multipartFile.getOriginalFilename());
+        return imgUploadStrategy.uploadFile(multipartFile, storeFileName);
+    }
+
+    private void validateFile(MultipartFile multipartFile) {
         if (multipartFile.isEmpty()) {
             throw new IllegalArgumentException("이미지가 존재하지 않습니다.");
         }
-
-        String storeFileName = createStoreFileName(multipartFile.getOriginalFilename());
-
-        GitHub gitHub = new GitHubBuilder().withOAuthToken(gitToken).build();
-        GHRepository repository = gitHub.getRepository(gitRepo);
-        repository.createContent().path("img/"+storeFileName)
-                .content(multipartFile.getBytes()).message("thumbnail").branch("main").commit();
-
-        return imgUrl + storeFileName + "?raw=true";
     }
 
     /*
