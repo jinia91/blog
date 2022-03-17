@@ -13,8 +13,8 @@ import java.io.IOException;
 /**
  * 깃헙 레포 이미지 업로드 전략 구현체
  */
-@RequiredArgsConstructor
-@Service
+//@RequiredArgsConstructor
+//@Service
 public class GithubRepoImgUploadStrategy implements ImgUploadStrategy {
 
     /*
