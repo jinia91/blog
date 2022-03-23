@@ -3,7 +3,7 @@ package myblog.blog.main;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import myblog.blog.article.dto.ArticleDtoForCardBox;
-import myblog.blog.article.service.ArticleService;
+import myblog.blog.article.application.ArticleService;
 import myblog.blog.shared.queries.LayoutRenderingQueries;
 import org.jsoup.Jsoup;
 import org.modelmapper.ModelMapper;

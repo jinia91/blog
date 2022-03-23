@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import myblog.blog.shared.exception.CustomFormException;
 import myblog.blog.shared.exception.ListValidator;
 import myblog.blog.category.dto.CategoryForView;
-import myblog.blog.category.dto.CategoryNormalDto;
+import myblog.blog.category.dto.CategorySimpleView;
 import myblog.blog.category.service.CategoryService;
 import myblog.blog.comment.dto.CommentDtoForLayout;
 import myblog.blog.comment.service.CommentService;
@@ -37,8 +37,8 @@ public class CategoryController {
     public String editCategoryForm(Model model) {
 
         // DTO 매핑 전처리
-        List<CategoryNormalDto> categoryList = categoryService.getCategorytCountList();
-        List<CategoryNormalDto> copyList = cloneList(categoryList);
+        List<CategorySimpleView> categoryList = categoryService.getCategorytCountList();
+        List<CategorySimpleView> copyList = cloneList(categoryList);
         copyList.remove(0);
         CategoryForView categoryForView = CategoryForView.createCategory(categoryList);
         List<CommentDtoForLayout> comments = commentService.recentCommentList();
@@ -56,7 +56,7 @@ public class CategoryController {
     */
     @PostMapping("/category/edit")
     public @ResponseBody
-    String editCategory(@RequestBody List<CategoryNormalDto> categoryList, Errors errors) {
+    String editCategory(@RequestBody List<CategorySimpleView> categoryList, Errors errors) {
        // List DTO 검증을 위한 커스텀 validator
         listValidator.validate(categoryList, errors);
         // 유효성 검사
@@ -67,11 +67,11 @@ public class CategoryController {
         categoryService.changeCategory(categoryList);
         return "변경 성공";
     }
-    private List<CategoryNormalDto> cloneList(List<CategoryNormalDto> categoryList) {
+    private List<CategorySimpleView> cloneList(List<CategorySimpleView> categoryList) {
         return categoryList
                 .stream()
                 .map(categoryNormalDto ->
-                        modelMapper.map(categoryNormalDto, CategoryNormalDto.class))
+                        modelMapper.map(categoryNormalDto, CategorySimpleView.class))
                 .collect(Collectors.toList());
     }
 }

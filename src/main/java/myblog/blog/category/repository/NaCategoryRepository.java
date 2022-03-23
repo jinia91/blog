@@ -1,6 +1,6 @@
 package myblog.blog.category.repository;
 
-import myblog.blog.category.dto.CategoryNormalDto;
+import myblog.blog.category.dto.CategorySimpleView;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 import org.springframework.stereotype.Repository;
@@ -23,6 +23,6 @@ public interface NaCategoryRepository {
             "            group by c.title, b.title with rollup) e\n" +
             "            right join category f on (e.title = f.title)\n" +
             "            order by pOrder, cOrder ")
-    List<CategoryNormalDto> getCategoryCount();
+    List<CategorySimpleView> getCategoryCount();
 
 }

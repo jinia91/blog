@@ -1,7 +1,8 @@
 package myblog.blog.rss
 
 import myblog.blog.article.domain.Article
-import myblog.blog.article.service.ArticleService
+import myblog.blog.article.application.ArticleService
+import myblog.blog.article.application.RssService
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith

@@ -2,19 +2,16 @@ package myblog.blog.category.service;
 
 import lombok.RequiredArgsConstructor;
 import myblog.blog.category.domain.Category;
-import myblog.blog.category.dto.CategoryNormalDto;
+import myblog.blog.category.dto.CategorySimpleView;
 import myblog.blog.category.dto.CategoryForView;
 import myblog.blog.category.repository.CategoryRepository;
 import myblog.blog.category.repository.NaCategoryRepository;
-import myblog.blog.member.doamin.Role;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.annotation.PostConstruct;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @Transactional
@@ -41,7 +38,7 @@ public class CategoryService {
     /*
         - 카테고리와 카테고리별 아티클 수 찾기
     */
-    public List<CategoryNormalDto> getCategorytCountList() {
+    public List<CategorySimpleView> getCategorytCountList() {
         return naCategoryRepository.getCategoryCount();
     }
 
@@ -74,7 +71,7 @@ public class CategoryService {
     */
     @Transactional
     @CacheEvict(value = {"layoutCaching", "seoCaching"}, allEntries = true)
-    public void changeCategory(List<CategoryNormalDto> categoryList) {
+    public void changeCategory(List<CategorySimpleView> categoryList) {
 
         // 1.카테고리 리스트 순서 작성
         sortingOrder(categoryList);
@@ -83,62 +80,62 @@ public class CategoryService {
 
         // 3. 카테고리 변경 루프
         while (!categoryList.isEmpty()) {
-            CategoryNormalDto categoryNormalDto = categoryList.get(0);
+            CategorySimpleView categorySimpleView = categoryList.get(0);
             categoryList.remove(0);
 
             // 부모카테고리인경우
-            if (categoryNormalDto.getTier() == 1) {
+            if (categorySimpleView.getTier() == 1) {
 
                 Category pCategory = null;
 
                 // 부모카테고리가 기존에 존재 x
-                if (categoryNormalDto.getId() == null) {
-                    pCategory = createNewCategory(categoryNormalDto, null);
+                if (categorySimpleView.getId() == null) {
+                    pCategory = createNewCategory(categorySimpleView, null);
                 }
                 // 부모카테고리가 기존에 존재 o
                 else {
                     for (int i = 0; i < categoryListFromDb.size(); i++) {
-                        if (categoryListFromDb.get(i).getId().equals(categoryNormalDto.getId())) {
+                        if (categoryListFromDb.get(i).getId().equals(categorySimpleView.getId())) {
                             pCategory = categoryListFromDb.get(i);
                             categoryListFromDb.remove(i);
                             break;
                         }
                     }
                     pCategory.updateCategory(
-                            categoryNormalDto.getTitle(),
-                            categoryNormalDto.getTier(),
-                            categoryNormalDto.getPOrder(),
-                            categoryNormalDto.getCOrder(),
+                            categorySimpleView.getTitle(),
+                            categorySimpleView.getTier(),
+                            categorySimpleView.getPOrder(),
+                            categorySimpleView.getCOrder(),
                             null
                     );
                 }
 
                 while (!categoryList.isEmpty()) {
 
-                    CategoryNormalDto subCategoryNormalDto = categoryList.get(0);
-                    if (subCategoryNormalDto.getTier() == 1) break;
+                    CategorySimpleView subCategorySimpleView = categoryList.get(0);
+                    if (subCategorySimpleView.getTier() == 1) break;
                     categoryList.remove(0);
 
                     // 자식 카테고리인경우
                     Category cCategory = null;
                     // 카테고리가 기존에 존재 x
-                    if (subCategoryNormalDto.getId() == null) {
-                        cCategory = createNewCategory(subCategoryNormalDto, pCategory.getTitle());
+                    if (subCategorySimpleView.getId() == null) {
+                        cCategory = createNewCategory(subCategorySimpleView, pCategory.getTitle());
                     }
                     // 카테고리가 기존에 존재 o
                     else {
                         for (int i = 0; i < categoryListFromDb.size(); i++) {
-                            if (categoryListFromDb.get(i).getId().equals(subCategoryNormalDto.getId())) {
+                            if (categoryListFromDb.get(i).getId().equals(subCategorySimpleView.getId())) {
                                 cCategory = categoryListFromDb.get(i);
                                 categoryListFromDb.remove(i);
                                 break;
                             }
                         }
                         cCategory.updateCategory(
-                                subCategoryNormalDto.getTitle(),
-                                subCategoryNormalDto.getTier(),
-                                subCategoryNormalDto.getPOrder(),
-                                subCategoryNormalDto.getCOrder(),
+                                subCategorySimpleView.getTitle(),
+                                subCategorySimpleView.getTier(),
+                                subCategorySimpleView.getPOrder(),
+                                subCategorySimpleView.getCOrder(),
                                 pCategory);
                     }
                 }
@@ -152,17 +149,17 @@ public class CategoryService {
     - 새로운 카테고리 생성하기
         - 상위 카테고리 존재 유무 분기
     */
-    private Category createNewCategory(CategoryNormalDto categoryNormalDto, String parent) {
+    private Category createNewCategory(CategorySimpleView categorySimpleView, String parent) {
         Category parentCategory = null;
         if (parent != null) {
             parentCategory = categoryRepository.findByTitle(parent);
         }
 
         Category category = Category.builder()
-                .title(categoryNormalDto.getTitle())
-                .pSortNum(categoryNormalDto.getPOrder())
-                .cSortNum(categoryNormalDto.getCOrder())
-                .tier(categoryNormalDto.getTier())
+                .title(categorySimpleView.getTitle())
+                .pSortNum(categorySimpleView.getPOrder())
+                .cSortNum(categorySimpleView.getCOrder())
+                .tier(categorySimpleView.getTier())
                 .parents(parentCategory)
                 .build();
         categoryRepository.save(category);
@@ -172,12 +169,12 @@ public class CategoryService {
     /*
         - 카테고리 변경을 위해 카테고리의 순번을 작성하는 로직
     */
-    private void sortingOrder(List<CategoryNormalDto> categoryList) {
+    private void sortingOrder(List<CategorySimpleView> categoryList) {
         int pOrderIndex = 0;
         int cOrderIndex = 0;
 
         //티어별 트리구조로 순서 작성 로직
-        for (CategoryNormalDto categoryDto : categoryList) {
+        for (CategorySimpleView categoryDto : categoryList) {
 
             if (categoryDto.getTier() == 1) {
                 cOrderIndex = 0;

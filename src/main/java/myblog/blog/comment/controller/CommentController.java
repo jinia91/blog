@@ -2,7 +2,7 @@ package myblog.blog.comment.controller;
 
 import lombok.RequiredArgsConstructor;
 import myblog.blog.article.domain.Article;
-import myblog.blog.article.service.ArticleService;
+import myblog.blog.article.application.ArticleService;
 import myblog.blog.comment.dto.CommentDto;
 import myblog.blog.comment.dto.CommentForm;
 import myblog.blog.comment.service.CommentService;
