@@ -1,4 +1,4 @@
-package myblog.blog.article.dto;
+package myblog.blog.article.model;
 
 import lombok.Getter;
 import lombok.Setter;

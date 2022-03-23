@@ -1,6 +1,7 @@
 package myblog.blog.comment.service;
 
 import lombok.RequiredArgsConstructor;
+import myblog.blog.article.application.port.incomming.ArticleUseCase;
 import myblog.blog.article.domain.Article;
 import myblog.blog.comment.domain.Comment;
 import myblog.blog.comment.dto.CommentDtoForLayout;
@@ -21,6 +22,8 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class CommentService {
 
+    private final ArticleUseCase articleUseCase;
+
     private final CommentRepository commentRepository;
     private final NaCommentRepository naCommentRepository;
 
@@ -35,7 +38,9 @@ public class CommentService {
         - 부모 댓글 저장
     */
     @CacheEvict(value = "layoutRecentCommentCaching", allEntries = true)
-    public void savePComment(CommentForm commentForm, Member member, Article article){
+    public void savePComment(CommentForm commentForm, Member member, Long articleId){
+
+        Article article = articleUseCase.getArticle(articleId);
 
         Comment comment = Comment.builder()
                 .article(article)
@@ -54,8 +59,9 @@ public class CommentService {
         - 자식 댓글 저장
     */
     @CacheEvict(value = "layoutRecentCommentCaching", allEntries = true)
-    public void saveCComment(CommentForm commentForm, Member member, Article article, Long parentId) {
+    public void saveCComment(CommentForm commentForm, Member member, Long articleId, Long parentId) {
 
+        Article article = articleUseCase.getArticle(articleId);
         Comment pComment = commentRepository.findById(parentId).get();
 
         Comment comment = Comment.builder()

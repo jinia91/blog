@@ -112,4 +112,8 @@ public class Oauth2MemberService extends DefaultOAuth2UserService {
 
     }
 
+    public Member findById(Long memberId) {
+        return memberRepository.findById(memberId)
+                .orElseThrow(() -> new IllegalArgumentException("NotFoundMemberException"));
+    }
 }

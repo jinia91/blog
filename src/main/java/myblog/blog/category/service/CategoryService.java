@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Transactional
@@ -25,7 +26,8 @@ public class CategoryService {
         - 카테고리 이름으로 카테고리 찾기
     */
     public Category findCategory(String title) {
-        return categoryRepository.findByTitle(title);
+        return categoryRepository.findByTitle(title)
+                .orElseThrow(() -> new IllegalArgumentException("NotFoundCategoryException"));
     }
 
     /*
@@ -152,7 +154,8 @@ public class CategoryService {
     private Category createNewCategory(CategorySimpleView categorySimpleView, String parent) {
         Category parentCategory = null;
         if (parent != null) {
-            parentCategory = categoryRepository.findByTitle(parent);
+            parentCategory = categoryRepository.findByTitle(parent)
+                    .orElseThrow(() -> new IllegalArgumentException("NotFoundCategoryException"));
         }
 
         Category category = Category.builder()
@@ -190,7 +193,7 @@ public class CategoryService {
     /*
         - 최초 필수 더미 카테고리 추가 코드
     */
-    @PostConstruct
+//    @PostConstruct
     private void insertDummyCategory() {
         if(categoryRepository.findByTitle("total")==null) {
             Category category0 = Category.builder()

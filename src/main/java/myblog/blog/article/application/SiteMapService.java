@@ -1,5 +1,6 @@
 package myblog.blog.article.application;
 
+import myblog.blog.article.application.port.incomming.ArticleUseCase;
 import myblog.blog.article.application.port.incomming.SiteMapUseCase;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.transaction.annotation.Transactional;
@@ -8,7 +9,6 @@ import lombok.RequiredArgsConstructor;
 
 import myblog.blog.article.domain.Article;
 import myblog.blog.category.domain.Category;
-import myblog.blog.article.application.ArticleService;
 import myblog.blog.category.service.CategoryService;
 import org.jdom2.*;
 import org.jdom2.output.*;
@@ -28,13 +28,13 @@ public class SiteMapService implements SiteMapUseCase {
     static final String CATEGORYPRO = "&page=1";
     static final String ARTICLEPREV = "/article/view?articleId=";
 
-    private final ArticleService articleService;
+    private final ArticleUseCase articleUseCase;
     private final CategoryService categoryService;
 
     @Override
     @Cacheable(value = "seoCaching", key = "1")
     public String getSiteMap(){
-        List<Article> articles = articleService.getTotalArticle();
+        List<Article> articles = articleUseCase.getTotalArticle();
         List<Category> allCategories = categoryService.getAllCategories();
         Document doc = makeSiteMapDocument(articles, allCategories);
         XMLOutputter xmlOutputter = getXmlOutputter();

@@ -2,11 +2,14 @@ package myblog.blog.article.adapter.incomming.web;
 
 import lombok.RequiredArgsConstructor;
 
-import myblog.blog.article.application.TagsQueries;
+import myblog.blog.article.application.port.request.ArticleCreateRequest;
+import myblog.blog.article.application.port.request.ArticleEditRequest;
 import myblog.blog.article.application.port.incomming.ArticleUseCase;
 import myblog.blog.article.application.port.incomming.TempArticleUseCase;
-import myblog.blog.article.domain.Article;
-import myblog.blog.article.dto.*;
+import myblog.blog.article.application.port.response.ArticleResponseForCardBox;
+import myblog.blog.article.model.*;
+import myblog.blog.article.application.port.incomming.ArticleQueriesUseCase;
+import myblog.blog.article.application.port.incomming.TagsQueriesUseCase;
 import myblog.blog.category.service.CategoryService;
 import myblog.blog.category.dto.*;
 import myblog.blog.member.auth.PrincipalDetails;
@@ -39,9 +42,10 @@ import static myblog.blog.shared.utils.MarkdownUtils.*;
 public class ArticleController {
 
     private final ArticleUseCase articleUseCase;
+    private final ArticleQueriesUseCase articleQueriesUseCase;
     private final TempArticleUseCase tempArticleUseCase;
     private final CategoryService categoryService;
-    private final TagsQueries tagsQueries;
+    private final TagsQueriesUseCase tagsQueriesUseCase;
     private final LayoutRenderingQueries layoutRenderingQueries;
     private final ModelMapper modelMapper;
 
@@ -49,7 +53,7 @@ public class ArticleController {
     String getArticleWriteForm(Model model) {
         layoutRenderingQueries.AddLayoutTo(model);
         model.addAttribute("categoryInput", getCategoryDtosForForm());
-        model.addAttribute("tagsInput", tagsQueries.findAllTagDtos());
+        model.addAttribute("tagsInput", tagsQueriesUseCase.findAllTagDtos());
         model.addAttribute("articleDto", new ArticleForm());
         return "article/articleWriteForm";
     }
@@ -64,7 +68,7 @@ public class ArticleController {
         if (errors.hasErrors()) {
             getArticleWriteForm(model);
         }
-        Long articleId = articleUseCase.writeArticle(articleForm, principal.getMember());
+        Long articleId = articleUseCase.writeArticle(ArticleCreateRequest.from(articleForm,principal.getMemberId()));
         articleUseCase.backupArticle(articleId);
         tempArticleUseCase.deleteTemp();
         return "redirect:/article/view?articleId=" + articleId;
@@ -74,18 +78,10 @@ public class ArticleController {
     */
     @GetMapping("/article/edit")
     String updateArticle(@RequestParam Long articleId, Model model) {
-        // 기존 아티클 DTO 전처리
-        Article article = articleUseCase.readArticle(articleId);
-        ArticleDtoForEdit articleDto = modelMapper.map(article, ArticleDtoForEdit.class);
-        List<String> articleTagStrings = article.getArticleTagLists()
-                .stream()
-                .map(articleTag -> articleTag.getTags().getName())
-                .collect(Collectors.toList());
-        articleDto.setArticleTagList(articleTagStrings);
-        //
+        ArticleResponseForEdit articleDto = articleQueriesUseCase.getArticleForEdit(articleId);
         layoutRenderingQueries.AddLayoutTo(model);
         model.addAttribute("categoryInput", getCategoryDtosForForm());
-        model.addAttribute("tagsInput", tagsQueries.findAllTagDtos());
+        model.addAttribute("tagsInput", tagsQueriesUseCase.findAllTagDtos());
         model.addAttribute("articleDto", articleDto);
         return "article/articleEditForm";
     }
@@ -97,7 +93,7 @@ public class ArticleController {
     @Transactional
     String editArticle(@RequestParam Long articleId,
                        @ModelAttribute ArticleForm articleForm) {
-        articleUseCase.editArticle(articleId, articleForm);
+        articleUseCase.editArticle(ArticleEditRequest.from(articleId, articleForm));
         return "redirect:/article/view?articleId=" + articleId;
     }
 
@@ -120,16 +116,13 @@ public class ArticleController {
                                      @RequestParam Integer tier,
                                      @RequestParam Integer page,
                                      Model model) {
-        // DTO 매핑 전처리
         PagingBoxDto pagingBoxDto =
                 PagingBoxDto.createOf(page, getTotalArticleCntByCategory(category, categoryService.getCategoryForView()));
 
-        Slice<ArticleDtoForCardBox> articleDtoList =
-                articleUseCase.getArticlesByCategory(category, tier, pagingBoxDto.getCurPageNum())
-                        .map(article -> modelMapper.map(article, ArticleDtoForCardBox.class));
-        //
+        Slice<ArticleResponseForCardBox> articleDtoList =
+                articleQueriesUseCase.getArticlesByCategory(category, tier, pagingBoxDto.getCurPageNum());
 
-        for(ArticleDtoForCardBox articleDto : articleDtoList){
+        for(ArticleResponseForCardBox articleDto : articleDtoList){
             articleDto.setContent(Jsoup.parse(getHtmlRenderer().render(getParser().parse(articleDto.getContent()))).text());
         }
 
@@ -148,13 +141,10 @@ public class ArticleController {
     String getArticlesListByTag(@RequestParam Integer page,
                                 @RequestParam String tagName,
                                 Model model) {
-        // DTO 매핑 전처리
-        Page<ArticleDtoForCardBox> articleList =
-                articleUseCase.getArticlesByTag(tagName, page)
-                        .map(article ->
-                                modelMapper.map(article, ArticleDtoForCardBox.class));
+        Page<ArticleResponseForCardBox> articleList =
+                articleQueriesUseCase.getArticlesByTag(tagName, page);
 
-        for(ArticleDtoForCardBox article : articleList){
+        for(ArticleResponseForCardBox article : articleList){
             article.setContent(Jsoup.parse(getHtmlRenderer().render(getParser().parse(article.getContent()))).text());
         }
 
@@ -176,13 +166,10 @@ public class ArticleController {
     String getArticlesListByKeyword(@RequestParam Integer page,
                                     @RequestParam String keyword,
                                     Model model) {
-        // DTO 매핑 전처리
-        Page<ArticleDtoForCardBox> articleList =
-                articleUseCase.getArticlesByKeyword(keyword, page)
-                        .map(article ->
-                                modelMapper.map(article, ArticleDtoForCardBox.class));
+        Page<ArticleResponseForCardBox> articleList =
+                articleQueriesUseCase.getArticlesByKeyword(keyword, page);
 
-        for(ArticleDtoForCardBox article : articleList){
+        for(ArticleResponseForCardBox article : articleList){
             article.setContent(Jsoup.parse(getHtmlRenderer().render(getParser().parse(article.getContent()))).text());
         }
 
@@ -220,33 +207,18 @@ public class ArticleController {
         }
 
         /*
-            DTO 매핑 전처리
-            2. 게시물 상세조회용
+            2.화면단을 위한 처리
         */
-        Article article = articleUseCase.readArticle(articleId);
+        ArticleDtoForDetail articleDtoForDetail = articleQueriesUseCase.getArticleForDetail(articleId);
+        articleDtoForDetail.setContent(getHtmlRenderer().render(getParser().parse(articleDtoForDetail.getContent())));
 
-        ArticleDtoForDetail articleDtoForDetail =
-                modelMapper.map(article, ArticleDtoForDetail.class);
-
-        List<String> tags =
-                article.getArticleTagLists()
-                    .stream()
-                    .map(tag -> tag.getTags().getName())
-                    .collect(Collectors.toList());
-
-        articleDtoForDetail.setTags(tags);
-        articleDtoForDetail.setContent(getHtmlRenderer().render(getParser().parse(article.getContent())));
-
-        List<ArticleDtoByCategory> articleTitlesSortByCategory =
-                articleUseCase
-                        .getArticlesByCategoryForDetailView(article.getCategory())
-                        .stream()
-                        .map(article1 -> modelMapper.map(article1, ArticleDtoByCategory.class))
-                        .collect(Collectors.toList());
+        List<ArticleResponseByCategory> articleTitlesSortByCategory =
+                articleQueriesUseCase
+                        .getArticlesByCategoryForDetailView(articleDtoForDetail.getCategory());
 
         // 3. 메타 태그용 Dto 전처리
         StringBuilder metaTags = new StringBuilder();
-        for (String tag : tags) {
+        for (String tag : articleDtoForDetail.getTags()) {
             metaTags.append(tag).append(", ");
         }
 
@@ -263,25 +235,24 @@ public class ArticleController {
         model.addAttribute("metaContents",Jsoup.parse(substringContents).text());
         model.addAttribute("articlesSortBycategory", articleTitlesSortByCategory);
 
-        // 5. 조회수 증가 검토
-        addHitWithCookie(article, cookie, response);
+        // 5. 조회수 증가 검토 및 증가
+        if(needToAddHitThroughCheckingCookie(articleId, cookie, response)) articleUseCase.addHit(articleId);
 
         return "article/articleView";
     }
 
-
     /*
         - 쿠키 추가 / 조회수 증가 검토
     */
-    private void addHitWithCookie(Article article, String cookie, HttpServletResponse response) {
-        Long articleId = article.getId();
+    private boolean needToAddHitThroughCheckingCookie(Long articleId, String cookie, HttpServletResponse response) {
         if (cookie == null) {
             Cookie viewCookie = new Cookie("view", articleId + "/");
             viewCookie.setComment("게시물 조회 확인용");
             viewCookie.setMaxAge(60 * 60);
-            articleUseCase.addHit(article);
             response.addCookie(viewCookie);
+            return true;
         } else {
+            boolean addHitAvailable = false;
             boolean isRead = false;
             String[] viewCookieList = cookie.split("/");
             for (String alreadyRead : viewCookieList) {
@@ -292,9 +263,10 @@ public class ArticleController {
             }
             if (!isRead) {
                 cookie += articleId + "/";
-                article.addHit();
+                addHitAvailable = true;
             }
             response.addCookie(new Cookie("view", cookie));
+            return addHitAvailable;
         }
     }
 

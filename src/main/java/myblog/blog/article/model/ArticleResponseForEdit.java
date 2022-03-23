@@ -1,4 +1,4 @@
-package myblog.blog.article.dto;
+package myblog.blog.article.model;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -11,7 +11,7 @@ import java.util.List;
     - 아티클 수정 폼을 위한 DTO
 */
 @Getter @Setter
-public class ArticleDtoForEdit {
+public class ArticleResponseForEdit {
 
     private Long id;
     private String title;

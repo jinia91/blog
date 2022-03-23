@@ -1,4 +1,4 @@
-package myblog.blog.article.dto;
+package myblog.blog.article.model;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -7,7 +7,7 @@ import lombok.Setter;
     - 카테고리별 게시물 표시용 DTO
 */
 @Getter @Setter
-public class ArticleDtoByCategory {
+public class ArticleResponseByCategory {
     private String title;
     private Long id;
 }

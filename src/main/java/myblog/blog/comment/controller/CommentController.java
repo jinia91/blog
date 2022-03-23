@@ -1,6 +1,7 @@
 package myblog.blog.comment.controller;
 
 import lombok.RequiredArgsConstructor;
+import myblog.blog.article.application.port.incomming.ArticleQueriesUseCase;
 import myblog.blog.article.domain.Article;
 import myblog.blog.article.application.ArticleService;
 import myblog.blog.comment.dto.CommentDto;
@@ -22,7 +23,6 @@ import java.util.Objects;
 public class CommentController {
 
     private final CommentService commentService;
-    private final ArticleService articleService;
 
     /*
         - 아티클 조회시 아티클에 달린 댓글들 전체 조회
@@ -45,14 +45,12 @@ public class CommentController {
         }
 
         Member member = principal.getMember();
-        Article article = articleService.readArticle(articleId);
-
         // 부모 댓글인지 자식댓글인지 분기로 저장
         if(parentId != null){
-            commentService.saveCComment(commentForm, member, article, parentId);
+            commentService.saveCComment(commentForm, member, articleId, parentId);
         }
         else {
-            commentService.savePComment(commentForm, member, article);
+            commentService.savePComment(commentForm, member, articleId);
         }
 
         return CommentDto.listCreateFrom(commentService.getCommentList(articleId),0);

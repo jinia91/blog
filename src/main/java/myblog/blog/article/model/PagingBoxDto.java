@@ -1,8 +1,7 @@
-package myblog.blog.article.dto;
+package myblog.blog.article.model;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.data.domain.Page;
 
 /*
     - 뷰단 페이징 박스 처리를 위한 핸들러

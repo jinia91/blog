@@ -3,7 +3,7 @@ package myblog.blog.article.adapter.incomming.web;
 import lombok.RequiredArgsConstructor;
 import myblog.blog.article.domain.TempArticle;
 import myblog.blog.article.application.TempArticleService;
-import myblog.blog.article.dto.TempArticleDto;
+import myblog.blog.article.model.TempArticleDto;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;

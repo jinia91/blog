@@ -1,4 +1,4 @@
-package myblog.blog.article.dto;
+package myblog.blog.article.application.port.response;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -6,11 +6,11 @@ import lombok.Setter;
 import java.time.LocalDateTime;
 
 /*
-    - 메인 화면 출력용 아티클 DTO
+    - 메인 화면 렌더링용 아티클 DTO
 */
 @Getter
 @Setter
-public class ArticleDtoForCardBox {
+public class ArticleResponseForCardBox {
     private Long id;
     private String title;
     private String content;

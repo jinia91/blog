@@ -1,13 +1,13 @@
 package myblog.blog.article.application;
 
 import lombok.RequiredArgsConstructor;
+import myblog.blog.article.application.port.incomming.ArticleUseCase;
 import myblog.blog.article.application.port.incomming.RssUseCase;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import myblog.blog.article.domain.Article;
-import myblog.blog.article.application.ArticleService;
 import org.jdom2.*;
 import org.jdom2.output.*;
 import java.sql.Timestamp;
@@ -29,12 +29,12 @@ public class RssService implements RssUseCase {
 
     static final String ITEM_ROOT = "https://www.jiniaslog.co.kr/article/view?articleId=";
 
-    private final ArticleService articleService;
+    private final ArticleUseCase articleUseCase;
 
     @Override
     @Cacheable(value = "seoCaching", key = "0")
     public String getRssFeed() {
-        List<Article> articles = articleService.getTotalArticle();
+        List<Article> articles = articleUseCase.getTotalArticle();
         Document doc = makeRssFeedDocumentFrom(articles);
         XMLOutputter xmlOutputter = getXmlOutputter();
         return xmlOutputter.outputString(doc);
