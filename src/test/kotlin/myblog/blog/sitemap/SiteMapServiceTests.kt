@@ -2,18 +2,15 @@ package myblog.blog.sitemap
 
 import myblog.blog.article.domain.Article
 import myblog.blog.article.application.ArticleService
-import myblog.blog.article.application.SiteMapService
+import myblog.blog.seo.application.SiteMapService
 import myblog.blog.category.domain.Category
 import myblog.blog.category.service.CategoryService
-import myblog.blog.rss.RssService
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 //import org.junit.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.InjectMocks
 import org.mockito.Mock
-import org.mockito.Mockito
-import org.mockito.junit.MockitoJUnitRunner
 import org.mockito.junit.jupiter.MockitoExtension
 import org.mockito.kotlin.whenever
 import java.lang.reflect.Field

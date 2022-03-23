@@ -1,4 +1,4 @@
-package myblog.blog.article.model;
+package myblog.blog.article.application.port.response;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -10,7 +10,7 @@ import java.util.List;
     - 아티클 상세조회용 DTO
 */
 @Getter @Setter
-public class ArticleDtoForDetail {
+public class ArticleResponseForDetail {
 
     private Long id;
     private String title;

@@ -1,6 +1,7 @@
 package myblog.blog.article.adapter.incomming.web;
 
 import lombok.RequiredArgsConstructor;
+
 import myblog.blog.article.application.port.response.ArticleResponseForCardBox;
 import myblog.blog.article.application.port.incomming.ArticleQueriesUseCase;
 import myblog.blog.shared.queries.LayoutRenderingQueries;

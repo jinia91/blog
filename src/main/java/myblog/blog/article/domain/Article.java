@@ -1,7 +1,5 @@
 package myblog.blog.article.domain;
 
-import myblog.blog.article.adapter.incomming.web.ArticleForm;
-
 import myblog.blog.shared.BasicEntity;
 import myblog.blog.category.domain.Category;
 import myblog.blog.comment.domain.Comment;
@@ -11,7 +9,6 @@ import lombok.Builder;
 import lombok.Getter;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
-
 import javax.persistence.*;
 import java.util.*;
 

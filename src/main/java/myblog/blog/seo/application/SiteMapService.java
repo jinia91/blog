@@ -1,4 +1,4 @@
-package myblog.blog.article.application;
+package myblog.blog.seo.application;
 
 import myblog.blog.article.application.port.incomming.ArticleUseCase;
 import myblog.blog.article.application.port.incomming.SiteMapUseCase;

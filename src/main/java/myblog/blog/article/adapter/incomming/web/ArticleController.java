@@ -2,22 +2,23 @@ package myblog.blog.article.adapter.incomming.web;
 
 import lombok.RequiredArgsConstructor;
 
-import myblog.blog.article.application.port.request.ArticleCreateRequest;
-import myblog.blog.article.application.port.request.ArticleEditRequest;
 import myblog.blog.article.application.port.incomming.ArticleUseCase;
 import myblog.blog.article.application.port.incomming.TempArticleUseCase;
-import myblog.blog.article.application.port.response.ArticleResponseForCardBox;
-import myblog.blog.article.model.*;
 import myblog.blog.article.application.port.incomming.ArticleQueriesUseCase;
 import myblog.blog.article.application.port.incomming.TagsQueriesUseCase;
+import myblog.blog.article.application.port.request.ArticleCreateRequest;
+import myblog.blog.article.application.port.request.ArticleEditRequest;
+import myblog.blog.article.application.port.response.ArticleResponseByCategory;
+import myblog.blog.article.application.port.response.ArticleResponseForCardBox;
+import myblog.blog.article.application.port.response.ArticleResponseForDetail;
+import myblog.blog.article.application.port.response.ArticleResponseForEdit;
 import myblog.blog.category.service.CategoryService;
 import myblog.blog.category.dto.*;
 import myblog.blog.member.auth.PrincipalDetails;
-import myblog.blog.member.dto.MemberDto;
+import myblog.blog.member.dto.MemberVo;
 import myblog.blog.shared.queries.LayoutRenderingQueries;
 
 import org.jsoup.Jsoup;
-
 import org.modelmapper.ModelMapper;
 
 import org.springframework.data.domain.*;
@@ -44,8 +45,8 @@ public class ArticleController {
     private final ArticleUseCase articleUseCase;
     private final ArticleQueriesUseCase articleQueriesUseCase;
     private final TempArticleUseCase tempArticleUseCase;
-    private final CategoryService categoryService;
     private final TagsQueriesUseCase tagsQueriesUseCase;
+    private final CategoryService categoryService;
     private final LayoutRenderingQueries layoutRenderingQueries;
     private final ModelMapper modelMapper;
 
@@ -116,18 +117,18 @@ public class ArticleController {
                                      @RequestParam Integer tier,
                                      @RequestParam Integer page,
                                      Model model) {
-        PagingBoxDto pagingBoxDto =
-                PagingBoxDto.createOf(page, getTotalArticleCntByCategory(category, categoryService.getCategoryForView()));
+        PagingBoxHandler pagingBoxHandler =
+                PagingBoxHandler.createOf(page, getTotalArticleCntByCategory(category, categoryService.getCategoryForView()));
 
         Slice<ArticleResponseForCardBox> articleDtoList =
-                articleQueriesUseCase.getArticlesByCategory(category, tier, pagingBoxDto.getCurPageNum());
+                articleQueriesUseCase.getArticlesByCategory(category, tier, pagingBoxHandler.getCurPageNum());
 
         for(ArticleResponseForCardBox articleDto : articleDtoList){
             articleDto.setContent(Jsoup.parse(getHtmlRenderer().render(getParser().parse(articleDto.getContent()))).text());
         }
 
         layoutRenderingQueries.AddLayoutTo(model);
-        model.addAttribute("pagingBox", pagingBoxDto);
+        model.addAttribute("pagingBox", pagingBoxHandler);
         model.addAttribute("articleList", articleDtoList);
 
         return "article/articleList";
@@ -148,12 +149,12 @@ public class ArticleController {
             article.setContent(Jsoup.parse(getHtmlRenderer().render(getParser().parse(article.getContent()))).text());
         }
 
-        PagingBoxDto pagingBoxDto =
-                PagingBoxDto.createOf(page, (int)articleList.getTotalElements());
+        PagingBoxHandler pagingBoxHandler =
+                PagingBoxHandler.createOf(page, (int)articleList.getTotalElements());
 
         layoutRenderingQueries.AddLayoutTo(model);
         model.addAttribute("articleList", articleList);
-        model.addAttribute("pagingBox", pagingBoxDto);
+        model.addAttribute("pagingBox", pagingBoxHandler);
 
         return "article/articleListByTag";
     }
@@ -173,12 +174,12 @@ public class ArticleController {
             article.setContent(Jsoup.parse(getHtmlRenderer().render(getParser().parse(article.getContent()))).text());
         }
 
-        PagingBoxDto pagingBoxDto =
-                PagingBoxDto.createOf(page, (int)articleList.getTotalElements());
+        PagingBoxHandler pagingBoxHandler =
+                PagingBoxHandler.createOf(page, (int)articleList.getTotalElements());
 
         layoutRenderingQueries.AddLayoutTo(model);
         model.addAttribute("articleList", articleList);
-        model.addAttribute("pagingBox", pagingBoxDto);
+        model.addAttribute("pagingBox", pagingBoxHandler);
 
         return "article/articleListByKeyword";
 
@@ -201,7 +202,7 @@ public class ArticleController {
                        Model model) {
         // 1. 로그인 여부에 따라 뷰단에 회원정보 출력 여부 결정
         if (principal != null) {
-            model.addAttribute("member", modelMapper.map(principal.getMember(), MemberDto.class));
+            model.addAttribute("member", MemberVo.from(principal.getMember()));
         } else {
             model.addAttribute("member", null);
         }
@@ -209,28 +210,28 @@ public class ArticleController {
         /*
             2.화면단을 위한 처리
         */
-        ArticleDtoForDetail articleDtoForDetail = articleQueriesUseCase.getArticleForDetail(articleId);
-        articleDtoForDetail.setContent(getHtmlRenderer().render(getParser().parse(articleDtoForDetail.getContent())));
+        ArticleResponseForDetail articleResponseForDetail = articleQueriesUseCase.getArticleForDetail(articleId);
+        articleResponseForDetail.setContent(getHtmlRenderer().render(getParser().parse(articleResponseForDetail.getContent())));
 
         List<ArticleResponseByCategory> articleTitlesSortByCategory =
                 articleQueriesUseCase
-                        .getArticlesByCategoryForDetailView(articleDtoForDetail.getCategory());
+                        .getArticlesByCategoryForDetailView(articleResponseForDetail.getCategory());
 
         // 3. 메타 태그용 Dto 전처리
         StringBuilder metaTags = new StringBuilder();
-        for (String tag : articleDtoForDetail.getTags()) {
+        for (String tag : articleResponseForDetail.getTags()) {
             metaTags.append(tag).append(", ");
         }
 
         String substringContents = null;
-        if(articleDtoForDetail.getContent().length()>200) {
-            substringContents = articleDtoForDetail.getContent().substring(0, 200);
+        if(articleResponseForDetail.getContent().length()>200) {
+            substringContents = articleResponseForDetail.getContent().substring(0, 200);
         }
-        else substringContents = articleDtoForDetail.getContent();
+        else substringContents = articleResponseForDetail.getContent();
 
         // 4. 모델 담기
         layoutRenderingQueries.AddLayoutTo(model);
-        model.addAttribute("article", articleDtoForDetail);
+        model.addAttribute("article", articleResponseForDetail);
         model.addAttribute("metaTags",metaTags);
         model.addAttribute("metaContents",Jsoup.parse(substringContents).text());
         model.addAttribute("articlesSortBycategory", articleTitlesSortByCategory);

@@ -1,4 +1,4 @@
-package myblog.blog.article.adapter.incomming.web;
+package myblog.blog.seo.adapter.incomming;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;

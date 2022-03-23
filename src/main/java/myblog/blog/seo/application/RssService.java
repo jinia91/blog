@@ -1,4 +1,4 @@
-package myblog.blog.article.application;
+package myblog.blog.seo.application;
 
 import lombok.RequiredArgsConstructor;
 import myblog.blog.article.application.port.incomming.ArticleUseCase;

@@ -3,7 +3,7 @@ package myblog.blog.article.adapter.incomming.web;
 import lombok.RequiredArgsConstructor;
 import myblog.blog.article.domain.TempArticle;
 import myblog.blog.article.application.TempArticleService;
-import myblog.blog.article.model.TempArticleDto;
+import myblog.blog.article.application.port.response.TempArticleResponse;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
@@ -21,9 +21,9 @@ public class TempArticleController {
         - 임시 아티클 저장 요청
     */
     @PostMapping("/article/temp/autoSave")
-    public String autoSaveTemp(@RequestBody TempArticleDto tempArticleDto){
+    public String autoSaveTemp(@RequestBody TempArticleResponse tempArticleResponse){
 
-        tempArticleService.saveTemp(new TempArticle(tempArticleDto.getContent()));
+        tempArticleService.saveTemp(new TempArticle(tempArticleResponse.getContent()));
 
         return "저장성공";
     }
@@ -32,13 +32,14 @@ public class TempArticleController {
         - 임시 아티클 조회
     */
     @GetMapping("/article/temp/getTemp")
-    public @ResponseBody TempArticleDto getTempArticle(){
+    public @ResponseBody
+    TempArticleResponse getTempArticle(){
 
         Optional<TempArticle> tempArticle = tempArticleService.getTempArticle();
 
-        TempArticleDto tempArticleDto = new TempArticleDto();
-        tempArticleDto.setContent(tempArticle.orElse(new TempArticle()).getContent());
+        TempArticleResponse tempArticleResponse = new TempArticleResponse();
+        tempArticleResponse.setContent(tempArticle.orElse(new TempArticle()).getContent());
 
-        return tempArticleDto;
+        return tempArticleResponse;
     }
 }

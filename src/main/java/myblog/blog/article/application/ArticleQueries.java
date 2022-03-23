@@ -7,10 +7,10 @@ import myblog.blog.article.application.port.incomming.ArticleQueriesUseCase;
 import myblog.blog.article.application.port.outgoing.ArticleRepositoryPort;
 
 import myblog.blog.article.domain.Article;
-import myblog.blog.article.model.ArticleResponseByCategory;
-import myblog.blog.article.model.ArticleDtoForDetail;
-import myblog.blog.article.model.ArticleResponseForEdit;
 import myblog.blog.category.domain.Category;
+import myblog.blog.article.application.port.response.ArticleResponseByCategory;
+import myblog.blog.article.application.port.response.ArticleResponseForDetail;
+import myblog.blog.article.application.port.response.ArticleResponseForEdit;
 
 import myblog.blog.category.service.CategoryService;
 import org.modelmapper.ModelMapper;
@@ -105,10 +105,10 @@ public class ArticleQueries implements ArticleQueriesUseCase {
     *  - 아티클 상세 조회를 위한 쿼리
     * */
     @Override
-    public ArticleDtoForDetail getArticleForDetail(Long id){
+    public ArticleResponseForDetail getArticleForDetail(Long id){
         Article article = articleRepositoryPort.findArticleByIdFetchCategoryAndTags(id);
-        ArticleDtoForDetail articleDtoForDetail =
-                modelMapper.map(article, ArticleDtoForDetail.class);
+        ArticleResponseForDetail articleResponseForDetail =
+                modelMapper.map(article, ArticleResponseForDetail.class);
 
         List<String> tags =
                 article.getArticleTagLists()
@@ -116,8 +116,8 @@ public class ArticleQueries implements ArticleQueriesUseCase {
                         .map(tag -> tag.getTags().getName())
                         .collect(Collectors.toList());
 
-        articleDtoForDetail.setTags(tags);
-        return articleDtoForDetail;
+        articleResponseForDetail.setTags(tags);
+        return articleResponseForDetail;
     }
 
     /*

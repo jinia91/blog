@@ -5,7 +5,7 @@ import myblog.blog.article.application.port.outgoing.TagRepositoryPort;
 import myblog.blog.article.domain.Tags;
 import myblog.blog.article.application.port.incomming.TagsQueriesUseCase;
 import myblog.blog.shared.utils.MapperUtils;
-import myblog.blog.article.model.TagsDto;
+import myblog.blog.article.application.port.response.TagsResponse;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,10 +18,10 @@ import java.util.stream.Collectors;
 public class TagsQueries implements TagsQueriesUseCase {
     private final TagRepositoryPort tagRepositoryPort;
 
-    public List<TagsDto> findAllTagDtos(){
+    public List<TagsResponse> findAllTagDtos(){
         List<Tags> tags = tagRepositoryPort.findAll();
         return tags.stream()
-                .map(tag -> MapperUtils.getModelMapper().map(tag, TagsDto.class))
+                .map(tag -> MapperUtils.getModelMapper().map(tag, TagsResponse.class))
                 .collect(Collectors.toList());
     }
 }

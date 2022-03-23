@@ -1,4 +1,4 @@
-package myblog.blog.article.model;
+package myblog.blog.article.adapter.incomming.web;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -7,7 +7,7 @@ import lombok.Setter;
     - 뷰단 페이징 박스 처리를 위한 핸들러
 */
 @Getter @Setter
-public class PagingBoxDto {
+public class PagingBoxHandler {
 
     private int curPageNum;
     private int lastPageNum;
@@ -19,9 +19,9 @@ public class PagingBoxDto {
     private final int displayArticlePerPage = 5;
 
     // 스태틱 생성 메소드
-    public static PagingBoxDto createOf(int page, int totalArticles) {
+    public static PagingBoxHandler createOf(int page, int totalArticles) {
 
-        PagingBoxDto box = new PagingBoxDto();
+        PagingBoxHandler box = new PagingBoxHandler();
         box.curPageNum = page;
         box.lastPageNum = (int) (Math.ceil(totalArticles / (double) box.displayArticlePerPage));
 
