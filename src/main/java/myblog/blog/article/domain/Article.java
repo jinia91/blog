@@ -1,19 +1,16 @@
 package myblog.blog.article.domain;
 
-import lombok.Builder;
-import lombok.Getter;
-import myblog.blog.article.dto.ArticleForm;
 import myblog.blog.shared.BasicEntity;
 import myblog.blog.category.domain.Category;
 import myblog.blog.comment.domain.Comment;
 import myblog.blog.member.doamin.Member;
-import myblog.blog.tags.domain.ArticleTagList;
+
+import lombok.Builder;
+import lombok.Getter;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
-
 import javax.persistence.*;
 import java.util.*;
-
 
 /*
     - 아티클 Entity
@@ -89,14 +86,13 @@ public class Article extends BasicEntity {
     /*
         - 아티클 수정을 위한 로직
     */
-    public void isEditedFrom(ArticleForm articleForm, Category category){
-        this.content = articleForm.getContent();
-        this.title = articleForm.getTitle();
-        this.toc = articleForm.getToc();
+    public void edit(String content, String title, String toc, String thumbnailUrl, Category category){
+        this.content = content;
+        this.title = title;
+        this.toc = toc;
         this.category = category;
-
-        if(articleForm.getThumbnailUrl() != null){
-            this.thumbnailUrl = articleForm.getThumbnailUrl();
+        if(thumbnailUrl != null){
+            this.thumbnailUrl = getThumbnailUrl();
         }
     }
     /*

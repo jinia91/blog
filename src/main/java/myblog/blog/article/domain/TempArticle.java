@@ -4,6 +4,8 @@ import lombok.Getter;
 import myblog.blog.shared.BasicEntity;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /*
     - 임시 아티클 저장 Entity

@@ -1,7 +1,8 @@
 package myblog.blog.sitemap
 
 import myblog.blog.article.domain.Article
-import myblog.blog.article.service.ArticleService
+import myblog.blog.article.application.ArticleService
+import myblog.blog.seo.application.SiteMapService
 import myblog.blog.category.domain.Category
 import myblog.blog.category.service.CategoryService
 import org.assertj.core.api.Assertions.assertThat
