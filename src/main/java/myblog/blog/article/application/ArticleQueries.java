@@ -65,21 +65,26 @@ public class ArticleQueries implements ArticleQueriesUseCase {
     }
     /*
         - 카테고리별 게시물 페이징 처리해서 가져오기
+        - tier 1은 super / tier 2는 sub
     */
     @Override
     public Slice<ArticleResponseForCardBox> getArticlesByCategory(String category, Integer tier, Integer page) {
-        Slice<Article> articles;
+        Slice<Article> articles = null;
 
         if (tier.equals(0)) {
             articles = articleRepositoryPort
                     .findByOrderByIdDesc(
                             PageRequest.of(pageResolve(page), 5));
         }
-        else {
+        if (tier.equals(1)) {
             articles = articleRepositoryPort
                     .findBySupCategoryOrderByIdDesc(
                             PageRequest.of(pageResolve(page), 5), category);
-
+        }
+        if (tier.equals(2)) {
+            articles = articleRepositoryPort
+                    .findBySubCategoryOrderByIdDesc(
+                            PageRequest.of(pageResolve(page), 5), category);
         }
 
         if(articles == null) throw new IllegalArgumentException("NotFoundArticleException");
