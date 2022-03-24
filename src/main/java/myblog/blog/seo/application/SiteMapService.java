@@ -9,7 +9,7 @@ import lombok.RequiredArgsConstructor;
 
 import myblog.blog.article.domain.Article;
 import myblog.blog.category.domain.Category;
-import myblog.blog.category.service.CategoryService;
+import myblog.blog.category.appliacation.CategoryService;
 import org.jdom2.*;
 import org.jdom2.output.*;
 

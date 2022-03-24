@@ -12,7 +12,7 @@ import myblog.blog.article.application.port.response.ArticleResponseByCategory;
 import myblog.blog.article.application.port.response.ArticleResponseForDetail;
 import myblog.blog.article.application.port.response.ArticleResponseForEdit;
 
-import myblog.blog.category.service.CategoryService;
+import myblog.blog.category.appliacation.CategoryService;
 import org.modelmapper.ModelMapper;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
@@ -78,7 +78,7 @@ public class ArticleQueries implements ArticleQueriesUseCase {
         }
         if (tier.equals(1)) {
             articles = articleRepositoryPort
-                    .findBySupCategoryOrderByIdDesc(
+                    .findBySuperCategoryOrderByIdDesc(
                             PageRequest.of(pageResolve(page), 5), category);
         }
         if (tier.equals(2)) {

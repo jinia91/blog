@@ -16,7 +16,7 @@ public interface ArticleRepositoryPort {
     List<Article> findByOrderByIdDescWithList(Pageable pageable);
     List<Article> findByOrderByIdDesc(Long articleId, Pageable pageable);
     Slice<Article> findBySubCategoryOrderByIdDesc(Pageable pageable, String category);
-    Slice<Article> findBySupCategoryOrderByIdDesc(Pageable pageable, String category);
+    Slice<Article> findBySuperCategoryOrderByIdDesc(Pageable pageable, String category);
     Article findArticleByIdFetchCategoryAndTags(Long articleId);
     Page<Article> findAllByArticleTagsOrderById(Pageable pageable, String tag);
     Page<Article> findAllByKeywordOrderById(Pageable pageable, String keyword);

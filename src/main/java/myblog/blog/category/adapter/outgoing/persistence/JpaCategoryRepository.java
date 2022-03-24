@@ -1,4 +1,4 @@
-package myblog.blog.category.repository;
+package myblog.blog.category.adapter.outgoing.persistence;
 
 import myblog.blog.category.domain.Category;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import java.util.List;
 import java.util.Optional;
 
-public interface CategoryRepository extends JpaRepository<Category, Long> {
+public interface JpaCategoryRepository extends JpaRepository<Category, Long> {
 
     /*
         - 카테고리 이름으로 카테고리 찾기

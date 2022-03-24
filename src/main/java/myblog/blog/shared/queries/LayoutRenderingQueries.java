@@ -1,8 +1,8 @@
 package myblog.blog.shared.queries;
 
 import lombok.RequiredArgsConstructor;
-import myblog.blog.category.dto.CategoryForView;
-import myblog.blog.category.service.CategoryService;
+import myblog.blog.category.appliacation.port.response.CategoryViewForLayout;
+import myblog.blog.category.appliacation.CategoryService;
 import myblog.blog.comment.dto.CommentDtoForLayout;
 import myblog.blog.comment.service.CommentService;
 import org.springframework.stereotype.Component;
@@ -21,9 +21,9 @@ public class LayoutRenderingQueries {
     - 레이아웃에 필요한 모델 담기
     */
     public void AddLayoutTo(Model model) {
-        CategoryForView categoryForView = categoryService.getCategoryForView();
+        CategoryViewForLayout categoryViewForLayout = categoryService.getCategoryViewForLayout();
         List<CommentDtoForLayout> comments = commentService.recentCommentList();
-        model.addAttribute("category", categoryForView);
+        model.addAttribute("category", categoryViewForLayout);
         model.addAttribute("commentsList", comments);
     }
 }

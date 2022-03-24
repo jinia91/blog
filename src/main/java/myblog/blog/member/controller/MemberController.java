@@ -1,9 +1,8 @@
 package myblog.blog.member.controller;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import myblog.blog.category.dto.CategoryForView;
-import myblog.blog.category.service.CategoryService;
+import myblog.blog.category.appliacation.port.response.CategoryViewForLayout;
+import myblog.blog.category.appliacation.CategoryService;
 import myblog.blog.comment.dto.CommentDtoForLayout;
 import myblog.blog.comment.service.CommentService;
 import org.springframework.stereotype.Controller;
@@ -12,7 +11,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Controller
 @RequiredArgsConstructor
@@ -34,11 +32,11 @@ public class MemberController {
         }
 
         // 레이아웃 DTO 전처리
-        CategoryForView categoryForView = categoryService.getCategoryForView();
+        CategoryViewForLayout categoryViewForLayout = categoryService.getCategoryViewForLayout();
         List<CommentDtoForLayout> comments = commentService.recentCommentList();
         //
 
-        model.addAttribute("category",categoryForView);
+        model.addAttribute("category", categoryViewForLayout);
         model.addAttribute("commentsList", comments);
 
         return "login";

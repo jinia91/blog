@@ -47,7 +47,7 @@
         <li class="border-top my-3"></li>
         <li class="mb-1 superCategory btn fs-5"><a th:href="@{/article/list(category=total,tier=0,page=1)}"
                                                    th:text="|전체글(${category.getCount()})|">토탈</a></li>
-        <a th:href="@{/edit/category}" sec:authorize="hasRole('ADMIN')" class="me-0 ps-0 btn"><i class="fas fa-pen"></i></a>
+        <a th:href="@{/category/edit}" sec:authorize="hasRole('ADMIN')" class="me-0 ps-0 btn"><i class="fas fa-pen"></i></a>
 
         <li class="mb-1" th:each="superCategory : ${category.getCategoryTCountList()}">
             <div class="btn-group">

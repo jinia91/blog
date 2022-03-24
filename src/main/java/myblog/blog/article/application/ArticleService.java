@@ -13,7 +13,7 @@ import myblog.blog.article.domain.Article;
 import myblog.blog.category.domain.Category;
 import myblog.blog.member.doamin.Member;
 
-import myblog.blog.category.service.CategoryService;
+import myblog.blog.category.appliacation.CategoryService;
 import myblog.blog.member.service.Oauth2MemberService;
 
 import org.springframework.cache.annotation.CacheEvict;

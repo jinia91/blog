@@ -4,7 +4,7 @@ import myblog.blog.article.domain.Article
 import myblog.blog.article.application.ArticleService
 import myblog.blog.seo.application.SiteMapService
 import myblog.blog.category.domain.Category
-import myblog.blog.category.service.CategoryService
+import myblog.blog.category.appliacation.CategoryService
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 //import org.junit.Test

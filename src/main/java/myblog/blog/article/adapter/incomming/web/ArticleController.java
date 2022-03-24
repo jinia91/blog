@@ -13,14 +13,13 @@ import myblog.blog.article.application.port.response.ArticleResponseForCardBox;
 import myblog.blog.article.application.port.response.ArticleResponseForDetail;
 import myblog.blog.article.application.port.response.ArticleResponseForEdit;
 
-import myblog.blog.category.service.CategoryService;
-import myblog.blog.category.dto.*;
+import myblog.blog.category.appliacation.port.incomming.CategoryUseCase;
+import myblog.blog.category.appliacation.port.response.CategoryViewForLayout;
 import myblog.blog.member.auth.PrincipalDetails;
 import myblog.blog.member.dto.MemberVo;
 import myblog.blog.shared.queries.LayoutRenderingQueries;
 
 import org.jsoup.Jsoup;
-import org.modelmapper.ModelMapper;
 
 import org.springframework.data.domain.*;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -33,7 +32,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static myblog.blog.shared.utils.MarkdownUtils.*;
 
@@ -45,14 +43,13 @@ public class ArticleController {
     private final ArticleQueriesUseCase articleQueriesUseCase;
     private final TempArticleUseCase tempArticleUseCase;
     private final TagsQueriesUseCase tagsQueriesUseCase;
-    private final CategoryService categoryService;
+    private final CategoryUseCase categoryUseCase;
     private final LayoutRenderingQueries layoutRenderingQueries;
-    private final ModelMapper modelMapper;
 
     @GetMapping("article/write")
     String getArticleWriteForm(Model model) {
         layoutRenderingQueries.AddLayoutTo(model);
-        model.addAttribute("categoryInput", getCategoryDtosForForm());
+        model.addAttribute("categoryInput", categoryUseCase.findCategoryByTier(2));
         model.addAttribute("tagsInput", tagsQueriesUseCase.findAllTagDtos());
         model.addAttribute("articleDto", new ArticleForm());
         return "article/articleWriteForm";
@@ -80,12 +77,11 @@ public class ArticleController {
     String updateArticle(@RequestParam Long articleId, Model model) {
         ArticleResponseForEdit articleDto = articleQueriesUseCase.getArticleForEdit(articleId);
         layoutRenderingQueries.AddLayoutTo(model);
-        model.addAttribute("categoryInput", getCategoryDtosForForm());
+        model.addAttribute("categoryInput", categoryUseCase.findCategoryByTier(2));
         model.addAttribute("tagsInput", tagsQueriesUseCase.findAllTagDtos());
         model.addAttribute("articleDto", articleDto);
         return "article/articleEditForm";
     }
-
     /*
         - 아티클 수정 요청
     */
@@ -96,7 +92,6 @@ public class ArticleController {
         articleUseCase.editArticle(ArticleEditRequest.from(articleId, articleForm));
         return "redirect:/article/view?articleId=" + articleId;
     }
-
     /*
         - 아티클 삭제 요청
     */
@@ -106,7 +101,6 @@ public class ArticleController {
         articleUseCase.deleteArticle(articleId);
         return "redirect:/";
     }
-
     /*
         - 카테고리별 게시물 조회하기
     */
@@ -117,7 +111,7 @@ public class ArticleController {
                                      @RequestParam Integer page,
                                      Model model) {
         PagingBoxHandler pagingBoxHandler =
-                PagingBoxHandler.createOf(page, getTotalArticleCntByCategory(category, categoryService.getCategoryForView()));
+                PagingBoxHandler.createOf(page, getTotalArticleCntByCategory(category, categoryUseCase.getCategoryViewForLayout()));
 
         Slice<ArticleResponseForCardBox> articleDtoList =
                 articleQueriesUseCase.getArticlesByCategory(category, tier, pagingBoxHandler.getCurPageNum());
@@ -132,7 +126,23 @@ public class ArticleController {
 
         return "article/articleList";
     }
+    private int getTotalArticleCntByCategory(String category, CategoryViewForLayout categorys) {
 
+        if (categorys.getTitle().equals(category)) {
+            return categorys.getCount();
+        } else {
+            for (CategoryViewForLayout categoryCnt :
+                    categorys.getCategoryTCountList()) {
+                if (categoryCnt.getTitle().equals(category))
+                    return categoryCnt.getCount();
+                for (CategoryViewForLayout categoryCntSub : categoryCnt.getCategoryTCountList()) {
+                    if (categoryCntSub.getTitle().equals(category))
+                        return categoryCntSub.getCount();
+                }
+            }
+        }
+        throw new IllegalArgumentException("'"+category+"' 라는 카테고리는 존재하지 않습니다.");
+    }
     /*
         - 태그별 게시물 조회하기
     */
@@ -157,7 +167,6 @@ public class ArticleController {
 
         return "article/articleListByTag";
     }
-
     /*
         - 검색어별 게시물 조회하기
     */
@@ -183,7 +192,6 @@ public class ArticleController {
         return "article/articleListByKeyword";
 
     }
-
     /*
         - 아티클 상세 조회
             1. 로그인여부 검토
@@ -240,7 +248,6 @@ public class ArticleController {
 
         return "article/articleView";
     }
-
     /*
         - 쿠키 추가 / 조회수 증가 검토
     */
@@ -268,37 +275,5 @@ public class ArticleController {
             response.addCookie(new Cookie("view", cookie));
             return addHitAvailable;
         }
-    }
-
-    /*
-        - 카테고리별 아티클 갯수 구하기
-    */
-    private int getTotalArticleCntByCategory(String category, CategoryForView categorys) {
-
-        if (categorys.getTitle().equals(category)) {
-            return categorys.getCount();
-        } else {
-            for (CategoryForView categoryCnt :
-                    categorys.getCategoryTCountList()) {
-                if (categoryCnt.getTitle().equals(category))
-                    return categoryCnt.getCount();
-                for (CategoryForView categoryCntSub : categoryCnt.getCategoryTCountList()) {
-                    if (categoryCntSub.getTitle().equals(category))
-                        return categoryCntSub.getCount();
-                }
-            }
-        }
-        throw new IllegalArgumentException("'"+category+"' 라는 카테고리는 존재하지 않습니다.");
-    }
-
-    /*
-    - 아티클 폼에 필요한 카테고리 dtos
-    */
-    private List<CategorySimpleView> getCategoryDtosForForm() {
-        return categoryService
-                .findCategoryByTier(2)
-                .stream()
-                .map(category -> modelMapper.map(category, CategorySimpleView.class))
-                .collect(Collectors.toList());
     }
 }

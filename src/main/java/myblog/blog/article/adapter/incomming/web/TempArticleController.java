@@ -24,7 +24,6 @@ public class TempArticleController {
     public String autoSaveTemp(@RequestBody TempArticleResponse tempArticleResponse){
 
         tempArticleService.saveTemp(new TempArticle(tempArticleResponse.getContent()));
-
         return "저장성공";
     }
 
@@ -36,10 +35,8 @@ public class TempArticleController {
     TempArticleResponse getTempArticle(){
 
         Optional<TempArticle> tempArticle = tempArticleService.getTempArticle();
-
         TempArticleResponse tempArticleResponse = new TempArticleResponse();
         tempArticleResponse.setContent(tempArticle.orElse(new TempArticle()).getContent());
-
         return tempArticleResponse;
     }
 }

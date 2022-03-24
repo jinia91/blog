@@ -83,6 +83,14 @@ public class Article extends BasicEntity {
         this.hit = 0L;
     }
 
+    private String makeDefaultThumbOf(String thumbnailUrl) {
+        String defaultThumbUrl = "https://cdn.pixabay.com/photo/2020/11/08/13/28/tree-5723734_1280.jpg";
+
+        if (thumbnailUrl == null || thumbnailUrl.equals("")) {
+            thumbnailUrl = defaultThumbUrl;
+        }
+        return thumbnailUrl;
+    }
     /*
         - 아티클 수정을 위한 로직
     */
@@ -95,22 +103,8 @@ public class Article extends BasicEntity {
             this.thumbnailUrl = getThumbnailUrl();
         }
     }
-    /*
-        - 아티클 조회수 증가
-    */
+
     public void addHit(){
         this.hit++;
-    }
-
-    /*
-        - 썸네일 기본 작성
-    */
-    private String makeDefaultThumbOf(String thumbnailUrl) {
-        String defaultThumbUrl = "https://cdn.pixabay.com/photo/2020/11/08/13/28/tree-5723734_1280.jpg";
-
-        if (thumbnailUrl == null || thumbnailUrl.equals("")) {
-            thumbnailUrl = defaultThumbUrl;
-        }
-        return thumbnailUrl;
     }
 }

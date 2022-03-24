@@ -3,8 +3,9 @@ package myblog.blog.category.domain;
 
 import lombok.Builder;
 import lombok.Getter;
-import myblog.blog.article.domain.Article;
+
 import myblog.blog.shared.BasicEntity;
+import myblog.blog.article.domain.Article;
 
 import javax.persistence.*;
 import java.util.ArrayList;

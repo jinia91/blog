@@ -51,7 +51,7 @@ public class ArticleRepositoryAdapter implements ArticleRepositoryPort {
     }
 
     @Override
-    public Slice<Article> findBySupCategoryOrderByIdDesc(Pageable pageable, String category) {
+    public Slice<Article> findBySuperCategoryOrderByIdDesc(Pageable pageable, String category) {
         return jpaArticleRepository.findBySupCategoryOrderByIdDesc(pageable,category);
     }
 

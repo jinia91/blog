@@ -1,6 +1,6 @@
-package myblog.blog.category.repository;
+package myblog.blog.category.adapter.outgoing.persistence;
 
-import myblog.blog.category.dto.CategorySimpleView;
+import myblog.blog.category.appliacation.port.response.CategorySimpleDto;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 import org.springframework.stereotype.Repository;
@@ -9,7 +9,7 @@ import java.util.List;
 
 @Mapper
 @Repository
-public interface NaCategoryRepository {
+public interface MybatisCategoryRepository {
 
     /*
         - 카테고리별 아티클 갯수 통계 쿼리
@@ -23,6 +23,6 @@ public interface NaCategoryRepository {
             "            group by c.title, b.title with rollup) e\n" +
             "            right join category f on (e.title = f.title)\n" +
             "            order by pOrder, cOrder ")
-    List<CategorySimpleView> getCategoryCount();
+    List<CategorySimpleDto> getCategoryCount();
 
 }

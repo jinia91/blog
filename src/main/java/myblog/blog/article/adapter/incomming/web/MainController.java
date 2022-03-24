@@ -24,7 +24,7 @@ public class MainController {
         - 메인 화면 제어용 컨트롤러
     */
     @GetMapping("/")
-    public String main(Model model) {
+    String main(Model model) {
         // Dto 전처리
         List<ArticleResponseForCardBox> popularArticles = articleQueriesUseCase.getPopularArticles();
         //
@@ -37,12 +37,10 @@ public class MainController {
         - 최신 아티클 무한스크롤로 조회
     */
     @GetMapping("/main/article/{lastArticleId}")
-    public @ResponseBody
-    List<ArticleResponseForCardBox> mainNextPage(@PathVariable(required = false) Long lastArticleId) {
+    @ResponseBody List<ArticleResponseForCardBox> mainNextPage(@PathVariable(required = false) Long lastArticleId) {
 
         // Entity to Dto
         List<ArticleResponseForCardBox> articles = articleQueriesUseCase.getRecentArticles(lastArticleId);
-
 
         // 화면렌더링을 위한 파싱
         for(ArticleResponseForCardBox article : articles){
@@ -52,7 +50,6 @@ public class MainController {
             }
             article.setContent(content);
         }
-
         return articles;
     }
 }

@@ -1,12 +1,14 @@
-package myblog.blog.shared.exception;
+package myblog.blog.category.adapter.imcomming;
 
 import lombok.RequiredArgsConstructor;
+import myblog.blog.shared.exception.CustomFormException;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 import org.springframework.validation.beanvalidation.SpringValidatorAdapter;
 
 import java.util.List;
+import java.util.Objects;
 
 
 /*
@@ -14,7 +16,7 @@ import java.util.List;
 */
 @Component
 @RequiredArgsConstructor
-public class ListValidator implements Validator {
+public class CategoryListValidator implements Validator {
 
     private final SpringValidatorAdapter springValidatorAdapter;
 
@@ -27,6 +29,9 @@ public class ListValidator implements Validator {
     public void validate(Object target, Errors errors) {
         for(Object object : (List)target){
             springValidatorAdapter.validate(object,errors);
+        }
+        if (errors.hasErrors()) {
+            throw new CustomFormException(Objects.requireNonNull(errors.getFieldError()).getDefaultMessage());
         }
     }
 }
