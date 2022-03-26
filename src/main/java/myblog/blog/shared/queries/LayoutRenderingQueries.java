@@ -3,8 +3,8 @@ package myblog.blog.shared.queries;
 import lombok.RequiredArgsConstructor;
 import myblog.blog.category.appliacation.port.incomming.CategoryUseCase;
 import myblog.blog.category.appliacation.port.response.CategoryViewForLayout;
-import myblog.blog.comment.dto.CommentDtoForLayout;
-import myblog.blog.comment.service.CommentService;
+import myblog.blog.comment.application.port.incomming.CommentDtoForLayout;
+import myblog.blog.comment.application.CommentService;
 import org.springframework.stereotype.Component;
 import org.springframework.ui.Model;
 

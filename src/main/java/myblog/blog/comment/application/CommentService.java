@@ -1,57 +1,57 @@
-package myblog.blog.comment.service;
+package myblog.blog.comment.application;
+
+import myblog.blog.article.application.port.incomming.ArticleUseCase;
+import myblog.blog.comment.application.port.incomming.CommentUseCase;
+import myblog.blog.comment.application.port.incomming.CommentDto;
+import myblog.blog.comment.application.port.incomming.CommentDtoForLayout;
+import myblog.blog.comment.application.port.outgoing.CommentRepositoryPort;
+
+import myblog.blog.comment.domain.Comment;
+import myblog.blog.article.domain.Article;
+import myblog.blog.member.doamin.Member;
 
 import lombok.RequiredArgsConstructor;
-import myblog.blog.article.application.port.incomming.ArticleUseCase;
-import myblog.blog.article.domain.Article;
-import myblog.blog.comment.domain.Comment;
-import myblog.blog.comment.dto.CommentDtoForLayout;
-import myblog.blog.comment.dto.CommentForm;
-import myblog.blog.comment.repository.CommentRepository;
-import myblog.blog.comment.repository.NaCommentRepository;
-import myblog.blog.member.doamin.Member;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class CommentService {
-
+public class CommentService implements CommentUseCase {
     private final ArticleUseCase articleUseCase;
-
-    private final CommentRepository commentRepository;
-    private final NaCommentRepository naCommentRepository;
+    private final CommentRepositoryPort commentRepositoryPort;
 
     /*
         - 아티클에 달린 댓글 전체 가져오기
     */
-    public List<Comment> getCommentList(Long articleId){
-        return commentRepository.findCommentsByArticleId(articleId);
+    @Override
+    public List<CommentDto> getCommentList(Long articleId){
+        return CommentDto.listCreateFrom(commentRepositoryPort.findCommentsByArticleId(articleId),0);
     }
 
     /*
         - 부모 댓글 저장
     */
     @CacheEvict(value = "layoutRecentCommentCaching", allEntries = true)
-    public void savePComment(CommentForm commentForm, Member member, Long articleId){
+    @Override
+    public void savePComment(String content, boolean secret, Member member, Long articleId){
 
         Article article = articleUseCase.getArticle(articleId);
 
         Comment comment = Comment.builder()
                 .article(article)
-                .content(removeDuplicatedEnter(commentForm))
+                .content(removeDuplicatedEnter(content))
                 .tier(0)
-                .pOrder(commentRepository.countCommentsByArticleAndTier(article,0)+1)
+                .pOrder(commentRepositoryPort.countCommentsByArticleAndTier(article,0)+1)
                 .member(member)
-                .secret(commentForm.isSecret())
+                .secret(secret)
                 .build();
 
-        commentRepository.save(comment);
+        commentRepositoryPort.save(comment);
 
     }
 
@@ -59,22 +59,24 @@ public class CommentService {
         - 자식 댓글 저장
     */
     @CacheEvict(value = "layoutRecentCommentCaching", allEntries = true)
-    public void saveCComment(CommentForm commentForm, Member member, Long articleId, Long parentId) {
+    @Override
+    public void saveCComment(String content, boolean secret, Member member, Long articleId, Long parentId) {
 
         Article article = articleUseCase.getArticle(articleId);
-        Comment pComment = commentRepository.findById(parentId).get();
+        Comment pComment = commentRepositoryPort.findById(parentId)
+                .orElseThrow(() -> new IllegalArgumentException("NotfoundParentCommentException"));
 
         Comment comment = Comment.builder()
                 .article(article)
-                .content(removeDuplicatedEnter(commentForm))
+                .content(removeDuplicatedEnter(content))
                 .tier(1)
                 .pOrder(pComment.getPOrder())
                 .member(member)
                 .parents(pComment)
-                .secret(commentForm.isSecret())
+                .secret(secret)
                 .build();
 
-        commentRepository.save(comment);
+        commentRepositoryPort.save(comment);
 
     }
 
@@ -82,8 +84,9 @@ public class CommentService {
         - 댓글 삭제
     */
     @CacheEvict(value = "layoutRecentCommentCaching", allEntries = true)
+    @Override
     public void deleteComment(Long commentId){
-        naCommentRepository.deleteComment(commentId);
+        commentRepositoryPort.deleteComment(commentId);
     }
 
     /*
@@ -93,8 +96,9 @@ public class CommentService {
              DTO 매핑 로직 서비스단에서 처리
     */
     @Cacheable(value = "layoutRecentCommentCaching", key = "0")
+    @Override
     public List<CommentDtoForLayout> recentCommentList(){
-       return commentRepository.findTop5ByOrderByIdDesc()
+       return commentRepositoryPort.findTop5ByOrderByIdDesc()
                .stream()
                 .map(comment ->
                         new CommentDtoForLayout(comment.getId(), comment.getArticle().getId(), comment.getContent(), comment.isSecret()))
@@ -104,15 +108,15 @@ public class CommentService {
     /*
     - 중복 개행 개행 하나로 압축 알고리즘
     */
-    private String removeDuplicatedEnter(CommentForm commentForm) {
+    private String removeDuplicatedEnter(String content) {
 
-        char[] contentBox = new char[commentForm.getContent().length()];
+        char[] contentBox = new char[content.length()];
         int idx = 0;
         String zipWord = "\n\n";
 
-        for(int i = 0; i< commentForm.getContent().length(); i++){
+        for(int i = 0; i< content.length(); i++){
 
-            contentBox[idx] = commentForm.getContent().charAt(i);
+            contentBox[idx] = content.charAt(i);
 
             if(contentBox[idx] == '\n'&&idx >= 1){
 

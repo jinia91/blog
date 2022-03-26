@@ -1,4 +1,4 @@
-package myblog.blog.comment.dto;
+package myblog.blog.comment.adapter.incomming;
 
 import lombok.Data;
 

@@ -1,14 +1,11 @@
-package myblog.blog.imgupload.dto;
+package myblog.blog.imgupload.adapter.incomming;
 
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.web.multipart.MultipartFile;
 
-/*
-    - 멀티파트 파일 래핑용 DTO
-*/
 @Getter
 @Setter
-public class UploadImgDto {
+public class UploadImgForm {
     private MultipartFile img;
 }

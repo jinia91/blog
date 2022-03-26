@@ -1,4 +1,4 @@
-package myblog.blog.comment.dto;
+package myblog.blog.comment.application.port.incomming;
 
 import lombok.Getter;
 import lombok.Setter;

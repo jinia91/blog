@@ -1,8 +1,10 @@
-package myblog.blog.imgupload.service;
+package myblog.blog.imgupload.adapter.outgoing;
 
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.*;
 import lombok.RequiredArgsConstructor;
+import myblog.blog.imgupload.domain.ImageFile;
+import myblog.blog.imgupload.service.port.outgoing.ImgUploadStrategyPort;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -15,22 +17,22 @@ import java.io.InputStream;
  */
 @RequiredArgsConstructor
 @Service
-public class AwsS3ImgUploadStrategy implements ImgUploadStrategy {
+public class AwsS3ImgUploadStrategyAdapter implements ImgUploadStrategyPort {
 
     private final AmazonS3 amazonS3;
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
 
-    @Override
-    public String uploadFile(MultipartFile file, String storeFileName) {
+    public String uploadFile(ImageFile imageFile) {
+        MultipartFile file = imageFile.getMultipartFile();
         ObjectMetadata metadata = createObjectMetadata(file);
         try(InputStream inputStream = file.getInputStream()) {
-            amazonS3.putObject(new PutObjectRequest(bucket, storeFileName, inputStream, metadata)
+            amazonS3.putObject(new PutObjectRequest(bucket, imageFile.getStoredFileName(), inputStream, metadata)
                     .withCannedAcl(CannedAccessControlList.PublicRead));
         } catch (IOException e) {
             throw new IllegalArgumentException("파일 업로드에 실패했습니다.");
         }
-        return amazonS3.getUrl(bucket, storeFileName).toString();
+        return amazonS3.getUrl(bucket, imageFile.getStoredFileName()).toString();
     }
 
     /**

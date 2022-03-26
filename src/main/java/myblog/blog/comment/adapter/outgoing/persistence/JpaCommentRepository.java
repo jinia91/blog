@@ -1,4 +1,4 @@
-package myblog.blog.comment.repository;
+package myblog.blog.comment.adapter.outgoing.persistence;
 
 import myblog.blog.article.domain.Article;
 import myblog.blog.comment.domain.Comment;
@@ -8,7 +8,7 @@ import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
-public interface CommentRepository extends JpaRepository<Comment, Long> {
+public interface JpaCommentRepository extends JpaRepository<Comment, Long> {
 
     /*
         - 특정 아티클에 해당하는 댓글 리스트 가져오기

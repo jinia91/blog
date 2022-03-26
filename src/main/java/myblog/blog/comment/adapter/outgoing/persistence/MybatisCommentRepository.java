@@ -1,10 +1,10 @@
-package myblog.blog.comment.repository;
+package myblog.blog.comment.adapter.outgoing.persistence;
 
 import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Mapper;
 
 @Mapper
-public interface NaCommentRepository {
+public interface MybatisCommentRepository {
 
     /*
         - cascade 삭제처리

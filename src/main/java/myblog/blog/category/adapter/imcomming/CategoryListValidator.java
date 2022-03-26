@@ -1,7 +1,6 @@
 package myblog.blog.category.adapter.imcomming;
 
 import lombok.RequiredArgsConstructor;
-import myblog.blog.shared.exception.CustomFormException;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
@@ -31,7 +30,7 @@ public class CategoryListValidator implements Validator {
             springValidatorAdapter.validate(object,errors);
         }
         if (errors.hasErrors()) {
-            throw new CustomFormException(Objects.requireNonNull(errors.getFieldError()).getDefaultMessage());
+            throw new InvalidCategoryRequestException(Objects.requireNonNull(errors.getFieldError()).getDefaultMessage());
         }
     }
 }

@@ -1,13 +1,11 @@
-package myblog.blog.comment.dto;
+package myblog.blog.comment.application.port.incomming;
 
 import lombok.Getter;
 import lombok.Setter;
 import myblog.blog.comment.domain.Comment;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 
 /*
