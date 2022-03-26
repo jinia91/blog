@@ -19,18 +19,6 @@ public class AppConfig {
     @Value("${cloud.aws.credentials.secretKey}")
     private String AWS_SECRET_ACCESS_KEY;
 
-    /*
-        - DTO <-> 엔티티 매퍼 빈등록
-    */
-    @Bean
-    public ModelMapper modelMapper(){
-        ModelMapper modelMapper = new ModelMapper();
-        modelMapper.getConfiguration()
-                .setFieldAccessLevel(org.modelmapper.config.Configuration.AccessLevel.PRIVATE)
-                .setFieldMatchingEnabled(true);
-        return modelMapper;
-    }
-
     /**
      * AWS S3 설정
      */
