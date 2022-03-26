@@ -1,4 +1,4 @@
-package myblog.blog.base;
+package myblog.blog.infra;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.env.Environment;

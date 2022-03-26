@@ -1,4 +1,4 @@
-package myblog.blog.base.config;
+package myblog.blog.infra.config;
 
 import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.AWSStaticCredentialsProvider;

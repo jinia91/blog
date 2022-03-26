@@ -1,4 +1,4 @@
-package myblog.blog.base.log;
+package myblog.blog.infra.log;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

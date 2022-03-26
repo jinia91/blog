@@ -1,4 +1,4 @@
-package myblog.blog.base.log;
+package myblog.blog.infra.log;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;

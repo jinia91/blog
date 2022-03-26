@@ -1,4 +1,4 @@
-package myblog.blog.base.config;
+package myblog.blog.infra.config;
 
 import lombok.RequiredArgsConstructor;
 import myblog.blog.shared.exception.LoginFailHandler;
