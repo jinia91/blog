@@ -1,13 +1,12 @@
 package myblog.blog.comment.adapter.incomming;
 
 import myblog.blog.comment.application.port.incomming.CommentUseCase;
-import myblog.blog.comment.application.port.incomming.CommentDto;
+import myblog.blog.comment.application.port.incomming.response.CommentDto;
 
-import myblog.blog.member.auth.PrincipalDetails;
-
-import myblog.blog.member.doamin.Member;
+import myblog.blog.member.application.port.incomming.response.PrincipalDetails;
 
 import lombok.RequiredArgsConstructor;
+import myblog.blog.member.application.port.incomming.response.MemberVo;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.Errors;
 import org.springframework.validation.annotation.Validated;
@@ -24,7 +23,7 @@ public class CommentController {
         - 아티클 조회시 아티클에 달린 댓글들 전체 조회
     */
     @GetMapping("/comment/list/{articleId}")
-    public List<CommentDto> getCommentList(@PathVariable Long articleId){
+    List<CommentDto> getCommentList(@PathVariable Long articleId){
         return commentUseCase.getCommentList(articleId);
     }
 
@@ -32,7 +31,7 @@ public class CommentController {
         - 댓글 작성 요청
     */
     @PostMapping("/comment/write")
-    public List<CommentDto> getCommentList(@RequestParam Long articleId,
+    List<CommentDto> getCommentList(@RequestParam Long articleId,
                                            @RequestParam(required = false) Long parentId,
                                            @Validated @RequestBody CommentForm commentForm, Errors errors,
                                            @AuthenticationPrincipal PrincipalDetails principal){
@@ -40,13 +39,13 @@ public class CommentController {
             throw new InvalidCommentRequestException(Objects.requireNonNull(errors.getFieldError()).getDefaultMessage());
         }
 
-        Member member = principal.getMember();
+        MemberVo member = principal.getMember();
         // 부모 댓글인지 자식댓글인지 분기로 저장
         if(parentId != null){
-            commentUseCase.saveCComment(commentForm.getContent(), commentForm.isSecret(), member, articleId, parentId);
+            commentUseCase.saveCComment(commentForm.getContent(), commentForm.isSecret(), member.getId(), articleId, parentId);
         }
         else {
-            commentUseCase.savePComment(commentForm.getContent(), commentForm.isSecret(), member, articleId);
+            commentUseCase.savePComment(commentForm.getContent(), commentForm.isSecret(), member.getId(), articleId);
         }
 
         return commentUseCase.getCommentList(articleId);
@@ -56,7 +55,7 @@ public class CommentController {
         - 댓글 삭제 요청
     */
     @PostMapping("/comment/delete")
-    public List<CommentDto> deleteComment(@RequestParam Long articleId,
+    List<CommentDto> deleteComment(@RequestParam Long articleId,
                             @RequestParam Long commentId) {
         commentUseCase.deleteComment(commentId);
         return commentUseCase.getCommentList(articleId);

@@ -1,9 +1,9 @@
 package myblog.blog.article.application.port.incomming;
 
-import myblog.blog.article.application.port.response.ArticleResponseForCardBox;
-import myblog.blog.article.application.port.response.ArticleResponseByCategory;
-import myblog.blog.article.application.port.response.ArticleResponseForDetail;
-import myblog.blog.article.application.port.response.ArticleResponseForEdit;
+import myblog.blog.article.application.port.incomming.response.ArticleResponseForCardBox;
+import myblog.blog.article.application.port.incomming.response.ArticleResponseByCategory;
+import myblog.blog.article.application.port.incomming.response.ArticleResponseForDetail;
+import myblog.blog.article.application.port.incomming.response.ArticleResponseForEdit;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Slice;
 

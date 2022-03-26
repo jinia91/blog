@@ -1,7 +1,7 @@
 package myblog.blog.category.appliacation.port.incomming;
 
-import myblog.blog.category.appliacation.port.response.CategorySimpleDto;
-import myblog.blog.category.appliacation.port.response.CategoryViewForLayout;
+import myblog.blog.category.appliacation.port.incomming.response.CategorySimpleDto;
+import myblog.blog.category.appliacation.port.incomming.response.CategoryViewForLayout;
 import myblog.blog.category.domain.Category;
 
 import java.util.List;

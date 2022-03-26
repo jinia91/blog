@@ -1,6 +1,6 @@
 package myblog.blog.article.application.port.incomming;
 
-import myblog.blog.article.application.port.response.TagsResponse;
+import myblog.blog.article.application.port.incomming.response.TagsResponse;
 
 import java.util.List;
 

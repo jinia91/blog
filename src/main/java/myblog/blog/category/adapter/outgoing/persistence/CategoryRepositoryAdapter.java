@@ -2,7 +2,7 @@ package myblog.blog.category.adapter.outgoing.persistence;
 
 import lombok.RequiredArgsConstructor;
 import myblog.blog.category.appliacation.port.outgoing.CategoryRepositoryPort;
-import myblog.blog.category.appliacation.port.response.CategorySimpleDto;
+import myblog.blog.category.appliacation.port.incomming.response.CategorySimpleDto;
 import myblog.blog.category.domain.Category;
 import org.springframework.stereotype.Component;
 

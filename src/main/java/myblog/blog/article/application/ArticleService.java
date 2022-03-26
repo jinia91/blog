@@ -2,10 +2,12 @@ package myblog.blog.article.application;
 
 import lombok.RequiredArgsConstructor;
 
-import myblog.blog.article.application.port.request.ArticleCreateRequest;
-import myblog.blog.article.application.port.request.ArticleEditRequest;
+import myblog.blog.article.application.port.incomming.request.ArticleCreateRequest;
+import myblog.blog.article.application.port.incomming.request.ArticleEditRequest;
 import myblog.blog.article.application.port.incomming.ArticleUseCase;
 import myblog.blog.article.application.port.incomming.TagUseCase;
+import myblog.blog.category.appliacation.port.incomming.CategoryUseCase;
+import myblog.blog.member.application.port.incomming.MemberUseCase;
 import myblog.blog.article.application.port.outgoing.ArticleBackupRepositoryPort;
 import myblog.blog.article.application.port.outgoing.ArticleRepositoryPort;
 
@@ -13,8 +15,6 @@ import myblog.blog.article.domain.Article;
 import myblog.blog.category.domain.Category;
 import myblog.blog.member.doamin.Member;
 
-import myblog.blog.category.appliacation.CategoryService;
-import myblog.blog.member.service.Oauth2MemberService;
 
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
@@ -28,16 +28,16 @@ import java.util.List;
 public class ArticleService implements ArticleUseCase {
 
     private final TagUseCase tagUseCase;
-    private final CategoryService categoryService;
-    private final Oauth2MemberService memberService;
+    private final CategoryUseCase categoryUseCase;
+    private final MemberUseCase memberUseCase;
     private final ArticleRepositoryPort articleRepositoryPort;
     private final ArticleBackupRepositoryPort articleBackupRepositoryPort;
 
     @Override
     @CacheEvict(value = {"layoutCaching", "layoutRecentArticleCaching","seoCaching"}, allEntries = true)
     public Long writeArticle(ArticleCreateRequest articleCreateRequest) {
-        Member writer = memberService.findById(articleCreateRequest.getMemberId());
-        Category category = categoryService.findCategory(articleCreateRequest.getCategory());
+        Member writer = memberUseCase.findById(articleCreateRequest.getMemberId());
+        Category category = categoryUseCase.findCategory(articleCreateRequest.getCategory());
         Article newArticle = new Article(articleCreateRequest.getTitle(),
                 articleCreateRequest.getContent(),
                 articleCreateRequest.getToc(),
@@ -54,7 +54,7 @@ public class ArticleService implements ArticleUseCase {
     public void editArticle(ArticleEditRequest articleEditRequest) {
         Article article = articleRepositoryPort.findById(articleEditRequest.getArticleId())
                 .orElseThrow(() -> new IllegalArgumentException("NotFoundArticleException"));
-        Category category = categoryService.findCategory(articleEditRequest.getCategoryName());
+        Category category = categoryUseCase.findCategory(articleEditRequest.getCategoryName());
         tagUseCase.deleteAllTagsWith(article);
         tagUseCase.createNewTagsAndArticleTagList(articleEditRequest.getTags(), article);
         article.edit(articleEditRequest.getContent(),

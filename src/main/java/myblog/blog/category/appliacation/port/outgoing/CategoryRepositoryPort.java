@@ -1,6 +1,6 @@
 package myblog.blog.category.appliacation.port.outgoing;
 
-import myblog.blog.category.appliacation.port.response.CategorySimpleDto;
+import myblog.blog.category.appliacation.port.incomming.response.CategorySimpleDto;
 import myblog.blog.category.domain.Category;
 
 import java.util.List;

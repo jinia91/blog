@@ -5,8 +5,8 @@ import lombok.RequiredArgsConstructor;
 import myblog.blog.category.domain.Category;
 import myblog.blog.category.appliacation.port.incomming.CategoryUseCase;
 import myblog.blog.category.appliacation.port.outgoing.CategoryRepositoryPort;
-import myblog.blog.category.appliacation.port.response.CategorySimpleDto;
-import myblog.blog.category.appliacation.port.response.CategoryViewForLayout;
+import myblog.blog.category.appliacation.port.incomming.response.CategorySimpleDto;
+import myblog.blog.category.appliacation.port.incomming.response.CategoryViewForLayout;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.cache.annotation.CacheEvict;

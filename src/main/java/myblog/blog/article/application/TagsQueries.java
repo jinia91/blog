@@ -5,7 +5,7 @@ import myblog.blog.article.application.port.outgoing.TagRepositoryPort;
 import myblog.blog.article.domain.Tags;
 import myblog.blog.article.application.port.incomming.TagsQueriesUseCase;
 import myblog.blog.shared.utils.MapperUtils;
-import myblog.blog.article.application.port.response.TagsResponse;
+import myblog.blog.article.application.port.incomming.response.TagsResponse;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 

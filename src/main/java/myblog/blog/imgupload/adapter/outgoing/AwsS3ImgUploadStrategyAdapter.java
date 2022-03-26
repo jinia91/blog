@@ -4,7 +4,7 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.*;
 import lombok.RequiredArgsConstructor;
 import myblog.blog.imgupload.domain.ImageFile;
-import myblog.blog.imgupload.service.port.outgoing.ImgUploadStrategyPort;
+import myblog.blog.imgupload.application.port.outgoing.ImgUploadStrategyPort;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;

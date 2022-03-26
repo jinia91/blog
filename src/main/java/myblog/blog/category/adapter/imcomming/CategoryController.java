@@ -3,9 +3,9 @@ package myblog.blog.category.adapter.imcomming;
 import lombok.RequiredArgsConstructor;
 
 import myblog.blog.category.appliacation.port.incomming.CategoryUseCase;
-import myblog.blog.category.appliacation.port.response.CategoryViewForLayout;
-import myblog.blog.category.appliacation.port.response.CategorySimpleDto;
-import myblog.blog.comment.application.port.incomming.CommentDtoForLayout;
+import myblog.blog.category.appliacation.port.incomming.response.CategoryViewForLayout;
+import myblog.blog.category.appliacation.port.incomming.response.CategorySimpleDto;
+import myblog.blog.comment.application.port.incomming.response.CommentDtoForLayout;
 import myblog.blog.comment.application.CommentService;
 
 import org.springframework.stereotype.Controller;
@@ -27,13 +27,13 @@ public class CategoryController {
     - 카테고리 수정폼 조회
     */
     @GetMapping("/category/edit")
-    public String editCategoryForm(Model model) {
+    String editCategoryForm(Model model) {
 
         List<CategorySimpleDto> categoryList = categoryUseCase.getCategorytCountList();
         List<CategorySimpleDto> copyList = new ArrayList<>(List.copyOf(categoryList));
         copyList.remove(0);
         CategoryViewForLayout categoryViewForLayout = CategoryViewForLayout.from(categoryList);
-        List<CommentDtoForLayout> comments = commentService.recentCommentList();
+        List<CommentDtoForLayout> comments = commentService.recentCommentListForLayout();
 
         model.addAttribute("categoryForEdit", copyList);
         model.addAttribute("category", categoryViewForLayout);
@@ -45,8 +45,7 @@ public class CategoryController {
     - 카테고리 수정 요청
     */
     @PostMapping("/category/edit")
-    public @ResponseBody
-    String editCategory(@RequestBody List<CategorySimpleDto> categoryList, Errors errors) {
+    @ResponseBody String editCategory(@RequestBody List<CategorySimpleDto> categoryList, Errors errors) {
        // List DTO 검증을 위한 커스텀 validator
         categorylistValidator.validate(categoryList, errors);
         categoryUseCase.changeCategory(categoryList);

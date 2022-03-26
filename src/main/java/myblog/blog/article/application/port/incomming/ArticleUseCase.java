@@ -1,7 +1,7 @@
 package myblog.blog.article.application.port.incomming;
 
-import myblog.blog.article.application.port.request.ArticleCreateRequest;
-import myblog.blog.article.application.port.request.ArticleEditRequest;
+import myblog.blog.article.application.port.incomming.request.ArticleCreateRequest;
+import myblog.blog.article.application.port.incomming.request.ArticleEditRequest;
 import myblog.blog.article.domain.Article;
 
 import java.util.List;

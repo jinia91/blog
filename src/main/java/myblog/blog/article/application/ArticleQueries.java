@@ -2,17 +2,17 @@ package myblog.blog.article.application;
 
 import lombok.RequiredArgsConstructor;
 
-import myblog.blog.article.application.port.response.ArticleResponseForCardBox;
+import myblog.blog.article.application.port.incomming.response.ArticleResponseForCardBox;
 import myblog.blog.article.application.port.incomming.ArticleQueriesUseCase;
 import myblog.blog.article.application.port.outgoing.ArticleRepositoryPort;
 
 import myblog.blog.article.domain.Article;
+import myblog.blog.category.appliacation.port.incomming.CategoryUseCase;
 import myblog.blog.category.domain.Category;
-import myblog.blog.article.application.port.response.ArticleResponseByCategory;
-import myblog.blog.article.application.port.response.ArticleResponseForDetail;
-import myblog.blog.article.application.port.response.ArticleResponseForEdit;
+import myblog.blog.article.application.port.incomming.response.ArticleResponseByCategory;
+import myblog.blog.article.application.port.incomming.response.ArticleResponseForDetail;
+import myblog.blog.article.application.port.incomming.response.ArticleResponseForEdit;
 
-import myblog.blog.category.appliacation.CategoryService;
 import org.modelmapper.ModelMapper;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
@@ -27,7 +27,7 @@ import java.util.stream.Collectors;
 public class ArticleQueries implements ArticleQueriesUseCase {
 
     private final ArticleRepositoryPort articleRepositoryPort;
-    private final CategoryService categoryService;
+    private final CategoryUseCase categoryUseCase;
     private final ModelMapper modelMapper;
 
     /*
@@ -130,7 +130,7 @@ public class ArticleQueries implements ArticleQueriesUseCase {
     */
     @Override
     public List<ArticleResponseByCategory> getArticlesByCategoryForDetailView(String categoryName){
-        Category category = categoryService.findCategory(categoryName);
+        Category category = categoryUseCase.findCategory(categoryName);
         return articleRepositoryPort.findTop6ByCategoryOrderByIdDesc(category)
                 .stream()
                 .map(article -> modelMapper.map(article, ArticleResponseByCategory.class))

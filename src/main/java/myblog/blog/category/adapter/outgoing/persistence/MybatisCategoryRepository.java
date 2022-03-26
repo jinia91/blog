@@ -1,6 +1,6 @@
 package myblog.blog.category.adapter.outgoing.persistence;
 
-import myblog.blog.category.appliacation.port.response.CategorySimpleDto;
+import myblog.blog.category.appliacation.port.incomming.response.CategorySimpleDto;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 import org.springframework.stereotype.Repository;

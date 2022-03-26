@@ -2,8 +2,8 @@ package myblog.blog.comment.application;
 
 import myblog.blog.article.application.port.incomming.ArticleUseCase;
 import myblog.blog.comment.application.port.incomming.CommentUseCase;
-import myblog.blog.comment.application.port.incomming.CommentDto;
-import myblog.blog.comment.application.port.incomming.CommentDtoForLayout;
+import myblog.blog.comment.application.port.incomming.response.CommentDto;
+import myblog.blog.comment.application.port.incomming.response.CommentDtoForLayout;
 import myblog.blog.comment.application.port.outgoing.CommentRepositoryPort;
 
 import myblog.blog.comment.domain.Comment;
@@ -11,6 +11,7 @@ import myblog.blog.article.domain.Article;
 import myblog.blog.member.doamin.Member;
 
 import lombok.RequiredArgsConstructor;
+import myblog.blog.member.application.port.incomming.MemberUseCase;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -23,6 +24,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class CommentService implements CommentUseCase {
     private final ArticleUseCase articleUseCase;
+    private final MemberUseCase memberUseCase;
     private final CommentRepositoryPort commentRepositoryPort;
 
     /*
@@ -38,8 +40,8 @@ public class CommentService implements CommentUseCase {
     */
     @CacheEvict(value = "layoutRecentCommentCaching", allEntries = true)
     @Override
-    public void savePComment(String content, boolean secret, Member member, Long articleId){
-
+    public void savePComment(String content, boolean secret, Long memberId, Long articleId){
+        Member member = memberUseCase.findById(memberId);
         Article article = articleUseCase.getArticle(articleId);
 
         Comment comment = Comment.builder()
@@ -60,8 +62,8 @@ public class CommentService implements CommentUseCase {
     */
     @CacheEvict(value = "layoutRecentCommentCaching", allEntries = true)
     @Override
-    public void saveCComment(String content, boolean secret, Member member, Long articleId, Long parentId) {
-
+    public void saveCComment(String content, boolean secret, Long memberId, Long articleId, Long parentId) {
+        Member member = memberUseCase.findById(memberId);
         Article article = articleUseCase.getArticle(articleId);
         Comment pComment = commentRepositoryPort.findById(parentId)
                 .orElseThrow(() -> new IllegalArgumentException("NotfoundParentCommentException"));
@@ -97,7 +99,7 @@ public class CommentService implements CommentUseCase {
     */
     @Cacheable(value = "layoutRecentCommentCaching", key = "0")
     @Override
-    public List<CommentDtoForLayout> recentCommentList(){
+    public List<CommentDtoForLayout> recentCommentListForLayout(){
        return commentRepositoryPort.findTop5ByOrderByIdDesc()
                .stream()
                 .map(comment ->
