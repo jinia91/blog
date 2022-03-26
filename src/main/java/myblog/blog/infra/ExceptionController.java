@@ -1,4 +1,4 @@
-package myblog.blog.shared.exception;
+package myblog.blog.infra;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

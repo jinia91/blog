@@ -6,6 +6,7 @@ import myblog.blog.article.application.port.incomming.ArticleUseCase;
 import myblog.blog.article.application.port.incomming.TempArticleUseCase;
 import myblog.blog.article.application.port.incomming.ArticleQueriesUseCase;
 import myblog.blog.article.application.port.incomming.TagsQueriesUseCase;
+import myblog.blog.category.appliacation.port.incomming.CategoryQueriesUseCase;
 import myblog.blog.category.appliacation.port.incomming.CategoryUseCase;
 import myblog.blog.article.application.port.incomming.request.ArticleCreateRequest;
 import myblog.blog.article.application.port.incomming.request.ArticleEditRequest;
@@ -42,13 +43,13 @@ public class ArticleController {
     private final ArticleQueriesUseCase articleQueriesUseCase;
     private final TempArticleUseCase tempArticleUseCase;
     private final TagsQueriesUseCase tagsQueriesUseCase;
-    private final CategoryUseCase categoryUseCase;
+    private final CategoryQueriesUseCase categoryQueriesUseCase;
     private final LayoutRenderingQueries layoutRenderingQueries;
 
     @GetMapping("article/write")
     String getArticleWriteForm(Model model) {
         layoutRenderingQueries.AddLayoutTo(model);
-        model.addAttribute("categoryInput", categoryUseCase.findCategoryByTier(2));
+        model.addAttribute("categoryInput", categoryQueriesUseCase.findCategoryByTier(2));
         model.addAttribute("tagsInput", tagsQueriesUseCase.findAllTagDtos());
         model.addAttribute("articleDto", new ArticleForm());
         return "article/articleWriteForm";
@@ -76,7 +77,7 @@ public class ArticleController {
     String updateArticle(@RequestParam Long articleId, Model model) {
         ArticleResponseForEdit articleDto = articleQueriesUseCase.getArticleForEdit(articleId);
         layoutRenderingQueries.AddLayoutTo(model);
-        model.addAttribute("categoryInput", categoryUseCase.findCategoryByTier(2));
+        model.addAttribute("categoryInput", categoryQueriesUseCase.findCategoryByTier(2));
         model.addAttribute("tagsInput", tagsQueriesUseCase.findAllTagDtos());
         model.addAttribute("articleDto", articleDto);
         return "article/articleEditForm";
@@ -110,7 +111,7 @@ public class ArticleController {
                                      @RequestParam Integer page,
                                      Model model) {
         PagingBoxHandler pagingBoxHandler =
-                PagingBoxHandler.createOf(page, getTotalArticleCntByCategory(category, categoryUseCase.getCategoryViewForLayout()));
+                PagingBoxHandler.createOf(page, getTotalArticleCntByCategory(category, categoryQueriesUseCase.getCategoryViewForLayout()));
 
         Slice<ArticleResponseForCardBox> articleDtoList =
                 articleQueriesUseCase.getArticlesByCategory(category, tier, pagingBoxHandler.getCurPageNum());

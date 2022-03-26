@@ -1,5 +1,6 @@
 package myblog.blog.comment.adapter.incomming;
 
+import myblog.blog.comment.application.port.incomming.CommentQueriesUseCase;
 import myblog.blog.comment.application.port.incomming.CommentUseCase;
 import myblog.blog.comment.application.port.incomming.response.CommentDto;
 
@@ -18,13 +19,14 @@ import java.util.*;
 public class CommentController {
 
     private final CommentUseCase commentUseCase;
+    private final CommentQueriesUseCase commentQueriesUseCase;
 
     /*
         - 아티클 조회시 아티클에 달린 댓글들 전체 조회
     */
     @GetMapping("/comment/list/{articleId}")
     List<CommentDto> getCommentList(@PathVariable Long articleId){
-        return commentUseCase.getCommentList(articleId);
+        return commentQueriesUseCase.getCommentList(articleId);
     }
 
     /*
@@ -48,7 +50,7 @@ public class CommentController {
             commentUseCase.savePComment(commentForm.getContent(), commentForm.isSecret(), member.getId(), articleId);
         }
 
-        return commentUseCase.getCommentList(articleId);
+        return commentQueriesUseCase.getCommentList(articleId);
     }
 
     /*
@@ -58,6 +60,6 @@ public class CommentController {
     List<CommentDto> deleteComment(@RequestParam Long articleId,
                             @RequestParam Long commentId) {
         commentUseCase.deleteComment(commentId);
-        return commentUseCase.getCommentList(articleId);
+        return commentQueriesUseCase.getCommentList(articleId);
     }
 }

@@ -1,6 +1,5 @@
 package myblog.blog.member.application;
 
-import myblog.blog.member.application.port.incomming.MemberUseCase;
 import myblog.blog.member.application.port.incomming.response.PrincipalDetails;
 import myblog.blog.member.application.port.incomming.response.userinfo.Oauth2UserInfo;
 import myblog.blog.member.application.port.outgoing.MemberRepositoryPort;
@@ -19,7 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class Oauth2MemberService extends DefaultOAuth2UserService implements MemberUseCase {
+public class Oauth2MemberService extends DefaultOAuth2UserService {
 
     private final MemberRepositoryPort memberRepositoryPort;
     private final UserInfoFactory userInfoFactory;
@@ -63,11 +62,5 @@ public class Oauth2MemberService extends DefaultOAuth2UserService implements Mem
             member.changeUsername(userInfo.getUserName());
         }
         return member;
-    }
-
-    @Override
-    public Member findById(Long memberId) {
-        return memberRepositoryPort.findById(memberId)
-                .orElseThrow(() -> new IllegalArgumentException("NotFoundMemberException"));
     }
 }

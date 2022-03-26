@@ -2,11 +2,12 @@ package myblog.blog.category.adapter.imcomming;
 
 import lombok.RequiredArgsConstructor;
 
+import myblog.blog.category.appliacation.port.incomming.CategoryQueriesUseCase;
 import myblog.blog.category.appliacation.port.incomming.CategoryUseCase;
 import myblog.blog.category.appliacation.port.incomming.response.CategoryViewForLayout;
 import myblog.blog.category.appliacation.port.incomming.response.CategorySimpleDto;
+import myblog.blog.comment.application.port.incomming.CommentQueriesUseCase;
 import myblog.blog.comment.application.port.incomming.response.CommentDtoForLayout;
-import myblog.blog.comment.application.CommentService;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -20,7 +21,8 @@ import java.util.*;
 public class CategoryController {
 
     private final CategoryUseCase categoryUseCase;
-    private final CommentService commentService;
+    private final CategoryQueriesUseCase categoryQueriesUseCase;
+    private final CommentQueriesUseCase commentQueriesUseCase;
     private final CategoryListValidator categorylistValidator;
 
     /*
@@ -29,11 +31,11 @@ public class CategoryController {
     @GetMapping("/category/edit")
     String editCategoryForm(Model model) {
 
-        List<CategorySimpleDto> categoryList = categoryUseCase.getCategorytCountList();
+        List<CategorySimpleDto> categoryList = categoryQueriesUseCase.getCategorytCountList();
         List<CategorySimpleDto> copyList = new ArrayList<>(List.copyOf(categoryList));
         copyList.remove(0);
         CategoryViewForLayout categoryViewForLayout = CategoryViewForLayout.from(categoryList);
-        List<CommentDtoForLayout> comments = commentService.recentCommentListForLayout();
+        List<CommentDtoForLayout> comments = commentQueriesUseCase.recentCommentListForLayout();
 
         model.addAttribute("categoryForEdit", copyList);
         model.addAttribute("category", categoryViewForLayout);

@@ -7,7 +7,7 @@ import myblog.blog.article.application.port.incomming.request.ArticleEditRequest
 import myblog.blog.article.application.port.incomming.ArticleUseCase;
 import myblog.blog.article.application.port.incomming.TagUseCase;
 import myblog.blog.category.appliacation.port.incomming.CategoryUseCase;
-import myblog.blog.member.application.port.incomming.MemberUseCase;
+import myblog.blog.member.application.port.incomming.MemberQueriesUseCase;
 import myblog.blog.article.application.port.outgoing.ArticleBackupRepositoryPort;
 import myblog.blog.article.application.port.outgoing.ArticleRepositoryPort;
 
@@ -29,14 +29,14 @@ public class ArticleService implements ArticleUseCase {
 
     private final TagUseCase tagUseCase;
     private final CategoryUseCase categoryUseCase;
-    private final MemberUseCase memberUseCase;
+    private final MemberQueriesUseCase memberQueriesUseCase;
     private final ArticleRepositoryPort articleRepositoryPort;
     private final ArticleBackupRepositoryPort articleBackupRepositoryPort;
 
     @Override
     @CacheEvict(value = {"layoutCaching", "layoutRecentArticleCaching","seoCaching"}, allEntries = true)
     public Long writeArticle(ArticleCreateRequest articleCreateRequest) {
-        Member writer = memberUseCase.findById(articleCreateRequest.getMemberId());
+        Member writer = memberQueriesUseCase.findById(articleCreateRequest.getMemberId());
         Category category = categoryUseCase.findCategory(articleCreateRequest.getCategory());
         Article newArticle = new Article(articleCreateRequest.getTitle(),
                 articleCreateRequest.getContent(),

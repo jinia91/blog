@@ -9,8 +9,5 @@ import java.util.List;
 public interface CategoryUseCase {
     Category findCategory(String title);
     List<Category> getAllCategories();
-    List<CategorySimpleDto> getCategorytCountList();
-    CategoryViewForLayout getCategoryViewForLayout();
-    List<CategorySimpleDto> findCategoryByTier(int tier);
     void changeCategory(List<CategorySimpleDto> categoryList);
 }

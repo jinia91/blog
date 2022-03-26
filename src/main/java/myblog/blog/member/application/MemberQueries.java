@@ -1,0 +1,22 @@
+package myblog.blog.member.application;
+
+import lombok.RequiredArgsConstructor;
+import myblog.blog.member.application.port.incomming.MemberQueriesUseCase;
+import myblog.blog.member.application.port.outgoing.MemberRepositoryPort;
+
+import myblog.blog.member.doamin.Member;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+@Service
+@Transactional
+@RequiredArgsConstructor
+public class MemberQueries implements MemberQueriesUseCase {
+    private final MemberRepositoryPort memberRepositoryPort;
+    @Override
+    public Member findById(Long memberId) {
+        return memberRepositoryPort.findById(memberId)
+                .orElseThrow(() -> new IllegalArgumentException("NotFoundMemberException"));
+    }
+}
