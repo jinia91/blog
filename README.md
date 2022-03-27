@@ -13,6 +13,7 @@ https://www.jiniaslog.co.kr/
     * [기타 주요 라이브러리](#기타-주요-라이브러리)
 - [핵심 키워드](#핵심-키워드)
 - [시스템 아키텍쳐](#시스템-아키텍쳐)
+- [WAS 아키텍처](#WAS-아키텍처)
 - [E-R 다이어그램](#e-r-다이어그램)
 - [프로젝트 목적](#프로젝트-목적)
     * [블로그 프로젝트를 기획한 이유?](#블로그-프로젝트를-기획한-이유?)
@@ -96,6 +97,16 @@ https://www.jiniaslog.co.kr/
 
 ## 시스템 아키텍쳐
 ![image](https://github.com/jinia91/blogBackUp/blob/main/img/57d1dfd7-22c1-4a5f-b6d5-ef635ae49307.png?raw=true)
+
+## WAS 아키텍처
+
+### 헥사고날 아키텍처
+
+![image](https://jinia-img-bucket.s3.ap-northeast-2.amazonaws.com/424ffacf-ec59-477b-af1a-93ed3971bbb2.png)
+
+### 패키징 구조 예시
+
+![image](https://jinia-img-bucket.s3.ap-northeast-2.amazonaws.com/9672bd14-4f0f-463c-ae85-3acd4d14fe2e.png)
 
 ## E-R 다이어그램
 ![image](https://github.com/jinia91/blogBackUp/blob/main/img/ff867940-efae-4040-ad47-5707e51d8865.png?raw=true)
