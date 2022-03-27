@@ -1,11 +1,11 @@
 package myblog.blog.article.adapter.incomming;
 
-import lombok.RequiredArgsConstructor;
+import myblog.blog.article.application.port.incomming.TempArticleUseCase;
+import myblog.blog.article.application.port.incomming.TempArticleDto;
 import myblog.blog.article.domain.TempArticle;
-import myblog.blog.article.application.TempArticleService;
-import myblog.blog.article.application.port.incomming.response.TempArticleResponse;
-import org.springframework.web.bind.annotation.*;
 
+import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.*;
 import java.util.Optional;
 
 /*
@@ -15,15 +15,15 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class TempArticleController {
 
-    private final TempArticleService tempArticleService;
+    private final TempArticleUseCase tempArticleUseCase;
 
     /*
         - 임시 아티클 저장 요청
     */
     @PostMapping("/article/temp/autoSave")
-    public String autoSaveTemp(@RequestBody TempArticleResponse tempArticleResponse){
+    public String autoSaveTemp(@RequestBody TempArticleDto tempArticleDto){
 
-        tempArticleService.saveTemp(new TempArticle(tempArticleResponse.getContent()));
+        tempArticleUseCase.saveTemp(new TempArticle(tempArticleDto.getContent()));
         return "저장성공";
     }
 
@@ -32,11 +32,11 @@ public class TempArticleController {
     */
     @GetMapping("/article/temp/getTemp")
     public @ResponseBody
-    TempArticleResponse getTempArticle(){
+    TempArticleDto getTempArticle(){
 
-        Optional<TempArticle> tempArticle = tempArticleService.getTempArticle();
-        TempArticleResponse tempArticleResponse = new TempArticleResponse();
-        tempArticleResponse.setContent(tempArticle.orElse(new TempArticle()).getContent());
-        return tempArticleResponse;
+        Optional<TempArticle> tempArticle = tempArticleUseCase.getTempArticle();
+        TempArticleDto tempArticleDto = new TempArticleDto();
+        tempArticleDto.setContent(tempArticle.orElse(new TempArticle()).getContent());
+        return tempArticleDto;
     }
 }

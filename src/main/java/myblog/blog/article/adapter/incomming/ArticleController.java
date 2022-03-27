@@ -1,26 +1,23 @@
 package myblog.blog.article.adapter.incomming;
 
-import lombok.RequiredArgsConstructor;
-
 import myblog.blog.article.application.port.incomming.ArticleUseCase;
 import myblog.blog.article.application.port.incomming.TempArticleUseCase;
 import myblog.blog.article.application.port.incomming.ArticleQueriesUseCase;
 import myblog.blog.article.application.port.incomming.TagsQueriesUseCase;
 import myblog.blog.category.appliacation.port.incomming.CategoryQueriesUseCase;
-import myblog.blog.category.appliacation.port.incomming.CategoryUseCase;
+import myblog.blog.shared.application.port.incomming.LayoutRenderingUseCase;
+
 import myblog.blog.article.application.port.incomming.request.ArticleCreateRequest;
 import myblog.blog.article.application.port.incomming.request.ArticleEditRequest;
-import myblog.blog.category.appliacation.port.incomming.response.CategoryViewForLayout;
 import myblog.blog.article.application.port.incomming.response.ArticleResponseByCategory;
 import myblog.blog.article.application.port.incomming.response.ArticleResponseForCardBox;
 import myblog.blog.article.application.port.incomming.response.ArticleResponseForDetail;
 import myblog.blog.article.application.port.incomming.response.ArticleResponseForEdit;
+import myblog.blog.category.appliacation.port.incomming.response.CategoryViewForLayout;
 import myblog.blog.member.application.port.incomming.response.PrincipalDetails;
 
-import myblog.blog.shared.queries.LayoutRenderingQueries;
-
+import lombok.RequiredArgsConstructor;
 import org.jsoup.Jsoup;
-
 import org.springframework.data.domain.*;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -44,11 +41,11 @@ public class ArticleController {
     private final TempArticleUseCase tempArticleUseCase;
     private final TagsQueriesUseCase tagsQueriesUseCase;
     private final CategoryQueriesUseCase categoryQueriesUseCase;
-    private final LayoutRenderingQueries layoutRenderingQueries;
+    private final LayoutRenderingUseCase layoutRenderingUseCase;
 
     @GetMapping("article/write")
     String getArticleWriteForm(Model model) {
-        layoutRenderingQueries.AddLayoutTo(model);
+        layoutRenderingUseCase.AddLayoutTo(model);
         model.addAttribute("categoryInput", categoryQueriesUseCase.findCategoryByTier(2));
         model.addAttribute("tagsInput", tagsQueriesUseCase.findAllTagDtos());
         model.addAttribute("articleDto", new ArticleForm());
@@ -76,7 +73,7 @@ public class ArticleController {
     @GetMapping("/article/edit")
     String updateArticle(@RequestParam Long articleId, Model model) {
         ArticleResponseForEdit articleDto = articleQueriesUseCase.getArticleForEdit(articleId);
-        layoutRenderingQueries.AddLayoutTo(model);
+        layoutRenderingUseCase.AddLayoutTo(model);
         model.addAttribute("categoryInput", categoryQueriesUseCase.findCategoryByTier(2));
         model.addAttribute("tagsInput", tagsQueriesUseCase.findAllTagDtos());
         model.addAttribute("articleDto", articleDto);
@@ -120,7 +117,7 @@ public class ArticleController {
             articleDto.setContent(Jsoup.parse(getHtmlRenderer().render(getParser().parse(articleDto.getContent()))).text());
         }
 
-        layoutRenderingQueries.AddLayoutTo(model);
+        layoutRenderingUseCase.AddLayoutTo(model);
         model.addAttribute("pagingBox", pagingBoxHandler);
         model.addAttribute("articleList", articleDtoList);
 
@@ -161,7 +158,7 @@ public class ArticleController {
         PagingBoxHandler pagingBoxHandler =
                 PagingBoxHandler.createOf(page, (int)articleList.getTotalElements());
 
-        layoutRenderingQueries.AddLayoutTo(model);
+        layoutRenderingUseCase.AddLayoutTo(model);
         model.addAttribute("articleList", articleList);
         model.addAttribute("pagingBox", pagingBoxHandler);
 
@@ -185,7 +182,7 @@ public class ArticleController {
         PagingBoxHandler pagingBoxHandler =
                 PagingBoxHandler.createOf(page, (int)articleList.getTotalElements());
 
-        layoutRenderingQueries.AddLayoutTo(model);
+        layoutRenderingUseCase.AddLayoutTo(model);
         model.addAttribute("articleList", articleList);
         model.addAttribute("pagingBox", pagingBoxHandler);
 
@@ -237,7 +234,7 @@ public class ArticleController {
         else substringContents = articleResponseForDetail.getContent();
 
         // 4. 모델 담기
-        layoutRenderingQueries.AddLayoutTo(model);
+        layoutRenderingUseCase.AddLayoutTo(model);
         model.addAttribute("article", articleResponseForDetail);
         model.addAttribute("metaTags",metaTags);
         model.addAttribute("metaContents",Jsoup.parse(substringContents).text());

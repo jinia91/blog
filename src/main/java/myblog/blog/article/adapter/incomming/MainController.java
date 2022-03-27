@@ -1,12 +1,11 @@
 package myblog.blog.article.adapter.incomming;
 
-import lombok.RequiredArgsConstructor;
-
 import myblog.blog.article.application.port.incomming.response.ArticleResponseForCardBox;
 import myblog.blog.article.application.port.incomming.ArticleQueriesUseCase;
-import myblog.blog.shared.queries.LayoutRenderingQueries;
-import org.jsoup.Jsoup;
+import myblog.blog.shared.application.port.incomming.LayoutRenderingUseCase;
 
+import lombok.RequiredArgsConstructor;
+import org.jsoup.Jsoup;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -19,7 +18,7 @@ import static myblog.blog.shared.utils.MarkdownUtils.*;
 public class MainController {
 
     private final ArticleQueriesUseCase articleQueriesUseCase;
-    private final LayoutRenderingQueries layoutRenderingQueries;
+    private final LayoutRenderingUseCase layoutRenderingUseCase;
     /*
         - 메인 화면 제어용 컨트롤러
     */
@@ -28,7 +27,7 @@ public class MainController {
         // Dto 전처리
         List<ArticleResponseForCardBox> popularArticles = articleQueriesUseCase.getPopularArticles();
         //
-        layoutRenderingQueries.AddLayoutTo(model);
+        layoutRenderingUseCase.AddLayoutTo(model);
         model.addAttribute("popularArticles", popularArticles);
         return "index";
     }

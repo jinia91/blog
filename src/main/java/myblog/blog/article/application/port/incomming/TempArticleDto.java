@@ -1,4 +1,4 @@
-package myblog.blog.article.application.port.incomming.response;
+package myblog.blog.article.application.port.incomming;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -7,6 +7,6 @@ import lombok.Setter;
 */
 @Getter
 @Setter
-public class TempArticleResponse {
+public class TempArticleDto {
     private String content;
 }

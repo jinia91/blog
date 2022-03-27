@@ -94,6 +94,7 @@ https://www.jiniaslog.co.kr/
 - AWS / 리눅스 기반 CI/CD 무중단 배포 인프라 구축
 - JPA, Hibernate를 사용한 도메인 설계
 - MVC 프레임워크 기반 백엔드 서버 구축
+- 헥사고날 아키텍처
 
 ## 시스템 아키텍쳐
 ![image](https://github.com/jinia91/blogBackUp/blob/main/img/57d1dfd7-22c1-4a5f-b6d5-ef635ae49307.png?raw=true)
