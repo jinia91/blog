@@ -17,6 +17,7 @@ https://www.jiniaslog.co.kr/
 - [프로젝트 목적](#프로젝트-목적)
     * [블로그 프로젝트를 기획한 이유?](#블로그-프로젝트를-기획한-이유?)
 - [핵심 기능](#핵심-기능)
+    * [헥사고날 아키텍처로 리아키텍처링](#헥사고날-아키텍처로-리아키텍처링)
     * [소셜 로그인](#소셜-로그인)
     * [로그 추적기](#로그-추적기)
     * [반응형 웹](#반응형-웹)
@@ -126,19 +127,19 @@ https://www.jiniaslog.co.kr/
 
 ## 핵심 기능
 
-### 소셜 로그인
+### 헥사고날 아키텍처로 리아키텍처링
+(2022-03-27 추가)
 
-소셜 로그인 구현을 위해 스프링 시큐리티와 OAuth2 인증방식을 사용했으며, 
+기존 아키텍처는 레이어드 아키텍처 기반에 어설프게 DDD를 적용한 난잡한 구조였습니다. 유지관리에 용이하고 확장에 유연한 보다 꺠끗한 아키텍처구축을 위해
 
-소셜 인증 제공자 추가로 인한 확장을 대비해 엑세스 토큰으로 받아오는 유저 정보를 OAuth2UserInfo 인터페이스로 추상화하여 파싱하도록 설계했습니다.
+헥사고날 아키텍처와 클린아키텍처의 개념을 공부하고 프로젝트 구조를 개선하는 작업을 진행했습니다.
 
-[Oauth2UserInfo인터페이스](https://github.com/jinia91/blog/blob/a1d9381d8675ef01fbe3cf7371fe642a1847a943/src/main/java/myblog/blog/member/auth/userinfo/Oauth2UserInfo.java#L8)
+해당과정에서 고민한점과 공부했던 부분들은 아래 블로그에 정리하였습니다.
 
-또한 확장성 있는 객체 생성을 위해, 객체 생성을 담당하는 클래스를 익명 인터페이스를 사용한 팩토리 메서드 패턴으로 구현하였습니다. 
+[헥사고날 아키텍처 학습과 프로젝트 적용](https://www.jiniaslog.co.kr/article/view?articleId=1152)
 
-[UserInfoFactory 클래스](https://github.com/jinia91/blog/blob/a1d9381d8675ef01fbe3cf7371fe642a1847a943/src/main/java/myblog/blog/member/auth/UserInfoFactory.java#L18)
-
-### 로그 추적기(2022.02.03 기능 추가)
+### 로그 추적기
+(2022.02.03 기능 추가)
 
 스프링 AOP 기술을 사용하여 프로젝트의 *Controller, *Service, *Repository 에 포인트컷을 지정, 로그를 찍고
 
@@ -165,6 +166,18 @@ AOP 학습과 해당 기능 개발을 위해 [인프런, 김영한님의 스프�
 ![구글 서치콘솔 모바일 친화 인증](https://github.com/jinia91/blogBackUp/blob/main/img/bf4c2ba2-2446-47c1-bcdd-f69157bf4d29.png?raw=true)
 [구글 서치 콘솔에서 모바일 친화페이지 인증]
 
+### 소셜 로그인
+
+소셜 로그인 구현을 위해 스프링 시큐리티와 OAuth2 인증방식을 사용했으며,
+
+소셜 인증 제공자 추가로 인한 확장을 대비해 엑세스 토큰으로 받아오는 유저 정보를 OAuth2UserInfo 인터페이스로 추상화하여 파싱하도록 설계했습니다.
+
+[Oauth2UserInfo인터페이스](https://github.com/jinia91/blog/blob/a1d9381d8675ef01fbe3cf7371fe642a1847a943/src/main/java/myblog/blog/member/auth/userinfo/Oauth2UserInfo.java#L8)
+
+또한 확장성 있는 객체 생성을 위해, 객체 생성을 담당하는 클래스를 익명 인터페이스를 사용한 팩토리 메서드 패턴으로 구현하였습니다.
+
+[UserInfoFactory 클래스](https://github.com/jinia91/blog/blob/a1d9381d8675ef01fbe3cf7371fe642a1847a943/src/main/java/myblog/blog/member/auth/UserInfoFactory.java#L18)
+
 ### Toast Ui editor
 
 #### 글작성은 마크다운으로
@@ -174,6 +187,7 @@ AOP 학습과 해당 기능 개발을 위해 [인프런, 김영한님의 스프�
 ![마크다운 편집](https://github.com/jinia91/blogBackUp/blob/main/img/080e9414-2691-461f-b0d1-7590bf562e20.png?raw=true)
 
 #### 이미지와 썸네일 삽입시는 깃허브 이미지 서버로
+(2022.03.21)
 
 Toast Ui editor는 기본적으로 컨텐츠 내의 이미지 삽입을 blob으로 컨텐츠와 함께 병기하게 되는데 이경우 장황한 바이너리 코드로 DB에 부담이 되고
 
@@ -181,10 +195,17 @@ Toast Ui editor는 기본적으로 컨텐츠 내의 이미지 삽입을 blob으�
 
 1. 이미지 삽입시 후킹으로 blob 코드를 낚아챈 후
 2. 아작스로 해당 이미지 blob을 앱 서버로 보내기 
-3. 앱서버에서 깃허브 api를 사용해 깃허브 레포지토리에 업로드
-4. 그리고 이미지의 blob대신 업로드된 url을 반환
 
-위 과정을 통해 깃헙 레포지토리를 이미지 서버로 활용하고 url만 사용하게끔 로직을 작성했습니다.
+3. ~~3. 앱서버에서 깃허브 api를 사용해 깃허브 레포지토리에 업로드~~
+4. was에서 aws s3로 업로드
+5. 그리고 이미지의 blob대신 업로드된 url을 반환
+
+깃헙 레포를 사용할경우 이미지 업로드시 무의미한 커밋이 찍혀 전략 패턴을 사용해 업로드 로직을 분리, 고도화한다음 aws S3로 업로드 서버를 변경하였습니다.
+
+해당 과정은 아래 포스팅주소에서 확인할 수 있습니다.
+
+[이미지 업로드를 전략패턴으로 재설계한뒤 aws s3로 전환하기](https://www.jiniaslog.co.kr/article/view?articleId=1103)
+
 
 [아작스로 이미지 업로드](https://github.com/jinia91/blog/blob/a1d9381d8675ef01fbe3cf7371fe642a1847a943/src/main/resources/static/js/thumbnail.js#L13)
 
@@ -419,6 +440,8 @@ tagify 라이브러리를 사용하여 태그 기능을 구현하였고 태그�
 
 ## 프로젝트 관련 추가 포스팅
 
+- [기존 프로젝트 헥사고날 아키텍쳐로 리아키텍쳐링하기](https://www.jiniaslog.co.kr/article/view?articleId=1152)
+- [전략패턴을 적용하여 이미지 업로드 모듈을 새로운 전략으로 스택 마이그레이션하기](https://www.jiniaslog.co.kr/article/view?articleId=1103)
 - [스프링 JPA 환경에서 오프셋 페이징을 커서 페이징으로 개선하기](https://www.jiniaslog.co.kr/article/view?articleId=202)
 - [스프링에서 캐시 사용하여 프로젝트 성능 개선해보기](https://www.jiniaslog.co.kr/article/view?articleId=254)
 - [[CI/CD 무중단배포 프로젝트 적용하기] CI? CD? 기본 개념잡기 (1)](https://www.jiniaslog.co.kr/article/view?articleId=303)
