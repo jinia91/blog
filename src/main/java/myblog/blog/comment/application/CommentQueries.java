@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-@Transactional
+@Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class CommentQueries implements CommentQueriesUseCase {
     private final CommentRepositoryPort commentRepositoryPort;

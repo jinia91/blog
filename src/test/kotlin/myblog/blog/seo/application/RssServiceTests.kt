@@ -1,8 +1,7 @@
-package myblog.blog.rss
+package myblog.blog.seo.application
 
 import myblog.blog.article.domain.Article
-import myblog.blog.article.application.ArticleService
-import myblog.blog.seo.application.RssService
+import myblog.blog.article.application.port.incomming.ArticleUseCase
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
@@ -18,7 +17,7 @@ import java.util.*
 class RssServiceTests {
 
     @Mock
-    lateinit var articleService: ArticleService
+    lateinit var articleService: ArticleUseCase
     @InjectMocks
     lateinit var rssService: RssService
 

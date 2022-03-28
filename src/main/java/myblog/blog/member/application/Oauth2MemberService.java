@@ -27,7 +27,6 @@ public class Oauth2MemberService extends DefaultOAuth2UserService {
         - OAuth2 인증 로그인
     */
     @Override
-    @Transactional
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
         OAuth2User oAuth2User = super.loadUser(userRequest);
         Oauth2UserInfo userInfo =

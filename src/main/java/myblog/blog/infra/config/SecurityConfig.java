@@ -1,7 +1,7 @@
 package myblog.blog.infra.config;
 
 import lombok.RequiredArgsConstructor;
-import myblog.blog.shared.exception.LoginFailHandler;
+import myblog.blog.infra.exception.LoginFailHandler;
 import myblog.blog.member.doamin.Role;
 import myblog.blog.member.application.Oauth2MemberService;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;

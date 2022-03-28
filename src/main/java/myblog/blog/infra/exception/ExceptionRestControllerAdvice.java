@@ -1,4 +1,4 @@
-package myblog.blog.shared.exception;
+package myblog.blog.infra.exception;
 
 import myblog.blog.comment.adapter.incomming.InvalidCommentRequestException;
 import org.springframework.http.HttpStatus;

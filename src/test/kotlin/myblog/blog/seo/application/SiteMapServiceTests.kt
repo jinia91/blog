@@ -1,10 +1,13 @@
-package myblog.blog.sitemap
+package myblog.blog.seo.application
 
 import myblog.blog.article.domain.Article
 import myblog.blog.article.application.ArticleService
+import myblog.blog.article.application.port.incomming.ArticleUseCase
 import myblog.blog.seo.application.SiteMapService
 import myblog.blog.category.domain.Category
 import myblog.blog.category.appliacation.CategoryService
+import myblog.blog.category.appliacation.port.incomming.CategoryUseCase
+import myblog.blog.seo.application.port.incomming.SiteMapUseCase
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 //import org.junit.Test
@@ -22,9 +25,9 @@ import java.util.*
 class SiteMapServiceTests {
 
     @Mock
-    lateinit var articleService: ArticleService
+    lateinit var articleService: ArticleUseCase
     @Mock
-    lateinit var categoryService: CategoryService
+    lateinit var categoryService: CategoryUseCase
     @InjectMocks
     lateinit var siteMapService: SiteMapService
 

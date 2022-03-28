@@ -19,10 +19,13 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Component
+@Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class ArticleQueries implements ArticleQueriesUseCase {
 

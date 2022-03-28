@@ -67,7 +67,7 @@ public class ArticleRepositoryAdapter implements ArticleRepositoryPort {
 
     @Override
     public Page<Article> findAllByKeywordOrderById(Pageable pageable, String keyword) {
-        return jpaArticleRepository.findAllByArticleTagsOrderById(pageable, keyword);
+        return jpaArticleRepository.findAllByKeywordOrderById(pageable, keyword);
     }
 
     @Override

@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Component
-@Transactional
+@Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class TagsQueries implements TagsQueriesUseCase {
     private final TagRepositoryPort tagRepositoryPort;
