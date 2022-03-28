@@ -23,7 +23,7 @@ public class UserInfoFactory {
     // 하위타입 생성 메소드와 열거타입 매핑
     private final static Map<ProviderType, Function<OAuth2User, Oauth2UserInfo>> userInfoFactoryMap;
     static {
-        userInfoFactoryMap = new EnumMap<>(ProviderType.class);
+        userInfoFactoryMap = Collections.synchronizedMap(new EnumMap<>(ProviderType.class));
         userInfoFactoryMap.put(ProviderType.GOOGLE, GoogleUserInfo::new);
         userInfoFactoryMap.put(ProviderType.NAVER, NaverUserInfo::new);
     }
@@ -31,9 +31,8 @@ public class UserInfoFactory {
     // String 파라미터를 열거타입으로 컨버팅하기위한 매핑
     private static final Map<String, ProviderType> stringToEnum;
     static {
-        stringToEnum =
-                Stream.of(ProviderType.values())
-                        .collect(Collectors.toMap(ProviderType::getValue, providerType->providerType));
+        stringToEnum = Collections.synchronizedMap(Stream.of(ProviderType.values())
+                .collect(Collectors.toMap(ProviderType::getValue, providerType->providerType)));
     }
 
     /*
