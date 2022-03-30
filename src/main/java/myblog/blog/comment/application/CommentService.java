@@ -65,7 +65,6 @@ public class CommentService implements CommentUseCase {
                 .build();
 
         commentRepositoryPort.save(comment);
-
     }
 
     /*

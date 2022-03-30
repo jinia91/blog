@@ -72,28 +72,24 @@ public class Comment extends BasicEntity {
         - 중복 개행 개행 하나로 압축 알고리즘
     */
     private String removeDuplicatedEnter(String content) {
-
+        if(content == null || content.isEmpty()){
+         throw new IllegalArgumentException("InvalidContentException");
+        }
         char[] contentBox = new char[content.length()];
         int idx = 0;
         String zipWord = "\n\n";
 
         for(int i = 0; i< content.length(); i++){
-
             contentBox[idx] = content.charAt(i);
-
             if(contentBox[idx] == '\n'&&idx >= 1){
-
                 int tempIdx = idx;
                 int length = 1;
                 boolean isRemove = true;
 
                 for(int j = 0; j<2; j++){
-
                     if(contentBox[tempIdx--] != zipWord.charAt(length--)){
-
                         isRemove = false;
                         break;
-
                     }
                 }
                 if(isRemove) idx -= 1;

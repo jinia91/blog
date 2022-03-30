@@ -30,7 +30,7 @@ public class Oauth2MemberService extends DefaultOAuth2UserService {
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
         OAuth2User oAuth2User = super.loadUser(userRequest);
         Oauth2UserInfo userInfo =
-                userInfoFactory.makeOauth2UserInfoOf(userRequest, oAuth2User);
+                userInfoFactory.makeOauth2UserInfoOf(userRequest.getClientRegistration().getRegistrationId(), oAuth2User);
         Member member = getOrJoinMember(userInfo);
         return new PrincipalDetails(member, userInfo.getAttributes());
     }
