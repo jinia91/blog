@@ -1,7 +1,6 @@
 package myblog.blog.article.adapter.outgoing.persistence;
 
 import lombok.RequiredArgsConstructor;
-import myblog.blog.article.application.port.outgoing.ArticleBackupRepositoryPort;
 import myblog.blog.article.application.port.outgoing.ArticleRepositoryPort;
 import myblog.blog.article.domain.Article;
 import myblog.blog.category.domain.Category;
@@ -19,6 +18,7 @@ public class ArticleRepositoryAdapter implements ArticleRepositoryPort {
 
     private final JpaArticleRepository jpaArticleRepository;
     private final MybatisArticleRepository mybatisArticleRepository;
+    private final QdslArticleRepository qdslArticleRepository;
 
     @Override
     public List<Article> findTop6ByOrderByHitDesc() {
@@ -36,13 +36,8 @@ public class ArticleRepositoryAdapter implements ArticleRepositoryPort {
     }
 
     @Override
-    public List<Article> findByOrderByIdDescWithList(Pageable pageable) {
-        return jpaArticleRepository.findByOrderByIdDescWithList(pageable);
-    }
-
-    @Override
-    public List<Article> findByOrderByIdDesc(Long articleId, Pageable pageable) {
-        return jpaArticleRepository.findByOrderByIdDesc(articleId, pageable);
+    public List<Article> findByOrderByIdDesc(Long articleId, int size) {
+        return qdslArticleRepository.findByOrderByIdDesc(articleId, size);
     }
 
     @Override

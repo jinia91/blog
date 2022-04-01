@@ -13,8 +13,7 @@ public interface ArticleRepositoryPort {
     List<Article> findTop6ByOrderByHitDesc();
     List<Article> findTop6ByCategoryOrderByIdDesc(Category category);
     Slice<Article> findByOrderByIdDesc(Pageable pageable);
-    List<Article> findByOrderByIdDescWithList(Pageable pageable);
-    List<Article> findByOrderByIdDesc(Long articleId, Pageable pageable);
+    List<Article> findByOrderByIdDesc(Long articleId, int size);
     Slice<Article> findBySubCategoryOrderByIdDesc(Pageable pageable, String category);
     Slice<Article> findBySuperCategoryOrderByIdDesc(Pageable pageable, String category);
     Article findArticleByIdFetchCategoryAndTags(Long articleId);

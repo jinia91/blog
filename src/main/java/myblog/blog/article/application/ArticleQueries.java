@@ -49,17 +49,13 @@ public class ArticleQueries implements ArticleQueriesUseCase {
     /*
         - 메인화면 위한 최신 아티클 커서 페이징해서 가져오기
            - 레이아웃 렌더링 성능 향상을 위해 캐싱작업
-             카테고리 변경 / 아티클 변경이 존재할경우 레이아웃 캐시 초기화
+             카테고리 변경 / 아티클 변경이 존재할경우 레이아웃 캐시 초기화 정책
     */
     @Override
     @Cacheable(value = "layoutRecentArticleCaching", key = "#lastArticleId")
     public List<ArticleResponseForCardBox> getRecentArticles(Long lastArticleId) {
-        List<Article> articles = lastArticleId.equals(0L) ?
-                articleRepositoryPort
-                        .findByOrderByIdDescWithList(PageRequest.of(0, 5))
-                :
-                articleRepositoryPort
-                        .findByOrderByIdDesc(lastArticleId, PageRequest.of(0, 5));
+        List<Article> articles = articleRepositoryPort
+                        .findByOrderByIdDesc(lastArticleId, 5);
         return articles
                 .stream()
                 .map(article -> MapperUtils.getModelMapper().map(article, ArticleResponseForCardBox.class))
