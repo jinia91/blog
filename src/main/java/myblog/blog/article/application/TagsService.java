@@ -1,7 +1,7 @@
 package myblog.blog.article.application;
 
 import lombok.RequiredArgsConstructor;
-import myblog.blog.article.adapter.outgoing.persistence.ArticleTagListsRepository;
+import myblog.blog.article.adapter.outgoing.persistence.JpaArticleTagListsRepository;
 import myblog.blog.article.adapter.outgoing.persistence.JpaTagsRepository;
 import myblog.blog.article.application.port.incomming.TagUseCase;
 import org.springframework.stereotype.Service;
@@ -17,7 +17,7 @@ import java.util.*;
 @RequiredArgsConstructor
 public class TagsService implements TagUseCase {
     private final JpaTagsRepository jpaTagsRepository;
-    private final ArticleTagListsRepository articleTagListsRepository;
+    private final JpaArticleTagListsRepository articleTagListsRepository;
     /*
         - Json 객체로 넘어온 태그들을 파싱해서 신규 태그인경우 저장
     */

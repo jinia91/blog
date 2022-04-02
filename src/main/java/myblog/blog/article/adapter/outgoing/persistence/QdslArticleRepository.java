@@ -4,6 +4,7 @@ import com.querydsl.core.types.Predicate;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import myblog.blog.article.domain.Article;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -16,7 +17,7 @@ public class QdslArticleRepository {
 
     private final JPAQueryFactory queryFactory;
 
-    List<Article> findByOrderByIdDesc(Long articleId, int size){
+    List<Article> findByOrderByIdDesc(Long articleId, int size) {
         return queryFactory
                 .selectFrom(article)
                 .where(cursorLt(articleId))
