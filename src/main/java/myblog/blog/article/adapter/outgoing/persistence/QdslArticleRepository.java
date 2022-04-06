@@ -4,7 +4,6 @@ import com.querydsl.core.types.Predicate;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import myblog.blog.article.domain.Article;
-import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -29,4 +28,6 @@ public class QdslArticleRepository {
     private Predicate cursorLt(Long articleId) {
         return articleId == 0L ? null : article.id.lt(articleId);
     }
+
+
 }

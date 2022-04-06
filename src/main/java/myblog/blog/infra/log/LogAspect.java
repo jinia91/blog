@@ -1,5 +1,6 @@
 package myblog.blog.infra.log;
 
+import io.sentry.Sentry;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -26,6 +27,7 @@ public class LogAspect {
             return joinPoint.proceed();
         } catch (Exception ex) {
             logTracer.handleException(status, ex);
+            Sentry.captureMessage(ex.getMessage());
             hasException = true;
             throw ex;
         } finally {
