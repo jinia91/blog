@@ -63,7 +63,7 @@
             <h1 class="text-center" th:text="${param.category}">카테고리 명</h1>
             <hr>
             <div id="articlePage-0">
-                <div class="card mb-3 recent-card wow fadeInUp" th:each="article :${articleList.getContent()}">
+                <div class="card mb-3 recent-card wow fadeInUp" th:each="article :${articleList}">
                     <a th:href="@{/article/view(articleId=${article.getId()})}">
                         <div class="row g-0">
                             <div class="col-3">

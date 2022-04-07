@@ -12,7 +12,7 @@ import java.util.List;
 public interface ArticleQueriesUseCase {
     List<ArticleResponseForCardBox> getPopularArticles();
     List<ArticleResponseForCardBox> getRecentArticles(Long lastArticleId);
-    Slice<ArticleResponseForCardBox> getArticlesByCategory(String category, Integer tier, Integer page);
+    List<ArticleResponseForCardBox> getArticlesByCategory(String category, int tier, int page);
     ArticleResponseForEdit getArticleForEdit(Long id);
     ArticleResponseForDetail getArticleForDetail(Long id);
     List<ArticleResponseByCategory> getArticlesByCategoryForDetailView(String category);

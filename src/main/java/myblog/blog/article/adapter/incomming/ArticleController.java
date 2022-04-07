@@ -104,13 +104,13 @@ public class ArticleController {
     @Transactional
     @GetMapping("article/list")
     String getArticlesListByCategory(@RequestParam String category,
-                                     @RequestParam Integer tier,
-                                     @RequestParam Integer page,
+                                     @RequestParam int tier,
+                                     @RequestParam int page,
                                      Model model) {
         PagingBoxHandler pagingBoxHandler =
                 PagingBoxHandler.createOf(page, getTotalArticleCntByCategory(category, categoryQueriesUseCase.getCategoryViewForLayout()));
 
-        Slice<ArticleResponseForCardBox> articleDtoList =
+        List<ArticleResponseForCardBox> articleDtoList =
                 articleQueriesUseCase.getArticlesByCategory(category, tier, pagingBoxHandler.getCurPageNum());
 
         for(ArticleResponseForCardBox articleDto : articleDtoList){

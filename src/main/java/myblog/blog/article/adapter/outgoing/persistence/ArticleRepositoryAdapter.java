@@ -5,6 +5,7 @@ import myblog.blog.article.application.port.outgoing.ArticleRepositoryPort;
 import myblog.blog.article.domain.Article;
 import myblog.blog.category.domain.Category;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Component;
@@ -31,8 +32,8 @@ public class ArticleRepositoryAdapter implements ArticleRepositoryPort {
     }
 
     @Override
-    public Slice<Article> findByOrderByIdDesc(Pageable pageable) {
-        return jpaArticleRepository.findByOrderByIdDesc(pageable);
+    public List<Article> findByOrderByIdDesc(int page, int size) {
+        return jpaArticleRepository.findByOrderByIdDesc(PageRequest.of(page,size)).getContent();
     }
 
     @Override
@@ -41,13 +42,13 @@ public class ArticleRepositoryAdapter implements ArticleRepositoryPort {
     }
 
     @Override
-    public Slice<Article> findBySubCategoryOrderByIdDesc(Pageable pageable, String category) {
-        return jpaArticleRepository.findBySubCategoryOrderByIdDesc(pageable,category);
+    public List<Article> findBySubCategoryOrderByIdDesc(int page,int size, String category) {
+        return jpaArticleRepository.findBySubCategoryOrderByIdDesc(PageRequest.of(page, size),category).getContent();
     }
 
     @Override
-    public Slice<Article> findBySuperCategoryOrderByIdDesc(Pageable pageable, String category) {
-        return jpaArticleRepository.findBySupCategoryOrderByIdDesc(pageable,category);
+    public List<Article> findBySuperCategoryOrderByIdDesc(int page,int size, String category) {
+        return jpaArticleRepository.findBySupCategoryOrderByIdDesc(PageRequest.of(page, size),category).getContent();
     }
 
     @Override

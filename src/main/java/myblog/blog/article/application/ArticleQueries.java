@@ -2,22 +2,22 @@ package myblog.blog.article.application;
 
 import lombok.RequiredArgsConstructor;
 
+import myblog.blog.article.domain.Article;
+import myblog.blog.category.domain.Category;
+
 import myblog.blog.article.application.port.incomming.response.ArticleResponseForCardBox;
 import myblog.blog.article.application.port.incomming.ArticleQueriesUseCase;
-import myblog.blog.article.application.port.outgoing.ArticleRepositoryPort;
-
-import myblog.blog.article.domain.Article;
-import myblog.blog.category.appliacation.port.incomming.CategoryUseCase;
-import myblog.blog.category.domain.Category;
 import myblog.blog.article.application.port.incomming.response.ArticleResponseByCategory;
 import myblog.blog.article.application.port.incomming.response.ArticleResponseForDetail;
 import myblog.blog.article.application.port.incomming.response.ArticleResponseForEdit;
+import myblog.blog.category.appliacation.port.incomming.CategoryUseCase;
+
+import myblog.blog.article.application.port.outgoing.ArticleRepositoryPort;
 
 import myblog.blog.shared.utils.MapperUtils;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -66,28 +66,25 @@ public class ArticleQueries implements ArticleQueriesUseCase {
         - tier 1은 super / tier 2는 sub
     */
     @Override
-    public Slice<ArticleResponseForCardBox> getArticlesByCategory(String category, Integer tier, Integer page) {
-        Slice<Article> articles = null;
+    public List<ArticleResponseForCardBox> getArticlesByCategory(String category, int tier, int page) {
+        List<Article> articles = null;
+        page = pageResolve(page);
 
-        if (tier.equals(0)) {
+        if (tier == 0) {
             articles = articleRepositoryPort
-                    .findByOrderByIdDesc(
-                            PageRequest.of(pageResolve(page), 5));
+                    .findByOrderByIdDesc(page, 5);
         }
-        if (tier.equals(1)) {
+        if (tier == 1) {
             articles = articleRepositoryPort
-                    .findBySuperCategoryOrderByIdDesc(
-                            PageRequest.of(pageResolve(page), 5), category);
+                    .findBySuperCategoryOrderByIdDesc(page, 5, category);
         }
-        if (tier.equals(2)) {
+        if (tier == 2) {
             articles = articleRepositoryPort
-                    .findBySubCategoryOrderByIdDesc(
-                            PageRequest.of(pageResolve(page), 5), category);
+                    .findBySubCategoryOrderByIdDesc(page, 5, category);
         }
-
         if(articles == null) throw new IllegalArgumentException("NotFoundArticleException");
 
-        return articles.map(article -> MapperUtils.getModelMapper().map(article, ArticleResponseForCardBox.class));
+        return articles.stream().map(article -> MapperUtils.getModelMapper().map(article, ArticleResponseForCardBox.class)).collect(Collectors.toList());
     }
 
     /*

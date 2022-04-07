@@ -12,10 +12,10 @@ import java.util.Optional;
 public interface ArticleRepositoryPort {
     List<Article> findTop6ByOrderByHitDesc();
     List<Article> findTop6ByCategoryOrderByIdDesc(Category category);
-    Slice<Article> findByOrderByIdDesc(Pageable pageable);
+    List<Article> findByOrderByIdDesc(int page, int size);
     List<Article> findByOrderByIdDesc(Long articleId, int size);
-    Slice<Article> findBySubCategoryOrderByIdDesc(Pageable pageable, String category);
-    Slice<Article> findBySuperCategoryOrderByIdDesc(Pageable pageable, String category);
+    List<Article> findBySubCategoryOrderByIdDesc(int page, int size, String category);
+    List<Article> findBySuperCategoryOrderByIdDesc(int page, int size, String category);
     Article findArticleByIdFetchCategoryAndTags(Long articleId);
     Page<Article> findAllByArticleTagsOrderById(Pageable pageable, String tag);
     Page<Article> findAllByKeywordOrderById(Pageable pageable, String keyword);
