@@ -74,7 +74,8 @@ https://www.jiniaslog.co.kr/
 #### Infra
 - AWS EC2
 - AWS S3
-- Travis CI
+- ~~Travis CI~~
+- Github Actions
 - AWS CodeDeploy
 - AWS Route53
 
@@ -151,6 +152,19 @@ https://www.jiniaslog.co.kr/
 두가지 메서드 쿼리를 분기처리하는 방식으로 구현한 코드도 존재했습니다.
 
 Qdsl을 학습후 기존 JPQL을 걷어내고 Qdsl로 스택 마이그레이션을 진행하는 중입니다.
+
+### CI 툴 트래비스에서 github 액션으로 스택 마이그레이션
+
+(2022.04.09)
+
+트래비스가 org에서 com으로 변경된뒤 기존 무료 정책에서 구독형 유료 모델로 변경되었으며
+
+무료 credit을 모두 사용한 후 월 요금 30달러를 지불해야 하는 상황을 맞이했습니다. 
+
+개인적으로 개인프로젝트에서 서버도 아니고 ci 툴을 사용하기 위해 비용을 지불하는것은 불필요하다고 판단했고, 코드 관리가 github에서 이루어지는 만큼
+
+ci역시 같은 github내에서 진행되는것이 보다 바람직하다고 판단하여 github actions로 스택마이그레이션을 진행하였습니다.
+
 
 
 ### 헥사고날 아키텍처로 리아키텍처링
