@@ -2,8 +2,8 @@ package myblog.blog.article.application;
 
 import lombok.RequiredArgsConstructor;
 
-import myblog.blog.article.application.port.incomming.request.ArticleCreateRequest;
-import myblog.blog.article.application.port.incomming.request.ArticleEditRequest;
+import myblog.blog.article.application.port.incomming.request.ArticleCreateCommand;
+import myblog.blog.article.application.port.incomming.request.ArticleEditCommand;
 import myblog.blog.article.application.port.incomming.ArticleUseCase;
 import myblog.blog.article.application.port.incomming.TagUseCase;
 import myblog.blog.category.appliacation.port.incomming.CategoryUseCase;
@@ -35,32 +35,32 @@ public class ArticleService implements ArticleUseCase {
 
     @Override
     @CacheEvict(value = {"layoutCaching", "layoutRecentArticleCaching","seoCaching"}, allEntries = true)
-    public Long writeArticle(ArticleCreateRequest articleCreateRequest) {
-        Member writer = memberQueriesUseCase.findById(articleCreateRequest.getMemberId());
-        Category category = categoryUseCase.findCategory(articleCreateRequest.getCategory());
-        Article newArticle = new Article(articleCreateRequest.getTitle(),
-                articleCreateRequest.getContent(),
-                articleCreateRequest.getToc(),
+    public Long writeArticle(ArticleCreateCommand articleCreateCommand) {
+        Member writer = memberQueriesUseCase.findById(articleCreateCommand.getMemberId());
+        Category category = categoryUseCase.findCategory(articleCreateCommand.getCategory());
+        Article newArticle = new Article(articleCreateCommand.getTitle(),
+                articleCreateCommand.getContent(),
+                articleCreateCommand.getToc(),
                 writer,
-                articleCreateRequest.getThumbnailUrl(),
+                articleCreateCommand.getThumbnailUrl(),
                 category);
         articleRepositoryPort.save(newArticle);
-        tagUseCase.createNewTagsAndArticleTagList(articleCreateRequest.getTags(), newArticle);
+        tagUseCase.createNewTagsAndArticleTagList(articleCreateCommand.getTags(), newArticle);
         return newArticle.getId();
     }
 
     @Override
     @CacheEvict(value = {"layoutCaching", "layoutRecentArticleCaching","seoCaching"}, allEntries = true)
-    public void editArticle(ArticleEditRequest articleEditRequest) {
-        Article article = articleRepositoryPort.findById(articleEditRequest.getArticleId())
+    public void editArticle(ArticleEditCommand articleEditCommand) {
+        Article article = articleRepositoryPort.findById(articleEditCommand.getArticleId())
                 .orElseThrow(() -> new IllegalArgumentException("NotFoundArticleException"));
-        Category category = categoryUseCase.findCategory(articleEditRequest.getCategoryName());
+        Category category = categoryUseCase.findCategory(articleEditCommand.getCategoryName());
         tagUseCase.deleteAllTagsWith(article);
-        tagUseCase.createNewTagsAndArticleTagList(articleEditRequest.getTags(), article);
-        article.edit(articleEditRequest.getContent(),
-                articleEditRequest.getTitle(),
-                articleEditRequest.getToc(),
-                articleEditRequest.getThumbnailUrl(), category);
+        tagUseCase.createNewTagsAndArticleTagList(articleEditCommand.getTags(), article);
+        article.edit(articleEditCommand.getContent(),
+                articleEditCommand.getTitle(),
+                articleEditCommand.getToc(),
+                articleEditCommand.getThumbnailUrl(), category);
     }
 
     @Override

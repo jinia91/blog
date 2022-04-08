@@ -6,6 +6,9 @@ import lombok.Setter;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import static myblog.blog.shared.utils.MarkdownUtils.getHtmlRenderer;
+import static myblog.blog.shared.utils.MarkdownUtils.getParser;
+
 /*
     - 아티클 상세조회용 DTO
 */
@@ -21,4 +24,8 @@ public class ArticleResponseForDetail {
     private String category;
     private List<String> tags;
     private LocalDateTime createdDate;
+
+    public void parseAndRenderForView(String content){
+        getHtmlRenderer().render(getParser().parse(content));
+    }
 }

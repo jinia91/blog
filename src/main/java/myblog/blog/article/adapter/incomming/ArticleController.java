@@ -7,16 +7,16 @@ import myblog.blog.article.application.port.incomming.TagsQueriesUseCase;
 import myblog.blog.category.appliacation.port.incomming.CategoryQueriesUseCase;
 import myblog.blog.shared.application.port.incomming.LayoutRenderingUseCase;
 
-import myblog.blog.article.application.port.incomming.request.ArticleCreateRequest;
-import myblog.blog.article.application.port.incomming.request.ArticleEditRequest;
+import myblog.blog.article.application.port.incomming.request.ArticleCreateCommand;
+import myblog.blog.article.application.port.incomming.request.ArticleEditCommand;
 import myblog.blog.article.application.port.incomming.response.ArticleResponseByCategory;
 import myblog.blog.article.application.port.incomming.response.ArticleResponseForCardBox;
-import myblog.blog.article.application.port.incomming.response.ArticleResponseForDetail;
 import myblog.blog.article.application.port.incomming.response.ArticleResponseForEdit;
 import myblog.blog.category.appliacation.port.incomming.response.CategoryViewForLayout;
 import myblog.blog.member.application.port.incomming.response.PrincipalDetails;
 
 import lombok.RequiredArgsConstructor;
+import myblog.blog.shared.utils.MetaTagBuildUtils;
 import org.jsoup.Jsoup;
 import org.springframework.data.domain.*;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -51,18 +51,15 @@ public class ArticleController {
         model.addAttribute("articleDto", new ArticleForm());
         return "article/articleWriteForm";
     }
-    /*
-        - 아티클 작성 post 요청
-    */
+
     @PostMapping("article/write")
     @Transactional
     String writeArticle(@Validated ArticleForm articleForm,
-                               @AuthenticationPrincipal PrincipalDetails principal,
-                               Errors errors, Model model) {
-        if (errors.hasErrors()) {
-            getArticleWriteForm(model);
-        }
-        Long articleId = articleUseCase.writeArticle(ArticleCreateRequest.from(articleForm,principal.getMemberId()));
+                        @AuthenticationPrincipal PrincipalDetails principal,
+                        Errors errors, Model model) {
+        if (errors.hasErrors()) getArticleWriteForm(model);
+        var command = ArticleCreateCommand.from(articleForm, principal.getMemberId());
+        Long articleId = articleUseCase.writeArticle(command);
         articleUseCase.backupArticle(articleId);
         tempArticleUseCase.deleteTemp();
         return "redirect:/article/view?articleId=" + articleId;
@@ -79,19 +76,14 @@ public class ArticleController {
         model.addAttribute("articleDto", articleDto);
         return "article/articleEditForm";
     }
-    /*
-        - 아티클 수정 요청
-    */
     @PostMapping("/article/edit")
     @Transactional
     String editArticle(@RequestParam Long articleId,
                        @ModelAttribute ArticleForm articleForm) {
-        articleUseCase.editArticle(ArticleEditRequest.from(articleId, articleForm));
+        var command = ArticleEditCommand.from(articleId, articleForm);
+        articleUseCase.editArticle(command);
         return "redirect:/article/view?articleId=" + articleId;
     }
-    /*
-        - 아티클 삭제 요청
-    */
     @PostMapping("/article/delete")
     @Transactional
     String deleteArticle(@RequestParam Long articleId) {
@@ -107,34 +99,24 @@ public class ArticleController {
                                      @RequestParam int tier,
                                      @RequestParam int page,
                                      Model model) {
-        PagingBoxHandler pagingBoxHandler =
+        var pagingBoxHandler =
                 PagingBoxHandler.createOf(page, getTotalArticleCntByCategory(category, categoryQueriesUseCase.getCategoryViewForLayout()));
-
-        List<ArticleResponseForCardBox> articleDtoList =
-                articleQueriesUseCase.getArticlesByCategory(category, tier, pagingBoxHandler.getCurPageNum());
-
-        for(ArticleResponseForCardBox articleDto : articleDtoList){
+        var articleDtoList = articleQueriesUseCase.getArticlesByCategory(category, tier, pagingBoxHandler.getCurPageNum());
+        for(var articleDto : articleDtoList){
             articleDto.setContent(Jsoup.parse(getHtmlRenderer().render(getParser().parse(articleDto.getContent()))).text());
         }
-
         layoutRenderingUseCase.AddLayoutTo(model);
         model.addAttribute("pagingBox", pagingBoxHandler);
         model.addAttribute("articleList", articleDtoList);
-
         return "article/articleList";
     }
     private int getTotalArticleCntByCategory(String category, CategoryViewForLayout categorys) {
-
-        if (categorys.getTitle().equals(category)) {
-            return categorys.getCount();
-        } else {
-            for (CategoryViewForLayout categoryCnt :
-                    categorys.getCategoryTCountList()) {
-                if (categoryCnt.getTitle().equals(category))
-                    return categoryCnt.getCount();
-                for (CategoryViewForLayout categoryCntSub : categoryCnt.getCategoryTCountList()) {
-                    if (categoryCntSub.getTitle().equals(category))
-                        return categoryCntSub.getCount();
+        if (categorys.getTitle().equals(category)) return categorys.getCount();
+        else {
+            for (var categoryCnt : categorys.getCategoryTCountList()) {
+                if (categoryCnt.getTitle().equals(category)) return categoryCnt.getCount();
+                for (var categoryCntSub : categoryCnt.getCategoryTCountList()) {
+                    if (categoryCntSub.getTitle().equals(category)) return categoryCntSub.getCount();
                 }
             }
         }
@@ -143,51 +125,36 @@ public class ArticleController {
     /*
         - 태그별 게시물 조회하기
     */
-    @Transactional
     @GetMapping("article/list/tag/")
     String getArticlesListByTag(@RequestParam Integer page,
                                 @RequestParam String tagName,
                                 Model model) {
-        Page<ArticleResponseForCardBox> articleList =
-                articleQueriesUseCase.getArticlesByTag(tagName, page);
-
+        Page<ArticleResponseForCardBox> articleList = articleQueriesUseCase.getArticlesByTag(tagName, page);
         for(ArticleResponseForCardBox article : articleList){
             article.setContent(Jsoup.parse(getHtmlRenderer().render(getParser().parse(article.getContent()))).text());
         }
-
-        PagingBoxHandler pagingBoxHandler =
-                PagingBoxHandler.createOf(page, (int)articleList.getTotalElements());
-
+        var pagingBoxHandler = PagingBoxHandler.createOf(page, (int)articleList.getTotalElements());
         layoutRenderingUseCase.AddLayoutTo(model);
         model.addAttribute("articleList", articleList);
         model.addAttribute("pagingBox", pagingBoxHandler);
-
         return "article/articleListByTag";
     }
     /*
         - 검색어별 게시물 조회하기
     */
-    @Transactional
     @GetMapping("article/list/search/")
     String getArticlesListByKeyword(@RequestParam Integer page,
                                     @RequestParam String keyword,
                                     Model model) {
-        Page<ArticleResponseForCardBox> articleList =
-                articleQueriesUseCase.getArticlesByKeyword(keyword, page);
-
+        Page<ArticleResponseForCardBox> articleList = articleQueriesUseCase.getArticlesByKeyword(keyword, page);
         for(ArticleResponseForCardBox article : articleList){
             article.setContent(Jsoup.parse(getHtmlRenderer().render(getParser().parse(article.getContent()))).text());
         }
-
-        PagingBoxHandler pagingBoxHandler =
-                PagingBoxHandler.createOf(page, (int)articleList.getTotalElements());
-
+        var pagingBoxHandler = PagingBoxHandler.createOf(page, (int)articleList.getTotalElements());
         layoutRenderingUseCase.AddLayoutTo(model);
         model.addAttribute("articleList", articleList);
         model.addAttribute("pagingBox", pagingBoxHandler);
-
         return "article/articleListByKeyword";
-
     }
     /*
         - 아티클 상세 조회
@@ -202,49 +169,40 @@ public class ArticleController {
     String readArticle(@RequestParam Long articleId,
                        @AuthenticationPrincipal PrincipalDetails principal,
                        @CookieValue(required = false, name = "view") String cookie,
-                       HttpServletResponse response,
-                       Model model) {
-        // 1. 로그인 여부에 따라 뷰단에 회원정보 출력 여부 결정
-        if (principal != null) {
-            model.addAttribute("member", principal.getMember());
-        } else {
-            model.addAttribute("member", null);
-        }
-
-        /*
-            2.화면단을 위한 처리
-        */
-        ArticleResponseForDetail articleResponseForDetail = articleQueriesUseCase.getArticleForDetail(articleId);
-        articleResponseForDetail.setContent(getHtmlRenderer().render(getParser().parse(articleResponseForDetail.getContent())));
-
-        List<ArticleResponseByCategory> articleTitlesSortByCategory =
-                articleQueriesUseCase
+                       HttpServletResponse response, Model model) {
+        addMemberInfoToModel(principal, model);
+        var articleResponseForDetail = articleQueriesUseCase.getArticleForDetail(articleId);
+        articleResponseForDetail.parseAndRenderForView(articleResponseForDetail.getContent());
+        List<ArticleResponseByCategory> articleTitlesSortByCategory = articleQueriesUseCase
                         .getArticlesByCategoryForDetailView(articleResponseForDetail.getCategory());
-
-        // 3. 메타 태그용 Dto 전처리
-        StringBuilder metaTags = new StringBuilder();
-        for (String tag : articleResponseForDetail.getTags()) {
-            metaTags.append(tag).append(", ");
-        }
-
-        String substringContents = null;
-        if(articleResponseForDetail.getContent().length()>200) {
-            substringContents = articleResponseForDetail.getContent().substring(0, 200);
-        }
-        else substringContents = articleResponseForDetail.getContent();
-
-        // 4. 모델 담기
+        String metaTags = MetaTagBuildUtils.buildMetaTags(articleResponseForDetail.getTags());
+        String substringContents = getSubStringContentsFrom(articleResponseForDetail.getContent());
         layoutRenderingUseCase.AddLayoutTo(model);
         model.addAttribute("article", articleResponseForDetail);
         model.addAttribute("metaTags",metaTags);
         model.addAttribute("metaContents",Jsoup.parse(substringContents).text());
         model.addAttribute("articlesSortBycategory", articleTitlesSortByCategory);
-
-        // 5. 조회수 증가 검토 및 증가
         if(needToAddHitThroughCheckingCookie(articleId, cookie, response)) articleUseCase.addHit(articleId);
-
         return "article/articleView";
     }
+
+    private void addMemberInfoToModel(PrincipalDetails principal, Model model) {
+        if (principal != null) {
+            model.addAttribute("member", principal.getMember());
+        } else {
+            model.addAttribute("member", null);
+        }
+    }
+
+    private String getSubStringContentsFrom(String content) {
+        String substringContents = null;
+        if(content.length()>200) {
+            substringContents = content.substring(0, 200);
+        }
+        else substringContents = content;
+        return substringContents;
+    }
+
     /*
         - 쿠키 추가 / 조회수 증가 검토
     */

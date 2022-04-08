@@ -6,7 +6,7 @@ import myblog.blog.article.adapter.incomming.ArticleForm;
 
 @Getter
 @AllArgsConstructor
-public class ArticleEditRequest {
+public class ArticleEditCommand {
 
     private Long articleId;
     private String title;
@@ -16,8 +16,8 @@ public class ArticleEditRequest {
     private String categoryName;
     private String tags;
 
-    static public ArticleEditRequest from(Long articleId, ArticleForm articleForm){
-        return new ArticleEditRequest(articleId,
+    static public ArticleEditCommand from(Long articleId, ArticleForm articleForm){
+        return new ArticleEditCommand(articleId,
                 articleForm.getTitle(),
                 articleForm.getContent(),
                 articleForm.getToc(),

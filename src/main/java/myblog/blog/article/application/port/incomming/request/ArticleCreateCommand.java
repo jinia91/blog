@@ -6,7 +6,7 @@ import myblog.blog.article.adapter.incomming.ArticleForm;
 
 @Getter
 @AllArgsConstructor
-public class ArticleCreateRequest {
+public class ArticleCreateCommand {
     private Long memberId;
     private String title;
     private String content;
@@ -15,8 +15,8 @@ public class ArticleCreateRequest {
     private String category;
     private String tags;
 
-    static public ArticleCreateRequest from(ArticleForm articleForm, Long memberId){
-        return new ArticleCreateRequest(memberId,
+    static public ArticleCreateCommand from(ArticleForm articleForm, Long memberId){
+        return new ArticleCreateCommand(memberId,
                 articleForm.getTitle(),
                 articleForm.getContent(),
                 articleForm.getToc(),

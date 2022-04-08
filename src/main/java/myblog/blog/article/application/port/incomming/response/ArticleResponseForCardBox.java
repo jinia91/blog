@@ -17,4 +17,6 @@ public class ArticleResponseForCardBox {
     private String thumbnailUrl;
     private LocalDateTime createdDate;
 
+
+
 }
