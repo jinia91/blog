@@ -25,7 +25,7 @@ public class ArticleResponseForDetail {
     private List<String> tags;
     private LocalDateTime createdDate;
 
-    public void parseAndRenderForView(String content){
-        getHtmlRenderer().render(getParser().parse(content));
+    public void parseAndRenderForView(){
+        this.content = getHtmlRenderer().render(getParser().parse(this.content));
     }
 }

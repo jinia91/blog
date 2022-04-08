@@ -172,7 +172,7 @@ public class ArticleController {
                        HttpServletResponse response, Model model) {
         addMemberInfoToModel(principal, model);
         var articleResponseForDetail = articleQueriesUseCase.getArticleForDetail(articleId);
-        articleResponseForDetail.parseAndRenderForView(articleResponseForDetail.getContent());
+        articleResponseForDetail.parseAndRenderForView();
         List<ArticleResponseByCategory> articleTitlesSortByCategory = articleQueriesUseCase
                         .getArticlesByCategoryForDetailView(articleResponseForDetail.getCategory());
         String metaTags = MetaTagBuildUtils.buildMetaTags(articleResponseForDetail.getTags());
