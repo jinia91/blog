@@ -130,8 +130,8 @@ public class ArticleController {
                                 @RequestParam String tagName,
                                 Model model) {
         Page<ArticleResponseForCardBox> articleList = articleQueriesUseCase.getArticlesByTag(tagName, page);
-        for(ArticleResponseForCardBox article : articleList){
-            article.setContent(Jsoup.parse(getHtmlRenderer().render(getParser().parse(article.getContent()))).text());
+        for(var article : articleList){
+            article.parseAndRenderForView();
         }
         var pagingBoxHandler = PagingBoxHandler.createOf(page, (int)articleList.getTotalElements());
         layoutRenderingUseCase.AddLayoutTo(model);
@@ -147,8 +147,8 @@ public class ArticleController {
                                     @RequestParam String keyword,
                                     Model model) {
         Page<ArticleResponseForCardBox> articleList = articleQueriesUseCase.getArticlesByKeyword(keyword, page);
-        for(ArticleResponseForCardBox article : articleList){
-            article.setContent(Jsoup.parse(getHtmlRenderer().render(getParser().parse(article.getContent()))).text());
+        for(var article : articleList){
+            article.parseAndRenderForView();
         }
         var pagingBoxHandler = PagingBoxHandler.createOf(page, (int)articleList.getTotalElements());
         layoutRenderingUseCase.AddLayoutTo(model);

@@ -1,4 +1,4 @@
-package myblog.blog.infra;
+package myblog.blog.infra.exception;
 
 import myblog.blog.shared.application.port.incomming.LayoutRenderingUseCase;
 
