@@ -43,7 +43,7 @@ jobs:
         aws-region: ${{ secrets.AWS_REGION }}
 
     - name: Upload to S3 # S3 업로드
-      run: aws s3 cp --region ${{ secrets.AWS_REGION }} ./springboot-blog.zip s3://${{ secrets.AWS_S3_BUCKET }}/springboot-blog.zip?$GITHUB_SHA
+      run: aws s3 cp --region ${{ secrets.AWS_REGION }} ./springboot-blog.zip s3://${{ secrets.AWS_S3_BUCKET }}/springboot-blog.zip
 
     - name: Code Deploy # CodeDeploy에 배포 요청
-      run: aws deploy create-deployment --application-name ${{ secrets.AWS_CODEDEPLOY_NAME }} --deployment-config-name CodeDeployDefault.AllAtOnce --deployment-group-name ${{ secrets.AWS_CODEDEPLOY_GROUP }} --s3-location bucket=${{ secrets.AWS_S3_BUCKET }},bundleType=zip,key=springboot-blog.zip?$GITHUB_SHA
+      run: aws deploy create-deployment --application-name ${{ secrets.AWS_CODEDEPLOY_NAME }} --deployment-config-name CodeDeployDefault.AllAtOnce --deployment-group-name ${{ secrets.AWS_CODEDEPLOY_GROUP }} --s3-location bucket=${{ secrets.AWS_S3_BUCKET }},bundleType=zip,key=springboot-blog.zip
