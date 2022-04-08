@@ -13,17 +13,17 @@ permissions:
 
 hooks:
   AfterInstall:
-    - location: stop.sh
+    - location: scripts/stop.sh
       timeout: 600
       runas: root
 
   ApplicationStart:
-    - location: start.sh
+    - location: scripts/start.sh
       timeout: 600
       runas: root
 
   ValidateService:
-    - location: health.sh
+    - location: scripts/health.sh
       timeout: 600
       runas: root
 
