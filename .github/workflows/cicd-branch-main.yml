@@ -1,4 +1,4 @@
-name: cicd branch main
+name: cicd
 
 on:
   push:
