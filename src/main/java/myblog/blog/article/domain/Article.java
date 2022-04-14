@@ -84,8 +84,7 @@ public class Article extends BasicEntity {
     }
 
     private String makeDefaultThumbOf(String thumbnailUrl) {
-        String defaultThumbUrl = "https://cdn.pixabay.com/photo/2020/11/08/13/28/tree-5723734_1280.jpg";
-
+        var defaultThumbUrl = "https://cdn.pixabay.com/photo/2020/11/08/13/28/tree-5723734_1280.jpg";
         if (thumbnailUrl == null || thumbnailUrl.equals("")) {
             thumbnailUrl = defaultThumbUrl;
         }

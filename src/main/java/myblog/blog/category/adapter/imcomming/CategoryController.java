@@ -31,11 +31,11 @@ public class CategoryController {
     @GetMapping("/category/edit")
     String editCategoryForm(Model model) {
 
-        List<CategorySimpleDto> categoryList = categoryQueriesUseCase.getCategorytCountList();
-        List<CategorySimpleDto> copyList = new ArrayList<>(List.copyOf(categoryList));
+        var categoryList = categoryQueriesUseCase.getCategorytCountList();
+        var copyList = new ArrayList<>(List.copyOf(categoryList));
         copyList.remove(0);
-        CategoryViewForLayout categoryViewForLayout = CategoryViewForLayout.from(categoryList);
-        List<CommentDtoForLayout> comments = commentQueriesUseCase.recentCommentListForLayout();
+        var categoryViewForLayout = CategoryViewForLayout.from(categoryList);
+        var comments = commentQueriesUseCase.recentCommentListForLayout();
 
         model.addAttribute("categoryForEdit", copyList);
         model.addAttribute("category", categoryViewForLayout);
@@ -48,7 +48,6 @@ public class CategoryController {
     */
     @PostMapping("/category/edit")
     @ResponseBody String editCategory(@RequestBody List<CategorySimpleDto> categoryList, Errors errors) {
-       // List DTO 검증을 위한 커스텀 validator
         categorylistValidator.validate(categoryList, errors);
         categoryUseCase.changeCategory(categoryList);
         return "변경 성공";

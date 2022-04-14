@@ -9,16 +9,12 @@ import myblog.blog.shared.application.port.incomming.LayoutRenderingUseCase;
 
 import myblog.blog.article.application.port.incomming.request.ArticleCreateCommand;
 import myblog.blog.article.application.port.incomming.request.ArticleEditCommand;
-import myblog.blog.article.application.port.incomming.response.ArticleResponseByCategory;
-import myblog.blog.article.application.port.incomming.response.ArticleResponseForCardBox;
-import myblog.blog.article.application.port.incomming.response.ArticleResponseForEdit;
 import myblog.blog.category.appliacation.port.incomming.response.CategoryViewForLayout;
 import myblog.blog.member.application.port.incomming.response.PrincipalDetails;
 
 import lombok.RequiredArgsConstructor;
 import myblog.blog.shared.utils.MetaTagBuildUtils;
 import org.jsoup.Jsoup;
-import org.springframework.data.domain.*;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,9 +24,6 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
-import java.util.List;
-
-import static myblog.blog.shared.utils.MarkdownUtils.*;
 
 @Controller
 @RequiredArgsConstructor
@@ -59,7 +52,7 @@ public class ArticleController {
                         Errors errors, Model model) {
         if (errors.hasErrors()) getArticleWriteForm(model);
         var command = ArticleCreateCommand.from(articleForm, principal.getMemberId());
-        Long articleId = articleUseCase.writeArticle(command);
+        var articleId = articleUseCase.writeArticle(command);
         articleUseCase.backupArticle(articleId);
         tempArticleUseCase.deleteTemp();
         return "redirect:/article/view?articleId=" + articleId;
@@ -69,7 +62,7 @@ public class ArticleController {
     */
     @GetMapping("/article/edit")
     String updateArticle(@RequestParam Long articleId, Model model) {
-        ArticleResponseForEdit articleDto = articleQueriesUseCase.getArticleForEdit(articleId);
+        var articleDto = articleQueriesUseCase.getArticleForEdit(articleId);
         layoutRenderingUseCase.AddLayoutTo(model);
         model.addAttribute("categoryInput", categoryQueriesUseCase.findCategoryByTier(2));
         model.addAttribute("tagsInput", tagsQueriesUseCase.findAllTagDtos());
@@ -99,12 +92,11 @@ public class ArticleController {
                                      @RequestParam int tier,
                                      @RequestParam int page,
                                      Model model) {
+        int totalArticleCnt = getTotalArticleCntByCategory(category, categoryQueriesUseCase.getCategoryViewForLayout());
         var pagingBoxHandler =
-                PagingBoxHandler.createOf(page, getTotalArticleCntByCategory(category, categoryQueriesUseCase.getCategoryViewForLayout()));
+                PagingBoxHandler.createOf(page, totalArticleCnt);
         var articleDtoList = articleQueriesUseCase.getArticlesByCategory(category, tier, pagingBoxHandler.getCurPageNum());
-        for(var articleDto : articleDtoList){
-            articleDto.setContent(Jsoup.parse(getHtmlRenderer().render(getParser().parse(articleDto.getContent()))).text());
-        }
+        for(var articleDto : articleDtoList) articleDto.parseAndRenderForView();
         layoutRenderingUseCase.AddLayoutTo(model);
         model.addAttribute("pagingBox", pagingBoxHandler);
         model.addAttribute("articleList", articleDtoList);
@@ -112,12 +104,10 @@ public class ArticleController {
     }
     private int getTotalArticleCntByCategory(String category, CategoryViewForLayout categorys) {
         if (categorys.getTitle().equals(category)) return categorys.getCount();
-        else {
-            for (var categoryCnt : categorys.getCategoryTCountList()) {
-                if (categoryCnt.getTitle().equals(category)) return categoryCnt.getCount();
-                for (var categoryCntSub : categoryCnt.getCategoryTCountList()) {
-                    if (categoryCntSub.getTitle().equals(category)) return categoryCntSub.getCount();
-                }
+        for (var categoryCnt : categorys.getCategoryTCountList()) {
+            if (categoryCnt.getTitle().equals(category)) return categoryCnt.getCount();
+            for (var categoryCntSub : categoryCnt.getCategoryTCountList()) {
+                if (categoryCntSub.getTitle().equals(category)) return categoryCntSub.getCount();
             }
         }
         throw new IllegalArgumentException("'"+category+"' 라는 카테고리는 존재하지 않습니다.");
@@ -129,10 +119,8 @@ public class ArticleController {
     String getArticlesListByTag(@RequestParam Integer page,
                                 @RequestParam String tagName,
                                 Model model) {
-        Page<ArticleResponseForCardBox> articleList = articleQueriesUseCase.getArticlesByTag(tagName, page);
-        for(var article : articleList){
-            article.parseAndRenderForView();
-        }
+        var articleList = articleQueriesUseCase.getArticlesByTag(tagName, page);
+        for(var article : articleList) article.parseAndRenderForView();
         var pagingBoxHandler = PagingBoxHandler.createOf(page, (int)articleList.getTotalElements());
         layoutRenderingUseCase.AddLayoutTo(model);
         model.addAttribute("articleList", articleList);
@@ -146,10 +134,8 @@ public class ArticleController {
     String getArticlesListByKeyword(@RequestParam Integer page,
                                     @RequestParam String keyword,
                                     Model model) {
-        Page<ArticleResponseForCardBox> articleList = articleQueriesUseCase.getArticlesByKeyword(keyword, page);
-        for(var article : articleList){
-            article.parseAndRenderForView();
-        }
+        var articleList = articleQueriesUseCase.getArticlesByKeyword(keyword, page);
+        for(var article : articleList) article.parseAndRenderForView();
         var pagingBoxHandler = PagingBoxHandler.createOf(page, (int)articleList.getTotalElements());
         layoutRenderingUseCase.AddLayoutTo(model);
         model.addAttribute("articleList", articleList);
@@ -173,10 +159,10 @@ public class ArticleController {
         addMemberInfoToModel(principal, model);
         var articleResponseForDetail = articleQueriesUseCase.getArticleForDetail(articleId);
         articleResponseForDetail.parseAndRenderForView();
-        List<ArticleResponseByCategory> articleTitlesSortByCategory = articleQueriesUseCase
+        var articleTitlesSortByCategory = articleQueriesUseCase
                         .getArticlesByCategoryForDetailView(articleResponseForDetail.getCategory());
-        String metaTags = MetaTagBuildUtils.buildMetaTags(articleResponseForDetail.getTags());
-        String substringContents = getSubStringContentsFrom(articleResponseForDetail.getContent());
+        var metaTags = MetaTagBuildUtils.buildMetaTags(articleResponseForDetail.getTags());
+        var substringContents = getSubStringContentsFrom(articleResponseForDetail.getContent());
         layoutRenderingUseCase.AddLayoutTo(model);
         model.addAttribute("article", articleResponseForDetail);
         model.addAttribute("metaTags",metaTags);

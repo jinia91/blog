@@ -49,68 +49,31 @@ public class CategoryService implements CategoryUseCase {
     @Transactional
     @CacheEvict(value = {"layoutCaching", "seoCaching"}, allEntries = true)
     public void changeCategory(List<CategorySimpleDto> categoryList) {
-
         // 1.카테고리 리스트 순서 작성
         CategorySimpleDto.sortByOrder(categoryList);
         // 2. 기존 DB 저장된 카테고리 리스트 불러오기
-        List<Category> categoryListFromDb = categoryRepositoryPort.findAllWithoutDummy();
-
+        var categoryListFromDb = categoryRepositoryPort.findAllWithoutDummy();
         // 3. 카테고리 변경
         while (!categoryList.isEmpty()) {
-            CategorySimpleDto categorySimpleDto = categoryList.get(0);
+            var categorySimpleDto = categoryList.get(0);
             categoryList.remove(0);
-
-            // 부모카테고리인경우
-            if (categorySimpleDto.getTier() == 1) {
+            if (categorySimpleDto.isSuperCategory()) {
                 Category pCategory = null;
-                // 신규 부모인경우
-                if (categorySimpleDto.getId() == null) {
-                    pCategory = createNewCategory(categorySimpleDto, null);
-                }
-                // 기존 부모인경우
+                if (categorySimpleDto.isNewCategory()) pCategory = createNewCategory(categorySimpleDto, null);
                 else {
-                    for (int i = 0; i < categoryListFromDb.size(); i++) {
-                        if (categoryListFromDb.get(i).getId().equals(categorySimpleDto.getId())) {
-                            pCategory = categoryListFromDb.get(i);
-                            categoryListFromDb.remove(i);
-                            break;
-                        }
-                    }
-                    pCategory.updateCategory(
-                            categorySimpleDto.getTitle(),
-                            categorySimpleDto.getTier(),
-                            categorySimpleDto.getPOrder(),
-                            categorySimpleDto.getCOrder(),
-                            null
-                    );
+                    pCategory = findMatchingCategory(categoryListFromDb, categorySimpleDto, pCategory);
+                    pCategory.updateCategory(categorySimpleDto.getTitle(), categorySimpleDto.getTier(), categorySimpleDto.getPOrder(), categorySimpleDto.getCOrder(), null);
                 }
 
                 while (!categoryList.isEmpty()) {
-
-                    CategorySimpleDto subCategorySimpleDto = categoryList.get(0);
-                    if (subCategorySimpleDto.getTier() == 1) break;
+                    var subCategorySimpleDto = categoryList.get(0);
+                    if (subCategorySimpleDto.isSuperCategory()) break;
                     categoryList.remove(0);
-                    // 자식 카테고리인경우
                     Category cCategory = null;
-                    // 카테고리가 기존에 존재 x
-                    if (subCategorySimpleDto.getId() == null) {
-                        cCategory = createNewCategory(subCategorySimpleDto, pCategory.getTitle());
-                    }
-                    // 카테고리가 기존에 존재 o
+                    if (subCategorySimpleDto.isNewCategory()) cCategory = createNewCategory(subCategorySimpleDto, pCategory.getTitle());
                     else {
-                        for (int i = 0; i < categoryListFromDb.size(); i++) {
-                            if (categoryListFromDb.get(i).getId().equals(subCategorySimpleDto.getId())) {
-                                cCategory = categoryListFromDb.get(i);
-                                categoryListFromDb.remove(i);
-                                break;
-                            }
-                        }
-                        cCategory.updateCategory(
-                                subCategorySimpleDto.getTitle(),
-                                subCategorySimpleDto.getTier(),
-                                subCategorySimpleDto.getPOrder(),
-                                subCategorySimpleDto.getCOrder(),
-                                pCategory);
+                        cCategory = findMatchingCategory(categoryListFromDb, subCategorySimpleDto, cCategory);
+                        cCategory.updateCategory(subCategorySimpleDto.getTitle(), subCategorySimpleDto.getTier(), subCategorySimpleDto.getPOrder(), subCategorySimpleDto.getCOrder(), pCategory);
                     }
                 }
             }
@@ -118,6 +81,18 @@ public class CategoryService implements CategoryUseCase {
         // 3-3 불일치 카테고리 전부 삭제
         categoryRepositoryPort.deleteAll(categoryListFromDb);
     }
+
+    private Category findMatchingCategory(List<Category> categoryListFromDb, CategorySimpleDto categorySimpleDto, Category category) {
+        for (int i = 0; i < categoryListFromDb.size(); i++) {
+            if (categoryListFromDb.get(i).getId().equals(categorySimpleDto.getId())) {
+                category = categoryListFromDb.get(i);
+                categoryListFromDb.remove(i);
+                break;
+            }
+        }
+        return category;
+    }
+
     /*
     - 새로운 카테고리 생성하기
         - 상위 카테고리 존재 유무 분기

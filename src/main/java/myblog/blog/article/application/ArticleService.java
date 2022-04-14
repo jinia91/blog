@@ -36,9 +36,9 @@ public class ArticleService implements ArticleUseCase {
     @Override
     @CacheEvict(value = {"layoutCaching", "layoutRecentArticleCaching","seoCaching"}, allEntries = true)
     public Long writeArticle(ArticleCreateCommand articleCreateCommand) {
-        Member writer = memberQueriesUseCase.findById(articleCreateCommand.getMemberId());
-        Category category = categoryUseCase.findCategory(articleCreateCommand.getCategory());
-        Article newArticle = new Article(articleCreateCommand.getTitle(),
+        var writer = memberQueriesUseCase.findById(articleCreateCommand.getMemberId());
+        var category = categoryUseCase.findCategory(articleCreateCommand.getCategory());
+        var newArticle = new Article(articleCreateCommand.getTitle(),
                 articleCreateCommand.getContent(),
                 articleCreateCommand.getToc(),
                 writer,
@@ -52,9 +52,9 @@ public class ArticleService implements ArticleUseCase {
     @Override
     @CacheEvict(value = {"layoutCaching", "layoutRecentArticleCaching","seoCaching"}, allEntries = true)
     public void editArticle(ArticleEditCommand articleEditCommand) {
-        Article article = articleRepositoryPort.findById(articleEditCommand.getArticleId())
+        var article = articleRepositoryPort.findById(articleEditCommand.getArticleId())
                 .orElseThrow(() -> new IllegalArgumentException("NotFoundArticleException"));
-        Category category = categoryUseCase.findCategory(articleEditCommand.getCategoryName());
+        var category = categoryUseCase.findCategory(articleEditCommand.getCategoryName());
         tagUseCase.deleteAllTagsWith(article);
         tagUseCase.createNewTagsAndArticleTagList(articleEditCommand.getTags(), article);
         article.edit(articleEditCommand.getContent(),
@@ -71,14 +71,14 @@ public class ArticleService implements ArticleUseCase {
 
     @Override
     public void backupArticle(Long articleId) {
-        Article article = articleRepositoryPort.findById(articleId)
+        var article = articleRepositoryPort.findById(articleId)
                 .orElseThrow(() -> new IllegalArgumentException("NotFoundArticle"));
         articleBackupRepositoryPort.backup(article);
     }
 
     @Override
     public void addHit(Long articleId) {
-        Article article = articleRepositoryPort.findById(articleId)
+        var article = articleRepositoryPort.findById(articleId)
                 .orElseThrow(() -> new IllegalArgumentException("NotFoundArticleException"));
         article.addHit();
     }

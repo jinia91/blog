@@ -25,7 +25,7 @@ public class TagsService implements TagUseCase {
     public void createNewTagsAndArticleTagList(String names, Article article) {
         List<Map<String,String>> tagsDtoArrayList = MapperUtils.getGson().fromJson(names, ArrayList.class);
         for (var tagDto : tagsDtoArrayList) {
-            Tags tag = findOrCreateTagFrom(tagDto);
+            var tag = findOrCreateTagFrom(tagDto);
             articleTagListsRepository.save(new ArticleTagList(article, tag));
         }
     }

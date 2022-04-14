@@ -50,4 +50,10 @@ public class CategorySimpleDto implements Cloneable {
             }
         }
     }
+    public boolean isSuperCategory(){
+        return tier == 1;
+    }
+    public boolean isNewCategory(){
+        return id == null;
+    }
 }

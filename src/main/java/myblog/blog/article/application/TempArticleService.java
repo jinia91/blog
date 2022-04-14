@@ -1,6 +1,7 @@
 package myblog.blog.article.application;
 
 import lombok.RequiredArgsConstructor;
+import myblog.blog.article.application.port.incomming.TempArticleDto;
 import myblog.blog.article.application.port.incomming.TempArticleUseCase;
 import myblog.blog.article.application.port.outgoing.TempArticleRepositoryPort;
 import myblog.blog.article.domain.TempArticle;
@@ -20,23 +21,28 @@ public class TempArticleService implements TempArticleUseCase {
         - 자동 저장 로직
         - ID값 고정으로 머지를 작동시켜 임시글 DB에 1개 유지
     */
-    public void saveTemp(TempArticle tempArticle){
-        tempArticleRepositoryPort.save(tempArticle);
+    @Override
+    public void saveTemp(String tempArticleContents){
+        tempArticleRepositoryPort.save(new TempArticle(tempArticleContents));
     }
 
     /*
         - 임시글 가져오기
     */
-    public Optional<TempArticle> getTempArticle(){
-        return tempArticleRepositoryPort.findById(1L);
+    @Override
+    public TempArticleDto getTempArticle(){
+        var tempArticle = tempArticleRepositoryPort.findById(1L);
+        var tempArticleDto = new TempArticleDto();
+        tempArticleDto.setContent(tempArticle.orElse(new TempArticle()).getContent());
+        return tempArticleDto;
     }
 
     /*
         - 임시글 삭제
     */
+    @Override
     public void deleteTemp(){
-        Optional<TempArticle> deleteArticle = tempArticleRepositoryPort.findById(1L);
+        var deleteArticle = tempArticleRepositoryPort.findById(1L);
         deleteArticle.ifPresent(tempArticleRepositoryPort::delete);
     }
-
 }

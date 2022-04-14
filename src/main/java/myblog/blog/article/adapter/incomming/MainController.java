@@ -24,9 +24,7 @@ public class MainController {
     */
     @GetMapping("/")
     String main(Model model) {
-        // Dto 전처리
-        List<ArticleResponseForCardBox> popularArticles = articleQueriesUseCase.getPopularArticles();
-        //
+        var popularArticles = articleQueriesUseCase.getPopularArticles();
         layoutRenderingUseCase.AddLayoutTo(model);
         model.addAttribute("popularArticles", popularArticles);
         return "index";
@@ -37,18 +35,8 @@ public class MainController {
     */
     @GetMapping("/main/article/{lastArticleId}")
     @ResponseBody List<ArticleResponseForCardBox> mainNextPage(@PathVariable(required = false) Long lastArticleId) {
-
-        // Entity to Dto
-        List<ArticleResponseForCardBox> articles = articleQueriesUseCase.getRecentArticles(lastArticleId);
-
-        // 화면렌더링을 위한 파싱
-        for(ArticleResponseForCardBox article : articles){
-            String content = Jsoup.parse(getHtmlRenderer().render(getParser().parse(article.getContent()))).text();
-            if(content.length()>300) {
-                content = content.substring(0, 300);
-            }
-            article.setContent(content);
-        }
+        var articles = articleQueriesUseCase.getRecentArticles(lastArticleId);
+        for(var article : articles) article.parseAndRenderForView();
         return articles;
     }
 }

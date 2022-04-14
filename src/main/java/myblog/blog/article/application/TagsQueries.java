@@ -19,7 +19,7 @@ public class TagsQueries implements TagsQueriesUseCase {
     private final TagRepositoryPort tagRepositoryPort;
 
     public List<TagsResponse> findAllTagDtos(){
-        List<Tags> tags = tagRepositoryPort.findAll();
+        var tags = tagRepositoryPort.findAll();
         return tags.stream()
                 .map(tag -> MapperUtils.getModelMapper().map(tag, TagsResponse.class))
                 .collect(Collectors.toList());

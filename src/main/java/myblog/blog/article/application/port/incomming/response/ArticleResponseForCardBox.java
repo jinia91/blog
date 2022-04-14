@@ -23,6 +23,9 @@ public class ArticleResponseForCardBox {
 
     public void parseAndRenderForView(){
         this.content = Jsoup.parse(getHtmlRenderer().render(getParser().parse(this.content))).text();
+        if(content.length()>300) {
+            content = content.substring(0, 300);
+        }
     }
 
 }
