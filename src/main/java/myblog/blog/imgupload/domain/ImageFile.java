@@ -24,15 +24,15 @@ public class ImageFile {
      - 이미지 중복 방지용 무작위 파일 이름 생성기
      */
     private static String createStoreFileName(String originalFilename) {
-        String ext = extractExt(originalFilename);
-        String uuid = UUID.randomUUID().toString();
+        var ext = extractExt(originalFilename);
+        var uuid = UUID.randomUUID().toString();
         return uuid + "." + ext;
     }
     /*
         - 파일 이름 추출
     */
     private static String extractExt(String originalFilename) {
-        int pos = originalFilename.lastIndexOf(".");
+        var pos = originalFilename.lastIndexOf(".");
         return originalFilename.substring(pos + 1);
     }
 }

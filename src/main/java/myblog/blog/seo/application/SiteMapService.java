@@ -26,10 +26,10 @@ public class SiteMapService implements SiteMapUseCase {
     @Override
     @Cacheable(value = "seoCaching", key = "1")
     public String getSiteMap(){
-        List<Article> articles = articleUseCase.getTotalArticle();
-        List<Category> allCategories = categoryUseCase.getAllCategories();
-        SiteMap siteMap = SiteMap.from(articles, allCategories);
-        XMLOutputter xmlOutputter = XMLOutPutterBuildHelper.getXmlOutputter();
+        var articles = articleUseCase.getTotalArticle();
+        var allCategories = categoryUseCase.getAllCategories();
+        var siteMap = SiteMap.from(articles, allCategories);
+        var xmlOutputter = XMLOutPutterBuildHelper.getXmlOutputter();
         return xmlOutputter.outputString(siteMap.getSiteMapDoc());
     }
 }

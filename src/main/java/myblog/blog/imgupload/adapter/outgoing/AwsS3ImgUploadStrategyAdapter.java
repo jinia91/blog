@@ -24,9 +24,9 @@ public class AwsS3ImgUploadStrategyAdapter implements ImgUploadStrategyPort {
     private String bucket;
 
     public String uploadFile(ImageFile imageFile) {
-        MultipartFile file = imageFile.getMultipartFile();
-        ObjectMetadata metadata = createObjectMetadata(file);
-        try(InputStream inputStream = file.getInputStream()) {
+        var file = imageFile.getMultipartFile();
+        var metadata = createObjectMetadata(file);
+        try(var inputStream = file.getInputStream()) {
             amazonS3.putObject(new PutObjectRequest(bucket, imageFile.getStoredFileName(), inputStream, metadata)
                     .withCannedAcl(CannedAccessControlList.PublicRead));
         } catch (IOException e) {
@@ -41,7 +41,7 @@ public class AwsS3ImgUploadStrategyAdapter implements ImgUploadStrategyPort {
      * @return s3 api 요구 스펙 dto
      */
     private ObjectMetadata createObjectMetadata(MultipartFile file) {
-        ObjectMetadata metadata = new ObjectMetadata();
+        var metadata = new ObjectMetadata();
         metadata.setContentLength(file.getSize());
         metadata.setContentType(file.getContentType());
         return metadata;

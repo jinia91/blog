@@ -28,8 +28,8 @@ public class CommentService implements CommentUseCase {
     @CacheEvict(value = "layoutRecentCommentCaching", allEntries = true)
     @Override
     public void savePComment(String content, boolean secret, Long memberId, Long articleId){
-        Member member = memberQueriesUseCase.findById(memberId);
-        Article article = articleUseCase.getArticle(articleId);
+        var member = memberQueriesUseCase.findById(memberId);
+        var article = articleUseCase.getArticle(articleId);
 
         Comment comment = Comment.builder()
                 .article(article)
@@ -49,12 +49,12 @@ public class CommentService implements CommentUseCase {
     @CacheEvict(value = "layoutRecentCommentCaching", allEntries = true)
     @Override
     public void saveCComment(String content, boolean secret, Long memberId, Long articleId, Long parentId) {
-        Member member = memberQueriesUseCase.findById(memberId);
-        Article article = articleUseCase.getArticle(articleId);
-        Comment pComment = commentRepositoryPort.findById(parentId)
+        var member = memberQueriesUseCase.findById(memberId);
+        var article = articleUseCase.getArticle(articleId);
+        var pComment = commentRepositoryPort.findById(parentId)
                 .orElseThrow(() -> new IllegalArgumentException("NotfoundParentCommentException"));
 
-        Comment comment = Comment.builder()
+        var comment = Comment.builder()
                 .article(article)
                 .content(content)
                 .tier(1)

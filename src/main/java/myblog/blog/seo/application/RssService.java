@@ -29,9 +29,9 @@ public class RssService implements RssUseCase {
     @Override
     @Cacheable(value = "seoCaching", key = "0")
     public String getRssFeed() {
-        List<Article> articles = articleUseCase.getTotalArticle();
-        RssFeed rssFeed = RssFeed.from(articles);
-        XMLOutputter xmlOutputter = XMLOutPutterBuildHelper.getXmlOutputter();
+        var articles = articleUseCase.getTotalArticle();
+        var rssFeed = RssFeed.from(articles);
+        var xmlOutputter = XMLOutPutterBuildHelper.getXmlOutputter();
         return xmlOutputter.outputString(rssFeed.getRssDoc());
     }
 }

@@ -18,7 +18,7 @@ public class ImgUploadService implements ImgUploadUseCase {
     @Override
     public String storeImg(MultipartFile multipartFile) {
         validateFile(multipartFile);
-        ImageFile imageFile = ImageFile.from(multipartFile);
+        var imageFile = ImageFile.from(multipartFile);
         return imgUploadStrategyPort.uploadFile(imageFile);
     }
 

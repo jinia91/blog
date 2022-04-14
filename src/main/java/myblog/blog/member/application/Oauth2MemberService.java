@@ -28,10 +28,10 @@ public class Oauth2MemberService extends DefaultOAuth2UserService {
     */
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
-        OAuth2User oAuth2User = super.loadUser(userRequest);
-        Oauth2UserInfo userInfo =
+        var oAuth2User = super.loadUser(userRequest);
+        var userInfo =
                 userInfoFactory.makeOauth2UserInfoOf(userRequest.getClientRegistration().getRegistrationId(), oAuth2User);
-        Member member = getOrJoinMember(userInfo);
+        var member = getOrJoinMember(userInfo);
         return new PrincipalDetails(member, userInfo.getAttributes());
     }
 
@@ -40,7 +40,7 @@ public class Oauth2MemberService extends DefaultOAuth2UserService {
     */
     private Member getOrJoinMember(Oauth2UserInfo userInfo) {
         //DB에서 조회해서 존재시 로그인처리, 미존재시 가입처리
-        Member member = memberRepositoryPort.findByUserId(userInfo.getProviderId());
+        var member = memberRepositoryPort.findByUserId(userInfo.getProviderId());
         if(member == null) {
             //Email 중복검증
             if(memberRepositoryPort.findByEmail(userInfo.getEmail()) != null)

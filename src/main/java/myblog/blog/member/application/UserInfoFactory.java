@@ -39,7 +39,7 @@ public class UserInfoFactory {
         - 팩토리 메소드
     */
     public Oauth2UserInfo makeOauth2UserInfoOf(String registrationId, OAuth2User oAuth2User) {
-        Optional<ProviderType> providerTypeOptional = createEnumFromString(registrationId);
+        var providerTypeOptional = createEnumFromString(registrationId);
         return userInfoFactoryMap
                 .get(providerTypeOptional.orElseThrow(() -> new IllegalArgumentException("지원하지 않는 소셜 로그인 API 제공자입니다.")))
                 .apply(oAuth2User);

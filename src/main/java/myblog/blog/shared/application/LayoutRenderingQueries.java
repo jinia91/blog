@@ -25,8 +25,8 @@ public class LayoutRenderingQueries implements LayoutRenderingUseCase {
     */
     @Override
     public void AddLayoutTo(Model model) {
-        CategoryViewForLayout categoryViewForLayout = categoryQueriesUseCase.getCategoryViewForLayout();
-        List<CommentDtoForLayout> comments = commentQueriesUseCase.recentCommentListForLayout();
+        var categoryViewForLayout = categoryQueriesUseCase.getCategoryViewForLayout();
+        var comments = commentQueriesUseCase.recentCommentListForLayout();
         model.addAttribute("category", categoryViewForLayout);
         model.addAttribute("commentsList", comments);
     }

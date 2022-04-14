@@ -25,10 +25,10 @@ public class SiteMap {
     }
 
     static public SiteMap from(List<Article> articles, List<Category> allCategories) {
-        Document doc = new Document();
-        Element siteMap = new Element("urlset", NAMESPACE);
+        var doc = new Document();
+        var siteMap = new Element("urlset", NAMESPACE);
         doc.setRootElement(siteMap);
-        Element main = createMainElement();
+        var main = createMainElement();
         siteMap.addContent(main);
         addCategoryUrlsToSiteMap(allCategories, siteMap);
         addArticleUrlToSiteMap(articles, siteMap);
@@ -36,7 +36,7 @@ public class SiteMap {
     }
 
     static private Element createMainElement() {
-        Element main = new Element("url",NAMESPACE);
+        var main = new Element("url",NAMESPACE);
         main.addContent(new Element("loc",NAMESPACE).setText(ROOT));
         main.addContent(new Element("lastmod",NAMESPACE).setText(
                 LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd", Locale.ENGLISH))));
@@ -45,8 +45,8 @@ public class SiteMap {
     }
 
     static private void addArticleUrlToSiteMap(List<Article> articles, Element siteMap) {
-        for (Article article : articles) {
-            Element articleUrl = new Element("url",NAMESPACE);
+        for (var article : articles) {
+            var articleUrl = new Element("url",NAMESPACE);
             articleUrl.addContent(new Element("loc",NAMESPACE)
                     .setText(ROOT + ARTICLEPREV + article.getId()));
             siteMap.addContent(articleUrl);
@@ -55,7 +55,7 @@ public class SiteMap {
 
     static private void addCategoryUrlsToSiteMap(List<Category> allCategories, Element siteMap) {
         for (Category category : allCategories) {
-            Element categoryUrl = new Element("url",NAMESPACE);
+            var categoryUrl = new Element("url",NAMESPACE);
             categoryUrl.addContent(new Element("loc",NAMESPACE)
                     .setText(ROOT + CATEGORYPRE + "category="+category.getTitle()+"&tier="+category.getTier()+CATEGORYPRO));
             siteMap.addContent(categoryUrl);
