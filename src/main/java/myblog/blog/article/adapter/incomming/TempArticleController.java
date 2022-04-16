@@ -1,7 +1,7 @@
 package myblog.blog.article.adapter.incomming;
 
 import myblog.blog.article.application.port.incomming.TempArticleUseCase;
-import myblog.blog.article.application.port.incomming.TempArticleDto;
+import myblog.blog.article.application.port.incomming.response.TempArticleDto;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;

@@ -1,4 +1,4 @@
-package myblog.blog.article.application.port.incomming;
+package myblog.blog.article.application.port.incomming.response;
 
 import lombok.Getter;
 import lombok.Setter;
