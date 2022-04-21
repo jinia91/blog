@@ -3,6 +3,7 @@ package myblog.blog.article.application;
 import lombok.RequiredArgsConstructor;
 
 import myblog.blog.article.domain.Article;
+import myblog.blog.article.domain.ArticleNotFoundException;
 import myblog.blog.category.domain.Category;
 
 import myblog.blog.article.application.port.incomming.response.ArticleResponseForCardBox;
@@ -82,7 +83,7 @@ public class ArticleQueries implements ArticleQueriesUseCase {
             articles = articleRepositoryPort
                     .findBySubCategoryOrderByIdDesc(page, 5, category);
         }
-        if(articles == null) throw new IllegalArgumentException("NotFoundArticleException");
+        if(articles == null) throw new ArticleNotFoundException();
 
         return articles.stream().map(article -> MapperUtils.getModelMapper().map(article, ArticleResponseForCardBox.class)).collect(Collectors.toList());
     }

@@ -4,6 +4,7 @@ import myblog.blog.member.application.port.incomming.response.userinfo.GoogleUse
 import myblog.blog.member.application.port.incomming.response.userinfo.NaverUserInfo;
 import myblog.blog.member.application.port.incomming.response.userinfo.Oauth2UserInfo;
 import myblog.blog.member.application.port.incomming.response.userinfo.ProviderType;
+import myblog.blog.member.doamin.NotSupportSocialProviderException;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Component;
@@ -41,7 +42,7 @@ public class UserInfoFactory {
     public Oauth2UserInfo makeOauth2UserInfoOf(String registrationId, OAuth2User oAuth2User) {
         var providerTypeOptional = createEnumFromString(registrationId);
         return userInfoFactoryMap
-                .get(providerTypeOptional.orElseThrow(() -> new IllegalArgumentException("지원하지 않는 소셜 로그인 API 제공자입니다.")))
+                .get(providerTypeOptional.orElseThrow(NotSupportSocialProviderException::new))
                 .apply(oAuth2User);
 
     }

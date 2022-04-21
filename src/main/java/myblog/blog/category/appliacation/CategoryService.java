@@ -7,6 +7,7 @@ import myblog.blog.category.appliacation.port.incomming.CategoryUseCase;
 import myblog.blog.category.appliacation.port.outgoing.CategoryRepositoryPort;
 import myblog.blog.category.appliacation.port.incomming.response.CategorySimpleDto;
 
+import myblog.blog.category.domain.CategoryNotFoundException;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,7 +26,7 @@ public class CategoryService implements CategoryUseCase {
     @Override
     public Category findCategory(String title) {
         return categoryRepositoryPort.findByTitle(title)
-                .orElseThrow(() -> new IllegalArgumentException("NotFoundCategoryException"));
+                .orElseThrow(CategoryNotFoundException::new);
     }
 
     /*
@@ -101,7 +102,7 @@ public class CategoryService implements CategoryUseCase {
         Category parentCategory = null;
         if (parent != null) {
             parentCategory = categoryRepositoryPort.findByTitle(parent)
-                    .orElseThrow(() -> new IllegalArgumentException("NotFoundCategoryException"));
+                    .orElseThrow(CategoryNotFoundException::new);
         }
 
         Category category = Category.builder()

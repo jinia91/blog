@@ -6,6 +6,7 @@ import myblog.blog.article.application.port.incomming.request.ArticleCreateComma
 import myblog.blog.article.application.port.incomming.request.ArticleEditCommand;
 import myblog.blog.article.application.port.incomming.ArticleUseCase;
 import myblog.blog.article.application.port.incomming.TagUseCase;
+import myblog.blog.article.domain.ArticleNotFoundException;
 import myblog.blog.category.appliacation.port.incomming.CategoryUseCase;
 import myblog.blog.member.application.port.incomming.MemberQueriesUseCase;
 import myblog.blog.article.application.port.outgoing.ArticleBackupRepositoryPort;
@@ -53,7 +54,7 @@ public class ArticleService implements ArticleUseCase {
     @CacheEvict(value = {"layoutCaching", "layoutRecentArticleCaching","seoCaching"}, allEntries = true)
     public void editArticle(ArticleEditCommand articleEditCommand) {
         var article = articleRepositoryPort.findById(articleEditCommand.getArticleId())
-                .orElseThrow(() -> new IllegalArgumentException("NotFoundArticleException"));
+                .orElseThrow(ArticleNotFoundException::new);
         var category = categoryUseCase.findCategory(articleEditCommand.getCategoryName());
         tagUseCase.deleteAllTagsWith(article);
         tagUseCase.createNewTagsAndArticleTagList(articleEditCommand.getTags(), article);

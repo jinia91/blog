@@ -3,6 +3,7 @@ package myblog.blog.comment.domain;
 import lombok.Builder;
 import lombok.Getter;
 import myblog.blog.article.domain.Article;
+import myblog.blog.comment.adapter.incomming.CommentBadRequestException;
 import myblog.blog.shared.domain.BasicEntity;
 import myblog.blog.member.doamin.Member;
 import org.hibernate.annotations.OnDelete;
@@ -73,7 +74,7 @@ public class Comment extends BasicEntity {
     */
     private String removeDuplicatedEnter(String content) {
         if(content == null || content.isEmpty()){
-         throw new IllegalArgumentException("InvalidContentException");
+         throw new CommentBadRequestException   ();
         }
         char[] contentBox = new char[content.length()];
         int idx = 0;

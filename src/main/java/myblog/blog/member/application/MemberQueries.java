@@ -6,6 +6,7 @@ import myblog.blog.member.application.port.outgoing.MemberRepositoryPort;
 
 import myblog.blog.member.doamin.Member;
 
+import myblog.blog.member.doamin.NotFoundMemberException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,6 +18,6 @@ public class MemberQueries implements MemberQueriesUseCase {
     @Override
     public Member findById(Long memberId) {
         return memberRepositoryPort.findById(memberId)
-                .orElseThrow(() -> new IllegalArgumentException("NotFoundMemberException"));
+                .orElseThrow(NotFoundMemberException::new);
     }
 }

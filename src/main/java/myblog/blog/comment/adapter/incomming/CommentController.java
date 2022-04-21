@@ -38,7 +38,7 @@ public class CommentController {
                                            @Validated @RequestBody CommentForm commentForm, Errors errors,
                                            @AuthenticationPrincipal PrincipalDetails principal){
         if (errors.hasErrors()) {
-            throw new InvalidCommentRequestException(Objects.requireNonNull(errors.getFieldError()).getDefaultMessage());
+            throw new CommentBadRequestException();
         }
 
         MemberVo member = principal.getMember();

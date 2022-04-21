@@ -5,6 +5,7 @@ import myblog.blog.article.application.port.incomming.TempArticleUseCase;
 import myblog.blog.article.application.port.incomming.ArticleQueriesUseCase;
 import myblog.blog.article.application.port.incomming.TagsQueriesUseCase;
 import myblog.blog.category.appliacation.port.incomming.CategoryQueriesUseCase;
+import myblog.blog.category.domain.CategoryNotFoundException;
 import myblog.blog.shared.application.port.incomming.LayoutRenderingUseCase;
 
 import myblog.blog.article.application.port.incomming.request.ArticleCreateCommand;
@@ -110,7 +111,7 @@ public class ArticleController {
                 if (categoryCntSub.getTitle().equals(category)) return categoryCntSub.getCount();
             }
         }
-        throw new IllegalArgumentException("'"+category+"' 라는 카테고리는 존재하지 않습니다.");
+        throw new CategoryNotFoundException();
     }
     /*
         - 태그별 게시물 조회하기

@@ -1,6 +1,8 @@
 package myblog.blog.article.adapter.outgoing.persistence;
 
+import myblog.blog.article.adapter.outgoing.model.GithubExternalErrorException;
 import myblog.blog.article.domain.Article;
+import myblog.blog.shared.domain.ExternalErrorException;
 import org.kohsuke.github.GHRepository;
 import org.kohsuke.github.GitHub;
 import org.kohsuke.github.GitHubBuilder;
@@ -29,6 +31,7 @@ public class GithubRepoArticleRepository {
                     .commit();
         } catch (IOException e) {
             e.printStackTrace();
+            throw new GithubExternalErrorException();
         }
     }
 
