@@ -2,6 +2,7 @@ package myblog.blog.article.application.port.incomming.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import myblog.blog.article.adapter.incomming.ArticleForm;
 
 @Getter
