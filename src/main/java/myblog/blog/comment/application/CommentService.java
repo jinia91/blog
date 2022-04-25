@@ -63,7 +63,6 @@ public class CommentService implements CommentUseCase {
                 .parents(pComment)
                 .secret(secret)
                 .build();
-
         commentRepositoryPort.save(comment);
     }
 

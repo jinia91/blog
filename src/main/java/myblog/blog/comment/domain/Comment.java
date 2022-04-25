@@ -74,7 +74,7 @@ public class Comment extends BasicEntity {
     */
     private String removeDuplicatedEnter(String content) {
         if(content == null || content.isEmpty()){
-         throw new CommentBadRequestException   ();
+         throw new CommentBadRequestException();
         }
         char[] contentBox = new char[content.length()];
         int idx = 0;

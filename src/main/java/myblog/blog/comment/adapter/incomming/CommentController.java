@@ -40,7 +40,6 @@ public class CommentController {
         if (errors.hasErrors()) {
             throw new CommentBadRequestException();
         }
-
         MemberVo member = principal.getMember();
         // 부모 댓글인지 자식댓글인지 분기로 저장
         if(parentId != null){
@@ -49,7 +48,6 @@ public class CommentController {
         else {
             commentUseCase.savePComment(commentForm.getContent(), commentForm.isSecret(), member.getId(), articleId);
         }
-
         return commentQueriesUseCase.getCommentList(articleId);
     }
 
