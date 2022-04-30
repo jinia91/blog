@@ -28,8 +28,7 @@ import java.util.*;
     - fts 구현을 위한 인덱스 설정
 */
 @Table(indexes = {
-        @Index(name="i_article_title", columnList = "title"),
-        @Index(name = "i_article_content", columnList = "content")
+        @Index(name="i_article_title", columnList = "title")
 })
 @Getter
 public class Article extends BasicEntity {
