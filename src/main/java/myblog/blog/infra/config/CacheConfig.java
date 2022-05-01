@@ -12,7 +12,7 @@ import java.util.Objects;
 /*
     - 캐시 인터페이스 설정
 */
-@Configuration
+//@Configuration
 public class CacheConfig {
 
     /*
