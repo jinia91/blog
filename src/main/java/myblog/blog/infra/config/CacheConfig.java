@@ -38,9 +38,9 @@ public class CacheConfig {
         */
         CacheConfiguration layoutCacheConfiguration = new CacheConfiguration()
                 .eternal(false)
-                .timeToIdleSeconds(0)
-                .timeToLiveSeconds(21600)
-                .maxEntriesLocalHeap(0)
+                .timeToIdleSeconds(3600)
+                .timeToLiveSeconds(3600)
+                .maxEntriesLocalHeap(5)
                 .memoryStoreEvictionPolicy("LRU")
                 .name("layoutCaching");
 
@@ -50,9 +50,9 @@ public class CacheConfig {
         // 2. 레이아웃에 필요한 동적 리스트반환 메서드용 캐시
         CacheConfiguration recentArticleCacheConfiguration = new CacheConfiguration()
                 .eternal(false)
-                .timeToIdleSeconds(0)
-                .timeToLiveSeconds(21600)
-                .maxEntriesLocalHeap(0)
+                .timeToIdleSeconds(3600)
+                .timeToLiveSeconds(3600)
+                .maxEntriesLocalHeap(100)
                 .memoryStoreEvictionPolicy("LRU")
                 .name("layoutRecentArticleCaching");
 
@@ -62,9 +62,9 @@ public class CacheConfig {
         // 3. 레이아웃에 필요한 리스트 반환 메서드용 캐시, 유지보수를 위해 분리
         CacheConfiguration recentCommentCacheConfiguration = new CacheConfiguration()
                 .eternal(false)
-                .timeToIdleSeconds(0)
-                .timeToLiveSeconds(21600)
-                .maxEntriesLocalHeap(0)
+                .timeToIdleSeconds(3600)
+                .timeToLiveSeconds(3600)
+                .maxEntriesLocalHeap(5)
                 .memoryStoreEvictionPolicy("LRU")
                 .name("layoutRecentCommentCaching");
 
@@ -79,9 +79,9 @@ public class CacheConfig {
         */
         CacheConfiguration rssConfiguration = new CacheConfiguration()
                 .eternal(false)
-                .timeToIdleSeconds(0)
+                .timeToIdleSeconds(21600)
                 .timeToLiveSeconds(21600)
-                .maxEntriesLocalHeap(0)
+                .maxEntriesLocalHeap(5)
                 .memoryStoreEvictionPolicy("LRU")
                 .name("seoCaching");
 
