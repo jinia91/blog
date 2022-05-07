@@ -1,6 +1,7 @@
 package myblog.blog.category.appliacation;
 
 import lombok.RequiredArgsConstructor;
+import myblog.blog.article.application.ArticleDtoMapper;
 import myblog.blog.category.appliacation.port.incomming.CategoryQueriesUseCase;
 import myblog.blog.category.appliacation.port.incomming.response.CategorySimpleDto;
 import myblog.blog.category.appliacation.port.incomming.response.CategoryViewForLayout;
@@ -19,6 +20,7 @@ import java.util.stream.Collectors;
 public class CategoryQueries implements CategoryQueriesUseCase {
 
     private final CategoryRepositoryPort categoryRepositoryPort;
+    private final ArticleDtoMapper articleDtoMapper;
 
     /*
         - 카테고리와 카테고리별 아티클 수 찾기
@@ -46,7 +48,7 @@ public class CategoryQueries implements CategoryQueriesUseCase {
     public List<CategorySimpleDto> findCategoryByTier(int tier) {
         return categoryRepositoryPort.findAllByTierIs(tier)
                 .stream()
-                .map(category -> MapperUtils.getModelMapper().map(category, CategorySimpleDto.class))
+                .map(articleDtoMapper::categorySimpleDto)
                 .collect(Collectors.toList());
     }
 }

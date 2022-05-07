@@ -32,6 +32,7 @@ public class ArticleQueries implements ArticleQueriesUseCase {
 
     private final ArticleRepositoryPort articleRepositoryPort;
     private final CategoryUseCase categoryUseCase;
+    private final ArticleDtoMapper articleDtoMapper;
 
     /*
         - 메인화면 위한 인기 아티클 6개 목록 가져오기
@@ -44,7 +45,7 @@ public class ArticleQueries implements ArticleQueriesUseCase {
     public List<ArticleResponseForCardBox> getPopularArticles() {
         return articleRepositoryPort.findTop6ByOrderByHitDesc()
                 .stream()
-                .map(article -> MapperUtils.getModelMapper().map(article, ArticleResponseForCardBox.class))
+                .map(articleDtoMapper::cardBox)
                 .collect(Collectors.toList());
     }
     /*
@@ -59,7 +60,7 @@ public class ArticleQueries implements ArticleQueriesUseCase {
                         .findByOrderByIdDesc(lastArticleId, 5);
         return articles
                 .stream()
-                .map(article -> MapperUtils.getModelMapper().map(article, ArticleResponseForCardBox.class))
+                .map(articleDtoMapper::cardBox)
                 .collect(Collectors.toList());
     }
     /*
@@ -85,7 +86,7 @@ public class ArticleQueries implements ArticleQueriesUseCase {
         }
         if(articles == null) throw new ArticleNotFoundException();
 
-        return articles.stream().map(article -> MapperUtils.getModelMapper().map(article, ArticleResponseForCardBox.class)).collect(Collectors.toList());
+        return articles.stream().map(articleDtoMapper::cardBox).collect(Collectors.toList());
     }
 
     /*
@@ -94,7 +95,7 @@ public class ArticleQueries implements ArticleQueriesUseCase {
     @Override
     public ArticleResponseForEdit getArticleForEdit(Long id){
         Article article = articleRepositoryPort.findArticleByIdFetchCategoryAndTags(id);
-        ArticleResponseForEdit articleDto = MapperUtils.getModelMapper().map(article, ArticleResponseForEdit.class);
+        ArticleResponseForEdit articleDto = articleDtoMapper.edit(article);
         List<String> articleTagStrings = article.getArticleTagLists()
                 .stream()
                 .map(articleTag -> articleTag.getTags().getName())
@@ -108,8 +109,7 @@ public class ArticleQueries implements ArticleQueriesUseCase {
     @Override
     public ArticleResponseForDetail getArticleForDetail(Long id){
         Article article = articleRepositoryPort.findArticleByIdFetchCategoryAndTags(id);
-        ArticleResponseForDetail articleResponseForDetail =
-                MapperUtils.getModelMapper().map(article, ArticleResponseForDetail.class);
+        ArticleResponseForDetail articleResponseForDetail = articleDtoMapper.detail(article);
 
         List<String> tags =
                 article.getArticleTagLists()
@@ -129,7 +129,7 @@ public class ArticleQueries implements ArticleQueriesUseCase {
         Category category = categoryUseCase.findCategory(categoryName);
         return articleRepositoryPort.findTop6ByCategoryOrderByIdDesc(category)
                 .stream()
-                .map(article -> MapperUtils.getModelMapper().map(article, ArticleResponseByCategory.class))
+                .map(articleDtoMapper::category)
                 .collect(Collectors.toList());
     }
     /*
@@ -139,8 +139,7 @@ public class ArticleQueries implements ArticleQueriesUseCase {
     public Page<ArticleResponseForCardBox> getArticlesByTag(String tag, Integer page) {
         return articleRepositoryPort
                 .findAllByArticleTagsOrderById(PageRequest.of(pageResolve(page), 5), tag)
-                .map(article ->
-                        MapperUtils.getModelMapper().map(article, ArticleResponseForCardBox.class));
+                .map(articleDtoMapper::cardBox);
     }
     /*
         - 검색어별 게시물 페이징 처리해서 가져오기
@@ -149,8 +148,7 @@ public class ArticleQueries implements ArticleQueriesUseCase {
     public Page<ArticleResponseForCardBox> getArticlesByKeyword(String keyword, Integer page) {
         return articleRepositoryPort
                 .findAllByKeywordOrderById(PageRequest.of(pageResolve(page),5), keyword)
-                .map(article ->
-                        MapperUtils.getModelMapper().map(article, ArticleResponseForCardBox.class));
+                .map(articleDtoMapper::cardBox);
     }
     /*
         - 페이지 시작점 0~1변경 메서드

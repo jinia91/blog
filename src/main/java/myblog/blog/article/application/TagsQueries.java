@@ -17,11 +17,12 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class TagsQueries implements TagsQueriesUseCase {
     private final TagRepositoryPort tagRepositoryPort;
+    private final ArticleDtoMapper articleDtoMapper;
 
     public List<TagsResponse> findAllTagDtos(){
         var tags = tagRepositoryPort.findAll();
         return tags.stream()
-                .map(tag -> MapperUtils.getModelMapper().map(tag, TagsResponse.class))
+                .map(articleDtoMapper::of)
                 .collect(Collectors.toList());
     }
 }

@@ -46,7 +46,6 @@ dependencies {
 	implementation 'io.sentry:sentry-spring-boot-starter:5.6.1'
 	implementation 'com.querydsl:querydsl-jpa'
 	implementation 'com.github.node-gradle:gradle-node-plugin:3.1.0'
-	implementation group: 'org.modelmapper', name: 'modelmapper', version: '2.4.4'
 	implementation group: 'org.kohsuke', name: 'github-api', version: '1.133'
 	implementation group: 'org.apache.commons', name: 'commons-text', version: '1.9'
 	implementation group: 'com.atlassian.commonmark', name: 'commonmark', version: '0.17.0'
@@ -55,6 +54,10 @@ dependencies {
 	implementation group: 'org.jdom', name: 'jdom2', version: '2.0.6'
 	implementation group: 'net.sf.ehcache', name: 'ehcache', version: '2.10.9.2'
 	implementation group: 'com.amazonaws', name: 'aws-java-sdk-s3', version: '1.12.152'
+
+	implementation 'org.mapstruct:mapstruct:1.4.2.Final'
+	annotationProcessor "org.mapstruct:mapstruct-processor:1.4.2.Final"
+	annotationProcessor'org.projectlombok:lombok-mapstruct-binding:0.2.0'
 
 
 	compileOnly 'org.projectlombok:lombok'

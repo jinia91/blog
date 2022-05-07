@@ -18,7 +18,6 @@ public class ArticleResponseForEdit {
     private String content;
     private String toc;
     private String thumbnailUrl;
-
-    private List<String> articleTagList = new ArrayList<>();
+    private List<String> articleTagList;
     private Category category;
 }
