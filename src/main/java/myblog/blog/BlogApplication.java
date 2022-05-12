@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
 @SpringBootApplication
 @EnableJpaAuditing
-//@EnableCaching
+@EnableCaching
 public class BlogApplication {
 
 	public static void main(String[] args) {
