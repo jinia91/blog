@@ -19,7 +19,6 @@ import java.util.*;
 @Transactional
 @RequiredArgsConstructor
 public class SiteMapService implements SiteMapUseCase {
-
     private final ArticleUseCase articleUseCase;
     private final CategoryUseCase categoryUseCase;
 

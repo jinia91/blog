@@ -14,7 +14,6 @@ import java.util.Map;
     - 멤버 객체를 래핑한 커스텀 Principal 클래스
 */
 public class PrincipalDetails implements OAuth2User {
-
     private final Map<String, Object> attributes;
     private final Member member;
     private final MemberVo memberVo;

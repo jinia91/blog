@@ -15,5 +15,4 @@ public enum Role {
     ADMIN("ROLE_ADMIN");
 
     private final String value;
-
 }

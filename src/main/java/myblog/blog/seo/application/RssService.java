@@ -23,7 +23,6 @@ import java.util.*;
 @Transactional
 @RequiredArgsConstructor
 public class RssService implements RssUseCase {
-
     private final ArticleUseCase articleUseCase;
 
     @Override

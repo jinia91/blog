@@ -10,10 +10,8 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @Getter
 public enum ProviderType {
-
     GOOGLE("google"),
     NAVER("naver");
 
     private final String value;
-
 }
