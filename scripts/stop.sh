@@ -7,7 +7,6 @@ source ${ABSDIR}/profile.sh
 IDLE_PORT=$(find_idle_port)
 
 echo "> $IDLE_PORT 에서 구동중인 앱 PID 확인"
-sleep 30
 
 IDLE_PID=$(lsof -ti tcp:${IDLE_PORT})
 
