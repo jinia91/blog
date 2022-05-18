@@ -89,6 +89,7 @@ https://www.jiniaslog.co.kr/
 - Lombok
 - Github-api
 - Toast Ui Editor
+- MapStruct
 
 ## 핵심 키워드
 
@@ -139,7 +140,35 @@ https://www.jiniaslog.co.kr/
 앞으로 제 프로그래밍 공부와 개발 기록, 그리고 유지보수를 같이할 블로그를 만들어 보기로 결정했습니다.
 
 
-## 핵심 기능
+## 핵심 기능(릴리즈 후 추가 개선)
+
+
+### 메모리가 부족한 프리티어 환경에서 원활한 운영을 위해 Swap으로 가상 메모리 설정
+
+(2022.05.12)
+
+프리티어환경에서 서버를 운영하면서 주기적으로 서버가 죽는 이슈가 있었고, 해당 이슈를 트러블 슈팅하며 가상메모리 설정을 진행하였습니다.
+
+해당 과정은 아래 링크 블로그 글을 통해 확인하실수 있습니다.
+
+[[트러블 슈팅]프리티어 환경에서 서버가 주기적으로 죽는 문제](https://www.jiniaslog.co.kr/article/view?articleId=1602)
+
+### MapStruct를 사용해 보일러 플레이트 코드 제거
+
+(2022.05.07)
+
+기존에는 리플렉션을 통해 객체 매핑을 해주는 `ModelMapper` 를 사용하였으나, 
+
+런타임 시점에서 매번 리플렉션을 사용하며 객체에 접근하고 생성하는 메커니즘의한계, 커뮤니티들에서 report 되는 메모리 누수 이슈등을 보며 고민하다
+
+인터페이스만 정의해주면 컴파일시점에서 매핑 코드를 자동으로 구현해주는 `MapStruct` 라이브러리로 스택 마이그레이션을 진행하였습니다.
+
+[기술조사 결과`MapSturct` 라이브러리가 성능적으로 훨씬 뛰어나다고 판단하였으며(링크)](https://better-dev.netlify.app/java/2020/10/26/compare_objectmapper/),
+
+해당 코드는 커밋내역으로 확인할 수 있습니다. 
+
+- [커밋내역](https://github.com/jinia91/blog/commit/efa8b4fbd41e7cdeccb56d959e356ad0ae1c935c)
+
 
 ### JPQL로 작성된 기존 쿼리 Qdsl로 스택 마이그레이션
 
@@ -199,6 +228,9 @@ ci역시 같은 github내에서 진행되는것이 보다 바람직하다고 판
 
 AOP 학습과 해당 기능 개발을 위해 [인프런, 김영한님의 스프링 핵심 원리 - 고급편](https://www.inflearn.com/course/%EC%8A%A4%ED%94%84%EB%A7%81-%ED%95%B5%EC%8B%AC-%EC%9B%90%EB%A6%AC-%EA%B3%A0%EA%B8%89%ED%8E%B8/dashboard) 을 참고했습니다.
 
+
+## 핵심 기능(릴리즈 전)
+
 ### 반응형 웹
 
 부트스트랩을 이용하여 작은 모바일 환경은 물론 태블릿 대형 화면에서도 문제없이 작동하는 반응형 웹을 구현하였습니다.
@@ -226,7 +258,7 @@ AOP 학습과 해당 기능 개발을 위해 [인프런, 김영한님의 스프�
 
 ![마크다운 편집](https://github.com/jinia91/blogBackUp/blob/main/img/080e9414-2691-461f-b0d1-7590bf562e20.png?raw=true)
 
-#### 이미지와 썸네일 삽입시는 깃허브 이미지 서버로
+#### 이미지와 썸네일 삽입시는 ~~깃허브~~ aws s3 이미지 서버로
 (2022.03.21)
 
 Toast Ui editor는 기본적으로 컨텐츠 내의 이미지 삽입을 blob으로 컨텐츠와 함께 병기하게 되는데 이경우 장황한 바이너리 코드로 DB에 부담이 되고
@@ -482,3 +514,4 @@ tagify 라이브러리를 사용하여 태그 기능을 구현하였고 태그�
 - [스프링에서 캐시 사용하여 프로젝트 성능 개선해보기](https://www.jiniaslog.co.kr/article/view?articleId=254)
 - [[CI/CD 무중단배포 프로젝트 적용하기] CI? CD? 기본 개념잡기 (1)](https://www.jiniaslog.co.kr/article/view?articleId=303)
 - [운영환경에서 정적 리소스의 버전관리와 브라우저의 캐시 문제](https://www.jiniaslog.co.kr/article/view?articleId=402)
+- [프리티어 환경에서 서버가 주기적으로 죽는 문제](https://www.jiniaslog.co.kr/article/view?articleId=1602)

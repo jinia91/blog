@@ -34,7 +34,7 @@ public class CommentDto {
                 2. Depth 변화시 재귀 호출 / 재귀 탈출
                 3. 탈출시 상위 카테고리 list로 삽입하여 트리구조 작성
     */
-    public static List<CommentDto> listCreateFrom(List<Comment> commentSource, int dept) {
+    public static List<CommentDto> createCommentListFrom(List<Comment> commentSource, int dept) {
 
         ArrayList<CommentDto> commentDtoList = new ArrayList<>();
 
@@ -49,7 +49,7 @@ public class CommentDto {
                 commentDtoList.add(new CommentDto(comment));
                 commentSource.remove(0);
             } else if (comment.getTier() > dept) {
-                List<CommentDto> childList = listCreateFrom(commentSource, dept + 1);
+                List<CommentDto> childList = createCommentListFrom(commentSource, dept + 1);
                 commentDtoList.get(commentDtoList.size() - 1)
                         .setCommentDtoList(childList);
             } else {

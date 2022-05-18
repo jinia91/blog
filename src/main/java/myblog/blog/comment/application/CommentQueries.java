@@ -23,7 +23,7 @@ public class CommentQueries implements CommentQueriesUseCase {
     */
     @Override
     public List<CommentDto> getCommentList(Long articleId){
-        return CommentDto.listCreateFrom(commentRepositoryPort.findCommentsByArticleId(articleId),0);
+        return CommentDto.createCommentListFrom(commentRepositoryPort.findCommentsByArticleId(articleId),0);
     }
     /*
         - 최신 댓글 5개 가져오기
