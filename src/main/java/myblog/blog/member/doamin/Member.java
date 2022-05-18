@@ -72,7 +72,8 @@ public class Member extends BasicEntity {
     /*
         - 유저명 변경 더티체킹 로직
     */
-    public void changeUsername(String username) {
+    public void renewUsername(String username) {
+        if(!this.username.equals(username))
         this.username = username;
     }
 }

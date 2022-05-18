@@ -36,9 +36,6 @@ public class UserInfoFactory {
                 .collect(Collectors.toMap(ProviderType::getValue, providerType->providerType)));
     }
 
-    /*
-        - 팩토리 메소드
-    */
     public Oauth2UserInfo makeOauth2UserInfoOf(String registrationId, OAuth2User oAuth2User) {
         var providerTypeOptional = createEnumFromString(registrationId);
         return userInfoFactoryMap

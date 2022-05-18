@@ -14,7 +14,7 @@ public class MemberRepositoryAdapter implements MemberRepositoryPort {
     private final JpaMemberRepository jpaMemberRepository;
 
     @Override
-    public Member findByEmail(String email) {
+    public Optional<Member> findByEmail(String email) {
         return jpaMemberRepository.findByEmail(email);
     }
     @Override
@@ -26,7 +26,7 @@ public class MemberRepositoryAdapter implements MemberRepositoryPort {
         return jpaMemberRepository.findById(memberId);
     }
     @Override
-    public Member findByUserId(String providerId) {
+    public Optional<Member> findByUserId(String providerId) {
         return jpaMemberRepository.findByUserId(providerId);
     }
 }

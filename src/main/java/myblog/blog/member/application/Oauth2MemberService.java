@@ -5,7 +5,6 @@ import myblog.blog.member.application.port.incomming.response.userinfo.Oauth2Use
 import myblog.blog.member.application.port.outgoing.MemberRepositoryPort;
 
 import myblog.blog.member.doamin.Member;
-import myblog.blog.member.doamin.Role;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
@@ -23,9 +22,6 @@ public class Oauth2MemberService extends DefaultOAuth2UserService {
     private final MemberRepositoryPort memberRepositoryPort;
     private final UserInfoFactory userInfoFactory;
 
-    /*
-        - OAuth2 인증 로그인
-    */
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
         var oAuth2User = super.loadUser(userRequest);
@@ -35,31 +31,19 @@ public class Oauth2MemberService extends DefaultOAuth2UserService {
         return new PrincipalDetails(member, userInfo.getAttributes());
     }
 
-    /*
-        - 회원가입 or 로그인 로직
-    */
     private Member getOrJoinMember(Oauth2UserInfo userInfo) {
-        //DB에서 조회해서 존재시 로그인처리, 미존재시 가입처리
-        var member = memberRepositoryPort.findByUserId(userInfo.getProviderId());
-        if(member == null) {
-            //Email 중복검증
-            if(memberRepositoryPort.findByEmail(userInfo.getEmail()) != null)
-                throw new OAuth2AuthenticationException("duplicateEmail");
-            member = Member.builder()
-                    .username(userInfo.getUserName())
-                    .picUrl(userInfo.getPicture())
-                    .email(userInfo.getEmail())
-                    .userId(userInfo.getProviderId())
-                    .providerId(userInfo.getProviderId())
-                    .provider(userInfo.getProvider())
-                    .role(Role.USER)
-                    .build();
-            memberRepositoryPort.save(member);
-        }
-        // 유저 네임 변경시 더티체킹으로 유저네임 변경
-        if(!member.getUsername().equals(userInfo.getUserName())){
-            member.changeUsername(userInfo.getUserName());
-        }
+        var member = memberRepositoryPort.findByUserId(userInfo.getProviderId())
+                .orElseGet(() -> signUpNewMember(userInfo));
+        member.renewUsername(userInfo.getUserName());
         return member;
+    }
+
+    private Member signUpNewMember(Oauth2UserInfo userInfo) {
+        memberRepositoryPort.findByEmail(userInfo.getEmail())
+                .ifPresent(alreadyMember -> {
+                    throw new OAuth2AuthenticationException("duplicateEmail");});
+        var newMember = userInfo.toEntity();
+        memberRepositoryPort.save(newMember);
+        return newMember;
     }
 }

@@ -1,5 +1,8 @@
 package myblog.blog.member.application.port.incomming.response.userinfo;
 
+import myblog.blog.member.doamin.Member;
+import myblog.blog.member.doamin.Role;
+
 import java.util.Map;
 
 /*
@@ -19,5 +22,15 @@ public interface Oauth2UserInfo {
 
     Map<String, Object> getAttributes();
 
-
+    default Member toEntity(){
+        return Member.builder()
+                .username(this.getUserName())
+                .picUrl(this.getPicture())
+                .email(this.getEmail())
+                .userId(this.getProviderId())
+                .providerId(this.getProviderId())
+                .provider(this.getProvider())
+                .role(Role.USER)
+                .build();
+    }
 }
