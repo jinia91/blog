@@ -56,7 +56,7 @@ public class Category extends BasicEntity {
         this.cSortNum = cSortNum;
     }
 
-    protected Category() {
+    public Category() {
     }
 
     @Override

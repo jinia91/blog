@@ -7,6 +7,7 @@ import myblog.blog.article.adapter.incomming.ArticleForm;
 
 @Getter
 @AllArgsConstructor
+@NoArgsConstructor
 public class ArticleCreateCommand {
     private Long memberId;
     private String title;

@@ -54,7 +54,7 @@ public class Member extends BasicEntity {
     @OneToMany(mappedBy = "member")
     private List<Comment> commentList = new ArrayList<>();
 
-    protected Member() {}
+    public Member() {}
 
     @Builder
     public Member(String username, String email, String picUrl, Role role,String userId, String provider, String providerId) {

@@ -1,5 +1,6 @@
 package myblog.blog.article.domain;
 
+import myblog.blog.shared.domain.BadRequestException;
 import myblog.blog.shared.domain.BasicEntity;
 import myblog.blog.category.domain.Category;
 import myblog.blog.comment.domain.Comment;
@@ -7,6 +8,7 @@ import myblog.blog.member.doamin.Member;
 
 import lombok.Builder;
 import lombok.Getter;
+import org.apache.commons.lang3.StringUtils;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import javax.persistence.*;
@@ -74,6 +76,11 @@ public class Article extends BasicEntity {
 
     @Builder
     public Article(String title, String content, String toc, Member member, String thumbnailUrl, Category category) {
+        if(StringUtils.isEmpty(title)) throw new BadRequestException("Article.tittle");
+        if(StringUtils.isEmpty(content)) throw new BadRequestException("Article.content");
+        if(member == null) throw new BadRequestException("Article.member");
+        if(category == null) throw new BadRequestException("Article.category");
+
         this.title = title;
         this.content = content;
         this.toc = toc;

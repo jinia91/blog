@@ -6,10 +6,12 @@ import myblog.blog.comment.application.port.outgoing.CommentRepositoryPort;
 
 import myblog.blog.comment.domain.Comment;
 import myblog.blog.article.domain.Article;
+import myblog.blog.comment.domain.NotFoundParentCommnetException;
 import myblog.blog.member.doamin.Member;
 
 import lombok.RequiredArgsConstructor;
 import myblog.blog.member.application.port.incomming.MemberQueriesUseCase;
+import myblog.blog.member.doamin.NotFoundMemberException;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,7 +30,8 @@ public class CommentService implements CommentUseCase {
     @CacheEvict(value = "layoutRecentCommentCaching", allEntries = true)
     @Override
     public void savePComment(String content, boolean secret, Long memberId, Long articleId){
-        var member = memberQueriesUseCase.findById(memberId);
+        var member = memberQueriesUseCase.findById(memberId)
+                .orElseThrow(NotFoundMemberException::new);
         var article = articleUseCase.getArticle(articleId);
 
         Comment comment = Comment.builder()
@@ -49,10 +52,11 @@ public class CommentService implements CommentUseCase {
     @CacheEvict(value = "layoutRecentCommentCaching", allEntries = true)
     @Override
     public void saveCComment(String content, boolean secret, Long memberId, Long articleId, Long parentId) {
-        var member = memberQueriesUseCase.findById(memberId);
+        var member = memberQueriesUseCase.findById(memberId)
+                .orElseThrow(NotFoundMemberException::new);;
         var article = articleUseCase.getArticle(articleId);
         var pComment = commentRepositoryPort.findById(parentId)
-                .orElseThrow(() -> new IllegalArgumentException("NotfoundParentCommentException"));
+                .orElseThrow(NotFoundParentCommnetException::new);
 
         var comment = Comment.builder()
                 .article(article)

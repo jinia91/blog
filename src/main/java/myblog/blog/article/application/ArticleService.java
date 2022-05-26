@@ -8,15 +8,15 @@ import myblog.blog.article.application.port.incomming.ArticleUseCase;
 import myblog.blog.article.application.port.incomming.TagUseCase;
 import myblog.blog.article.domain.ArticleNotFoundException;
 import myblog.blog.category.appliacation.port.incomming.CategoryUseCase;
+import myblog.blog.category.domain.CategoryNotFoundException;
 import myblog.blog.member.application.port.incomming.MemberQueriesUseCase;
 import myblog.blog.article.application.port.outgoing.ArticleBackupRepositoryPort;
 import myblog.blog.article.application.port.outgoing.ArticleRepositoryPort;
 
 import myblog.blog.article.domain.Article;
-import myblog.blog.category.domain.Category;
-import myblog.blog.member.doamin.Member;
 
 
+import myblog.blog.member.doamin.NotFoundMemberException;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -37,8 +37,10 @@ public class ArticleService implements ArticleUseCase {
     @Override
     @CacheEvict(value = {"layoutCaching", "layoutRecentArticleCaching","seoCaching"}, allEntries = true)
     public Long writeArticle(ArticleCreateCommand articleCreateCommand) {
-        var writer = memberQueriesUseCase.findById(articleCreateCommand.getMemberId());
-        var category = categoryUseCase.findCategory(articleCreateCommand.getCategory());
+        var writer = memberQueriesUseCase.findById(articleCreateCommand.getMemberId())
+                .orElseThrow(NotFoundMemberException::new);
+        var category = categoryUseCase.findCategory(articleCreateCommand.getCategory())
+                .orElseThrow(CategoryNotFoundException::new);
         var newArticle = new Article(articleCreateCommand.getTitle(),
                 articleCreateCommand.getContent(),
                 articleCreateCommand.getToc(),
@@ -55,7 +57,8 @@ public class ArticleService implements ArticleUseCase {
     public void editArticle(ArticleEditCommand articleEditCommand) {
         var article = articleRepositoryPort.findById(articleEditCommand.getArticleId())
                 .orElseThrow(ArticleNotFoundException::new);
-        var category = categoryUseCase.findCategory(articleEditCommand.getCategoryName());
+        var category = categoryUseCase.findCategory(articleEditCommand.getCategoryName())
+                .orElseThrow(CategoryNotFoundException::new);
         tagUseCase.deleteAllTagsWith(article);
         tagUseCase.createNewTagsAndArticleTagList(articleEditCommand.getTags(), article);
         article.edit(articleEditCommand.getContent(),

@@ -2,6 +2,8 @@ package myblog.blog.member.application.port.incomming;
 
 import myblog.blog.member.doamin.Member;
 
+import java.util.Optional;
+
 public interface MemberQueriesUseCase {
-    Member findById(Long memberId);
+    Optional<Member> findById(Long memberId);
 }

@@ -12,6 +12,7 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Transactional
@@ -24,9 +25,8 @@ public class CategoryService implements CategoryUseCase {
         - 카테고리 이름으로 카테고리 찾기
     */
     @Override
-    public Category findCategory(String title) {
-        return categoryRepositoryPort.findByTitle(title)
-                .orElseThrow(CategoryNotFoundException::new);
+    public Optional<Category> findCategory(String title) {
+        return categoryRepositoryPort.findByTitle(title);
     }
 
     /*

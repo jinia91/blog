@@ -15,6 +15,7 @@ import myblog.blog.category.appliacation.port.incomming.CategoryUseCase;
 
 import myblog.blog.article.application.port.outgoing.ArticleRepositoryPort;
 
+import myblog.blog.category.domain.CategoryNotFoundException;
 import myblog.blog.shared.utils.MapperUtils;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
@@ -126,7 +127,8 @@ public class ArticleQueries implements ArticleQueriesUseCase {
     */
     @Override
     public List<ArticleResponseByCategory> getArticlesByCategoryForDetailView(String categoryName){
-        Category category = categoryUseCase.findCategory(categoryName);
+        Category category = categoryUseCase.findCategory(categoryName)
+                .orElseThrow(CategoryNotFoundException::new);
         return articleRepositoryPort.findTop6ByCategoryOrderByIdDesc(category)
                 .stream()
                 .map(articleDtoMapper::category)

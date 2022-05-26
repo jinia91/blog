@@ -5,9 +5,10 @@ import myblog.blog.category.appliacation.port.incomming.response.CategoryViewFor
 import myblog.blog.category.domain.Category;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface CategoryUseCase {
-    Category findCategory(String title);
+    Optional<Category> findCategory(String title);
     List<Category> getAllCategories();
     void changeCategory(List<CategorySimpleDto> categoryList);
 }
