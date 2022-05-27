@@ -26,10 +26,4 @@ public interface ArticleDtoMapper {
     ArticleResponseForDetail detail(Article article);
     ArticleResponseByCategory category(Article article);
     TagsResponse of(Tags tag);
-    @Mappings({
-            @Mapping(target = "count",ignore = true),
-            @Mapping(target = "POrder",ignore = true),
-            @Mapping(target = "COrder",ignore = true)
-    })
-    CategorySimpleDto categorySimpleDto(Category category);
 }

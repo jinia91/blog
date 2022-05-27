@@ -16,6 +16,8 @@ import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.InjectMocks
 import org.mockito.Mock
 import org.mockito.junit.jupiter.MockitoExtension
+import org.mockito.kotlin.times
+import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 import java.util.*
 import kotlin.test.assertFailsWith
@@ -63,5 +65,10 @@ class ArticleServiceTests {
         sut.writeArticle(articleCreateCommand)
     }
 
+    @Test
+    fun`article 삭제 성공`(){
+        sut.deleteArticle(1L)
+        verify(articleRepositoryPort, times(1)).deleteArticle(1L)
+    }
 
 }

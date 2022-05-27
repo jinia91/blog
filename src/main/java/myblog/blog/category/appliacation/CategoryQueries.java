@@ -1,12 +1,10 @@
 package myblog.blog.category.appliacation;
 
 import lombok.RequiredArgsConstructor;
-import myblog.blog.article.application.ArticleDtoMapper;
 import myblog.blog.category.appliacation.port.incomming.CategoryQueriesUseCase;
 import myblog.blog.category.appliacation.port.incomming.response.CategorySimpleDto;
 import myblog.blog.category.appliacation.port.incomming.response.CategoryViewForLayout;
 import myblog.blog.category.appliacation.port.outgoing.CategoryRepositoryPort;
-import myblog.blog.shared.utils.MapperUtils;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,7 +18,7 @@ import java.util.stream.Collectors;
 public class CategoryQueries implements CategoryQueriesUseCase {
 
     private final CategoryRepositoryPort categoryRepositoryPort;
-    private final ArticleDtoMapper articleDtoMapper;
+    private final CategoryDtoMapper categoryDtoMapper;
 
     /*
         - 카테고리와 카테고리별 아티클 수 찾기
@@ -48,7 +46,7 @@ public class CategoryQueries implements CategoryQueriesUseCase {
     public List<CategorySimpleDto> findCategoryByTier(int tier) {
         return categoryRepositoryPort.findAllByTierIs(tier)
                 .stream()
-                .map(articleDtoMapper::categorySimpleDto)
+                .map(categoryDtoMapper::categorySimpleDto)
                 .collect(Collectors.toList());
     }
 }
