@@ -39,4 +39,10 @@ public class MainController {
         for(var article : articles) article.parseAndRenderForView();
         return articles;
     }
+
+    @GetMapping("/aboutMe")
+    String aboutMe(Model model) {
+        layoutRenderingUseCase.AddLayoutTo(model);
+        return "aboutMe";
+    }
 }

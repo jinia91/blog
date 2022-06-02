@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html th:replace="~{layout/layout.html :: layout(~{::head}, ~{::section})}"
+      lang="ko" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5" xmlns="http://www.w3.org/1999/html">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,  user-scalable = no, initial-scale=1.0"/>
+    <title>Jinia's LOG - About Me!</title>
+    <!-- SEO -->
+    <meta name="description" content="비전공 출신, 개발자 지망생의 공부 내용을 기록하는 블로그입니다."/>
+    <meta name="keyword" content="개발, 테크, IT, 코딩, 알고리즘, 쥬니어, 개발자, 포트폴리오, 블로그, CS, 컴공지식, 컴공, 프로그래밍, 프로그래밍 언어, 비전공, 코딩 테스트, 취업, 취준"/>
+    <meta name="author" content="Jinia"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+
+    <link rel="icon" href="/img/favicon-16x16.png"/>
+    <link rel="apple-touch-icon" href="/img/favicon-16x16.png"/>
+    <link rel="icon" type="image/png" sizes="16x16"  href="/img/favicon-16x16.png">
+    <meta name="msapplication-TileColor" content="#ffffff">
+    <meta name="theme-color" content="#ffffff">
+    <!-- CSS RESET -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css"/>
+    <link rel="stylesheet" th:href="@{/node_modules/bootstrap/dist/css/bootstrap.min.css}"/>
+    <link rel="stylesheet" th:href="@{/css/mainCss.css?ver=1.1}"/>
+    <link rel="stylesheet" th:href="@{/css/about.css}">
+
+    <script src="https://kit.fontawesome.com/233840a552.js" crossorigin="anonymous"></script>
+</head>
+
+<body>
+
+<section class="login-section">
+
+    <article>
+        <figure>
+            <img src='https://unsplash.it/450/800?image=508' alt />
+        </figure>
+        <section>
+                <div>
+                    <h1>Scrolling half by half</h1>
+                    <p>Made in pure #CSS and almost all is "old properties" method. And a bit imagination.<br/>
+                    Yes, the flexbox is old now.</p>
+                </div>
+        </section>
+        
+        <figure>
+            <img src='https://unsplash.it/450/800?image=817' alt />
+        </figure>
+        <section>
+            <div>
+                <h2>I'm Kseso,<br/>
+                &ldquo;a #obCSServer&rdquo;</h2>
+                <p>Ramajero Argonauta, Enredique Amanuense de #CSS.</p>
+            </div>
+        </section>
+        
+        <figure>
+            <img src='https://unsplash.it/450/800?image=948' alt />
+        </figure>
+        <section>
+            <div>
+                <h2><a href='https://escss.blogspot.com'>&xi;sCSS Blog</a></h2>
+                <p>#impoCSSible inside EsCSS. A Spanish #CSS blog where the borders & limits of #CSS disappear.</p>
+            </div>
+        </section>
+        
+        <figure>
+            <img src='https://unsplash.it/450/800?image=737' alt />
+        </figure>
+        <section>
+            <div>
+                <h2>#impoCSSible is nothing</h2>
+                <p>You don´t need Javascript or #CSS processors either for almost 100% of what you want to do.</p>
+            </div>
+        </section>
+        
+        <figure>
+            <img src='https://unsplash.it/450/800?image=870' alt />
+        </figure>
+        <section>
+            <div>
+                <h2>Idea from E.Bouças´s <a href='https://codepen.io/eduardoboucas/full/qdaOWv/'>pen</a></h2>
+                <p>Without jQuery or Javascript, nor fixed position (bye IOs problems)</p>
+            </div>
+        </section>
+        
+        <figure>
+            <img src='https://unsplash.it/450/800?image=743' alt />
+        </figure>
+        <section>
+            <div>
+                <h2>Images from unsplash.it</h2>
+                <p>Because it´s the best for demos. Thanks, guys!</p>
+            </div>
+        </section>
+        
+        <figure>
+            <img src='https://unsplash.it/450/800?image=452' alt />
+        </figure>
+        <section>
+            <div>
+                <h2>show the PEN.<br/>
+                    <a href='https://escss.blogspot.com/2017/08/scroll-half-by-half-pure-css.html'>link the POST</a></h2>
+                <p>Por una web con mucho estilo, para argonautas con buen gusto.</p>
+            </div>
+        </section>
+        
+    </article>
+
+
+    <script th:src="@{/node_modules/bootstrap/dist/js/bootstrap.bundle.min.js}"></script>
+
+</section>
+
+</body>
+</html>
