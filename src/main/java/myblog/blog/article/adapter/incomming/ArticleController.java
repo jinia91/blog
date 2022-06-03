@@ -39,10 +39,10 @@ public class ArticleController {
 
     @GetMapping("article/write")
     String getArticleWriteForm(Model model) {
-        layoutRenderingUseCase.AddLayoutTo(model);
-        model.addAttribute("categoryInput", categoryQueriesUseCase.findCategoryByTier(2));
-        model.addAttribute("tagsInput", tagsQueriesUseCase.findAllTagDtos());
-        model.addAttribute("articleDto", new ArticleForm());
+//        layoutRenderingUseCase.AddLayoutTo(model);
+//        model.addAttribute("categoryInput", categoryQueriesUseCase.findCategoryByTier(2));
+//        model.addAttribute("tagsInput", tagsQueriesUseCase.findAllTagDtos());
+//        model.addAttribute("articleDto", new ArticleForm());
         return "article/articleWriteForm";
     }
 
