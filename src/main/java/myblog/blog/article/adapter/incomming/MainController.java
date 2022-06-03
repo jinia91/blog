@@ -40,6 +40,9 @@ public class MainController {
         return articles;
     }
 
+    /*
+    *  - about me page
+    * */
     @GetMapping("/aboutMe")
     String aboutMe(Model model) {
         layoutRenderingUseCase.AddLayoutTo(model);
