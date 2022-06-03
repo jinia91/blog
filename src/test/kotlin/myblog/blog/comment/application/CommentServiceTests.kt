@@ -3,7 +3,9 @@ package myblog.blog.comment.application
 import myblog.blog.article.application.port.incomming.ArticleUseCase
 import myblog.blog.comment.application.port.outgoing.CommentRepositoryPort
 import myblog.blog.comment.domain.Comment
+import myblog.blog.comment.domain.NotFoundParentCommnetException
 import myblog.blog.member.application.port.incomming.MemberQueriesUseCase
+import myblog.blog.member.doamin.Member
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.ArgumentCaptor
@@ -31,6 +33,7 @@ class CommentServiceTests {
 
     @Test
     fun `부모 댓글 저장 성공`(){
+        whenever(memberQueriesUseCase.findById(1L)).thenReturn(Optional.of(Member()))
         //when
         commentService.savePComment("부모 댓글", false, 1L, 1L)
         //then
@@ -42,6 +45,7 @@ class CommentServiceTests {
     fun `자식 댓글 저장 성공`(){
         //given
         val commentCaptor = ArgumentCaptor.forClass(Comment::class.java)
+        whenever(memberQueriesUseCase.findById(1L)).thenReturn(Optional.of(Member()))
         val comment = Comment.builder().content("test").pOrder(1).build()
         //when
         whenever(commentRepositoryPort.findById(1L)).thenReturn(Optional.of(comment))
@@ -52,7 +56,8 @@ class CommentServiceTests {
 
     @Test
     fun `부모가 없는 자식댓글 에러`(){
-        assertFailsWith<IllegalArgumentException> {
+        whenever(memberQueriesUseCase.findById(1L)).thenReturn(Optional.of(Member()))
+        assertFailsWith<NotFoundParentCommnetException> {
             commentService.saveCComment("자식 댓글", false, 1L, 1L, 1L)
         }
     }
@@ -60,8 +65,6 @@ class CommentServiceTests {
     @Test
     fun `댓글 삭제 성공`(){
         //given
-        val commentCaptor = ArgumentCaptor.forClass(Comment::class.java)
-        val comment = Comment.builder().content("test").pOrder(1).build()
         //when
         commentService.deleteComment(1L)
         //then

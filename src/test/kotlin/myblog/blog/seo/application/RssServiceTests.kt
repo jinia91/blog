@@ -2,6 +2,8 @@ package myblog.blog.seo.application
 
 import myblog.blog.article.domain.Article
 import myblog.blog.article.application.port.incomming.ArticleUseCase
+import myblog.blog.category.domain.Category
+import myblog.blog.member.doamin.Member
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
@@ -34,7 +36,8 @@ class RssServiceTests {
     }
 
     private fun buildArticle(title: String, content: String, id: Long): Article? {
-        val article = Article.builder().title(title).content(content).build()
+        val article = Article.builder().title(title).content(content)
+                .member(Member()).category(Category()).build()
         setArticlePrivateFieldId(id, article)
         setArticleCreatedTimeStamp(article)
         return article

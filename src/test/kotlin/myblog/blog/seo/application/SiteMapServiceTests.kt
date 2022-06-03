@@ -7,6 +7,7 @@ import myblog.blog.seo.application.SiteMapService
 import myblog.blog.category.domain.Category
 import myblog.blog.category.appliacation.CategoryService
 import myblog.blog.category.appliacation.port.incomming.CategoryUseCase
+import myblog.blog.member.doamin.Member
 import myblog.blog.seo.application.port.incomming.SiteMapUseCase
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -48,7 +49,8 @@ class SiteMapServiceTests {
 
     private fun buildCategory(title: String) = Category.builder().title(title).tier(1).build()
     private fun buildArticle(title: String, content: String, id: Long): Article? {
-        val article = Article.builder().title(title).content(content).build()
+        val article = Article.builder().title(title).content(content)
+                .member(Member()).category(Category()).build()
         setArticlePrivateFieldId(id, article)
         setArticleCreatedTimeStamp(article)
         return article
