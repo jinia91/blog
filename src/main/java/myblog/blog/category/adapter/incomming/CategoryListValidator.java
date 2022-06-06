@@ -1,4 +1,4 @@
-package myblog.blog.category.adapter.imcomming;
+package myblog.blog.category.adapter.incomming;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
