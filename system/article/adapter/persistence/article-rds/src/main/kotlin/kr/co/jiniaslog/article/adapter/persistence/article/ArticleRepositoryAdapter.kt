@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository
 @Repository
 class ArticleRepositoryAdapter(
     private val jpaArticleRepository: JpaArticleRepository,
+    private val articleMapper: ArticlePmMapper,
 ) : ArticleRepository {
     override fun save(newArticle: Article) {
         jpaArticleRepository.save(

@@ -10,6 +10,7 @@ plugins {
     val kotlinVersion = "1.8.10"
     kotlin("jvm") version kotlinVersion
     id("org.jmailen.kotlinter") version "3.14.0" apply false
+    kotlin("kapt") version kotlinVersion
 }
 
 group = "kr.co.jiniaslog"
@@ -34,6 +35,7 @@ subprojects {
     apply(plugin = "java")
     apply(plugin = "org.jetbrains.kotlin.jvm")
     apply(plugin = "org.jmailen.kotlinter")
+    apply(plugin = "org.jetbrains.kotlin.kapt")
 
     repositories {
         mavenCentral()
@@ -63,6 +65,10 @@ subprojects {
 
                 testImplementation("org.assertj:assertj-core:3.24.2")
                 testImplementation("ch.qos.logback:logback-classic:1.4.5")
+
+                implementation("org.mapstruct:mapstruct:1.5.3.Final")
+                kapt("org.mapstruct:mapstruct-processor:1.5.3.Final")
+                kaptTest("org.mapstruct:mapstruct-processor:1.5.3.Final")
             }
         }
 
