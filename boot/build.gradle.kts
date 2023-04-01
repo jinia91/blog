@@ -33,10 +33,14 @@ dependencies {
 tasks.withType<KotlinCompile> {
     kotlinOptions {
         jvmTarget = "17"
-        freeCompilerArgs += "-Xjsr305=strict"
+        freeCompilerArgs = freeCompilerArgs + "-Xjsr305=strict"
     }
 }
 
 tasks.withType<Test> {
     useJUnitPlatform()
+}
+
+tasks.getByName("jar") {
+    enabled = false
 }

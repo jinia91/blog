@@ -11,15 +11,18 @@ plugins {
 }
 
 group = "kr.co.jiniaslog"
+val jar: Jar by tasks
+jar.enabled = true
+jar.archiveFileName.set("${project.name}.jar")
+
 
 dependencies {
-    val isSystemProject = project.path.startsWith(":system")
-    if (isSystemProject) {
-        dependencies {
-            implementation(project(path))
+    subprojects.forEach { subproject ->
+        val isSystemChildProject = subproject.path.startsWith(":system:")
+        if (isSystemChildProject) {
+            implementation(project(subproject.path))
         }
     }
-
 }
 
 subprojects {
@@ -30,14 +33,21 @@ subprojects {
         mavenCentral()
     }
 
+    val localLib = ":lib"
+
+    if(this.name != localLib)
+    dependencies {
+        api(localLib)
+    }
+
     tasks.withType<KotlinCompile> {
         kotlinOptions {
             jvmTarget = "17"
             freeCompilerArgs = freeCompilerArgs + "-Xjsr305=strict"
         }
     }
-}
 
-repositories {
-    mavenCentral()
+    val jar: Jar by tasks
+    jar.enabled = true
+    jar.archiveFileName.set("${project.name}.jar")
 }
