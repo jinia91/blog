@@ -10,7 +10,7 @@ plugins {
     kotlin("plugin.jpa") version kotlinVersion
 }
 
-group = "Jinia's log"
+group = "kr.co.jiniaslog"
 version = "2.0.0"
 java.sourceCompatibility = JavaVersion.VERSION_17
 
@@ -19,6 +19,8 @@ repositories {
 }
 
 dependencies {
+    implementation(project(":system"))
+
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.jetbrains.kotlin:kotlin-reflect")

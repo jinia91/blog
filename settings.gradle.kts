@@ -7,10 +7,12 @@ include(
      * ################
       */
     "boot", // framework 의존성을 가진 main module
-    "article",
-    "user",
-    "comment",
-    "chat",
-    "notification",
-    "seo",
+    "system",
+    "system:article",
+    "system:user",
+    "system:comment",
+    "system:chat",
+    "system:notification",
+    "system:seo",
+    "system:lib",
 )
