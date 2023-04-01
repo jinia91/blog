@@ -18,14 +18,16 @@ val jar: Jar by tasks
 jar.enabled = true
 jar.archiveFileName.set("${project.name}.jar")
 
+val localLib = ":system:lib"
 
 dependencies {
     subprojects.forEach { subproject ->
         val isSystemChildProject = subproject.path.startsWith(":system:")
-        if (isSystemChildProject) {
+        if (isSystemChildProject && subproject.name != localLib) {
             implementation(project(subproject.path))
         }
     }
+    api(project(localLib))
 }
 
 subprojects {
@@ -49,22 +51,31 @@ subprojects {
         }
 
         // adding local-library
-        val localLib = ":system:lib"
         if(project.path != localLib) {
             dependencies {
                 api(project(localLib))
+                testImplementation("io.mockk:mockk:1.13.4")
+                testImplementation("io.kotest:kotest-runner-junit5:5.5.4")
+                testImplementation("io.kotest:kotest-assertions-core:5.5.4")
+                implementation("io.kotest:kotest-extensions-spring:4.4.3")
+                testImplementation("org.assertj:assertj-core:3.24.2")
+                testImplementation("ch.qos.logback:logback-classic:1.4.5")
             }
         }
-    }
 
-    tasks.withType<KotlinCompile> {
-        kotlinOptions {
-            jvmTarget = "17"
-            freeCompilerArgs = freeCompilerArgs + "-Xjsr305=strict"
+        tasks.withType<KotlinCompile> {
+            kotlinOptions {
+                jvmTarget = "17"
+                freeCompilerArgs = freeCompilerArgs + "-Xjsr305=strict"
+            }
+        }
+
+        val jar: Jar by tasks
+        jar.enabled = true
+        jar.archiveFileName.set("${project.name}.jar")
+
+        tasks.withType<Test> {
+            useJUnitPlatform()
         }
     }
-
-    val jar: Jar by tasks
-    jar.enabled = true
-    jar.archiveFileName.set("${project.name}.jar")
 }
