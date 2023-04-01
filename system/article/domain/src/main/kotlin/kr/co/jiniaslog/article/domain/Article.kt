@@ -3,12 +3,11 @@ package kr.co.jiniaslog.article.domain
 import kr.co.jiniaslog.lib.context.DomainEntity
 
 @DomainEntity
-class Article internal constructor(
+class Article(
     id: ArticleId,
     title: String,
     content: String,
     hit: Long,
-//    toc: String,
     thumbnailUrl: String,
     writerId: WriterId,
     categoryId: CategoryId,
@@ -21,9 +20,6 @@ class Article internal constructor(
         private set
     var hit: Long = hit
         private set
-
-//    var toc: String = toc
-//        private set
     var thumbnailUrl: String = thumbnailUrl
         private set
     val writerId: WriterId = writerId
@@ -31,4 +27,13 @@ class Article internal constructor(
         private set
     var tags: Set<TagId> = tags
         private set
+
+    fun edit(title: String, content: String, thumbnailUrl: String, categoryId: CategoryId, tags: Set<TagId>): Article {
+        this.title = title
+        this.content = content
+        this.thumbnailUrl = thumbnailUrl
+        this.categoryId = categoryId
+        this.tags = tags
+        return this
+    }
 }
