@@ -5,26 +5,27 @@ import jakarta.persistence.Entity
 import jakarta.persistence.Id
 import jakarta.persistence.Index
 import jakarta.persistence.Table
+import kr.co.jiniaslog.shared.persistence.BasePM
 
 @Entity
 @Table(indexes = [Index(name = "i_article_title", columnList = "title")])
 class ArticlePM(
     @Id
     @Column(name = "article_id")
-    private val id: Long? = null,
+    val id: Long? = null,
 
     @Column(nullable = false, length = 50)
-    private var title: String? = null,
+    var title: String? = null,
 
     @Column(nullable = false, length = 10000)
-    private var content: String? = null,
+    var content: String? = null,
 
     @Column(columnDefinition = "bigint default 0", nullable = false)
-    private var hit: Long? = null,
+    var hit: Long? = null,
 
     @Column(nullable = false)
-    private var thumbnailUrl: String? = null,
+    var thumbnailUrl: String? = null,
 
     @Column(nullable = false)
-    private var memberId: Long? = null,
-)
+    var memberId: Long? = null,
+) : BasePM()
