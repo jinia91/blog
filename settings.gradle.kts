@@ -13,6 +13,8 @@ include(
     "system:article:adapter",
     "system:article:application",
     "system:user",
+    "system:category",
+    "system:imgupload",
     "system:comment",
     "system:chat",
     "system:notification",

@@ -1,10 +1,10 @@
 package kr.co.jiniaslog.article.domain
 
-import kr.co.jiniaslog.lib.context.Domain
+import kr.co.jiniaslog.lib.context.DomainEntity
 
-@Domain
+@DomainEntity
 class Article {
-    val id: Long? = null
+    val id: ArticleId = ArticleId(0)
     var title: String = ""
         private set
     var content: String = ""
@@ -15,6 +15,6 @@ class Article {
         private set
     var thumbnailUrl: String = ""
         private set
-    var memberId: Long = 0
+    var writerId: Long = 0
         private set
 }
