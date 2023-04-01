@@ -12,7 +12,6 @@ data class ArticlePostCommand(
     val writerId: WriterId,
     val title: String,
     val content: String,
-//    val toc: String,
     val thumbnailUrl: String,
     val categoryId: CategoryId,
     val tags: Set<TagId>,

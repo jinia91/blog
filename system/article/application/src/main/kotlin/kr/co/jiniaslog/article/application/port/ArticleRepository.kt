@@ -7,6 +7,4 @@ interface ArticleRepository {
     fun save(newArticle: Article)
 
     fun findById(articleId: ArticleId): Article?
-
-    fun deleteArticle(articleId: Long)
 }
