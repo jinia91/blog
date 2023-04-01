@@ -3,6 +3,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 /**
  * System's Global Convention
  * - Kotlin version 1.8.0
+ * - Kotlinter version 3.14.0
  */
 
 plugins {
@@ -12,6 +13,7 @@ plugins {
 }
 
 group = "kr.co.jiniaslog"
+
 val jar: Jar by tasks
 jar.enabled = true
 jar.archiveFileName.set("${project.name}.jar")
@@ -35,11 +37,24 @@ subprojects {
         mavenCentral()
     }
 
-    val localLib = ":system:lib"
+    // recursive dependency
+    afterEvaluate {
+        val isSubModule = project.path.startsWith(":system:")
+        if (isSubModule) {
+            project.subprojects.forEach { subproject ->
+                dependencies {
+                    implementation(project(subproject.path))
+                }
+            }
+        }
 
-    if(this.name != localLib)
-    dependencies {
-        api(localLib)
+        // adding local-library
+        val localLib = ":system:lib"
+        if(project.path != localLib) {
+            dependencies {
+                api(project(localLib))
+            }
+        }
     }
 
     tasks.withType<KotlinCompile> {
