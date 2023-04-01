@@ -14,10 +14,11 @@ plugins {
 
 dependencies {
     implementation(project(":system:article:application"))
+    implementation(project(":system:shared-persistence-kernel"))
 
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
-    implementation("mysql:mysql-connector-java:8.0.32")
+    runtimeOnly("com.mysql:mysql-connector-j")
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
 

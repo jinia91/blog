@@ -20,4 +20,5 @@ include(
     "system:notification",
     "system:seo",
     "system:lib",
+    "system:shared-persistence-kernel",
 )
