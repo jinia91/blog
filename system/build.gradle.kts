@@ -8,6 +8,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
     val kotlinVersion = "1.8.0"
     kotlin("jvm") version kotlinVersion
+    id("org.jmailen.kotlinter") version "3.14.0" apply false
 }
 
 group = "kr.co.jiniaslog"
@@ -28,12 +29,13 @@ dependencies {
 subprojects {
     apply(plugin = "java")
     apply(plugin = "org.jetbrains.kotlin.jvm")
+    apply(plugin = "org.jmailen.kotlinter")
 
     repositories {
         mavenCentral()
     }
 
-    val localLib = ":lib"
+    val localLib = ":system:lib"
 
     if(this.name != localLib)
     dependencies {
