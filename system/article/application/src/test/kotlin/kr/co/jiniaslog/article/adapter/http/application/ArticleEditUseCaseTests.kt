@@ -8,6 +8,7 @@ import kr.co.jiniaslog.article.application.ArticleService
 import kr.co.jiniaslog.article.application.infra.TransactionHandler
 import kr.co.jiniaslog.article.application.port.ArticleIdGenerator
 import kr.co.jiniaslog.article.application.port.ArticleRepository
+import kr.co.jiniaslog.article.application.port.UserServiceClient
 import kr.co.jiniaslog.article.application.usecase.ArticleEditCommand
 import kr.co.jiniaslog.article.domain.Article
 import kr.co.jiniaslog.article.domain.ArticleFactory
@@ -21,8 +22,9 @@ internal class ArticleEditUseCaseTests : BehaviorSpec() {
     private val transactionHandler: TransactionHandler = mockk(relaxed = true)
     private val articleIdGenerator: ArticleIdGenerator = mockk(relaxed = true)
     private val articleFactory: ArticleFactory = mockk(relaxed = true)
+    private val userAcl: UserServiceClient = mockk(relaxed = true)
 
-    private val sut = ArticleService(articleRepository, articleIdGenerator, transactionHandler, articleFactory)
+    private val sut = ArticleService(articleRepository, articleIdGenerator, transactionHandler, articleFactory, userAcl)
 
     init {
         Given("다음과 같은 command가 주어질 때") {
@@ -37,6 +39,8 @@ internal class ArticleEditUseCaseTests : BehaviorSpec() {
                 tags = tags,
             )
             val mockArticle = buildMockArticle(articleId, tags)
+
+            every { userAcl.findUserById(articleId.value) }.returns(UserId(1))
 
             every { articleRepository.findById(articleId) } returns mockArticle
 
