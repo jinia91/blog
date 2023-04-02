@@ -3,8 +3,8 @@ package kr.co.jiniaslog.shared.persistence.id
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.dao.EmptyResultDataAccessException
 import org.springframework.jdbc.core.JdbcTemplate
-import org.springframework.orm.jpa.JpaTransactionManager
 import org.springframework.stereotype.Component
+import org.springframework.transaction.PlatformTransactionManager
 import org.springframework.transaction.TransactionDefinition
 import org.springframework.transaction.support.TransactionTemplate
 import kotlin.math.pow
@@ -18,7 +18,7 @@ import kotlin.math.pow
 @Component
 class JdbcServerIdAllocator(
     @Qualifier("idJdbcTemplate") private val jdbcTemplate: JdbcTemplate,
-    @Qualifier("idTransactionManager") private val transactionManager: JpaTransactionManager,
+    @Qualifier("idTransactionManager") private val transactionManager: PlatformTransactionManager,
 ) : ServerIdAllocator {
     private val machineSequenceBitSize: Int = IdGeneratorConfig.MACHINE_SEQUENCE_BIT_SIZE
 

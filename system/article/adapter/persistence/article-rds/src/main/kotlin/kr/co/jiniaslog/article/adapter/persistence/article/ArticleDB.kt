@@ -43,9 +43,10 @@ class ArticleDatasourceConfig {
     @Primary
     fun articleEntityManagerFactory(
         builder: EntityManagerFactoryBuilder,
+        articleDataSource: DataSource,
     ): LocalContainerEntityManagerFactoryBean {
         return builder
-            .dataSource(articleDatasource())
+            .dataSource(articleDataSource)
             .packages(ArticleDB.BASE_PACKAGE)
             .build()
     }
