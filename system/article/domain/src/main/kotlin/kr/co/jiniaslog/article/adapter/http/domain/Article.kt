@@ -1,4 +1,4 @@
-package kr.co.jiniaslog.article.domain
+package kr.co.jiniaslog.article.adapter.http.domain
 
 import kr.co.jiniaslog.lib.context.DomainEntity
 

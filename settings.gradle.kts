@@ -11,6 +11,7 @@ include(
     "system:article:domain",
     "system:article:application",
     "system:article:adapter:persistence:article-rds",
+    "system:article:adapter:http-api",
     "system:user",
     "system:category",
     "system:imgupload",

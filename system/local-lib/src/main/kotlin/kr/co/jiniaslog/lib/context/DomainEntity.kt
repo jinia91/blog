@@ -1,6 +1,6 @@
 package kr.co.jiniaslog.lib.context
 
 @Target(AnnotationTarget.CLASS)
-@Retention(AnnotationRetention.SOURCE)
+@Retention(AnnotationRetention.RUNTIME)
 @MustBeDocumented
 annotation class DomainEntity

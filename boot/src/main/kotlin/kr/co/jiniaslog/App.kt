@@ -4,15 +4,26 @@ import kr.co.jiniaslog.lib.context.DomainService
 import kr.co.jiniaslog.lib.context.UseCaseInteractor
 import org.springframework.boot.SpringApplication
 import org.springframework.boot.autoconfigure.SpringBootApplication
+import org.springframework.boot.context.properties.ConfigurationPropertiesScan
 import org.springframework.context.annotation.ComponentScan
 import org.springframework.context.annotation.FilterType
 
 
-@SpringBootApplication
+
 @ComponentScan(
     includeFilters = [
         ComponentScan.Filter(type = FilterType.ANNOTATION, value = [UseCaseInteractor::class]),
         ComponentScan.Filter(type = FilterType.ANNOTATION, value = [DomainService::class]),
+    ]
+)
+@SpringBootApplication(
+    scanBasePackages = [
+        "kr.co.jiniaslog"
+    ]
+)
+@ConfigurationPropertiesScan(
+    basePackages = [
+        "kr.co.jiniaslog"
     ]
 )
 class App

@@ -1,19 +1,20 @@
-package kr.co.jiniaslog.article.application
+package kr.co.jiniaslog.article.adapter.http.application
 
 import io.kotest.core.spec.style.BehaviorSpec
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
+import kr.co.jiniaslog.article.adapter.http.domain.Article
+import kr.co.jiniaslog.article.adapter.http.domain.ArticleFactory
+import kr.co.jiniaslog.article.adapter.http.domain.ArticleId
+import kr.co.jiniaslog.article.adapter.http.domain.CategoryId
+import kr.co.jiniaslog.article.adapter.http.domain.TagId
+import kr.co.jiniaslog.article.adapter.http.domain.WriterId
+import kr.co.jiniaslog.article.application.ArticleService
 import kr.co.jiniaslog.article.application.infra.TransactionHandler
 import kr.co.jiniaslog.article.application.port.ArticleIdGenerator
 import kr.co.jiniaslog.article.application.port.ArticleRepository
 import kr.co.jiniaslog.article.application.usecase.ArticleEditCommand
-import kr.co.jiniaslog.article.domain.Article
-import kr.co.jiniaslog.article.domain.ArticleFactory
-import kr.co.jiniaslog.article.domain.ArticleId
-import kr.co.jiniaslog.article.domain.CategoryId
-import kr.co.jiniaslog.article.domain.TagId
-import kr.co.jiniaslog.article.domain.WriterId
 
 internal class ArticleEditUseCaseTests : BehaviorSpec() {
     private val articleRepository: ArticleRepository = mockk(relaxed = true)

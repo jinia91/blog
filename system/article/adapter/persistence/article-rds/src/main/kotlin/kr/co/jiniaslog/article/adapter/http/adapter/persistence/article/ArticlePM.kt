@@ -1,4 +1,4 @@
-package kr.co.jiniaslog.article.adapter.persistence.article
+package kr.co.jiniaslog.article.adapter.http.adapter.persistence.article
 
 import jakarta.persistence.Column
 import jakarta.persistence.Entity

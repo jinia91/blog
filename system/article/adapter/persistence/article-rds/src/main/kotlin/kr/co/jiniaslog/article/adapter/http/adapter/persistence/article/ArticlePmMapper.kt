@@ -1,6 +1,6 @@
-package kr.co.jiniaslog.article.adapter.persistence.article
+package kr.co.jiniaslog.article.adapter.http.adapter.persistence.article
 
-import kr.co.jiniaslog.article.domain.Article
+import kr.co.jiniaslog.article.adapter.http.domain.Article
 import org.mapstruct.InjectionStrategy
 import org.mapstruct.Mapper
 import org.mapstruct.Mapping

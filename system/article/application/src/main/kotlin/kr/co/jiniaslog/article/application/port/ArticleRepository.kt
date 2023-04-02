@@ -1,7 +1,7 @@
 package kr.co.jiniaslog.article.application.port
 
-import kr.co.jiniaslog.article.domain.Article
-import kr.co.jiniaslog.article.domain.ArticleId
+import kr.co.jiniaslog.article.adapter.http.domain.Article
+import kr.co.jiniaslog.article.adapter.http.domain.ArticleId
 
 interface ArticleRepository {
     fun save(newArticle: Article)

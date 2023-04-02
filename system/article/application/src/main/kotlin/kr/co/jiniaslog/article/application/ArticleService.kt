@@ -1,5 +1,6 @@
 package kr.co.jiniaslog.article.application
 
+import kr.co.jiniaslog.article.adapter.http.domain.ArticleFactory
 import kr.co.jiniaslog.article.application.infra.TransactionHandler
 import kr.co.jiniaslog.article.application.port.ArticleIdGenerator
 import kr.co.jiniaslog.article.application.port.ArticleRepository
@@ -7,7 +8,6 @@ import kr.co.jiniaslog.article.application.usecase.ArticleEditCommand
 import kr.co.jiniaslog.article.application.usecase.ArticleEditUseCase
 import kr.co.jiniaslog.article.application.usecase.ArticlePostCommand
 import kr.co.jiniaslog.article.application.usecase.ArticlePostUseCase
-import kr.co.jiniaslog.article.domain.ArticleFactory
 import kr.co.jiniaslog.lib.context.UseCaseInteractor
 
 @UseCaseInteractor

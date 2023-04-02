@@ -1,0 +1,21 @@
+package kr.co.jiniaslog.article.adapter.http.adapter.persistence.article
+
+import kr.co.jiniaslog.article.adapter.http.domain.Article
+import kr.co.jiniaslog.article.adapter.http.domain.ArticleId
+import kr.co.jiniaslog.article.application.port.ArticleRepository
+import org.springframework.stereotype.Repository
+
+@Repository
+class ArticleRepositoryAdapter(
+    private val jpaArticleRepository: JpaArticleRepository,
+    private val articleMapper: ArticlePmMapper,
+) : ArticleRepository {
+    override fun save(newArticle: Article) {
+        val articlePM = articleMapper.toPm(newArticle)
+        jpaArticleRepository.save(articlePM)
+    }
+
+    override fun findById(articleId: ArticleId): Article? {
+        TODO("Not yet implemented")
+    }
+}
