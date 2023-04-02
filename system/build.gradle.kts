@@ -29,10 +29,9 @@ tasks.getByName("jar") {
     enabled = false
 }
 
-val localLib = ":system:lib"
-
 subprojects {
-    if(project.subprojects.isNotEmpty()) return@subprojects // build only leaf project
+
+    if (project.subprojects.isNotEmpty()) return@subprojects // build only leaf project
 
     apply(plugin = "java")
     apply(plugin = "org.jetbrains.kotlin.jvm")
@@ -42,20 +41,19 @@ subprojects {
         mavenCentral()
     }
 
-    tasks.getByName("jar") {
-        enabled = false
-    }
-
     java {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
     }
 
     afterEvaluate {
+
+        val localLib = ":system:local-lib"
+
         // adding global dependency
         if (project.path != localLib) {
             dependencies {
-                api(project(localLib))
+                implementation(project(localLib))
                 implementation("org.jetbrains.kotlin:kotlin-reflect")
 
                 testImplementation("io.mockk:mockk:1.13.4")
@@ -67,20 +65,23 @@ subprojects {
                 testImplementation("ch.qos.logback:logback-classic:1.4.5")
             }
         }
-    }
-
-    tasks.withType<KotlinCompile> {
-        kotlinOptions {
-            jvmTarget = "17"
-            freeCompilerArgs = freeCompilerArgs + "-Xjsr305=strict"
+        tasks.withType<KotlinCompile> {
+            kotlinOptions {
+                jvmTarget = "17"
+                freeCompilerArgs = freeCompilerArgs + "-Xjsr305=strict"
+            }
         }
-    }
 
-    tasks.getByName("jar") {
-        enabled = false
-    }
+        tasks.findByName("bootJar")?.let {
+            it.enabled = false
+        }
 
-    tasks.withType<Test> {
-        useJUnitPlatform()
+        tasks.getByName("jar") {
+            enabled = true
+        }
+
+        tasks.withType<Test> {
+            useJUnitPlatform()
+        }
     }
 }

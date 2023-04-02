@@ -19,7 +19,7 @@ dependencies {
 
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
-    implementation("mysql:mysql-connector-java:8.0.32")
+    runtimeOnly("com.mysql:mysql-connector-j")
     implementation("org.mapstruct:mapstruct:1.5.3.Final")
     kapt("org.mapstruct:mapstruct-processor:1.5.3.Final")
     kaptTest("org.mapstruct:mapstruct-processor:1.5.3.Final")

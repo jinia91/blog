@@ -18,6 +18,6 @@ include(
     "system:chat",
     "system:notification",
     "system:seo",
-    "system:lib",
+    "system:local-lib",
     "system:shared-persistence-kernel",
 )
