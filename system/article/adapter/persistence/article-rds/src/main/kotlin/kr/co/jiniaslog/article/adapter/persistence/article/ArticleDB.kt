@@ -1,7 +1,7 @@
 package kr.co.jiniaslog.article.adapter.persistence.article
 
-import jakarta.persistence.EntityManagerFactory
-import org.springframework.beans.factory.annotation.Qualifier
+import kr.co.jiniaslog.shared.persistence.JpaDdlAutoProperties
+import org.springframework.boot.autoconfigure.flyway.FlywayDataSource
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.boot.jdbc.DataSourceBuilder
 import org.springframework.boot.orm.jpa.EntityManagerFactoryBuilder
@@ -18,10 +18,13 @@ import javax.sql.DataSource
 object ArticleDB {
     const val BASE_PACKAGE = "kr.co.jiniaslog.article.adapter.persistence.article"
     const val DATASOURCE_PREFIX = "spring.datasource.article"
+    const val DATASOURCE = "articleDataSource"
 
     const val ENTITY_MANAGER_FACTORY = "articleEntityManagerFactory"
     const val PERSISTENT_UNIT = "articleEntityManager"
     const val TRANSACTION_MANAGER = "articleTransactionManager"
+    const val FLYWAY_SCRIPT_LOCATION = "db/migration/article"
+    const val FLYWAY_SCRIPT_CHARSET = "UTF-8"
 }
 
 @Configuration
@@ -31,10 +34,13 @@ object ArticleDB {
     transactionManagerRef = ArticleDB.TRANSACTION_MANAGER,
     basePackages = [ArticleDB.BASE_PACKAGE],
 )
-class ArticleDatasourceConfig {
-    @Bean
+class ArticleDatasourceConfig(
+    private val property: JpaDdlAutoProperties,
+) {
+    @Bean(name = [ArticleDB.DATASOURCE])
     @Primary
     @ConfigurationProperties(prefix = ArticleDB.DATASOURCE_PREFIX)
+    @FlywayDataSource
     fun articleDatasource(): DataSource {
         return DataSourceBuilder.create().build()
     }
@@ -44,19 +50,23 @@ class ArticleDatasourceConfig {
     fun articleEntityManagerFactory(
         builder: EntityManagerFactoryBuilder,
     ): LocalContainerEntityManagerFactoryBean {
+        val properties: MutableMap<String, Any> = HashMap()
+        properties["hibernate.hbm2ddl.auto"] = property.value
+
         return builder
             .dataSource(articleDatasource())
             .packages(ArticleDB.BASE_PACKAGE)
+            .properties(properties)
             .build()
     }
 
     @Bean
     @Primary
     fun articleTransactionManager(
-        @Qualifier(ArticleDB.ENTITY_MANAGER_FACTORY) entityManagerFactory: EntityManagerFactory,
+        builder: EntityManagerFactoryBuilder,
     ): PlatformTransactionManager {
         val transactionManager = JpaTransactionManager()
-        transactionManager.entityManagerFactory = entityManagerFactory
+        transactionManager.entityManagerFactory = articleEntityManagerFactory(builder).`object`
         transactionManager.persistenceUnitName = ArticleDB.PERSISTENT_UNIT
 
         return transactionManager

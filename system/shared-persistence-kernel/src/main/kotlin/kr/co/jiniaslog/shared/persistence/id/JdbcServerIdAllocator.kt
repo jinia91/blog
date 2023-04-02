@@ -1,10 +1,9 @@
 package kr.co.jiniaslog.shared.persistence.id
 
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.dao.EmptyResultDataAccessException
 import org.springframework.jdbc.core.JdbcTemplate
+import org.springframework.jdbc.datasource.DataSourceTransactionManager
 import org.springframework.stereotype.Component
-import org.springframework.transaction.PlatformTransactionManager
 import org.springframework.transaction.TransactionDefinition
 import org.springframework.transaction.support.TransactionTemplate
 import kotlin.math.pow
@@ -17,14 +16,13 @@ import kotlin.math.pow
  */
 @Component
 class JdbcServerIdAllocator(
-    @Autowired private val jdbcTemplate: JdbcTemplate,
-    @Autowired private val transactionManager: PlatformTransactionManager,
+    private val jdbcTemplate: JdbcTemplate,
+    private val transactionManager: DataSourceTransactionManager,
 ) : ServerIdAllocator {
     private val machineSequenceBitSize: Int = IdGeneratorConfig.MACHINE_SEQUENCE_BIT_SIZE
 
     override fun allocate(): Int {
-        val transactionTemplate =
-            TransactionTemplate(transactionManager)
+        val transactionTemplate = TransactionTemplate(transactionManager)
         transactionTemplate.isolationLevel = TransactionDefinition.ISOLATION_READ_COMMITTED
         transactionTemplate.propagationBehavior = TransactionDefinition.PROPAGATION_REQUIRED
 

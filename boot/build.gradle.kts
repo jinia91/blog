@@ -9,10 +9,12 @@ plugins {
     kotlin("plugin.spring") version kotlinVersion
     kotlin("plugin.jpa") version kotlinVersion
     kotlin("kapt") version kotlinVersion
+    id("org.flywaydb.flyway") version "5.2.4"
 }
 
 group = "kr.co.jiniaslog"
 version = "2.0.0"
+
 java {
     sourceCompatibility = JavaVersion.VERSION_17
     targetCompatibility = JavaVersion.VERSION_17
@@ -60,4 +62,9 @@ tasks.withType<Test> {
 
 tasks.getByName("jar") {
     enabled = false
+}
+
+tasks.named<org.springframework.boot.gradle.tasks.bundling.BootJar>("bootJar") {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    enabled = true
 }

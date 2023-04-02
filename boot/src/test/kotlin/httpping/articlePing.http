@@ -2,7 +2,7 @@ POST http://localhost:7777/articles
 Content-Type: application/json
 
 {
-  "writerId": 4,
+  "writerId": 5,
   "title": "",
   "content": "",
   "thumbnailUrl": "",

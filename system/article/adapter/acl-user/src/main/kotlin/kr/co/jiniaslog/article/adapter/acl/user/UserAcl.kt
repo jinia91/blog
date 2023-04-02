@@ -9,5 +9,5 @@ import kr.co.jiniaslog.user.application.UserServiceStub
 class UserAcl(
     private val userServiceStub: UserServiceStub,
 ) : UserServiceClient {
-    override fun findUserById(id: Long) = UserId(userServiceStub.stub(id).id)
+    override fun isAdmin(id: Long) = UserId(userServiceStub.stub(id).id) == UserId(1)
 }

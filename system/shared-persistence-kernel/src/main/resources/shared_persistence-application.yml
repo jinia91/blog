@@ -4,11 +4,12 @@ spring:
   #===========#
   datasource:
     id:
-      jdbc-url: jdbc:mysql://localhost/jinia_blog_id?serverTimezone=Asia/Seoul
+      jdbc-url: jdbc:mysql://localhost:3307/jinia_blog_id?serverTimezone=Asia/Seoul
       username: root
-      password:
+      password: 1
       driver-class-name: com.mysql.cj.jdbc.Driver
 
-  jpa:
-    hibernate:
-      ddl-auto: create
+jpa:
+  ddl:
+    auto:
+      value: validate

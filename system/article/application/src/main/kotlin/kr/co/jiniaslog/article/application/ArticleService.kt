@@ -21,7 +21,7 @@ internal class ArticleService(
 ) : ArticlePostUseCase, ArticleEditUseCase {
 
     // todo: cache impl
-    override fun postArticle(articleCreateCommand: ArticlePostCommand): Long = with(articleCreateCommand) {
+    override fun postArticle(articleCreateCommand: ArticlePostCommand) = with(articleCreateCommand) {
         if (this.isInvalid()) throw IllegalArgumentException("Invalid ArticlePostCommand")
         val article = transactionHandler.runInReadCommittedTransaction {
             articleFactory.newOne(
@@ -36,7 +36,7 @@ internal class ArticleService(
                 articleRepository.save(it)
             }
         }
-        return@with article.id.value
+        return@with article.id
     }
 
     /**
@@ -44,7 +44,7 @@ internal class ArticleService(
      *     - writerId, categoryId, tagId가 존재하는지 확인
      */
     private fun ArticlePostCommand.isInvalid(): Boolean =
-        userServiceClient.findUserById(userId.value) == null
+        !userServiceClient.isAdmin(userId.value)
 
     override fun editArticle(articleEditCommand: ArticleEditCommand) = with(articleEditCommand) {
         if (this.isInvalid()) throw IllegalArgumentException("Invalid ArticleEditCommand")
@@ -64,5 +64,6 @@ internal class ArticleService(
      *     todo: implement
      *     - writerId, categoryId, tagId가 존재하는지 확인
      */
-    private fun ArticleEditCommand.isInvalid(): Boolean = false
+    private fun ArticleEditCommand.isInvalid(): Boolean =
+        !userServiceClient.isAdmin(userId.value)
 }
