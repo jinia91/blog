@@ -8,15 +8,16 @@ import org.springframework.boot.orm.jpa.EntityManagerFactoryBuilder
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories
+import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.orm.jpa.JpaTransactionManager
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean
-import org.springframework.transaction.PlatformTransactionManager
 import org.springframework.transaction.annotation.EnableTransactionManagement
 import javax.sql.DataSource
 
 object IdDB {
     const val BASE_PACKAGE = "kr.co.jiniaslog.shared.persistence.id"
     const val DATASOURCE_PREFIX = "spring.datasource.id"
+    const val DATASOURCE = "idDataSource"
 
     const val ENTITY_MANAGER_FACTORY = "idEntityManagerFactory"
     const val PERSISTENT_UNIT = "idEntityManager"
@@ -30,31 +31,30 @@ object IdDB {
     transactionManagerRef = IdDB.TRANSACTION_MANAGER,
     basePackages = [IdDB.BASE_PACKAGE],
 )
-class IdDatasourceConfig {
-    @Bean
+class IdDataSourceConfig {
+
+    @Bean(name = [IdDB.DATASOURCE])
     @ConfigurationProperties(prefix = IdDB.DATASOURCE_PREFIX)
-    fun idDatasource(): DataSource {
-        return DataSourceBuilder.create().build()
-    }
+    fun idDataSource(): DataSource = DataSourceBuilder.create().build()
 
-    @Bean
+    @Bean(name = [IdDB.ENTITY_MANAGER_FACTORY])
     fun idEntityManagerFactory(
+        @Qualifier(IdDB.DATASOURCE) dataSource: DataSource,
         builder: EntityManagerFactoryBuilder,
-    ): LocalContainerEntityManagerFactoryBean {
-        return builder
-            .dataSource(idDatasource())
-            .packages(IdDB.BASE_PACKAGE)
-            .build()
+    ): LocalContainerEntityManagerFactoryBean = builder.dataSource(dataSource)
+        .packages(IdDB.BASE_PACKAGE)
+        .persistenceUnit(IdDB.PERSISTENT_UNIT)
+        .build()
+
+    @Bean(name = [IdDB.TRANSACTION_MANAGER])
+    fun idTransactionManager(
+        @Qualifier(IdDB.ENTITY_MANAGER_FACTORY) emf: EntityManagerFactory,
+    ) = JpaTransactionManager().apply {
+        this.entityManagerFactory = emf
     }
 
     @Bean
-    fun idTransactionManager(
-        @Qualifier(IdDB.ENTITY_MANAGER_FACTORY) entityManagerFactory: EntityManagerFactory,
-    ): PlatformTransactionManager {
-        val transactionManager = JpaTransactionManager()
-        transactionManager.entityManagerFactory = entityManagerFactory
-        transactionManager.persistenceUnitName = IdDB.PERSISTENT_UNIT
-
-        return transactionManager
+    fun idJdbcTemplate(@Qualifier(IdDB.DATASOURCE) dataSource: DataSource): JdbcTemplate {
+        return JdbcTemplate(dataSource)
     }
 }

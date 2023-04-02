@@ -1,6 +1,8 @@
 package kr.co.jiniaslog.lib.context
 
+import java.lang.annotation.Inherited
+
 @Target(AnnotationTarget.CLASS)
 @Retention(AnnotationRetention.RUNTIME)
-@CustomComponent
-annotation class UseCaseInteractor
+@Inherited
+annotation class CustomComponent
