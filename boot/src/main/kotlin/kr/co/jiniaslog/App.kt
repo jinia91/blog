@@ -1,5 +1,6 @@
 package kr.co.jiniaslog
 
+import kr.co.jiniaslog.lib.context.AntiCorruptLayer
 import kr.co.jiniaslog.lib.context.DomainService
 import kr.co.jiniaslog.lib.context.UseCaseInteractor
 import org.springframework.boot.SpringApplication
@@ -14,6 +15,7 @@ import org.springframework.context.annotation.FilterType
     includeFilters = [
         ComponentScan.Filter(type = FilterType.ANNOTATION, value = [UseCaseInteractor::class]),
         ComponentScan.Filter(type = FilterType.ANNOTATION, value = [DomainService::class]),
+        ComponentScan.Filter(type = FilterType.ANNOTATION, value = [AntiCorruptLayer::class]),
     ]
 )
 @SpringBootApplication

@@ -1,13 +1,14 @@
 package kr.co.jiniaslog.article.application
 
-import kr.co.jiniaslog.article.adapter.http.domain.ArticleFactory
 import kr.co.jiniaslog.article.application.infra.TransactionHandler
 import kr.co.jiniaslog.article.application.port.ArticleIdGenerator
 import kr.co.jiniaslog.article.application.port.ArticleRepository
+import kr.co.jiniaslog.article.application.port.UserServiceClient
 import kr.co.jiniaslog.article.application.usecase.ArticleEditCommand
 import kr.co.jiniaslog.article.application.usecase.ArticleEditUseCase
 import kr.co.jiniaslog.article.application.usecase.ArticlePostCommand
 import kr.co.jiniaslog.article.application.usecase.ArticlePostUseCase
+import kr.co.jiniaslog.article.domain.ArticleFactory
 import kr.co.jiniaslog.lib.context.UseCaseInteractor
 
 @UseCaseInteractor
@@ -16,6 +17,7 @@ internal class ArticleService(
     private val articleIdGenerator: ArticleIdGenerator,
     private val transactionHandler: TransactionHandler,
     private val articleFactory: ArticleFactory,
+    private val userServiceClient: UserServiceClient,
 ) : ArticlePostUseCase, ArticleEditUseCase {
 
     // todo: cache impl
@@ -24,7 +26,7 @@ internal class ArticleService(
         val article = transactionHandler.runInReadCommittedTransaction {
             articleFactory.newOne(
                 id = articleIdGenerator.generate(),
-                writerId = writerId,
+                userId = userId,
                 title = title,
                 content = content,
                 thumbnailUrl = thumbnailUrl,
@@ -41,7 +43,8 @@ internal class ArticleService(
      *     todo: implement
      *     - writerId, categoryId, tagId가 존재하는지 확인
      */
-    private fun ArticlePostCommand.isInvalid(): Boolean = false
+    private fun ArticlePostCommand.isInvalid(): Boolean =
+        userServiceClient.findUserById(userId.value) == null
 
     override fun editArticle(articleEditCommand: ArticleEditCommand) = with(articleEditCommand) {
         if (this.isInvalid()) throw IllegalArgumentException("Invalid ArticleEditCommand")

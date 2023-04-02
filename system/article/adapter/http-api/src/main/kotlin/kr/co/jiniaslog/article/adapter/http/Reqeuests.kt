@@ -1,11 +1,11 @@
 package kr.co.jiniaslog.article.adapter.http
 
-import kr.co.jiniaslog.article.adapter.http.domain.ArticleId
-import kr.co.jiniaslog.article.adapter.http.domain.CategoryId
-import kr.co.jiniaslog.article.adapter.http.domain.TagId
-import kr.co.jiniaslog.article.adapter.http.domain.WriterId
 import kr.co.jiniaslog.article.application.usecase.ArticleEditCommand
 import kr.co.jiniaslog.article.application.usecase.ArticlePostCommand
+import kr.co.jiniaslog.article.domain.ArticleId
+import kr.co.jiniaslog.article.domain.CategoryId
+import kr.co.jiniaslog.article.domain.TagId
+import kr.co.jiniaslog.article.domain.UserId
 
 data class ArticlePostRequest(
     val writerId: Long,
@@ -17,7 +17,7 @@ data class ArticlePostRequest(
 ) {
     fun toCommand(): ArticlePostCommand {
         return ArticlePostCommand(
-            writerId = WriterId(writerId),
+            userId = UserId(writerId),
             title = title,
             content = content,
             thumbnailUrl = thumbnailUrl,
