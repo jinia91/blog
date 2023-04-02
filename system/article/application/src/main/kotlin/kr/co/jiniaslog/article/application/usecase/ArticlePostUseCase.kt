@@ -1,11 +1,12 @@
 package kr.co.jiniaslog.article.application.usecase
 
+import kr.co.jiniaslog.article.domain.ArticleId
 import kr.co.jiniaslog.article.domain.CategoryId
 import kr.co.jiniaslog.article.domain.TagId
 import kr.co.jiniaslog.article.domain.UserId
 
 interface ArticlePostUseCase {
-    fun postArticle(articleCreateCommand: ArticlePostCommand): Long
+    fun postArticle(articleCreateCommand: ArticlePostCommand): ArticleId
 }
 
 data class ArticlePostCommand(

@@ -31,6 +31,7 @@ internal class ArticleEditUseCaseTests : BehaviorSpec() {
             val tags = setOf(TagId(1), TagId(2), TagId(3))
             val articleId = ArticleId(1)
             val command = ArticleEditCommand(
+                userId = UserId(1),
                 articleId = articleId,
                 title = "edit title",
                 content = "edit content",
@@ -40,7 +41,7 @@ internal class ArticleEditUseCaseTests : BehaviorSpec() {
             )
             val mockArticle = buildMockArticle(articleId, tags)
 
-            every { userAcl.findUserById(articleId.value) }.returns(UserId(1))
+            every { userAcl.isAdmin(articleId.value) }.returns(true)
 
             every { articleRepository.findById(articleId) } returns mockArticle
 

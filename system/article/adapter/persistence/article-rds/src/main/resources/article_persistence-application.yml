@@ -4,7 +4,14 @@ spring:
   #===========#
   datasource:
     article:
-      jdbc-url: jdbc:mysql://localhost/jinia_blog_article?serverTimezone=Asia/Seoul
+      jdbc-url: jdbc:mysql://localhost:3307/jinia_blog_article?serverTimezone=Asia/Seoul
       username: root
-      password:
+      password: 1
       driver-class-name: com.mysql.cj.jdbc.Driver
+
+  flyway:
+    locations: db.migration.article
+    enabled: true
+    baseline-on-migrate: true          # flyway_schema_history 테이블을 자동으로 생성할지 여부
+    baseline-version: 0
+    validateMigrationNaming: true

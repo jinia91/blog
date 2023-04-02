@@ -1,6 +1,10 @@
 package kr.co.jiniaslog.user.adapter.persistence.user
 
+import jakarta.annotation.PostConstruct
 import kr.co.jiniaslog.shared.persistence.JpaDdlAutoProperties
+import org.flywaydb.core.Flyway
+import org.springframework.beans.factory.annotation.Qualifier
+import org.springframework.boot.autoconfigure.flyway.FlywayMigrationStrategy
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.boot.jdbc.DataSourceBuilder
 import org.springframework.boot.orm.jpa.EntityManagerFactoryBuilder
@@ -11,15 +15,19 @@ import org.springframework.orm.jpa.JpaTransactionManager
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean
 import org.springframework.transaction.PlatformTransactionManager
 import org.springframework.transaction.annotation.EnableTransactionManagement
+import java.nio.charset.Charset
 import javax.sql.DataSource
 
 object UserDB {
     const val BASE_PACKAGE = "kr.co.jiniaslog.user.adapter.persistence.user"
     const val DATASOURCE_PREFIX = "spring.datasource.user"
+    const val DATASOURCE = "userDataSource"
 
     const val ENTITY_MANAGER_FACTORY = "userEntityManagerFactory"
     const val PERSISTENT_UNIT = "userEntityManager"
     const val TRANSACTION_MANAGER = "userTransactionManager"
+    const val FLYWAY_SCRIPT_LOCATION = "db.migration.user"
+    const val FLYWAY_SCRIPT_CHARSET = "UTF-8"
 }
 
 @Configuration
@@ -32,7 +40,7 @@ object UserDB {
 class UserDatasourceConfig(
     private val property: JpaDdlAutoProperties,
 ) {
-    @Bean
+    @Bean(name = [UserDB.DATASOURCE])
     @ConfigurationProperties(prefix = UserDB.DATASOURCE_PREFIX)
     fun userDatasource(): DataSource {
         return DataSourceBuilder.create().build()
@@ -61,5 +69,26 @@ class UserDatasourceConfig(
         transactionManager.persistenceUnitName = UserDB.PERSISTENT_UNIT
 
         return transactionManager
+    }
+}
+
+@Configuration
+class UserSchemaVersioning(
+    @Qualifier(UserDB.DATASOURCE) private val userDataSource: DataSource,
+) {
+    @PostConstruct
+    fun migrateBatchDataSource() {
+        Flyway.configure()
+            .dataSource(userDataSource)
+            .locations(UserDB.FLYWAY_SCRIPT_LOCATION)
+            .baselineOnMigrate(true)
+            .encoding(Charset.forName(UserDB.FLYWAY_SCRIPT_CHARSET))
+            .load()
+            .migrate()
+    }
+
+    @Bean
+    fun flywayMigrationStrategy(): FlywayMigrationStrategy {
+        return FlywayMigrationStrategy { flyway -> flyway.migrate() }
     }
 }

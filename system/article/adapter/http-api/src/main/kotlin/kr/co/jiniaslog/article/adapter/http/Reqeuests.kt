@@ -37,6 +37,7 @@ data class ArticleEditRequest(
 ) {
     fun toCommand(): ArticleEditCommand {
         return ArticleEditCommand(
+            userId = UserId(articleId),
             articleId = ArticleId(articleId),
             title = title,
             content = content,

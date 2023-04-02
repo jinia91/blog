@@ -16,6 +16,7 @@ repositories {
 dependencies {
     implementation(project(":system:user:application"))
     implementation(project(":system:shared-persistence-kernel"))
+    implementation("org.flywaydb:flyway-mysql:9.16.1")
 
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")

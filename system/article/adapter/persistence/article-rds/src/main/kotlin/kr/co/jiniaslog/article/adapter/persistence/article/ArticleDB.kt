@@ -1,6 +1,7 @@
 package kr.co.jiniaslog.article.adapter.persistence.article
 
 import kr.co.jiniaslog.shared.persistence.JpaDdlAutoProperties
+import org.springframework.boot.autoconfigure.flyway.FlywayDataSource
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.boot.jdbc.DataSourceBuilder
 import org.springframework.boot.orm.jpa.EntityManagerFactoryBuilder
@@ -17,10 +18,13 @@ import javax.sql.DataSource
 object ArticleDB {
     const val BASE_PACKAGE = "kr.co.jiniaslog.article.adapter.persistence.article"
     const val DATASOURCE_PREFIX = "spring.datasource.article"
+    const val DATASOURCE = "articleDataSource"
 
     const val ENTITY_MANAGER_FACTORY = "articleEntityManagerFactory"
     const val PERSISTENT_UNIT = "articleEntityManager"
     const val TRANSACTION_MANAGER = "articleTransactionManager"
+    const val FLYWAY_SCRIPT_LOCATION = "db/migration/article"
+    const val FLYWAY_SCRIPT_CHARSET = "UTF-8"
 }
 
 @Configuration
@@ -33,9 +37,10 @@ object ArticleDB {
 class ArticleDatasourceConfig(
     private val property: JpaDdlAutoProperties,
 ) {
-    @Bean
+    @Bean(name = [ArticleDB.DATASOURCE])
     @Primary
     @ConfigurationProperties(prefix = ArticleDB.DATASOURCE_PREFIX)
+    @FlywayDataSource
     fun articleDatasource(): DataSource {
         return DataSourceBuilder.create().build()
     }

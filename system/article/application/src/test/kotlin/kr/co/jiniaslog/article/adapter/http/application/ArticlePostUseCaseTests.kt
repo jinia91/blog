@@ -39,7 +39,7 @@ internal class ArticlePostUseCaseTests : BehaviorSpec() {
             )
             val articleId = ArticleId(1)
 
-            every { userAcl.findUserById(articleId.value) }.returns(UserId(1))
+            every { userAcl.isAdmin(articleId.value) }.returns(UserId(1))
 
             every { articleIdGenerator.generate() } returns articleId
             val mockArticleDomainEntity = mockk<Article> {

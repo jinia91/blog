@@ -9,6 +9,7 @@ plugins {
     kotlin("plugin.spring") version kotlinVersion
     kotlin("plugin.jpa") version kotlinVersion
     kotlin("kapt") version kotlinVersion
+    id("org.flywaydb.flyway") version "5.2.4"
 }
 
 group = "kr.co.jiniaslog"

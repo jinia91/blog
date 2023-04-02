@@ -4,7 +4,7 @@ spring:
   #===========#
   datasource:
     user:
-      jdbc-url: jdbc:mysql://localhost/jinia_blog_user?serverTimezone=Asia/Seoul
+      jdbc-url: jdbc:mysql://localhost:3307/jinia_blog_user?serverTimezone=Asia/Seoul
       username: root
-      password:
+      password: 1
       driver-class-name: com.mysql.cj.jdbc.Driver
