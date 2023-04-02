@@ -18,7 +18,7 @@ class ArticleRepositoryAdapter(
                 content = newArticle.content,
                 hit = newArticle.hit,
                 thumbnailUrl = newArticle.thumbnailUrl,
-                memberId = newArticle.writerId.value,
+                writerId = newArticle.writerId.value,
             ),
         )
     }

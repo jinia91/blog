@@ -12,20 +12,20 @@ import kr.co.jiniaslog.shared.persistence.BasePM
 class ArticlePM(
     @Id
     @Column(name = "article_id")
-    val id: Long? = null,
+    val id: Long,
 
     @Column(nullable = false, length = 50)
-    var title: String? = null,
+    var title: String,
 
     @Column(nullable = false, length = 10000)
-    var content: String? = null,
+    var content: String,
 
     @Column(columnDefinition = "bigint default 0", nullable = false)
-    var hit: Long? = null,
+    var hit: Long,
 
     @Column(nullable = false)
-    var thumbnailUrl: String? = null,
+    var thumbnailUrl: String,
 
     @Column(nullable = false)
-    var memberId: Long? = null,
+    var writerId: Long,
 ) : BasePM()

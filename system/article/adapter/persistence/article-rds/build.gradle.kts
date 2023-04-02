@@ -1,7 +1,3 @@
-val jar: Jar by tasks
-jar.enabled = true
-jar.archiveFileName.set("${project.name}.jar")
-
 plugins {
     val kotlinVersion = "1.8.10"
     val springBootVersion = "3.0.5"
@@ -10,6 +6,11 @@ plugins {
     kotlin("jvm") version kotlinVersion
     kotlin("plugin.spring") version kotlinVersion
     kotlin("plugin.jpa") version kotlinVersion
+    kotlin("kapt")
+}
+
+repositories {
+    mavenCentral()
 }
 
 dependencies {
@@ -18,7 +19,10 @@ dependencies {
 
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
-    runtimeOnly("com.mysql:mysql-connector-j")
+    implementation("mysql:mysql-connector-java:8.0.32")
+    implementation("org.mapstruct:mapstruct:1.5.3.Final")
+    kapt("org.mapstruct:mapstruct-processor:1.5.3.Final")
+    kaptTest("org.mapstruct:mapstruct-processor:1.5.3.Final")
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
 }

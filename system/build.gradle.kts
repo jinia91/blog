@@ -4,56 +4,56 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
  * System's Global Convention
  * - Kotlin version 1.8.10
  * - Kotlinter version 3.14.0
+ * - mockk version 1.13.4
+ * - kotest version 5.5.4
  */
 
 plugins {
     val kotlinVersion = "1.8.10"
     kotlin("jvm") version kotlinVersion
     id("org.jmailen.kotlinter") version "3.14.0" apply false
-    kotlin("kapt") version kotlinVersion
+}
+
+repositories {
+    mavenCentral()
 }
 
 group = "kr.co.jiniaslog"
 
-val jar: Jar by tasks
-jar.enabled = true
-jar.archiveFileName.set("${project.name}.jar")
+java {
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
+}
+
+tasks.getByName("jar") {
+    enabled = false
+}
 
 val localLib = ":system:lib"
 
-dependencies {
-    subprojects.forEach { subproject ->
-        val isSystemChildProject = subproject.path.startsWith(":system:")
-        if (isSystemChildProject && subproject.name != localLib) {
-            api(project(subproject.path))
-        }
-    }
-    api(project(localLib))
-}
-
 subprojects {
+    if(project.subprojects.isNotEmpty()) return@subprojects // build only leaf project
+
     apply(plugin = "java")
     apply(plugin = "org.jetbrains.kotlin.jvm")
     apply(plugin = "org.jmailen.kotlinter")
-    apply(plugin = "org.jetbrains.kotlin.kapt")
 
     repositories {
         mavenCentral()
     }
 
-    afterEvaluate {
-        // recursive dependency
-        val isSubModule = project.path.startsWith(":system:")
-        if (isSubModule) {
-            project.subprojects.forEach { subproject ->
-                dependencies {
-                    api(project(subproject.path))
-                }
-            }
-        }
+    tasks.getByName("jar") {
+        enabled = false
+    }
 
+    java {
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
+    }
+
+    afterEvaluate {
         // adding global dependency
-        if(project.path != localLib) {
+        if (project.path != localLib) {
             dependencies {
                 api(project(localLib))
                 implementation("org.jetbrains.kotlin:kotlin-reflect")
@@ -65,26 +65,22 @@ subprojects {
 
                 testImplementation("org.assertj:assertj-core:3.24.2")
                 testImplementation("ch.qos.logback:logback-classic:1.4.5")
-
-                implementation("org.mapstruct:mapstruct:1.5.3.Final")
-                kapt("org.mapstruct:mapstruct-processor:1.5.3.Final")
-                kaptTest("org.mapstruct:mapstruct-processor:1.5.3.Final")
             }
         }
+    }
 
-        tasks.withType<KotlinCompile> {
-            kotlinOptions {
-                jvmTarget = "17"
-                freeCompilerArgs = freeCompilerArgs + "-Xjsr305=strict"
-            }
+    tasks.withType<KotlinCompile> {
+        kotlinOptions {
+            jvmTarget = "17"
+            freeCompilerArgs = freeCompilerArgs + "-Xjsr305=strict"
         }
+    }
 
-        val jar: Jar by tasks
-        jar.enabled = true
-        jar.archiveFileName.set("${project.name}.jar")
+    tasks.getByName("jar") {
+        enabled = false
+    }
 
-        tasks.withType<Test> {
-            useJUnitPlatform()
-        }
+    tasks.withType<Test> {
+        useJUnitPlatform()
     }
 }

@@ -12,15 +12,28 @@ plugins {
 
 group = "kr.co.jiniaslog"
 version = "2.0.0"
-java.sourceCompatibility = JavaVersion.VERSION_17
+java {
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
+}
 
 repositories {
     mavenCentral()
 }
 
-dependencies {
-    implementation(project(":system"))
+// add system's LeafModule
+findProject(":system")?.let {
+    it.subprojects.forEach { subProject ->
+        val isLeafModule = subProject.subprojects.isEmpty()
+        if (isLeafModule) {
+            dependencies {
+                implementation(project(subProject.path))
+            }
+        }
+    }
+}
 
+dependencies {
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
