@@ -2,31 +2,37 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 /**
  * System's Global Convention
- * - Kotlin version 1.8.0
+ * - Kotlin version 1.8.10
+ * - Kotlinter version 3.14.0
+ * - mockk version 1.13.4
+ * - kotest version 5.5.4
  */
 
 plugins {
-    val kotlinVersion = "1.8.0"
+    val kotlinVersion = "1.8.10"
     kotlin("jvm") version kotlinVersion
     id("org.jmailen.kotlinter") version "3.14.0" apply false
 }
 
+repositories {
+    mavenCentral()
+}
+
 group = "kr.co.jiniaslog"
-val jar: Jar by tasks
-jar.enabled = true
-jar.archiveFileName.set("${project.name}.jar")
 
+java {
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
+}
 
-dependencies {
-    subprojects.forEach { subproject ->
-        val isSystemChildProject = subproject.path.startsWith(":system:")
-        if (isSystemChildProject) {
-            implementation(project(subproject.path))
-        }
-    }
+tasks.getByName("jar") {
+    enabled = false
 }
 
 subprojects {
+
+    if (project.subprojects.isNotEmpty()) return@subprojects // build only leaf project
+
     apply(plugin = "java")
     apply(plugin = "org.jetbrains.kotlin.jvm")
     apply(plugin = "org.jmailen.kotlinter")
@@ -35,21 +41,47 @@ subprojects {
         mavenCentral()
     }
 
-    val localLib = ":system:lib"
-
-    if(this.name != localLib)
-    dependencies {
-        api(localLib)
+    java {
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
 
-    tasks.withType<KotlinCompile> {
-        kotlinOptions {
-            jvmTarget = "17"
-            freeCompilerArgs = freeCompilerArgs + "-Xjsr305=strict"
+    afterEvaluate {
+
+        val localLib = ":system:local-lib"
+
+        // adding global dependency
+        if (project.path != localLib) {
+            dependencies {
+                implementation(project(localLib))
+                implementation("org.jetbrains.kotlin:kotlin-reflect")
+
+                testImplementation("io.mockk:mockk:1.13.4")
+                testImplementation("io.kotest:kotest-runner-junit5:5.5.4")
+                testImplementation("io.kotest:kotest-assertions-core:5.5.4")
+                implementation("io.kotest:kotest-extensions-spring:4.4.3")
+
+                testImplementation("org.assertj:assertj-core:3.24.2")
+                testImplementation("ch.qos.logback:logback-classic:1.4.5")
+            }
+        }
+        tasks.withType<KotlinCompile> {
+            kotlinOptions {
+                jvmTarget = "17"
+                freeCompilerArgs = freeCompilerArgs + "-Xjsr305=strict"
+            }
+        }
+
+        tasks.findByName("bootJar")?.let {
+            it.enabled = false
+        }
+
+        tasks.getByName("jar") {
+            enabled = true
+        }
+
+        tasks.withType<Test> {
+            useJUnitPlatform()
         }
     }
-
-    val jar: Jar by tasks
-    jar.enabled = true
-    jar.archiveFileName.set("${project.name}.jar")
 }

@@ -1,0 +1,14 @@
+spring:
+  #===========#
+  #   MySQL   #
+  #===========#
+  datasource:
+    id:
+      jdbc-url: jdbc:mysql://localhost/jinia_blog_id?serverTimezone=Asia/Seoul
+      username: root
+      password:
+      driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: create

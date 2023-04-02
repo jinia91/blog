@@ -1,0 +1,28 @@
+plugins {
+    val kotlinVersion = "1.8.10"
+    val springBootVersion = "3.0.5"
+    id("org.springframework.boot") version springBootVersion
+    id("io.spring.dependency-management") version "1.1.0"
+    kotlin("jvm") version kotlinVersion
+    kotlin("plugin.spring") version kotlinVersion
+    kotlin("plugin.jpa") version kotlinVersion
+    kotlin("kapt")
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation(project(":system:article:application"))
+    implementation(project(":system:shared-persistence-kernel"))
+
+    implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
+    runtimeOnly("com.mysql:mysql-connector-j")
+    implementation("org.mapstruct:mapstruct:1.5.3.Final")
+    kapt("org.mapstruct:mapstruct-processor:1.5.3.Final")
+    kaptTest("org.mapstruct:mapstruct-processor:1.5.3.Final")
+
+    testImplementation("org.springframework.boot:spring-boot-starter-test")
+}
