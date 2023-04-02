@@ -14,7 +14,7 @@ repositories {
 }
 
 dependencies {
-    implementation(project(":system:article:application"))
+    implementation(project(":system:user:application"))
     implementation(project(":system:shared-persistence-kernel"))
 
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")

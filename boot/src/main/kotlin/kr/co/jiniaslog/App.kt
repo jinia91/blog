@@ -4,6 +4,7 @@ import kr.co.jiniaslog.lib.context.AntiCorruptLayer
 import kr.co.jiniaslog.lib.context.CustomComponent
 import kr.co.jiniaslog.lib.context.DomainService
 import kr.co.jiniaslog.lib.context.UseCaseInteractor
+import org.springframework.boot.CommandLineRunner
 import org.springframework.boot.SpringApplication
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.context.properties.ConfigurationPropertiesScan
@@ -18,7 +19,6 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing
 )
 @SpringBootApplication
 @ConfigurationPropertiesScan
-@EnableJpaAuditing
 class App
 
 fun main(args: Array<String>) {

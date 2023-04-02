@@ -15,7 +15,7 @@ repositories {
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
-    runtimeOnly("com.mysql:mysql-connector-j")
+    implementation("mysql:mysql-connector-java:8.0.32")
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
 }
