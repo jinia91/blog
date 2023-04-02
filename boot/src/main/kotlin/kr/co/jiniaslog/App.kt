@@ -16,11 +16,7 @@ import org.springframework.context.annotation.FilterType
         ComponentScan.Filter(type = FilterType.ANNOTATION, value = [DomainService::class]),
     ]
 )
-@SpringBootApplication(
-    scanBasePackages = [
-        "kr.co.jiniaslog"
-    ]
-)
+@SpringBootApplication
 @ConfigurationPropertiesScan(
     basePackages = [
         "kr.co.jiniaslog"

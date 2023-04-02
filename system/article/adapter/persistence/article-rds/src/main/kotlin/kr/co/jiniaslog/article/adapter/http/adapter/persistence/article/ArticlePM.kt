@@ -14,18 +14,18 @@ class ArticlePM(
     @Column(name = "article_id")
     val id: Long,
 
-    @Column(nullable = false, length = 50)
+    @Column(nullable = false, length = 50, name = "title")
     var title: String,
 
-    @Column(nullable = false, length = 10000)
+    @Column(nullable = false, length = 10000, name = "content")
     var content: String,
 
-    @Column(columnDefinition = "bigint default 0", nullable = false)
+    @Column(columnDefinition = "bigint default 0", nullable = false, name = "hit")
     var hit: Long,
 
-    @Column(nullable = false)
+    @Column(nullable = false, name = "thumbnail_url")
     var thumbnailUrl: String,
 
-    @Column(nullable = false)
+    @Column(nullable = false, name = "writer_id")
     var writerId: Long,
 ) : BasePM()

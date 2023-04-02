@@ -12,9 +12,10 @@ import java.time.LocalDateTime
 @MappedSuperclass
 abstract class BasePM {
     @CreatedDate
-    @Column(updatable = false)
+    @Column(updatable = false, name = "created_date")
     private val createdDate: LocalDateTime? = null
 
     @LastModifiedDate
+    @Column(name = "updated_date")
     private val updatedDate: LocalDateTime? = null
 }
