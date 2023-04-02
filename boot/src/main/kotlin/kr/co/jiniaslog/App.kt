@@ -7,6 +7,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.context.annotation.ComponentScan
 import org.springframework.context.annotation.FilterType
 
+
 @SpringBootApplication
 @ComponentScan(
     includeFilters = [
@@ -16,8 +17,9 @@ import org.springframework.context.annotation.FilterType
 )
 class App
 
-
 fun main(args: Array<String>) {
-    SpringApplication.run(App::class.java, *args)
+    val application = SpringApplication(App::class.java)
+    application.addInitializers(CustomAutoConfigYmlImportInitializer())
+    application.run(*args)
 }
 
