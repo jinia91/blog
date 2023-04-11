@@ -37,12 +37,16 @@ class Article private constructor(
         PUBLISHED, DRAFT
     }
 
-    fun edit(title: String, content: String, thumbnailUrl: String, categoryId: CategoryId, tags: Set<TagId>) {
+    fun edit(title: String, content: String, thumbnailUrl: String?, categoryId: CategoryId?, tags: Set<TagId>) {
         this.title = title
         this.content = content
         this.thumbnailUrl = thumbnailUrl
         this.categoryId = categoryId
         this.tags = tags
+        when (status) {
+            ArticleStatus.PUBLISHED -> ArticleValidatePolicy.validatePublishingArticle(this)
+            ArticleStatus.DRAFT -> ArticleValidatePolicy.validateDraftingArticle(this)
+        }
         registerEvent(ArticleEditedEvent(this.id, this.writerId))
     }
 
@@ -59,6 +63,7 @@ class Article private constructor(
     }
 
     fun hit() {
+        if (status == ArticleStatus.DRAFT) return
         this.hit++
     }
 
