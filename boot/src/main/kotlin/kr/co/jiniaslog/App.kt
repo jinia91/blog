@@ -1,9 +1,9 @@
 package kr.co.jiniaslog
 
-import kr.co.jiniaslog.lib.context.AntiCorruptLayer
-import kr.co.jiniaslog.lib.context.CustomComponent
-import kr.co.jiniaslog.lib.context.DomainService
-import kr.co.jiniaslog.lib.context.UseCaseInteractor
+import kr.co.jiniaslog.shared.core.context.AntiCorruptLayer
+import kr.co.jiniaslog.shared.core.context.CustomComponent
+import kr.co.jiniaslog.shared.core.context.DomainService
+import kr.co.jiniaslog.shared.core.context.UseCaseInteractor
 import org.springframework.boot.CommandLineRunner
 import org.springframework.boot.SpringApplication
 import org.springframework.boot.autoconfigure.SpringBootApplication
