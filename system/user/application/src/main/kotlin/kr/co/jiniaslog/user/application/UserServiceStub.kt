@@ -1,6 +1,6 @@
 package kr.co.jiniaslog.user.application
 
-import kr.co.jiniaslog.lib.context.UseCaseInteractor
+import kr.co.jiniaslog.shared.core.context.UseCaseInteractor
 import kr.co.jiniaslog.user.domain.User
 
 @UseCaseInteractor

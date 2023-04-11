@@ -48,12 +48,12 @@ subprojects {
 
     afterEvaluate {
 
-        val localLib = ":system:local-lib"
+        val sharedCoreKernel = ":system:shared-core-kernel"
 
         // adding global dependency
-        if (project.path != localLib) {
+        if (project.path != sharedCoreKernel) {
             dependencies {
-                implementation(project(localLib))
+                implementation(project(sharedCoreKernel))
                 implementation("org.jetbrains.kotlin:kotlin-reflect")
 
                 testImplementation("io.mockk:mockk:1.13.4")

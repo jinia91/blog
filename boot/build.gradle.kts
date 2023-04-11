@@ -24,6 +24,8 @@ repositories {
     mavenCentral()
 }
 
+var leafModules = mutableListOf<Project>()
+
 // add system's LeafModule
 findProject(":system")?.let {
     it.subprojects.forEach { subProject ->
@@ -32,6 +34,7 @@ findProject(":system")?.let {
             dependencies {
                 implementation(project(subProject.path))
             }
+            leafModules.add(subProject)
         }
     }
 }
@@ -58,6 +61,10 @@ tasks.withType<KotlinCompile> {
 
 tasks.withType<Test> {
     useJUnitPlatform()
+}
+
+tasks.register("testAll") {
+    dependsOn(leafModules.map { it.tasks.named("test") })
 }
 
 tasks.getByName("jar") {
