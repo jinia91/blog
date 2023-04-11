@@ -1,5 +1,8 @@
 rootProject.name = "Jinia's Log"
 
+// Enable parallel execution for tasks
+gradle.startParameter.isParallelProjectExecutionEnabled = true
+
 include(
     /**
      * ################
@@ -8,21 +11,20 @@ include(
       */
     "boot", // framework 의존성을 가진 main module
     "system",
-    "system:article:domain",
-    "system:article:application",
-    "system:article:adapter:persistence:article-rds",
-    "system:article:adapter:http-api",
-    "system:article:adapter:acl-user",
+    "system:blog-core:domain",
+    "system:blog-core:application",
+    "system:blog-core:adapter:persistence:core-rds",
+    "system:blog-core:adapter:http-api",
+    "system:blog-core:adapter:acl-user",
     "system:user:domain",
     "system:user:application",
     "system:user:adapter:persistence:user-rds",
     "system:user:adapter:http-api",
-    "system:category",
-    "system:imgupload",
-    "system:comment",
+    "system:media",
     "system:chat",
     "system:notification",
     "system:seo",
-    "system:local-lib",
+    "system:shared-core-kernel",
     "system:shared-persistence-kernel",
+    "system:infra",
 )
