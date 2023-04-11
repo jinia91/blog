@@ -6,20 +6,20 @@ import kr.co.jiniaslog.blogcore.domain.category.CategoryId
 import kr.co.jiniaslog.blogcore.domain.tag.TagId
 
 interface DraftArticlePostUseCase {
-    fun post(draftArticlePostCommand: DraftArticlePostCommand): ArticleId
+    fun post(command: DraftArticlePostCommand): ArticleId
 }
 
 data class DraftArticlePostCommand(
     val userId: UserId,
-    val title: String?,
-    val content: String?,
+    val title: String,
+    val content: String,
     val thumbnailUrl: String?,
     val categoryId: CategoryId?,
     val tags: Set<TagId>,
 )
 
 interface ArticleEditUseCase {
-    fun edit(articleEditCommand: ArticleEditCommand)
+    fun edit(command: ArticleEditCommand)
 }
 
 data class ArticleEditCommand(

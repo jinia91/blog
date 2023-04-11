@@ -19,3 +19,5 @@ data class TempArticlePostCommand(
     val categoryId: CategoryId?,
     val tags: Set<TagId>,
 )
+
+data class TempArticlePostCommandInValidException(override val message: String) : RuntimeException(message)

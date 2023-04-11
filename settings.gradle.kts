@@ -13,7 +13,7 @@ include(
     "system",
     "system:blog-core:domain",
     "system:blog-core:application",
-    "system:blog-core:adapter:persistence:article-rds",
+    "system:blog-core:adapter:persistence:core-rds",
     "system:blog-core:adapter:http-api",
     "system:blog-core:adapter:acl-user",
     "system:user:domain",
@@ -26,5 +26,5 @@ include(
     "system:seo",
     "system:shared-core-kernel",
     "system:shared-persistence-kernel",
-    "system:shared-application-infra-kernel",
+    "system:infra",
 )
