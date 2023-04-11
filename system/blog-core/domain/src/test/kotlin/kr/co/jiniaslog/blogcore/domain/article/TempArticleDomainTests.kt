@@ -10,10 +10,6 @@ internal class TempArticleDomainTests : BehaviorSpec() {
         Given("temp Article은") {
             val mockArticle = TempArticle.Factory.newTempOne(
                 userId = UserId(value = 8191),
-                title = null,
-                content = null,
-                thumbnailUrl = null,
-                categoryId = null,
                 tags = setOf(),
             )
 
