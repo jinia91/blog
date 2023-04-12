@@ -23,7 +23,6 @@ internal class TempArticleUseCasesInteractor(
             content = content,
             thumbnailUrl = thumbnailUrl,
             categoryId = categoryId,
-            tags = tags,
         )
 
         transactionHandler.runInReadCommittedTransaction { TempArticleRepository.save(newTemp) }
@@ -37,5 +36,5 @@ internal class TempArticleUseCasesInteractor(
     }
 
     override fun findOne(): TempArticle? =
-        TempArticleRepository.findTemp(ArticleId(TempArticle.TEMP_ARTICLE_STATIC_ID))
+        TempArticleRepository.getTemp(ArticleId(TempArticle.TEMP_ARTICLE_STATIC_ID))
 }

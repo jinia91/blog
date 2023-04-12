@@ -13,9 +13,9 @@ import java.time.LocalDateTime
 abstract class BasePM {
     @CreatedDate
     @Column(updatable = false, name = "created_date")
-    private val createdDate: LocalDateTime? = null
+    open var createdDate: LocalDateTime? = null
 
     @LastModifiedDate
     @Column(name = "updated_date")
-    private val updatedDate: LocalDateTime? = null
+    open var updatedDate: LocalDateTime? = null
 }

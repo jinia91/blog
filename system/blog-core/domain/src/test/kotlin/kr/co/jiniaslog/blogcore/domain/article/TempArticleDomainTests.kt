@@ -3,14 +3,12 @@ package kr.co.jiniaslog.blogcore.domain.article
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.shouldBe
 import kr.co.jiniaslog.blogcore.domain.category.CategoryId
-import kr.co.jiniaslog.blogcore.domain.tag.TagId
 
 internal class TempArticleDomainTests : BehaviorSpec() {
     init {
         Given("temp Article은") {
             val mockArticle = TempArticle.Factory.newTempOne(
                 userId = UserId(value = 8191),
-                tags = setOf(),
             )
 
             val mockArticle2 = TempArticle.Factory.newTempOne(
@@ -19,7 +17,6 @@ internal class TempArticleDomainTests : BehaviorSpec() {
                 content = "null",
                 thumbnailUrl = "null",
                 categoryId = CategoryId(2),
-                tags = setOf(TagId(4)),
             )
 
             When("생성될때") {

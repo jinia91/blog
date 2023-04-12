@@ -19,6 +19,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing
 )
 @SpringBootApplication
 @ConfigurationPropertiesScan
+@EnableJpaAuditing
 class App
 
 fun main(args: Array<String>) {

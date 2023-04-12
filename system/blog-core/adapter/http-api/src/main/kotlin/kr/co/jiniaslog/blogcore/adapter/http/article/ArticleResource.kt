@@ -1,4 +1,4 @@
-package kr.co.jiniaslog.blogcore.adapter.http
+package kr.co.jiniaslog.blogcore.adapter.http.article
 
 import kr.co.jiniaslog.blogcore.application.article.usecase.DraftArticlePostUseCase
 import org.springframework.web.bind.annotation.PostMapping

@@ -5,6 +5,7 @@ import kr.co.jiniaslog.blogcore.domain.tag.TagId
 import kr.co.jiniaslog.shared.core.context.DomainEntity
 import kr.co.jiniaslog.shared.core.domain.AggregateRoot
 import kr.co.jiniaslog.shared.core.extentions.shouldBe
+import java.time.LocalDateTime
 
 @DomainEntity
 class Article private constructor(
@@ -32,6 +33,10 @@ class Article private constructor(
         private set
     var status: ArticleStatus = ArticleStatus.DRAFT
         private set
+
+    val createdDate: LocalDateTime? = null
+
+    val updatedDate: LocalDateTime? = null
 
     enum class ArticleStatus {
         PUBLISHED, DRAFT

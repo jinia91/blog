@@ -1,4 +1,4 @@
-package kr.co.jiniaslog.blogcore.adapter.http
+package kr.co.jiniaslog.blogcore.adapter.http.article
 
 import kr.co.jiniaslog.blogcore.application.article.usecase.ArticleEditCommand
 import kr.co.jiniaslog.blogcore.application.article.usecase.DraftArticlePostCommand

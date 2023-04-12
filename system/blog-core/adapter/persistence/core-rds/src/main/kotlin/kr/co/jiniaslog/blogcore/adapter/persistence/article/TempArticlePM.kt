@@ -16,14 +16,18 @@ class TempArticlePM(
     val id: Long,
 
     @Column(nullable = true, length = 50, name = "title")
-    var title: String,
+    var title: String?,
 
     @Column(nullable = true, length = 10000, name = "content")
-    var content: String,
+    var content: String?,
 
     @Column(nullable = true, name = "thumbnail_url")
-    var thumbnailUrl: String,
+    var thumbnailUrl: String?,
 
-    @Column(nullable = true, name = "writer_id")
+    @Column(nullable = false, name = "writer_id")
     var writerId: Long,
+
+    @Column(nullable = true, name = "category_id")
+    var categoryId: Long?,
+
 ) : BasePM()

@@ -1,0 +1,10 @@
+POST http://localhost:7777/articles/temp
+Content-Type: application/json
+
+{
+  "title": "ㅇㅇㅇㅇㅇ",
+  "content": "",
+  "thumbnailUrl": "",
+  "writerId": 1,
+  "categoryId": 0
+}
