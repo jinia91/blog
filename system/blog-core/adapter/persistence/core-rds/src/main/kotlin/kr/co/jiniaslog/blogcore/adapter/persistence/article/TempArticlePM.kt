@@ -13,7 +13,7 @@ import kr.co.jiniaslog.shared.persistence.BasePM
 class TempArticlePM(
     @Id
     @Column(name = "temp_article_id")
-    val id: Long,
+    override val id: Long,
 
     @Column(nullable = true, length = 50, name = "title")
     var title: String?,
@@ -29,5 +29,4 @@ class TempArticlePM(
 
     @Column(nullable = true, name = "category_id")
     var categoryId: Long?,
-
 ) : BasePM()

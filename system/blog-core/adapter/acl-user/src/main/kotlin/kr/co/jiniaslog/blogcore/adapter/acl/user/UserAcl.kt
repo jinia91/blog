@@ -6,8 +6,8 @@ import kr.co.jiniaslog.shared.core.context.AntiCorruptLayer
 import kr.co.jiniaslog.user.application.UserServiceStub
 
 @AntiCorruptLayer
-class UserAcl(
+internal class UserAcl(
     private val userServiceStub: UserServiceStub,
 ) : UserServiceClient {
-    override fun isAdmin(id: Long) = UserId(userServiceStub.stub(id).id) == UserId(1)
+    override fun userExists(userId: UserId): Boolean = true
 }

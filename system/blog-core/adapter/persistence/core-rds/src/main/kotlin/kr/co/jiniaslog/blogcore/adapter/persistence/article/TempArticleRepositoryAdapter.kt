@@ -6,6 +6,7 @@ import kr.co.jiniaslog.blogcore.domain.article.TempArticleRepository
 import kr.co.jiniaslog.blogcore.domain.article.UserId
 import kr.co.jiniaslog.blogcore.domain.category.CategoryId
 import org.springframework.stereotype.Repository
+import java.time.LocalDateTime
 import kotlin.jvm.optionals.getOrNull
 
 @Repository
@@ -13,7 +14,10 @@ internal class TempArticleRepositoryAdapter(
     private val tempArticleJpaRepository: TempArticleJpaRepository,
 ) : TempArticleRepository {
     override fun save(newTempArticle: TempArticle) {
-        tempArticleJpaRepository.save(newTempArticle.toPm())
+        tempArticleJpaRepository.save(
+            newTempArticle.toPm()
+                .apply { createdDate = LocalDateTime.now() },
+        )
     }
 
     override fun getTemp(articleId: ArticleId): TempArticle? = tempArticleJpaRepository.findById(articleId.value)
@@ -30,7 +34,7 @@ internal class TempArticleRepositoryAdapter(
         categoryId = categoryId?.value,
     )
 
-    private fun TempArticlePM.toDomain(): TempArticle = TempArticle(
+    private fun TempArticlePM.toDomain(): TempArticle = TempArticle.Factory.from(
         title = title,
         content = content,
         thumbnailUrl = thumbnailUrl,

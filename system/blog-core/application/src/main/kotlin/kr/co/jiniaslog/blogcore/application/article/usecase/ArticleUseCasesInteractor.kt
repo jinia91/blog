@@ -33,5 +33,5 @@ class ArticleUseCasesInteractor(
     }
 
     private fun DraftArticlePostCommand.isInvalid(): Boolean =
-        !userServiceClient.isAdmin(userId.value)
+        !userServiceClient.userExists(userId)
 }

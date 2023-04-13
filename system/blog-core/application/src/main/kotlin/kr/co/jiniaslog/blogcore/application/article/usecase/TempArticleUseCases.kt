@@ -11,7 +11,7 @@ interface TempArticleUseCases {
 }
 
 data class TempArticlePostCommand(
-    val userId: UserId,
+    val writerId: UserId,
     val title: String?,
     val content: String?,
     val thumbnailUrl: String?,

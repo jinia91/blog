@@ -10,31 +10,32 @@ import kr.co.jiniaslog.shared.core.context.UseCaseInteractor
 @UseCaseInteractor
 internal class TempArticleUseCasesInteractor(
     private val transactionHandler: TransactionHandler,
-    private val TempArticleRepository: TempArticleRepository,
+    private val tempArticleRepository: TempArticleRepository,
     private val userServiceClient: UserServiceClient,
 ) : TempArticleUseCases {
 
     override fun post(command: TempArticlePostCommand) = with(command) {
-        if (command.isInvalid()) throw TempArticlePostCommandInValidException("Invalid ArticlePostCommand : $command")
+        if (!command.isValid()) throw TempArticlePostCommandInValidException("Invalid ArticlePostCommand : $command")
 
-        val newTemp = TempArticle.Factory.newTempOne(
-            userId = userId,
+        val newTemp = TempArticle.Factory.from(
+            writerId = writerId,
             title = title,
             content = content,
             thumbnailUrl = thumbnailUrl,
             categoryId = categoryId,
         )
 
-        transactionHandler.runInReadCommittedTransaction { TempArticleRepository.save(newTemp) }
+        transactionHandler.runInReadCommittedTransaction { tempArticleRepository.save(newTemp) }
     }
 
-    private fun TempArticlePostCommand.isInvalid(): Boolean =
-        !userServiceClient.isAdmin(userId.value)
+    private fun TempArticlePostCommand.isValid(): Boolean =
+        userServiceClient.userExists(writerId)
+    // TODO: category 존재 검증
 
     override fun delete() {
-        transactionHandler.runInReadCommittedTransaction { TempArticleRepository.delete() }
+        transactionHandler.runInReadCommittedTransaction { tempArticleRepository.delete() }
     }
 
     override fun findOne(): TempArticle? =
-        TempArticleRepository.getTemp(ArticleId(TempArticle.TEMP_ARTICLE_STATIC_ID))
+        tempArticleRepository.getTemp(ArticleId(TempArticle.TEMP_ARTICLE_STATIC_ID))
 }

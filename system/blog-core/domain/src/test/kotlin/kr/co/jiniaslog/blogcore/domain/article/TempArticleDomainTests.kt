@@ -7,12 +7,12 @@ import kr.co.jiniaslog.blogcore.domain.category.CategoryId
 internal class TempArticleDomainTests : BehaviorSpec() {
     init {
         Given("temp Article은") {
-            val mockArticle = TempArticle.Factory.newTempOne(
-                userId = UserId(value = 8191),
+            val mockArticle = TempArticle.Factory.from(
+                writerId = UserId(value = 8191),
             )
 
-            val mockArticle2 = TempArticle.Factory.newTempOne(
-                userId = UserId(value = 4151),
+            val mockArticle2 = TempArticle.Factory.from(
+                writerId = UserId(value = 4151),
                 title = "aliquid",
                 content = "null",
                 thumbnailUrl = "null",

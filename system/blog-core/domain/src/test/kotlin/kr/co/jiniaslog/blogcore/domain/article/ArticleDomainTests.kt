@@ -212,6 +212,8 @@ internal class ArticleDomainTests : BehaviorSpec() {
                 mockArticle.hit()
                 Then("article의 hit가 증가한다") {
                     mockArticle.hit shouldBe 1
+                    mockArticle.createdDate shouldBe null
+                    mockArticle.updatedDate shouldBe null
                 }
             }
         }

@@ -2,12 +2,10 @@ package kr.co.jiniaslog.blogcore.domain.article
 
 import kr.co.jiniaslog.blogcore.domain.category.CategoryId
 import kr.co.jiniaslog.blogcore.domain.tag.TagId
-import kr.co.jiniaslog.shared.core.context.DomainEntity
 import kr.co.jiniaslog.shared.core.domain.AggregateRoot
 import kr.co.jiniaslog.shared.core.extentions.shouldBe
 import java.time.LocalDateTime
 
-@DomainEntity
 class Article private constructor(
     id: ArticleId,
     title: String,
@@ -16,8 +14,9 @@ class Article private constructor(
     userId: UserId,
     categoryId: CategoryId?,
     tags: Set<TagId>,
-) : AggregateRoot() {
-    val id: ArticleId = id
+) : AggregateRoot<ArticleId>() {
+
+    override val id: ArticleId = id
     var title: String = title
         private set
     var content: String = content
@@ -34,35 +33,36 @@ class Article private constructor(
     var status: ArticleStatus = ArticleStatus.DRAFT
         private set
 
-    val createdDate: LocalDateTime? = null
-
     val updatedDate: LocalDateTime? = null
+
+    val createdDate: LocalDateTime? = null
 
     enum class ArticleStatus {
         PUBLISHED, DRAFT
     }
 
     fun edit(title: String, content: String, thumbnailUrl: String?, categoryId: CategoryId?, tags: Set<TagId>) {
+        when (this.status) {
+            ArticleStatus.PUBLISHED -> ArticleValidatePolicy.validatePublishingArticle(this.writerId, title, content, thumbnailUrl, categoryId, tags)
+            ArticleStatus.DRAFT -> ArticleValidatePolicy.validateDraftingArticle(this.writerId, title, content)
+        }
+
         this.title = title
         this.content = content
         this.thumbnailUrl = thumbnailUrl
         this.categoryId = categoryId
         this.tags = tags
-        when (status) {
-            ArticleStatus.PUBLISHED -> ArticleValidatePolicy.validatePublishingArticle(this)
-            ArticleStatus.DRAFT -> ArticleValidatePolicy.validateDraftingArticle(this)
-        }
         registerEvent(ArticleEditedEvent(this.id, this.writerId))
     }
 
     fun publish() {
-        ArticleValidatePolicy.validatePublishingArticle(this)
+        ArticleValidatePolicy.validatePublishingArticle(this.writerId, this.title, this.content, this.thumbnailUrl, this.categoryId, this.tags)
         this.status = ArticleStatus.PUBLISHED
         registerEvent(ArticlePublishedEvent(this.id, this.writerId))
     }
 
     fun drafting() {
-        ArticleValidatePolicy.validateDraftingArticle(this)
+        ArticleValidatePolicy.validateDraftingArticle(this.writerId, this.title, this.content)
         this.status = ArticleStatus.DRAFT
         registerEvent(ArticleDraftEvent(this.id, this.writerId))
     }
@@ -74,19 +74,20 @@ class Article private constructor(
 
     object ArticleValidatePolicy {
 
-        fun validateDraftingArticle(article: Article) = defaultValidate(article)
+        fun validateDraftingArticle(writerId: UserId, title: String, content: String) =
+            defaultValidate(writerId, title, content)
 
-        fun validatePublishingArticle(article: Article) = with(article) {
-            defaultValidate(this)
+        fun validatePublishingArticle(writerId: UserId, title: String, content: String, thumbnailUrl: String?, categoryId: CategoryId?, tags: Set<TagId>) {
+            defaultValidate(writerId, title, content)
             shouldBe<ArticleNotValidException>(categoryId != CategoryId(0) && categoryId != null) { "shouldHaveCategory" }
             shouldBe<ArticleNotValidException>(tags.isNotEmpty()) { "shouldHaveTags" }
             shouldBe<ArticleNotValidException>(thumbnailUrl != null) { "shouldHaveThumbnail" }
         }
-        private fun defaultValidate(article: Article) = with(article) {
+
+        private fun defaultValidate(writerId: UserId, title: String, content: String) {
             shouldBe<ArticleNotValidException>(writerId != UserId(0)) { "shouldHaveWriter" }
             shouldBe<ArticleNotValidException>(title.isNotBlank()) { "shouldHaveTitle" }
             shouldBe<ArticleNotValidException>(content.isNotBlank()) { "shouldHaveContent" }
-            shouldBe<ArticleNotValidException>(writerId != UserId(0)) { "shouldHaveWriter" }
         }
     }
 

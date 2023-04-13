@@ -13,5 +13,5 @@ import kr.co.jiniaslog.shared.persistence.BasePM
 class UserPM(
     @Id
     @Column(name = "user_id")
-    val id: Long,
+    override val id: Long,
 ) : BasePM()

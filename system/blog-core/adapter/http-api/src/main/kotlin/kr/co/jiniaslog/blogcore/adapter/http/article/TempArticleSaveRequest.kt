@@ -15,7 +15,7 @@ data class TempArticleSaveRequest(
         title = title,
         content = content,
         thumbnailUrl = thumbnailUrl,
-        userId = UserId(writerId),
+        writerId = UserId(writerId),
         categoryId = categoryId?.let { CategoryId(it) },
     )
 }

@@ -1,3 +1,5 @@
+
+### 1. 임시 아티클 생성 테스트
 POST http://localhost:7777/articles/temp
 Content-Type: application/json
 
@@ -8,3 +10,7 @@ Content-Type: application/json
   "writerId": 1,
   "categoryId": 0
 }
+
+
+### 2. 임시 아티클 조회 테스트
+GET http://localhost:7777/article/temp

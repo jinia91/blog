@@ -1,17 +1,17 @@
 package kr.co.jiniaslog.blogcore.domain.article
 
 import kr.co.jiniaslog.blogcore.domain.category.CategoryId
-import kr.co.jiniaslog.shared.core.context.DomainEntity
+import kr.co.jiniaslog.shared.core.domain.DomainEntity
 
-@DomainEntity
-class TempArticle(
+class TempArticle private constructor(
     title: String?,
     content: String?,
     thumbnailUrl: String?,
     writerId: UserId,
     categoryId: CategoryId?,
-) {
-    val id: ArticleId = ArticleId(TEMP_ARTICLE_STATIC_ID)
+) : DomainEntity<TempArticleId>() {
+
+    override val id: TempArticleId = TempArticleId(TEMP_ARTICLE_STATIC_ID)
 
     var title: String? = title
         private set
@@ -28,14 +28,14 @@ class TempArticle(
         private set
 
     object Factory {
-        fun newTempOne(
-            userId: UserId,
+        fun from(
+            writerId: UserId,
             title: String? = null,
             content: String? = null,
             thumbnailUrl: String? = null,
             categoryId: CategoryId? = null,
         ): TempArticle = TempArticle(
-            writerId = userId,
+            writerId = writerId,
             title = title,
             content = content,
             thumbnailUrl = thumbnailUrl,
