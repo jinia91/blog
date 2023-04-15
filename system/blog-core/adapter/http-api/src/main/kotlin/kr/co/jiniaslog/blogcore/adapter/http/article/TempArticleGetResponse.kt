@@ -10,7 +10,7 @@ data class TempArticleGetResponse(
     val categoryId: Long? = null,
 ) {
     companion object {
-        fun from(findOne: TempArticle?): TempArticleGetResponse = findOne?.let {
+        fun from(findOne: TempArticle?): TempArticleGetResponse? = findOne?.let {
             TempArticleGetResponse(
                 title = it.title,
                 content = it.content,
@@ -18,6 +18,6 @@ data class TempArticleGetResponse(
                 writerId = it.writerId.value,
                 categoryId = it.categoryId?.value,
             )
-        } ?: TempArticleGetResponse()
+        }
     }
 }

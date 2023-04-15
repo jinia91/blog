@@ -1,6 +1,5 @@
-package kr.co.jiniaslog.blogcore.adapter.persistence
+package kr.co.jiniaslog.config
 
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.jdbc.datasource.DataSourceUtils
 import org.springframework.stereotype.Component

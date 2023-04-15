@@ -1,7 +1,10 @@
-package kr.co.jiniaslog
-import kr.co.jiniaslog.blogcore.adapter.persistence.DbCleaner
+package kr.co.jiniaslog.config
+import io.restassured.RestAssured
+import kr.co.jiniaslog.CustomAutoConfigYmlImportInitializer
 import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.BeforeEach
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.annotation.DirtiesContext
@@ -12,12 +15,11 @@ import org.springframework.test.context.DynamicPropertySource
 import org.springframework.test.context.TestExecutionListeners
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener
 import org.testcontainers.containers.MySQLContainer
-import org.testcontainers.junit.jupiter.Container
 import org.testcontainers.junit.jupiter.Testcontainers
 
 
 @Testcontainers
-@SpringBootTest
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @TestExecutionListeners(DependencyInjectionTestExecutionListener::class)
@@ -28,11 +30,19 @@ class TestContainerConfig {
     @Autowired
     protected lateinit var dbCleaner: DbCleaner
 
+    @Value("\${local.server.port}")
+    private lateinit var port: Number
+
+    @BeforeEach
+    fun setup() {
+        RestAssured.port = port.toInt()
+        RestAssured.baseURI = "http://localhost"
+    }
+
     @AfterEach
     fun tearDown() {
         dbCleaner.cleanAll()
     }
-
 
     companion object {
 
@@ -40,21 +50,15 @@ class TestContainerConfig {
         private const val RDB_COLLATION = "--collation-server=utf8mb4_unicode_ci"
         private const val RDB_INIT_SQL = "SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci"
 
-        @Container
-        @JvmField
-        val blogCoreDbContainer: MySQLContainer<*> = MySQLContainer("mysql:8.0")
+        private val blogCoreDbContainer: MySQLContainer<*> = MySQLContainer("mysql:8.0")
             .withCommand(RDB_CHARSET, RDB_COLLATION)
             .withDatabaseName("blogcore")
 
-        @Container
-        @JvmField
-        val userDbContainer: MySQLContainer<*> = MySQLContainer("mysql:8.0")
+        private val userDbContainer: MySQLContainer<*> = MySQLContainer("mysql:8.0")
             .withCommand(RDB_CHARSET, RDB_COLLATION)
             .withDatabaseName("user")
 
-        @Container
-        @JvmField
-        val idDbContainer: MySQLContainer<*> = MySQLContainer("mysql:8.0")
+        private val idDbContainer: MySQLContainer<*> = MySQLContainer("mysql:8.0")
             .withCommand(RDB_CHARSET, RDB_COLLATION)
             .withDatabaseName("id")
 

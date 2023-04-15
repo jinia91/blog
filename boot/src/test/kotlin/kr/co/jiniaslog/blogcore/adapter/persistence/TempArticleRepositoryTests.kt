@@ -1,6 +1,6 @@
 package kr.co.jiniaslog.blogcore.adapter.persistence
 
-import kr.co.jiniaslog.TestContainerConfig
+import kr.co.jiniaslog.config.TestContainerConfig
 import jakarta.persistence.EntityManager
 import jakarta.persistence.PersistenceContext
 import kr.co.jiniaslog.blogcore.domain.article.TempArticle
