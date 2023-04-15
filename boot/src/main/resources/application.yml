@@ -4,3 +4,21 @@ server:
 spring:
   jpa:
     open-in-view: false
+    properties:
+      hibernate:
+        format_sql: true
+        use_sql_comments: true
+      show-sql: true
+
+logging:
+  level:
+    org.hibernate: INFO
+    org.hibernate.SQL: INFO
+    org.hibernate.type.descriptor.sql.BasicBinder: INFO
+    org.hibernate.transaction: INFO
+    sql: INFO
+
+decorator:
+  datasource:
+    p6spy:
+      enable-logging: true

@@ -45,6 +45,8 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 
+    implementation("com.github.gavlyukovskiy:p6spy-spring-boot-starter:1.9.0")
+
     implementation("org.mapstruct:mapstruct:1.5.3.Final")
     kapt("org.mapstruct:mapstruct-processor:1.5.3.Final")
     kaptTest("org.mapstruct:mapstruct-processor:1.5.3.Final")

@@ -11,7 +11,7 @@ import java.time.LocalDateTime
 
 @EntityListeners(AuditingEntityListener::class)
 @MappedSuperclass
-abstract class BasePM : Persistable<Long> {
+abstract class BasePersistenceModel : Persistable<Long> {
     abstract val id: Long
 
     @CreatedDate
