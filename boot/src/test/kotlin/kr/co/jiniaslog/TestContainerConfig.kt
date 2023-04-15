@@ -4,8 +4,6 @@ import org.junit.jupiter.api.AfterEach
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.context.ApplicationContextInitializer
-import org.springframework.context.ConfigurableApplicationContext
 import org.springframework.test.annotation.DirtiesContext
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.ContextConfiguration
@@ -37,43 +35,44 @@ class TestContainerConfig {
 
 
     companion object {
+        private const val RDB_CHARSET = "--character-set-server=utf8mb4"
+        private const val RDB_COLLATION = "--collation-server=utf8mb4_unicode_ci"
+        private const val RDB_INIT_SQL = "--init-sql=SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci"
+
         @Container
         @JvmField
-        val blogCoreDbContainer = MySQLContainer("mysql:8.0")
-            .withCommand("--character-set-server=utf8mb4", "--collation-server=utf8mb4_unicode_ci")
+        val blogCoreDbContainer: MySQLContainer<*> = MySQLContainer("mysql:8.0")
+            .withCommand(RDB_CHARSET, RDB_COLLATION)
             .withDatabaseName("blogcore")
 
         @Container
         @JvmField
-        val userDbContainer = MySQLContainer("mysql:8.0")
-            .withCommand("--character-set-server=utf8mb4", "--collation-server=utf8mb4_unicode_ci")
+        val userDbContainer: MySQLContainer<*> = MySQLContainer("mysql:8.0")
+            .withCommand(RDB_CHARSET, RDB_COLLATION)
             .withDatabaseName("user")
 
         @Container
         @JvmField
-        val idDbContainer = MySQLContainer("mysql:8.0")
-            .withCommand("--character-set-server=utf8mb4", "--collation-server=utf8mb4_unicode_ci")
+        val idDbContainer: MySQLContainer<*> = MySQLContainer("mysql:8.0")
+            .withCommand(RDB_CHARSET, RDB_COLLATION)
             .withDatabaseName("id")
 
+        private val rdbContainers = listOf(blogCoreDbContainer, userDbContainer, idDbContainer)
 
         @DynamicPropertySource
         @JvmStatic
-        fun dynamicProperty(registry: DynamicPropertyRegistry) {
-
-            val dbContainer = listOf(blogCoreDbContainer, userDbContainer, idDbContainer)
-            for (mySQLContainer in dbContainer) {
+        fun injectTestProperties(registry: DynamicPropertyRegistry) {
+            for (mySQLContainer in rdbContainers) {
                 registry.add("spring.datasource.${mySQLContainer.databaseName}.jdbc-url") { mySQLContainer.jdbcUrl }
                 registry.add("spring.datasource.${mySQLContainer.databaseName}.driver-class-name") { mySQLContainer.driverClassName }
                 registry.add("spring.datasource.${mySQLContainer.databaseName}.username") { mySQLContainer.username }
                 registry.add("spring.datasource.${mySQLContainer.databaseName}.password") { mySQLContainer.password }
-                registry.add("spring.datasource.${mySQLContainer.databaseName}.connection-init-sql") { "SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci" }
+                registry.add("spring.datasource.${mySQLContainer.databaseName}.connection-init-sql") { RDB_INIT_SQL }
             }
         }
 
         init {
-            blogCoreDbContainer.start()
-            userDbContainer.start()
-            idDbContainer.start()
+            rdbContainers.forEach { it.start() }
         }
     }
 }
