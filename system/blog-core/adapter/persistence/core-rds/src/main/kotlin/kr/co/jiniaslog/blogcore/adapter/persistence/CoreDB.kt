@@ -55,6 +55,7 @@ class BlogCoreDatasourceConfig(
             .dataSource(blogCoreDatasource())
             .packages(CoreDB.BASE_PACKAGE)
             .properties(properties)
+            .persistenceUnit(CoreDB.PERSISTENT_UNIT)
             .build()
     }
 

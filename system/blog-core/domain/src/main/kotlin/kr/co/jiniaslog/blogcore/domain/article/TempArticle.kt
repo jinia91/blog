@@ -11,7 +11,7 @@ class TempArticle private constructor(
     categoryId: CategoryId?,
 ) : DomainEntity<TempArticleId>() {
 
-    override val id: TempArticleId = TempArticleId(TEMP_ARTICLE_STATIC_ID)
+    override val id: TempArticleId = TempArticleId.getDefault()
 
     var title: String? = title
         private set
@@ -41,9 +41,5 @@ class TempArticle private constructor(
             thumbnailUrl = thumbnailUrl,
             categoryId = categoryId,
         )
-    }
-
-    companion object {
-        const val TEMP_ARTICLE_STATIC_ID = 1L
     }
 }

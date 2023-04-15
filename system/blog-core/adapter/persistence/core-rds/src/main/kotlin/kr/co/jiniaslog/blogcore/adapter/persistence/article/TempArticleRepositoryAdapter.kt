@@ -1,7 +1,7 @@
 package kr.co.jiniaslog.blogcore.adapter.persistence.article
 
-import kr.co.jiniaslog.blogcore.domain.article.ArticleId
 import kr.co.jiniaslog.blogcore.domain.article.TempArticle
+import kr.co.jiniaslog.blogcore.domain.article.TempArticleId
 import kr.co.jiniaslog.blogcore.domain.article.TempArticleRepository
 import kr.co.jiniaslog.blogcore.domain.article.UserId
 import kr.co.jiniaslog.blogcore.domain.category.CategoryId
@@ -20,7 +20,7 @@ internal class TempArticleRepositoryAdapter(
         )
     }
 
-    override fun getTemp(articleId: ArticleId): TempArticle? = tempArticleJpaRepository.findById(articleId.value)
+    override fun getTemp(tempArticleId: TempArticleId): TempArticle? = tempArticleJpaRepository.findById(tempArticleId.value)
         .getOrNull()?.toDomain()
 
     override fun delete() = tempArticleJpaRepository.deleteAll()

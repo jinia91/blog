@@ -8,7 +8,7 @@ import kr.co.jiniaslog.blogcore.domain.article.UserServiceClient
 import kr.co.jiniaslog.shared.core.context.UseCaseInteractor
 
 @UseCaseInteractor
-class ArticleUseCasesInteractor(
+internal class ArticleUseCasesInteractor(
     private val transactionHandler: TransactionHandler,
     private val articleIdGenerator: ArticleIdGenerator,
     private val articleRepository: ArticleRepository,
