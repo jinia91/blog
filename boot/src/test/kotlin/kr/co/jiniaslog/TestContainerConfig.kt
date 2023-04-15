@@ -1,4 +1,7 @@
 package kr.co.jiniaslog
+import kr.co.jiniaslog.blogcore.adapter.persistence.DbCleaner
+import org.junit.jupiter.api.AfterEach
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.context.ApplicationContextInitializer
@@ -24,22 +27,31 @@ import org.testcontainers.junit.jupiter.Testcontainers
 @ContextConfiguration(initializers = [CustomAutoConfigYmlImportInitializer::class])
 class TestContainerConfig {
 
+    @Autowired
+    protected lateinit var dbCleaner: DbCleaner
+
+    @AfterEach
+    fun tearDown() {
+        dbCleaner.cleanAll()
+    }
+
+
     companion object {
         @Container
         @JvmField
-        var blogCoreDbContainer = MySQLContainer("mysql:8.0")
+        val blogCoreDbContainer = MySQLContainer("mysql:8.0")
             .withCommand("--character-set-server=utf8mb4", "--collation-server=utf8mb4_unicode_ci")
             .withDatabaseName("blogcore")
 
         @Container
         @JvmField
-        var userDbContainer = MySQLContainer("mysql:8.0")
+        val userDbContainer = MySQLContainer("mysql:8.0")
             .withCommand("--character-set-server=utf8mb4", "--collation-server=utf8mb4_unicode_ci")
             .withDatabaseName("user")
 
         @Container
         @JvmField
-        var idDbContainer = MySQLContainer("mysql:8.0")
+        val idDbContainer = MySQLContainer("mysql:8.0")
             .withCommand("--character-set-server=utf8mb4", "--collation-server=utf8mb4_unicode_ci")
             .withDatabaseName("id")
 
@@ -47,24 +59,15 @@ class TestContainerConfig {
         @DynamicPropertySource
         @JvmStatic
         fun dynamicProperty(registry: DynamicPropertyRegistry) {
-            registry.add("spring.datasource.blogcore.jdbcUrl") { blogCoreDbContainer.jdbcUrl }
-            registry.add("spring.datasource.blogcore.driverClassName") { blogCoreDbContainer.driverClassName }
-            registry.add("spring.datasource.blogcore.username") { blogCoreDbContainer.username }
-            registry.add("spring.datasource.blogcore.password") { blogCoreDbContainer.password }
-            registry.add("spring.datasource.blogcore.connection-init-sql") { "SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci" }
 
-            registry.add("spring.datasource.user.jdbcUrl") { userDbContainer.jdbcUrl }
-            registry.add("spring.datasource.user.driverClassName") { userDbContainer.driverClassName }
-            registry.add("spring.datasource.user.username") { userDbContainer.username }
-            registry.add("spring.datasource.user.password") { userDbContainer.password }
-            registry.add("spring.datasource.user.connection-init-sql") { "SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci" }
-
-            registry.add("spring.datasource.id.jdbcUrl") { idDbContainer.jdbcUrl }
-            registry.add("spring.datasource.id.driverClassName") { idDbContainer.driverClassName }
-            registry.add("spring.datasource.id.username") { idDbContainer.username }
-            registry.add("spring.datasource.id.password") { idDbContainer.password }
-            registry.add("spring.datasource.id.connection-init-sql") { "SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci" }
-
+            val dbContainer = listOf(blogCoreDbContainer, userDbContainer, idDbContainer)
+            for (mySQLContainer in dbContainer) {
+                registry.add("spring.datasource.${mySQLContainer.databaseName}.jdbc-url") { mySQLContainer.jdbcUrl }
+                registry.add("spring.datasource.${mySQLContainer.databaseName}.driver-class-name") { mySQLContainer.driverClassName }
+                registry.add("spring.datasource.${mySQLContainer.databaseName}.username") { mySQLContainer.username }
+                registry.add("spring.datasource.${mySQLContainer.databaseName}.password") { mySQLContainer.password }
+                registry.add("spring.datasource.${mySQLContainer.databaseName}.connection-init-sql") { "SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci" }
+            }
         }
 
         init {
@@ -72,6 +75,5 @@ class TestContainerConfig {
             userDbContainer.start()
             idDbContainer.start()
         }
-
     }
 }

@@ -20,7 +20,7 @@ class TempArticleRepositoryTests : TestContainerConfig() {
     private lateinit var em: EntityManager
 
     @Test
-    fun `tempArticle Save Test`() {
+    fun `tempArticle Save and get Test`() {
         val tempArticle = TempArticle.Factory.from(
             writerId = UserId(value = 2372),
             title = null,
@@ -31,7 +31,27 @@ class TempArticleRepositoryTests : TestContainerConfig() {
         tempArticleRepository.save(tempArticle)
         em.clear()
         val temp = tempArticleRepository.getTemp(TempArticleId.getDefault())
+
+        // then
         assertThat(temp).isNotNull
         assertThat(temp!!.id).isEqualTo(TempArticleId.getDefault())
+    }
+
+    @Test
+    fun `tempArticle delete Test`() {
+        val tempArticle = TempArticle.Factory.from(
+            writerId = UserId(value = 2372),
+            title = null,
+            content = null,
+            thumbnailUrl = null,
+            categoryId = null
+        )
+        tempArticleRepository.save(tempArticle)
+        em.clear()
+
+        tempArticleRepository.delete()
+
+        // then
+        assertThat(tempArticleRepository.getTemp(TempArticleId.getDefault())).isNull()
     }
 }
