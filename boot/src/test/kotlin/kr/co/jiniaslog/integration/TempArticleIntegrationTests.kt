@@ -2,8 +2,6 @@ package kr.co.jiniaslog.integration
 
 import kr.co.jiniaslog.config.TestContainerConfig
 import io.restassured.RestAssured.given
-import io.restassured.RestAssured.port
-import io.restassured.response.ResponseOptions
 import jakarta.persistence.EntityManager
 import jakarta.persistence.PersistenceContext
 import kr.co.jiniaslog.blogcore.adapter.persistence.CoreDB
@@ -17,7 +15,6 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
-import org.springframework.http.HttpStatusCode
 
 class TempArticleIntegrationTests : TestContainerConfig() {
 
