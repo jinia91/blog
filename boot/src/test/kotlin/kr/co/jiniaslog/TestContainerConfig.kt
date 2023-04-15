@@ -35,9 +35,10 @@ class TestContainerConfig {
 
 
     companion object {
+
         private const val RDB_CHARSET = "--character-set-server=utf8mb4"
         private const val RDB_COLLATION = "--collation-server=utf8mb4_unicode_ci"
-        private const val RDB_INIT_SQL = "--init-sql=SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci"
+        private const val RDB_INIT_SQL = "SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci"
 
         @Container
         @JvmField

@@ -69,6 +69,7 @@ tasks.withType<Test> {
 
 tasks.register("testAll") {
     dependsOn(leafModules.map { it.tasks.named("test") })
+    dependsOn(tasks.test)
 }
 
 tasks.getByName("jar") {
