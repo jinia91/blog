@@ -7,8 +7,8 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import kr.co.jiniaslog.blogcore.application.article.infra.TransactionHandler
-import kr.co.jiniaslog.blogcore.domain.article.ArticleId
 import kr.co.jiniaslog.blogcore.domain.article.TempArticle
+import kr.co.jiniaslog.blogcore.domain.article.TempArticleId
 import kr.co.jiniaslog.blogcore.domain.article.TempArticleRepository
 import kr.co.jiniaslog.blogcore.domain.article.UserId
 import kr.co.jiniaslog.blogcore.domain.article.UserServiceClient
@@ -59,7 +59,7 @@ internal class TempArticleUseCasesInteractorTests : BehaviorSpec() {
         }
 
         Given("임시 아티클이 이미 존재할 때") {
-            every { tempArticleRepository.getTemp(ArticleId(TempArticle.TEMP_ARTICLE_STATIC_ID)) }
+            every { tempArticleRepository.getTemp(TempArticleId.getDefault()) }
                 .returns(
                     TempArticle.Factory.from(
                         writerId = UserId(value = 8525),
