@@ -14,6 +14,8 @@ class Article private constructor(
     userId: UserId,
     categoryId: CategoryId?,
     tags: Set<TagId>,
+    status: String? = null,
+    hit: Long? = null,
 ) : AggregateRoot<ArticleId>() {
 
     override val id: ArticleId = id
@@ -21,7 +23,7 @@ class Article private constructor(
         private set
     var content: String = content
         private set
-    var hit: Long = 0L
+    var hit: Long = hit ?: 0
         private set
     var thumbnailUrl: String? = thumbnailUrl
         private set
@@ -30,7 +32,7 @@ class Article private constructor(
         private set
     var tags: Set<TagId> = tags
         private set
-    var status: ArticleStatus = ArticleStatus.DRAFT
+    var status: ArticleStatus = status?.let { ArticleStatus.valueOf(it) } ?: ArticleStatus.DRAFT
         private set
 
     val updatedDate: LocalDateTime? = null
@@ -137,5 +139,26 @@ class Article private constructor(
             newOne.publish()
             return newOne
         }
+
+        fun from(
+            id: Long,
+            title: String,
+            content: String,
+            hit: Long,
+            thumbnailUrl: String?,
+            writerId: Long,
+            categoryId: Long?,
+            status: String,
+        ): Article = Article(
+            id = ArticleId(id),
+            title = title,
+            content = content,
+            hit = hit,
+            thumbnailUrl = thumbnailUrl,
+            userId = UserId(writerId),
+            categoryId = categoryId?.let { CategoryId(it) },
+            tags = emptySet(),
+            status = status,
+        )
     }
 }

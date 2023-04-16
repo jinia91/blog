@@ -6,6 +6,7 @@ import kr.co.jiniaslog.blogcore.domain.article.ArticleIdGenerator
 import kr.co.jiniaslog.blogcore.domain.article.ArticleRepository
 import kr.co.jiniaslog.shared.persistence.id.IdGenerator
 import org.springframework.stereotype.Repository
+import kotlin.jvm.optionals.getOrNull
 
 @Repository
 class ArticleRepositoryAdapter(
@@ -18,9 +19,8 @@ class ArticleRepositoryAdapter(
         jpaArticleRepository.save(articlePM)
     }
 
-    override fun findById(articleId: ArticleId): Article? {
-        TODO("Not yet implemented")
-    }
+    override fun findById(articleId: ArticleId): Article? =
+        jpaArticleRepository.findById(articleId.value).getOrNull()?.toDomain()
 
     override fun generate(): ArticleId {
         return ArticleId(idGenerator.generate())
