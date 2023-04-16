@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
+import io.swagger.v3.oas.annotations.tags.Tag
 import kr.co.jiniaslog.blogcore.application.article.usecase.TempArticleFindOneUseCase
 import kr.co.jiniaslog.blogcore.application.article.usecase.TempArticlePostUseCase
 import org.springframework.http.HttpStatus
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController
 
 @RestController
 @RequestMapping("/articles/temp")
+@Tag(name = "임시 아티클", description = "임시 아티클 관련 API")
 class TempArticleResource(
     private val tempArticlePostUseCase: TempArticlePostUseCase,
     private val tempArticleFindOneUseCase: TempArticleFindOneUseCase,

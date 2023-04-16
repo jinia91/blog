@@ -17,29 +17,31 @@ internal class DomainEventChannelGenerator : BeanDefinitionRegistryPostProcessor
         const val ROOT_PACKAGE = "kr.co.jiniaslog"
     }
 
-//    private val pubSubChannelBeanBuilder: BeanDefinitionBuilder = BeanDefinitionBuilder
-//        .genericBeanDefinition(PublishSubscribeChannel::class.java)
-
     override fun postProcessBeanFactory(beanFactory: ConfigurableListableBeanFactory) {}
 
     override fun postProcessBeanDefinitionRegistry(registry: BeanDefinitionRegistry) {
         val findAnnotatedEventClasses = DomainEventScanner.findAnnotatedEventClasses(ROOT_PACKAGE)
         findAnnotatedEventClasses.forEach { clazz ->
-            val taskExecutor = ThreadPoolTaskExecutor()
-            taskExecutor.corePoolSize = 5
-
-            taskExecutor.setThreadNamePrefix("Sub-Worker-")
-            taskExecutor.initialize()
+            val subscriber = createSubscriber()
 
             val beanDefinitionBuilder = BeanDefinitionBuilder.genericBeanDefinition(
                 PublishSubscribeChannel::class.java,
             )
-            beanDefinitionBuilder.addConstructorArgValue(taskExecutor)
+            beanDefinitionBuilder.addConstructorArgValue(subscriber)
 
             val channelName = generateChannelBeanName(clazz)
             registry.registerBeanDefinition(channelName, beanDefinitionBuilder.beanDefinition)
             log.info { "register success $channelName" }
         }
+    }
+
+    private fun createSubscriber(): ThreadPoolTaskExecutor {
+        val taskExecutor = ThreadPoolTaskExecutor()
+        taskExecutor.corePoolSize = 5
+
+        taskExecutor.setThreadNamePrefix("Sub-Worker-")
+        taskExecutor.initialize()
+        return taskExecutor
     }
 
     private fun generateChannelBeanName(eventClass: Class<*>): String {

@@ -53,7 +53,7 @@ subprojects {
         // adding global dependency
         dependencies {
             implementation("org.jetbrains.kotlin:kotlin-reflect")
-            implementation("io.github.microutils:kotlin-logging-jvm:3.0.4")
+            implementation("io.github.microutils:kotlin-logging-jvm:3.0.5")
 
             testImplementation("io.mockk:mockk:1.13.4")
             testImplementation("io.kotest:kotest-runner-junit5:5.5.4")
