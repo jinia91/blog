@@ -5,17 +5,24 @@ import jakarta.persistence.EntityListeners
 import jakarta.persistence.MappedSuperclass
 import org.springframework.data.annotation.CreatedDate
 import org.springframework.data.annotation.LastModifiedDate
+import org.springframework.data.domain.Persistable
 import org.springframework.data.jpa.domain.support.AuditingEntityListener
 import java.time.LocalDateTime
 
 @EntityListeners(AuditingEntityListener::class)
 @MappedSuperclass
-abstract class BasePM {
+abstract class BasePersistenceModel : Persistable<Long> {
+    abstract val id: Long
+
     @CreatedDate
     @Column(updatable = false, name = "created_date")
-    private val createdDate: LocalDateTime? = null
+    open var createdDate: LocalDateTime? = null
 
     @LastModifiedDate
     @Column(name = "updated_date")
-    private val updatedDate: LocalDateTime? = null
+    open var updatedDate: LocalDateTime? = null
+
+    override fun isNew(): Boolean = createdDate == null
+
+    override fun getId(): Long? = id
 }

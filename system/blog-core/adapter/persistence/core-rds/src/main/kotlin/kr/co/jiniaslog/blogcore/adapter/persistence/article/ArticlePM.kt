@@ -4,7 +4,7 @@ import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.Id
 import jakarta.persistence.Table
-import kr.co.jiniaslog.shared.persistence.BasePM
+import kr.co.jiniaslog.shared.persistence.BasePersistenceModel
 
 @Entity
 @Table(
@@ -13,7 +13,7 @@ import kr.co.jiniaslog.shared.persistence.BasePM
 class ArticlePM(
     @Id
     @Column(name = "article_id")
-    val id: Long,
+    override val id: Long,
 
     @Column(nullable = false, length = 50, name = "title")
     var title: String,
@@ -29,4 +29,4 @@ class ArticlePM(
 
     @Column(nullable = false, name = "writer_id")
     var writerId: Long,
-) : BasePM()
+) : BasePersistenceModel()

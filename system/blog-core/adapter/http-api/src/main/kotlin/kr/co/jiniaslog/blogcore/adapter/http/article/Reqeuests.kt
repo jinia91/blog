@@ -1,4 +1,4 @@
-package kr.co.jiniaslog.blogcore.adapter.http
+package kr.co.jiniaslog.blogcore.adapter.http.article
 
 import kr.co.jiniaslog.blogcore.application.article.usecase.ArticleEditCommand
 import kr.co.jiniaslog.blogcore.application.article.usecase.DraftArticlePostCommand
@@ -17,7 +17,7 @@ data class DraftArticlePostRequest(
 ) {
     fun toCommand(): DraftArticlePostCommand {
         return DraftArticlePostCommand(
-            userId = UserId(writerId),
+            writerId = UserId(writerId),
             title = title,
             content = content,
             thumbnailUrl = thumbnailUrl,

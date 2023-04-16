@@ -45,11 +45,17 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 
+    implementation("com.github.gavlyukovskiy:p6spy-spring-boot-starter:1.9.0")
+    implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.0.2")
+
     implementation("org.mapstruct:mapstruct:1.5.3.Final")
     kapt("org.mapstruct:mapstruct-processor:1.5.3.Final")
     kaptTest("org.mapstruct:mapstruct-processor:1.5.3.Final")
-
+    testImplementation("org.testcontainers:testcontainers:1.17.6")
+    testImplementation("org.testcontainers:junit-jupiter:1.17.6")
+    testImplementation("org.testcontainers:mysql:1.17.6")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
+    testImplementation("io.rest-assured:rest-assured:5.3.0")
 }
 
 tasks.withType<KotlinCompile> {
@@ -65,6 +71,7 @@ tasks.withType<Test> {
 
 tasks.register("testAll") {
     dependsOn(leafModules.map { it.tasks.named("test") })
+    dependsOn(tasks.test)
 }
 
 tasks.getByName("jar") {

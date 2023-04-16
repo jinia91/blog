@@ -56,6 +56,7 @@ class UserDatasourceConfig(
         return builder
             .dataSource(userDatasource())
             .packages(UserDB.BASE_PACKAGE)
+            .persistenceUnit(UserDB.PERSISTENT_UNIT)
             .properties(properties)
             .build()
     }

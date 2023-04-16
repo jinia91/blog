@@ -1,5 +1,5 @@
 package kr.co.jiniaslog.blogcore.domain.article
 
 interface UserServiceClient {
-    fun isAdmin(id: Long): Boolean
+    fun userExists(userId: UserId): Boolean
 }
