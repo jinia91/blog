@@ -5,8 +5,12 @@ import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
 import io.swagger.v3.oas.annotations.tags.Tag
+import kr.co.jiniaslog.blogcore.adapter.http.config.ExceptionApiResponse
+import kr.co.jiniaslog.blogcore.adapter.http.config.ExceptionsApiResponses
 import kr.co.jiniaslog.blogcore.application.article.usecase.TempArticleFindOneUseCase
 import kr.co.jiniaslog.blogcore.application.article.usecase.TempArticlePostUseCase
+import kr.co.jiniaslog.shared.core.domain.ResourceNotFoundException
+import kr.co.jiniaslog.shared.core.domain.ValidationException
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
@@ -26,6 +30,22 @@ class TempArticleResource(
     @ApiResponses(
         value = [
             ApiResponse(responseCode = "201", description = "임시 아티클 저장 성공", content = [Content()]),
+        ],
+    )
+    @ExceptionsApiResponses(
+        value = [
+            ExceptionApiResponse(
+                httpStatusCode = HttpStatus.BAD_REQUEST,
+                exceptions = [
+                    ValidationException::class,
+                ],
+            ),
+            ExceptionApiResponse(
+                httpStatusCode = HttpStatus.NOT_FOUND,
+                exceptions = [
+                    ResourceNotFoundException::class,
+                ],
+            ),
         ],
     )
     @PostMapping

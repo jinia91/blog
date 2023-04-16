@@ -22,7 +22,7 @@ logging:
 decorator:
   datasource:
     p6spy:
-      enable-logging: false
+      enable-logging: true
 
 springdoc:
   packages-to-scan: kr.co.jiniaslog

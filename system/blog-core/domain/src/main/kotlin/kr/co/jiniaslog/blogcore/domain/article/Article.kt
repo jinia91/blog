@@ -4,7 +4,6 @@ import kr.co.jiniaslog.blogcore.domain.category.CategoryId
 import kr.co.jiniaslog.blogcore.domain.tag.TagId
 import kr.co.jiniaslog.blogcore.domain.user.UserId
 import kr.co.jiniaslog.shared.core.domain.AggregateRoot
-import kr.co.jiniaslog.shared.core.extentions.shouldBe
 import java.time.LocalDateTime
 
 class Article private constructor(
@@ -77,15 +76,15 @@ class Article private constructor(
 
         fun validatePublishingArticle(writerId: UserId, title: String, content: String, thumbnailUrl: String?, categoryId: CategoryId?, tags: Set<TagId>) {
             defaultValidate(writerId, title, content)
-            shouldBe<ArticleNotValidException>(categoryId != CategoryId(0) && categoryId != null) { "shouldHaveCategory" }
-            shouldBe<ArticleNotValidException>(tags.isNotEmpty()) { "shouldHaveTags" }
-            shouldBe<ArticleNotValidException>(thumbnailUrl != null) { "shouldHaveThumbnail" }
+            if (categoryId == CategoryId(0) || categoryId == null) throw ArticleNotValidException("shouldHaveCategory")
+            if (tags.isEmpty()) throw ArticleNotValidException("shouldHaveTags")
+            if (thumbnailUrl == null) throw ArticleNotValidException("shouldHaveThumbnail")
         }
 
         private fun defaultValidate(writerId: UserId, title: String, content: String) {
-            shouldBe<ArticleNotValidException>(writerId != UserId(0)) { "shouldHaveWriter" }
-            shouldBe<ArticleNotValidException>(title.isNotBlank()) { "shouldHaveTitle" }
-            shouldBe<ArticleNotValidException>(content.isNotBlank()) { "shouldHaveContent" }
+            if (writerId == UserId(0)) throw ArticleNotValidException("shouldHaveWriter")
+            if (title.isBlank()) throw ArticleNotValidException("shouldHaveTitle")
+            if (content.isBlank()) throw ArticleNotValidException("shouldHaveContent")
         }
     }
 
