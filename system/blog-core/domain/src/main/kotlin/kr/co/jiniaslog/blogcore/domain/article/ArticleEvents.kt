@@ -6,7 +6,7 @@ import kr.co.jiniaslog.shared.core.domain.DomainEvent
 import java.time.LocalDateTime
 
 @RegisteredEvent
-data class ArticlePublishedEvent(
+data class ArticleCreatedEvent(
     val articleId: ArticleId,
     val userId: UserId,
     private val occurredAt: LocalDateTime = LocalDateTime.now(),

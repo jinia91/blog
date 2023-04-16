@@ -53,19 +53,16 @@ class Article private constructor(
         this.thumbnailUrl = thumbnailUrl
         this.categoryId = categoryId
         this.tags = tags
-        registerEvent(ArticleEditedEvent(this.id, this.writerId))
     }
 
     fun publish() {
         ArticleValidatePolicy.validatePublishingArticle(this.writerId, this.title, this.content, this.thumbnailUrl, this.categoryId, this.tags)
         this.status = ArticleStatus.PUBLISHED
-        registerEvent(ArticlePublishedEvent(this.id, this.writerId))
     }
 
     fun drafting() {
         ArticleValidatePolicy.validateDraftingArticle(this.writerId, this.title, this.content)
         this.status = ArticleStatus.DRAFT
-        registerEvent(ArticleDraftEvent(this.id, this.writerId))
     }
 
     fun hit() {
@@ -111,7 +108,9 @@ class Article private constructor(
                 thumbnailUrl = thumbnailUrl,
                 categoryId = categoryId,
                 tags = tags,
-            )
+            ).apply {
+                registerEvent(ArticleCreatedEvent(this.id, this.writerId))
+            }
             newOne.drafting()
             return newOne
         }
@@ -133,7 +132,9 @@ class Article private constructor(
                 thumbnailUrl = thumbnailUrl,
                 categoryId = categoryId,
                 tags = tags,
-            )
+            ).apply {
+                registerEvent(ArticleCreatedEvent(this.id, this.writerId))
+            }
             newOne.publish()
             return newOne
         }

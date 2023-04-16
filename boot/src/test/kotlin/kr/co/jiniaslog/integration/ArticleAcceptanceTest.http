@@ -1,0 +1,15 @@
+
+### 1. 임시 아티클 생성 테스트
+POST http://localhost:7777/articles
+Content-Type: application/json
+
+{
+  "writerId": 73,
+  "title": "test_d0ce030f400d",
+  "content": "test_9a1d30d00fb4",
+  "thumbnailUrl": "test_d46086707282",
+  "categoryId": 41,
+  "tags": [68]
+}
+### 2. 임시 아티클 조회 테스트
+GET http://localhost:7777/article/temp

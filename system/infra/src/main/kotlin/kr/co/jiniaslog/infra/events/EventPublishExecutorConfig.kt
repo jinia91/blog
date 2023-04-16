@@ -9,10 +9,10 @@ internal class EventPublishExecutorConfig {
     @Bean
     fun domainEventPublishExecutor(): ThreadPoolTaskExecutor {
         val executor = ThreadPoolTaskExecutor()
-        executor.corePoolSize = 10
+        executor.corePoolSize = 4
         executor.queueCapacity = 100
         executor.setAllowCoreThreadTimeOut(true)
-        executor.setThreadNamePrefix("domainEventPublishExecutor-")
+        executor.setThreadNamePrefix("Pub-Worker-")
         executor.setWaitForTasksToCompleteOnShutdown(true)
         executor.setAwaitTerminationSeconds(300)
         executor.initialize()

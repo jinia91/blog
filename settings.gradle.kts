@@ -16,7 +16,7 @@ include(
     "system:blog-core:adapter:persistence:core-rds",
     "system:blog-core:adapter:http-api",
     "system:blog-core:adapter:acl-user",
-    "system:blog-core:adapter:driving-messaging",
+    "system:blog-core:adapter:messaging",
     "system:user:domain",
     "system:user:application",
     "system:user:adapter:persistence:user-rds",

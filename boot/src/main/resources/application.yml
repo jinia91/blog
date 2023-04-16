@@ -12,6 +12,7 @@ spring:
 
 logging:
   level:
+
     org.hibernate: INFO
     org.hibernate.SQL: INFO
     org.hibernate.type.descriptor.sql.BasicBinder: INFO
@@ -21,7 +22,7 @@ logging:
 decorator:
   datasource:
     p6spy:
-      enable-logging: true
+      enable-logging: false
 
 springdoc:
   packages-to-scan: kr.co.jiniaslog
