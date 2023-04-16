@@ -17,7 +17,7 @@ data class DraftArticlePostRequest(
 ) {
     fun toCommand(): DraftArticlePostCommand {
         return DraftArticlePostCommand(
-            userId = UserId(writerId),
+            writerId = UserId(writerId),
             title = title,
             content = content,
             thumbnailUrl = thumbnailUrl,
