@@ -37,7 +37,7 @@ class ArticlePM(
     @Column(nullable = false, name = "status")
     var status: String,
 ) : BasePersistenceModel() {
-    fun toDomain(): Article? {
+    fun toDomain(): Article {
         return Article.Factory.from(
             id = id,
             title = title,
