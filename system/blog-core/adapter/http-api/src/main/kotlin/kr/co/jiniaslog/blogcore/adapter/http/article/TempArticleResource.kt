@@ -4,7 +4,8 @@ import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
-import kr.co.jiniaslog.blogcore.application.article.usecase.TempArticleUseCases
+import kr.co.jiniaslog.blogcore.application.article.usecase.TempArticleFindOneUseCase
+import kr.co.jiniaslog.blogcore.application.article.usecase.TempArticlePostUseCase
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
@@ -16,7 +17,8 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 @RequestMapping("/articles/temp")
 class TempArticleResource(
-    private val tempArticleUseCases: TempArticleUseCases,
+    private val tempArticlePostUseCase: TempArticlePostUseCase,
+    private val tempArticleFindOneUseCase: TempArticleFindOneUseCase,
 ) {
     @Operation(summary = "임시 아티클을 저장한다.")
     @ApiResponses(
@@ -26,7 +28,7 @@ class TempArticleResource(
     )
     @PostMapping
     fun autoSaveTemp(@RequestBody request: TempArticleSaveRequest): ResponseEntity<Nothing> {
-        tempArticleUseCases.post(request.toCommand())
+        tempArticlePostUseCase.post(request.toCommand())
         return ResponseEntity.status(HttpStatus.CREATED).build()
     }
 
@@ -39,7 +41,7 @@ class TempArticleResource(
     )
     @GetMapping
     fun getTempArticle(): ResponseEntity<TempArticleGetResponse?> =
-        TempArticleGetResponse.from(tempArticleUseCases.findOne())?.let {
+        TempArticleGetResponse.from(tempArticleFindOneUseCase.findOne())?.let {
             ResponseEntity
                 .status(HttpStatus.OK)
                 .body(it)
