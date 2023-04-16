@@ -1,6 +1,5 @@
 package kr.co.jiniaslog.blogcore.application.article.usecase
 
-import kr.co.jiniaslog.blogcore.application.article.infra.TransactionHandler
 import kr.co.jiniaslog.blogcore.domain.article.TempArticle
 import kr.co.jiniaslog.blogcore.domain.article.TempArticleId
 import kr.co.jiniaslog.blogcore.domain.article.TempArticleRepository
@@ -12,7 +11,6 @@ interface TempArticleFindOneUseCase {
 
 @UseCaseInteractor
 internal class TempArticleFindOneUseCaseInteractor(
-    private val transactionHandler: TransactionHandler,
     private val tempArticleRepository: TempArticleRepository,
 ) : TempArticleFindOneUseCase {
     override fun findOne(): TempArticle? =
