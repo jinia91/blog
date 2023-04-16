@@ -15,7 +15,7 @@ internal class TempArticleFindOneUseCaseTests : BehaviorSpec() {
 
     private val transactionHandler: TransactionHandler = mockk()
     private val tempArticleRepository: TempArticleRepository = mockk(relaxed = true)
-    private val sut = TempArticleFindOneUseCaseInteractor(transactionHandler, tempArticleRepository)
+    private val sut = TempArticleFindOneUseCaseInteractor(tempArticleRepository)
 
     init {
         every<Unit> { transactionHandler.runInReadCommittedTransaction(any()) } answers {
