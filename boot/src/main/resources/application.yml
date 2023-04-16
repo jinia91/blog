@@ -12,10 +12,10 @@ spring:
 
 logging:
   level:
-    org.hibernate: TRACE
+    org.hibernate: INFO
     org.hibernate.SQL: INFO
     org.hibernate.type.descriptor.sql.BasicBinder: INFO
-    org.hibernate.transaction: TRACE
+    org.hibernate.transaction: INFO
     sql: INFO
 
 decorator:

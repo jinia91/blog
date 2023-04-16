@@ -18,5 +18,5 @@ internal class DomainEventPublisherImpl(
         resolveChannel(eventName).send(GenericMessage(message))
     }
 
-    private fun resolveChannel(eventName: String) = (applicationContext.getBean(eventName) as MessageChannel)
+    private fun resolveChannel(eventName: String) = (applicationContext.getBean(eventName + "Channel") as MessageChannel)
 }

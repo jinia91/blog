@@ -51,20 +51,25 @@ subprojects {
         val sharedCoreKernel = ":system:shared-core-kernel"
 
         // adding global dependency
+        dependencies {
+            implementation("org.jetbrains.kotlin:kotlin-reflect")
+            implementation("io.github.microutils:kotlin-logging-jvm:3.0.4")
+
+            testImplementation("io.mockk:mockk:1.13.4")
+            testImplementation("io.kotest:kotest-runner-junit5:5.5.4")
+            testImplementation("io.kotest:kotest-assertions-core:5.5.4")
+            implementation("io.kotest:kotest-extensions-spring:4.4.3")
+
+            testImplementation("org.assertj:assertj-core:3.24.2")
+            testImplementation("ch.qos.logback:logback-classic:1.4.5")
+        }
+
         if (project.path != sharedCoreKernel) {
             dependencies {
                 implementation(project(sharedCoreKernel))
-                implementation("org.jetbrains.kotlin:kotlin-reflect")
-
-                testImplementation("io.mockk:mockk:1.13.4")
-                testImplementation("io.kotest:kotest-runner-junit5:5.5.4")
-                testImplementation("io.kotest:kotest-assertions-core:5.5.4")
-                implementation("io.kotest:kotest-extensions-spring:4.4.3")
-
-                testImplementation("org.assertj:assertj-core:3.24.2")
-                testImplementation("ch.qos.logback:logback-classic:1.4.5")
             }
         }
+
         tasks.withType<KotlinCompile> {
             kotlinOptions {
                 jvmTarget = "17"
