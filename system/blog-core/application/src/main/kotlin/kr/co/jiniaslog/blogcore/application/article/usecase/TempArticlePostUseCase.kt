@@ -3,9 +3,9 @@ package kr.co.jiniaslog.blogcore.application.article.usecase
 import kr.co.jiniaslog.blogcore.application.article.infra.TransactionHandler
 import kr.co.jiniaslog.blogcore.domain.article.TempArticle
 import kr.co.jiniaslog.blogcore.domain.article.TempArticleRepository
-import kr.co.jiniaslog.blogcore.domain.article.UserId
-import kr.co.jiniaslog.blogcore.domain.article.UserServiceClient
 import kr.co.jiniaslog.blogcore.domain.category.CategoryId
+import kr.co.jiniaslog.blogcore.domain.user.UserId
+import kr.co.jiniaslog.blogcore.domain.user.UserServiceClient
 import kr.co.jiniaslog.shared.core.context.UseCaseInteractor
 import kr.co.jiniaslog.shared.core.domain.ResourceNotFoundException
 

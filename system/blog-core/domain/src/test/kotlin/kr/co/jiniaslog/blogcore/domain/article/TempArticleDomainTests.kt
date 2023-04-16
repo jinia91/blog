@@ -3,6 +3,7 @@ package kr.co.jiniaslog.blogcore.domain.article
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.shouldBe
 import kr.co.jiniaslog.blogcore.domain.category.CategoryId
+import kr.co.jiniaslog.blogcore.domain.user.UserId
 
 internal class TempArticleDomainTests : BehaviorSpec() {
     init {

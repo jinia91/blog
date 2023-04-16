@@ -2,6 +2,7 @@ package kr.co.jiniaslog.blogcore.domain.article
 
 import kr.co.jiniaslog.blogcore.domain.category.CategoryId
 import kr.co.jiniaslog.blogcore.domain.tag.TagId
+import kr.co.jiniaslog.blogcore.domain.user.UserId
 import kr.co.jiniaslog.shared.core.domain.AggregateRoot
 import kr.co.jiniaslog.shared.core.extentions.shouldBe
 import java.time.LocalDateTime

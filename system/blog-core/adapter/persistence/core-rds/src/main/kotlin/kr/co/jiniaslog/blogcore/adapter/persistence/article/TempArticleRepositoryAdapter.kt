@@ -3,8 +3,8 @@ package kr.co.jiniaslog.blogcore.adapter.persistence.article
 import kr.co.jiniaslog.blogcore.domain.article.TempArticle
 import kr.co.jiniaslog.blogcore.domain.article.TempArticleId
 import kr.co.jiniaslog.blogcore.domain.article.TempArticleRepository
-import kr.co.jiniaslog.blogcore.domain.article.UserId
 import kr.co.jiniaslog.blogcore.domain.category.CategoryId
+import kr.co.jiniaslog.blogcore.domain.user.UserId
 import org.springframework.stereotype.Repository
 import java.time.LocalDateTime
 import kotlin.jvm.optionals.getOrNull

@@ -1,9 +1,9 @@
 package kr.co.jiniaslog.blogcore.application.article.usecase
 
 import kr.co.jiniaslog.blogcore.domain.article.ArticleId
-import kr.co.jiniaslog.blogcore.domain.article.UserId
 import kr.co.jiniaslog.blogcore.domain.category.CategoryId
 import kr.co.jiniaslog.blogcore.domain.tag.TagId
+import kr.co.jiniaslog.blogcore.domain.user.UserId
 
 interface ArticleEditUseCase {
     fun edit(command: ArticleEditCommand)

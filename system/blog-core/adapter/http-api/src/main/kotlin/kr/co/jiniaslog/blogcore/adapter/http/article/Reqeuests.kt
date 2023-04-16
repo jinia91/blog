@@ -3,9 +3,9 @@ package kr.co.jiniaslog.blogcore.adapter.http.article
 import kr.co.jiniaslog.blogcore.application.article.usecase.ArticleEditCommand
 import kr.co.jiniaslog.blogcore.application.article.usecase.DraftArticlePostCommand
 import kr.co.jiniaslog.blogcore.domain.article.ArticleId
-import kr.co.jiniaslog.blogcore.domain.article.UserId
 import kr.co.jiniaslog.blogcore.domain.category.CategoryId
 import kr.co.jiniaslog.blogcore.domain.tag.TagId
+import kr.co.jiniaslog.blogcore.domain.user.UserId
 
 data class DraftArticlePostRequest(
     val writerId: Long,

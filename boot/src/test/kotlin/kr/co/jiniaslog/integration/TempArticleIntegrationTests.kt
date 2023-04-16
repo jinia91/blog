@@ -8,7 +8,7 @@ import kr.co.jiniaslog.blogcore.adapter.persistence.CoreDB
 import kr.co.jiniaslog.blogcore.domain.article.TempArticle
 import kr.co.jiniaslog.blogcore.domain.article.TempArticleId
 import kr.co.jiniaslog.blogcore.domain.article.TempArticleRepository
-import kr.co.jiniaslog.blogcore.domain.article.UserId
+import kr.co.jiniaslog.blogcore.domain.user.UserId
 import kr.co.jiniaslog.blogcore.domain.category.CategoryId
 import org.apache.http.protocol.HTTP
 import org.assertj.core.api.Assertions.assertThat

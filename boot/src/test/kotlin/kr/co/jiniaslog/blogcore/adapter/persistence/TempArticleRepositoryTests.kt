@@ -6,7 +6,7 @@ import jakarta.persistence.PersistenceContext
 import kr.co.jiniaslog.blogcore.domain.article.TempArticle
 import kr.co.jiniaslog.blogcore.domain.article.TempArticleId
 import kr.co.jiniaslog.blogcore.domain.article.TempArticleRepository
-import kr.co.jiniaslog.blogcore.domain.article.UserId
+import kr.co.jiniaslog.blogcore.domain.user.UserId
 import org.assertj.core.api.Assertions.*
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired

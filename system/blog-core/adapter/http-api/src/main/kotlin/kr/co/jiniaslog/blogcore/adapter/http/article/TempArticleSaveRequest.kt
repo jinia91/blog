@@ -2,8 +2,8 @@ package kr.co.jiniaslog.blogcore.adapter.http.article
 
 import io.swagger.v3.oas.annotations.media.Schema
 import kr.co.jiniaslog.blogcore.application.article.usecase.TempArticlePostCommand
-import kr.co.jiniaslog.blogcore.domain.article.UserId
 import kr.co.jiniaslog.blogcore.domain.category.CategoryId
+import kr.co.jiniaslog.blogcore.domain.user.UserId
 
 @Schema(description = "임시 아티클 저장 요청")
 data class TempArticleSaveRequest(

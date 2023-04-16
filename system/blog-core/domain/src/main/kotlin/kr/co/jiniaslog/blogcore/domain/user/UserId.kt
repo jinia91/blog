@@ -1,4 +1,4 @@
-package kr.co.jiniaslog.blogcore.domain.article
+package kr.co.jiniaslog.blogcore.domain.user
 
 import kr.co.jiniaslog.shared.core.domain.ValueObject
 

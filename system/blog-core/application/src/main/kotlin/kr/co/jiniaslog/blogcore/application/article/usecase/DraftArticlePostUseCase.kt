@@ -5,10 +5,10 @@ import kr.co.jiniaslog.blogcore.domain.article.Article
 import kr.co.jiniaslog.blogcore.domain.article.ArticleId
 import kr.co.jiniaslog.blogcore.domain.article.ArticleIdGenerator
 import kr.co.jiniaslog.blogcore.domain.article.ArticleRepository
-import kr.co.jiniaslog.blogcore.domain.article.UserId
-import kr.co.jiniaslog.blogcore.domain.article.UserServiceClient
 import kr.co.jiniaslog.blogcore.domain.category.CategoryId
 import kr.co.jiniaslog.blogcore.domain.tag.TagId
+import kr.co.jiniaslog.blogcore.domain.user.UserId
+import kr.co.jiniaslog.blogcore.domain.user.UserServiceClient
 import kr.co.jiniaslog.shared.core.context.UseCaseInteractor
 import kr.co.jiniaslog.shared.core.domain.ResourceNotFoundException
 
@@ -52,5 +52,6 @@ internal class DraftArticlePostUseCaseInteractor(
 
     private fun DraftArticlePostCommand.isValid() {
         if (!userServiceClient.userExists(writerId)) throw ResourceNotFoundException("$this 's $writerId is not found")
+        // todo more validation
     }
 }

@@ -1,9 +1,9 @@
 package kr.co.jiniaslog.blogcore.application.article.usecase
 
 import io.kotest.core.spec.style.BehaviorSpec
-import io.kotest.matchers.shouldNotBe
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.verify
 import kr.co.jiniaslog.blogcore.application.article.infra.TransactionHandler
 import kr.co.jiniaslog.blogcore.domain.article.TempArticle
 import kr.co.jiniaslog.blogcore.domain.article.TempArticleId
@@ -11,11 +11,11 @@ import kr.co.jiniaslog.blogcore.domain.article.TempArticleRepository
 import kr.co.jiniaslog.blogcore.domain.user.UserId
 import java.util.function.Supplier
 
-internal class TempArticleFindOneUseCaseTests : BehaviorSpec() {
+internal class TempArticleDeleteUseCaseTests : BehaviorSpec() {
 
     private val transactionHandler: TransactionHandler = mockk()
-    private val tempArticleRepository: TempArticleRepository = mockk()
-    private val sut = TempArticleFindOneUseCaseInteractor(tempArticleRepository)
+    private val tempArticleRepository: TempArticleRepository = mockk(relaxed = true)
+    private val sut = TempArticleDeleteUseCaseInteractor(transactionHandler, tempArticleRepository)
 
     init {
         every<Unit> { transactionHandler.runInReadCommittedTransaction(any()) } answers {
@@ -35,10 +35,10 @@ internal class TempArticleFindOneUseCaseTests : BehaviorSpec() {
                     ),
                 )
 
-            When("임시 아티클 조회를 하면") {
-                val tempArticle = sut.findOne()
-                Then("임시 아티클이 조회된다.") {
-                    tempArticle shouldNotBe null
+            When("임시 아티클 삭제를 하면") {
+                sut.delete()
+                Then("임시 아티클이 삭제된다.") {
+                    verify(exactly = 1) { tempArticleRepository.delete() }
                 }
             }
         }
