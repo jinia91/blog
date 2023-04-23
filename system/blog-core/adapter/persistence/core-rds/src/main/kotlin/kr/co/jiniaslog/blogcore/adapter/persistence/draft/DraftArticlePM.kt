@@ -5,6 +5,7 @@ import jakarta.persistence.Entity
 import jakarta.persistence.Id
 import jakarta.persistence.Table
 import kr.co.jiniaslog.shared.persistence.BasePersistenceModel
+import java.time.LocalDateTime
 
 @Entity
 @Table(
@@ -26,4 +27,8 @@ class DraftArticlePM(
 
     @Column(nullable = true, name = "thumbnail_url")
     var thumbnailUrl: String?,
-) : BasePersistenceModel()
+
+    createdDate: LocalDateTime?,
+
+    updatedDate: LocalDateTime?,
+) : BasePersistenceModel(createdDate, updatedDate)

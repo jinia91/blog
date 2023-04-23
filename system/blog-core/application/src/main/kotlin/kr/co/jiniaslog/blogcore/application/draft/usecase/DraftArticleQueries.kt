@@ -4,5 +4,5 @@ import kr.co.jiniaslog.blogcore.domain.draft.DraftArticle
 import kr.co.jiniaslog.blogcore.domain.draft.DraftArticleId
 
 interface DraftArticleQueries {
-    fun getDraftArticleById(draftArticleId: DraftArticleId): DraftArticle
+    fun getDraftArticle(draftArticleId: DraftArticleId): DraftArticle
 }

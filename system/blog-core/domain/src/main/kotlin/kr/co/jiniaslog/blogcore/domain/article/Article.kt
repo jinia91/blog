@@ -43,9 +43,9 @@ class Article private constructor(
     var status: ArticleStatus = status
         private set
 
-    val updatedDate: LocalDateTime? = null
+    override val updatedDate: LocalDateTime? = null
 
-    val createdDate: LocalDateTime? = null
+    override val createdDate: LocalDateTime? = null
 
     enum class ArticleStatus {
         PUBLISHED, DRAFT
