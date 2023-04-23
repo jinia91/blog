@@ -17,7 +17,7 @@ data class ArticleCreatedEvent(
 }
 
 @RegisteredEvent
-data class ArticleEditedEvent(
+data class ArticlePublishedEvent(
     val articleId: ArticleId,
     val userId: UserId,
     private val occurredAt: LocalDateTime = LocalDateTime.now(),
@@ -28,7 +28,7 @@ data class ArticleEditedEvent(
 }
 
 @RegisteredEvent
-data class ArticleDraftEvent(
+data class PublishedArticleDeletedEvent(
     val articleId: ArticleId,
     val userId: UserId,
     private val occurredAt: LocalDateTime = LocalDateTime.now(),

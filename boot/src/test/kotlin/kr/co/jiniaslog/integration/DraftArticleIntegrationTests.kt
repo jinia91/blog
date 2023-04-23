@@ -5,9 +5,9 @@ import io.restassured.RestAssured.given
 import jakarta.persistence.EntityManager
 import jakarta.persistence.PersistenceContext
 import kr.co.jiniaslog.blogcore.adapter.persistence.CoreDB
-import kr.co.jiniaslog.blogcore.domain.article.TempArticle
-import kr.co.jiniaslog.blogcore.domain.article.TempArticleId
-import kr.co.jiniaslog.blogcore.domain.article.TempArticleRepository
+import kr.co.jiniaslog.blogcore.domain.draft.DraftArticle
+import kr.co.jiniaslog.blogcore.domain.draft.DraftArticleId
+import kr.co.jiniaslog.blogcore.domain.draft.DraftArticleRepository
 import kr.co.jiniaslog.blogcore.domain.user.UserId
 import kr.co.jiniaslog.blogcore.domain.category.CategoryId
 import org.apache.http.protocol.HTTP
@@ -16,10 +16,10 @@ import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 
-class TempArticleIntegrationTests : TestContainerConfig() {
+class DraftArticleIntegrationTests : TestContainerConfig() {
 
     @Autowired
-    private lateinit var tempArticleRepository: TempArticleRepository
+    private lateinit var draftArticleRepository: DraftArticleRepository
 
     @PersistenceContext(unitName = CoreDB.PERSISTENT_UNIT)
     private lateinit var em: EntityManager
@@ -46,9 +46,9 @@ class TempArticleIntegrationTests : TestContainerConfig() {
         // then:
         assertThat(response.statusCode()).isEqualTo(HttpStatus.CREATED.value())
         em.clear()
-        val temp = tempArticleRepository.getTemp(TempArticleId.getDefault())
+        val temp = draftArticleRepository.getById(DraftArticleId.getDefault())
         assertThat(temp).isNotNull
-        assertThat(temp!!.id).isEqualTo(TempArticleId.getDefault())
+        assertThat(temp!!.id).isEqualTo(DraftArticleId.getDefault())
         assertThat(temp.title).isEqualTo("ㅇㅇㅇㅇㅇ")
     }
 
@@ -74,8 +74,8 @@ class TempArticleIntegrationTests : TestContainerConfig() {
         val request = given()
             .header(HTTP.CONTENT_TYPE, "application/json")
 
-        tempArticleRepository.save(
-            TempArticle.Factory.from(
+        draftArticleRepository.save(
+            DraftArticle.Factory.from(
                 writerId = UserId(value = 5626),
                 title = "test",
                 content = "test",

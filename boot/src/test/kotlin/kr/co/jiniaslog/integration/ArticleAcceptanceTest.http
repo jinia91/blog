@@ -1,6 +1,6 @@
 
 ### 1. 임시 아티클 생성 테스트
-POST http://localhost:7777/articles
+POST http://localhost:7777/articles/draft
 Content-Type: application/json
 
 {

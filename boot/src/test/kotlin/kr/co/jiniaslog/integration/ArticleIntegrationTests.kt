@@ -4,14 +4,10 @@ import kr.co.jiniaslog.config.TestContainerConfig
 import io.restassured.RestAssured.given
 import jakarta.persistence.EntityManager
 import jakarta.persistence.PersistenceContext
-import kr.co.jiniaslog.blogcore.adapter.http.article.DraftArticlePostResponse
+import kr.co.jiniaslog.blogcore.adapter.http.article.ArticlePostResponse
 import kr.co.jiniaslog.blogcore.adapter.persistence.CoreDB
 import kr.co.jiniaslog.blogcore.domain.article.ArticleId
 import kr.co.jiniaslog.blogcore.domain.article.ArticleRepository
-import kr.co.jiniaslog.blogcore.domain.article.TempArticle
-import kr.co.jiniaslog.blogcore.domain.article.TempArticleId
-import kr.co.jiniaslog.blogcore.domain.user.UserId
-import kr.co.jiniaslog.blogcore.domain.category.CategoryId
 import org.apache.http.protocol.HTTP
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -45,7 +41,7 @@ class ArticleIntegrationTests : TestContainerConfig() {
             .`when`().post("/articles/draft")
             .then().extract()
 
-        val deSerializedResponse = response.body().jsonPath().getObject("", DraftArticlePostResponse::class.java)
+        val deSerializedResponse = response.body().jsonPath().getObject("", ArticlePostResponse::class.java)
 
         // then:
         assertThat(response.statusCode()).isEqualTo(HttpStatus.CREATED.value())

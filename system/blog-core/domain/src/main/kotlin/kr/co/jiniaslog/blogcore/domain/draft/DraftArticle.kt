@@ -1,18 +1,23 @@
-package kr.co.jiniaslog.blogcore.domain.article
+package kr.co.jiniaslog.blogcore.domain.draft
 
 import kr.co.jiniaslog.blogcore.domain.category.CategoryId
+import kr.co.jiniaslog.blogcore.domain.tag.TagId
 import kr.co.jiniaslog.blogcore.domain.user.UserId
 import kr.co.jiniaslog.shared.core.domain.DomainEntity
 
-class TempArticle private constructor(
+class DraftArticle private constructor(
+    id: DraftArticleId,
+    writerId: UserId,
     title: String?,
     content: String?,
     thumbnailUrl: String?,
-    writerId: UserId,
     categoryId: CategoryId?,
-) : DomainEntity<TempArticleId>() {
+    tags: Set<TagId>,
+) : DomainEntity<DraftArticleId>() {
 
-    override val id: TempArticleId = TempArticleId.getDefault()
+    override val id: DraftArticleId = id
+
+    val writerId: UserId = writerId
 
     var title: String? = title
         private set
@@ -23,24 +28,29 @@ class TempArticle private constructor(
     var thumbnailUrl: String? = thumbnailUrl
         private set
 
-    val writerId: UserId = writerId
-
     var categoryId: CategoryId? = categoryId
+        private set
+
+    var tags: Set<TagId> = tags
         private set
 
     object Factory {
         fun from(
+            id: DraftArticleId,
             writerId: UserId,
             title: String? = null,
             content: String? = null,
             thumbnailUrl: String? = null,
             categoryId: CategoryId? = null,
-        ): TempArticle = TempArticle(
+            tags: Set<TagId> = emptySet(),
+        ): DraftArticle = DraftArticle(
+            id = id,
             writerId = writerId,
             title = title,
             content = content,
             thumbnailUrl = thumbnailUrl,
             categoryId = categoryId,
+            tags = tags,
         )
     }
 }

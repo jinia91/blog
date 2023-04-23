@@ -19,19 +19,27 @@ class Article private constructor(
 ) : AggregateRoot<ArticleId>() {
 
     override val id: ArticleId = id
+
     var title: String = title
         private set
+
     var content: String = content
         private set
+
     var hit: Long = hit
         private set
+
     var thumbnailUrl: String? = thumbnailUrl
         private set
+
     val writerId: UserId = userId
+
     var categoryId: CategoryId? = categoryId
         private set
+
     var tags: Set<TagId> = tags
         private set
+
     var status: ArticleStatus = status
         private set
 
@@ -45,8 +53,8 @@ class Article private constructor(
 
     fun edit(title: String, content: String, thumbnailUrl: String?, categoryId: CategoryId?, tags: Set<TagId>) {
         when (this.status) {
-            ArticleStatus.PUBLISHED -> ArticleValidatePolicy.validatePublishingArticle(this.writerId, title, content, thumbnailUrl, categoryId, tags)
-            ArticleStatus.DRAFT -> ArticleValidatePolicy.validateDraftingArticle(this.writerId, title, content)
+            ArticleStatus.PUBLISHED -> ArticleValidatePolicy.validatePublishingArticleData(this.writerId, title, content, thumbnailUrl, categoryId, tags)
+            ArticleStatus.DRAFT -> ArticleValidatePolicy.validateDraftingArticleData(this.writerId, title, content)
         }
 
         this.title = title
@@ -57,12 +65,13 @@ class Article private constructor(
     }
 
     fun publish() {
-        ArticleValidatePolicy.validatePublishingArticle(this.writerId, this.title, this.content, this.thumbnailUrl, this.categoryId, this.tags)
+        ArticleValidatePolicy.validatePublishingArticleData(this.writerId, this.title, this.content, this.thumbnailUrl, this.categoryId, this.tags)
         this.status = ArticleStatus.PUBLISHED
+        registerEvent(ArticlePublishedEvent(this.id, this.writerId))
     }
 
     fun drafting() {
-        ArticleValidatePolicy.validateDraftingArticle(this.writerId, this.title, this.content)
+        ArticleValidatePolicy.validateDraftingArticleData(this.writerId, this.title, this.content)
         this.status = ArticleStatus.DRAFT
     }
 
@@ -71,12 +80,16 @@ class Article private constructor(
         this.hit++
     }
 
+    fun registerPublishedArticleDeleteEvent() {
+        registerEvent(PublishedArticleDeletedEvent(this.id, this.writerId))
+    }
+
     object ArticleValidatePolicy {
 
-        fun validateDraftingArticle(writerId: UserId, title: String, content: String) =
+        fun validateDraftingArticleData(writerId: UserId, title: String, content: String) =
             defaultValidate(writerId, title, content)
 
-        fun validatePublishingArticle(writerId: UserId, title: String, content: String, thumbnailUrl: String?, categoryId: CategoryId?, tags: Set<TagId>) {
+        fun validatePublishingArticleData(writerId: UserId, title: String, content: String, thumbnailUrl: String?, categoryId: CategoryId?, tags: Set<TagId>) {
             defaultValidate(writerId, title, content)
             if (categoryId == CategoryId(0) || categoryId == null) throw ArticleNotValidException("shouldHaveCategory")
             if (tags.isEmpty()) throw ArticleNotValidException("shouldHaveTags")

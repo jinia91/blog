@@ -1,4 +1,4 @@
-package kr.co.jiniaslog.blogcore.application.article.infra
+package kr.co.jiniaslog.blogcore.application.infra
 
 import java.util.function.Supplier
 

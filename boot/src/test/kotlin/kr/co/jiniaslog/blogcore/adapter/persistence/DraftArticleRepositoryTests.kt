@@ -3,55 +3,55 @@ package kr.co.jiniaslog.blogcore.adapter.persistence
 import kr.co.jiniaslog.config.TestContainerConfig
 import jakarta.persistence.EntityManager
 import jakarta.persistence.PersistenceContext
-import kr.co.jiniaslog.blogcore.domain.article.TempArticle
-import kr.co.jiniaslog.blogcore.domain.article.TempArticleId
-import kr.co.jiniaslog.blogcore.domain.article.TempArticleRepository
+import kr.co.jiniaslog.blogcore.domain.draft.DraftArticle
+import kr.co.jiniaslog.blogcore.domain.draft.DraftArticleId
+import kr.co.jiniaslog.blogcore.domain.draft.DraftArticleRepository
 import kr.co.jiniaslog.blogcore.domain.user.UserId
 import org.assertj.core.api.Assertions.*
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 
-class TempArticleRepositoryTests : TestContainerConfig() {
+class DraftArticleRepositoryTests : TestContainerConfig() {
 
     @Autowired
-    private lateinit var tempArticleRepository: TempArticleRepository
+    private lateinit var draftArticleRepository: DraftArticleRepository
 
     @PersistenceContext(unitName = CoreDB.PERSISTENT_UNIT)
     private lateinit var em: EntityManager
 
     @Test
     fun `tempArticle Save and get Test`() {
-        val tempArticle = TempArticle.Factory.from(
+        val draftArticle = DraftArticle.Factory.from(
             writerId = UserId(value = 2372),
             title = null,
             content = null,
             thumbnailUrl = null,
             categoryId = null
         )
-        tempArticleRepository.save(tempArticle)
+        draftArticleRepository.save(draftArticle)
         em.clear()
-        val temp = tempArticleRepository.getTemp(TempArticleId.getDefault())
+        val temp = draftArticleRepository.getById(DraftArticleId.getDefault())
 
         // then
         assertThat(temp).isNotNull
-        assertThat(temp!!.id).isEqualTo(TempArticleId.getDefault())
+        assertThat(temp!!.id).isEqualTo(DraftArticleId.getDefault())
     }
 
     @Test
     fun `tempArticle delete Test`() {
-        val tempArticle = TempArticle.Factory.from(
+        val draftArticle = DraftArticle.Factory.from(
             writerId = UserId(value = 2372),
             title = null,
             content = null,
             thumbnailUrl = null,
             categoryId = null
         )
-        tempArticleRepository.save(tempArticle)
+        draftArticleRepository.save(draftArticle)
         em.clear()
 
-        tempArticleRepository.delete()
+        draftArticleRepository.delete()
 
         // then
-        assertThat(tempArticleRepository.getTemp(TempArticleId.getDefault())).isNull()
+        assertThat(draftArticleRepository.getById(DraftArticleId.getDefault())).isNull()
     }
 }

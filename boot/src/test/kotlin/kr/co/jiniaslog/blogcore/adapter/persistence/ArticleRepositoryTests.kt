@@ -6,8 +6,6 @@ import jakarta.persistence.PersistenceContext
 import kr.co.jiniaslog.blogcore.domain.article.Article
 import kr.co.jiniaslog.blogcore.domain.article.ArticleId
 import kr.co.jiniaslog.blogcore.domain.article.ArticleRepository
-import kr.co.jiniaslog.blogcore.domain.article.TempArticle
-import kr.co.jiniaslog.blogcore.domain.article.TempArticleId
 import kr.co.jiniaslog.blogcore.domain.tag.TagId
 import kr.co.jiniaslog.blogcore.domain.user.UserId
 import org.assertj.core.api.Assertions.*

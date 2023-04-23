@@ -1,6 +1,6 @@
 package kr.co.jiniaslog.blogcore.adapter.persistence
 
-import kr.co.jiniaslog.blogcore.application.article.infra.TransactionHandler
+import kr.co.jiniaslog.blogcore.application.infra.TransactionHandler
 import org.springframework.stereotype.Component
 import org.springframework.transaction.annotation.Isolation
 import org.springframework.transaction.annotation.Transactional
