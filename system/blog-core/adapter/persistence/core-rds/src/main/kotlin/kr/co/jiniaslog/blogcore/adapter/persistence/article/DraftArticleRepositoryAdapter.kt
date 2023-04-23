@@ -34,7 +34,7 @@ internal class DraftArticleRepositoryAdapter(
         categoryId = categoryId?.value,
     )
 
-    private fun TempArticlePM.toDomain(): DraftArticle = DraftArticle.Factory.from(
+    private fun TempArticlePM.toDomain(): DraftArticle = DraftArticle.Factory.fromPm(
         title = title,
         content = content,
         thumbnailUrl = thumbnailUrl,

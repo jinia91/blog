@@ -75,7 +75,7 @@ class DraftArticleIntegrationTests : TestContainerConfig() {
             .header(HTTP.CONTENT_TYPE, "application/json")
 
         draftArticleRepository.save(
-            DraftArticle.Factory.from(
+            DraftArticle.Factory.fromPm(
                 writerId = UserId(value = 5626),
                 title = "test",
                 content = "test",

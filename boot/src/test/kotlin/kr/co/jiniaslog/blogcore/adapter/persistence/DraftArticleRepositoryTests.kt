@@ -21,7 +21,7 @@ class DraftArticleRepositoryTests : TestContainerConfig() {
 
     @Test
     fun `tempArticle Save and get Test`() {
-        val draftArticle = DraftArticle.Factory.from(
+        val draftArticle = DraftArticle.Factory.fromPm(
             writerId = UserId(value = 2372),
             title = null,
             content = null,
@@ -39,7 +39,7 @@ class DraftArticleRepositoryTests : TestContainerConfig() {
 
     @Test
     fun `tempArticle delete Test`() {
-        val draftArticle = DraftArticle.Factory.from(
+        val draftArticle = DraftArticle.Factory.fromPm(
             writerId = UserId(value = 2372),
             title = null,
             content = null,
