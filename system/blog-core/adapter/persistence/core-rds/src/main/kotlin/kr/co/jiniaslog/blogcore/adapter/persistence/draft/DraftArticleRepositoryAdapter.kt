@@ -1,6 +1,5 @@
-package kr.co.jiniaslog.blogcore.adapter.persistence.article
+package kr.co.jiniaslog.blogcore.adapter.persistence.draft
 
-import kr.co.jiniaslog.blogcore.domain.category.CategoryId
 import kr.co.jiniaslog.blogcore.domain.draft.DraftArticle
 import kr.co.jiniaslog.blogcore.domain.draft.DraftArticleId
 import kr.co.jiniaslog.blogcore.domain.draft.DraftArticleRepository
@@ -11,34 +10,37 @@ import kotlin.jvm.optionals.getOrNull
 
 @Repository
 internal class DraftArticleRepositoryAdapter(
-    private val tempArticleJpaRepository: TempArticleJpaRepository,
+    private val draftArticleJpaRepository: DraftArticleJpaRepository,
 ) : DraftArticleRepository {
     override fun save(newDraftArticle: DraftArticle) {
-        tempArticleJpaRepository.save(
+        draftArticleJpaRepository.save(
             newDraftArticle.toPm()
                 .apply { createdDate = LocalDateTime.now() },
         )
     }
 
-    override fun getById(draftArticleId: DraftArticleId): DraftArticle? = tempArticleJpaRepository.findById(draftArticleId.value)
+    override fun getById(draftArticleId: DraftArticleId): DraftArticle? = draftArticleJpaRepository.findById(draftArticleId.value)
         .getOrNull()?.toDomain()
 
-    override fun delete() = tempArticleJpaRepository.deleteAll()
+    override fun deleteById(draftArticleId: DraftArticleId) {
+        draftArticleJpaRepository.deleteById(draftArticleId.value)
+    }
 
-    private fun DraftArticle.toPm(): TempArticlePM = TempArticlePM(
+    private fun DraftArticle.toPm(): DraftArticlePM = DraftArticlePM(
         id = id.value,
         title = title,
         content = content,
         thumbnailUrl = thumbnailUrl,
         writerId = writerId.value,
-        categoryId = categoryId?.value,
     )
 
-    private fun TempArticlePM.toDomain(): DraftArticle = DraftArticle.Factory.fromPm(
+    private fun DraftArticlePM.toDomain(): DraftArticle = DraftArticle.Factory.fromPm(
+        id = DraftArticleId(id),
         title = title,
         content = content,
         thumbnailUrl = thumbnailUrl,
         writerId = UserId(writerId),
-        categoryId = categoryId?.let { CategoryId(it) },
+        createdAt = createdDate!!,
+        updatedAt = updatedDate!!,
     )
 }

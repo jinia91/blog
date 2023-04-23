@@ -1,5 +1,8 @@
 package kr.co.jiniaslog.blogcore.application.draft.usecase
 
+import kr.co.jiniaslog.blogcore.application.draft.usecase.DraftArticleCommands.DeleteDraftArticleCommand
+import kr.co.jiniaslog.blogcore.application.draft.usecase.DraftArticleCommands.UpsertDraftArticleCommand
+import kr.co.jiniaslog.blogcore.application.draft.usecase.DraftArticleCommands.UpsertDraftArticleResult
 import kr.co.jiniaslog.blogcore.application.infra.TransactionHandler
 import kr.co.jiniaslog.blogcore.domain.draft.DraftArticle
 import kr.co.jiniaslog.blogcore.domain.draft.DraftArticleId
@@ -16,15 +19,13 @@ internal class DraftArticleUseCaseInteractor(
     private val transactionHandler: TransactionHandler,
 ) : DraftArticleCommands, DraftArticleQueries {
 
-    override fun upsertDraftArticle(command: DraftArticleCommands.UpsertDraftArticleCommand): DraftArticleCommands.UpsertDraftArticleResult = with(command) {
+    override fun upsertDraftArticle(command: UpsertDraftArticleCommand): UpsertDraftArticleResult = with(command) {
         val draftArticle = draftArticleId?.let { draftArticleRepository.getById(it) }
             ?.apply {
                 update(
                     title = title,
                     content = content,
                     thumbnailUrl = thumbnailUrl,
-                    categoryId = categoryId,
-                    tags = tags,
                 )
             } ?: DraftArticle.Factory.newOne(
             id = draftArticleIdGenerator.generate(),
@@ -32,17 +33,16 @@ internal class DraftArticleUseCaseInteractor(
             title = title,
             content = content,
             thumbnailUrl = thumbnailUrl,
-            categoryId = categoryId,
         )
 
         transactionHandler.runInReadCommittedTransaction {
             draftArticleRepository.save(draftArticle)
         }
 
-        return DraftArticleCommands.UpsertDraftArticleResult(draftArticleId = draftArticle.id.value)
+        return UpsertDraftArticleResult(draftArticleId = draftArticle.id.value)
     }
 
-    override fun deleteDraftArticle(command: DraftArticleCommands.DeleteDraftArticleCommand) {
+    override fun deleteDraftArticle(command: DeleteDraftArticleCommand) {
         transactionHandler.runInReadCommittedTransaction {
             draftArticleRepository.deleteById(command.draftArticleId)
         }

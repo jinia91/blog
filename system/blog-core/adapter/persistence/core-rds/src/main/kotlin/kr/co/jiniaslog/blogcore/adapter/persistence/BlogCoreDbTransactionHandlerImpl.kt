@@ -10,7 +10,6 @@ import java.util.function.Supplier
 class BlogCoreDbTransactionHandlerImpl : TransactionHandler {
 
     @Transactional(isolation = Isolation.READ_COMMITTED)
-    @Throws(Exception::class)
     override fun <T> runInReadCommittedTransaction(supplier: Supplier<T>): T {
         return supplier.get()
     }

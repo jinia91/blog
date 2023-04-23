@@ -1,7 +1,5 @@
 package kr.co.jiniaslog.blogcore.domain.draft
 
-import kr.co.jiniaslog.blogcore.domain.category.CategoryId
-import kr.co.jiniaslog.blogcore.domain.tag.TagId
 import kr.co.jiniaslog.blogcore.domain.user.UserId
 import kr.co.jiniaslog.shared.core.domain.DomainEntity
 import java.time.LocalDateTime
@@ -12,8 +10,6 @@ class DraftArticle private constructor(
     title: String?,
     content: String?,
     thumbnailUrl: String?,
-    categoryId: CategoryId?,
-    tags: Set<TagId>,
     createdAt: LocalDateTime?,
     updatedAt: LocalDateTime?,
 ) : DomainEntity<DraftArticleId>() {
@@ -31,12 +27,6 @@ class DraftArticle private constructor(
     var thumbnailUrl: String? = thumbnailUrl
         private set
 
-    var categoryId: CategoryId? = categoryId
-        private set
-
-    var tags: Set<TagId> = tags
-        private set
-
     override val createdDate: LocalDateTime? = createdAt
 
     override val updatedDate: LocalDateTime? = updatedAt
@@ -45,14 +35,10 @@ class DraftArticle private constructor(
         title: String?,
         content: String?,
         thumbnailUrl: String?,
-        categoryId: CategoryId?,
-        tags: Set<TagId>,
     ) {
         this.title = title
         this.content = content
         this.thumbnailUrl = thumbnailUrl
-        this.categoryId = categoryId
-        this.tags = tags
     }
 
     object Factory {
@@ -62,8 +48,6 @@ class DraftArticle private constructor(
             title: String? = null,
             content: String? = null,
             thumbnailUrl: String? = null,
-            categoryId: CategoryId? = null,
-            tags: Set<TagId> = emptySet(),
             createdAt: LocalDateTime,
             updatedAt: LocalDateTime,
         ): DraftArticle = DraftArticle(
@@ -72,8 +56,6 @@ class DraftArticle private constructor(
             title = title,
             content = content,
             thumbnailUrl = thumbnailUrl,
-            categoryId = categoryId,
-            tags = tags,
             createdAt = createdAt,
             updatedAt = updatedAt,
         )
@@ -84,16 +66,12 @@ class DraftArticle private constructor(
             title: String? = null,
             content: String? = null,
             thumbnailUrl: String? = null,
-            categoryId: CategoryId? = null,
-            tags: Set<TagId> = emptySet(),
         ): DraftArticle = DraftArticle(
             id = id,
             writerId = writerId,
             title = title,
             content = content,
             thumbnailUrl = thumbnailUrl,
-            categoryId = categoryId,
-            tags = tags,
             createdAt = null,
             updatedAt = null,
         )

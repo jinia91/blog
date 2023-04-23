@@ -1,4 +1,4 @@
-package kr.co.jiniaslog.blogcore.adapter.persistence.article
+package kr.co.jiniaslog.blogcore.adapter.persistence.draft
 
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
@@ -8,12 +8,15 @@ import kr.co.jiniaslog.shared.persistence.BasePersistenceModel
 
 @Entity
 @Table(
-    name = "temp_article",
+    name = "draft_article",
 )
-class TempArticlePM(
+class DraftArticlePM(
     @Id
-    @Column(name = "temp_article_id")
+    @Column(name = "draft_article_id")
     override val id: Long,
+
+    @Column(nullable = false, name = "writer_id")
+    var writerId: Long,
 
     @Column(nullable = true, length = 50, name = "title")
     var title: String?,
@@ -23,10 +26,4 @@ class TempArticlePM(
 
     @Column(nullable = true, name = "thumbnail_url")
     var thumbnailUrl: String?,
-
-    @Column(nullable = false, name = "writer_id")
-    var writerId: Long,
-
-    @Column(nullable = true, name = "category_id")
-    var categoryId: Long?,
 ) : BasePersistenceModel()
