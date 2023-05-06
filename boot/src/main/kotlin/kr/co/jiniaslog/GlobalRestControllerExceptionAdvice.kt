@@ -1,6 +1,4 @@
 package kr.co.jiniaslog
-import kr.co.jiniaslog.blogcore.adapter.http.config.ExceptionApiResponse
-import kr.co.jiniaslog.blogcore.domain.article.ArticleNotValidException
 import kr.co.jiniaslog.shared.core.domain.BusinessException
 import kr.co.jiniaslog.shared.core.domain.ResourceNotFoundException
 import kr.co.jiniaslog.shared.core.domain.ValidationException
@@ -21,7 +19,7 @@ private val log = KotlinLogging.logger { }
 @RestControllerAdvice
 class GlobalRestControllerExceptionAdvice {
 
-    @ExceptionHandler(ValidationException::class)
+    @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     fun handleValidationException(e: ValidationException): ResponseEntity<ErrorResponse> {
         if (e.isNecessaryToLog) {
@@ -33,11 +31,21 @@ class GlobalRestControllerExceptionAdvice {
             .body(ErrorResponse(e.javaClass.simpleName ,e.message ?: "Validation Error"))
     }
 
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    fun handleMethodArgumentNotValidException(e: MethodArgumentNotValidException): ResponseEntity<ErrorResponse> {
+        val errors = e.bindingResult.fieldErrors.associate { fieldError ->
+            fieldError.field to fieldError.defaultMessage
+        }
+
+        return ResponseEntity
+            .status(HttpStatus.BAD_REQUEST)
+            .body(ErrorResponse(e.javaClass.simpleName, errors.toString()))
+    }
+
     @ExceptionHandler(
         IllegalArgumentException::class,
-        MethodArgumentNotValidException::class,
         MissingServletRequestParameterException::class,
-        MethodArgumentNotValidException::class,
         HttpRequestMethodNotSupportedException::class,
         MissingRequestHeaderException::class,
         HttpMessageNotReadableException::class,
@@ -49,7 +57,7 @@ class GlobalRestControllerExceptionAdvice {
             .body(ErrorResponse(e.javaClass.simpleName, e.message ?: "Bad Request"))
     }
 
-    @ExceptionHandler(ResourceNotFoundException::class)
+    @ExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND)
     fun handleResourceNotFoundException(e: ResourceNotFoundException): ResponseEntity<ErrorResponse> {
         if (e.isNecessaryToLog) {
@@ -61,7 +69,7 @@ class GlobalRestControllerExceptionAdvice {
             .body(ErrorResponse(e.javaClass.simpleName ,e.message ?: "Resource Not Found"))
     }
 
-    @ExceptionHandler(BusinessException::class)
+    @ExceptionHandler
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     fun handleBusinessException(e: BusinessException): ResponseEntity<ErrorResponse> {
         if (e.isNecessaryToLog) {
@@ -73,7 +81,7 @@ class GlobalRestControllerExceptionAdvice {
             .body(ErrorResponse(e.javaClass.simpleName, e.message ?: "Business Error"))
     }
     
-    @ExceptionHandler(Throwable::class)
+    @ExceptionHandler
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     fun handleThrowable(e: Throwable): ResponseEntity<ErrorResponse> {
         log.error { e.message }

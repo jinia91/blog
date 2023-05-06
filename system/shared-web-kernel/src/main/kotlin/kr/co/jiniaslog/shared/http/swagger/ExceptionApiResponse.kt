@@ -1,4 +1,4 @@
-package kr.co.jiniaslog.blogcore.adapter.http.config
+package kr.co.jiniaslog.shared.http.swagger
 
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import org.springframework.http.HttpStatus

@@ -37,7 +37,7 @@ internal class DraftArticleUseCaseInteractor(
             draftArticleRepository.save(draftArticle)
         }
 
-        return CreateDraftArticleResult(draftArticleId = draftArticle.id.value)
+        return CreateDraftArticleResult(draftArticleId = draftArticle.id)
     }
 
     private fun CreateDraftArticleCommand.isValid() {
@@ -59,16 +59,17 @@ internal class DraftArticleUseCaseInteractor(
             draftArticleRepository.save(draftArticle)
         }
 
-        return UpdateDraftArticleResult(draftArticleId = draftArticle.id.value)
+        return UpdateDraftArticleResult(draftArticleId = draftArticle.id)
     }
 
     private fun UpdateDraftArticleCommand.isValid() {
         if (!userServiceClient.userExists(writerId)) throw ResourceNotFoundException()
     }
 
-    override fun delete(command: DeleteDraftArticleCommand) {
+    override fun delete(command: DeleteDraftArticleCommand) = with(command) {
+        draftArticleRepository.getById(draftArticleId) ?: throw ResourceNotFoundException()
         transactionHandler.runInReadCommittedTransaction {
-            draftArticleRepository.deleteById(command.draftArticleId)
+            draftArticleRepository.deleteById(draftArticleId)
         }
     }
 

@@ -27,5 +27,6 @@ include(
     "system:seo",
     "system:shared-core-kernel",
     "system:shared-persistence-kernel",
+    "system:shared-web-kernel",
     "system:infra",
 )

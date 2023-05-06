@@ -5,7 +5,6 @@ plugins {
     id("io.spring.dependency-management") version "1.1.0"
     kotlin("jvm") version kotlinVersion
     kotlin("plugin.spring") version kotlinVersion
-    kotlin("kapt")
 }
 
 repositories {
@@ -13,16 +12,9 @@ repositories {
 }
 
 dependencies {
-    implementation(project(":system:blog-core:application"))
-    api(project(":system:shared-web-kernel"))
-
+    api("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.0.4")
     implementation("org.springframework.boot:spring-boot-starter-web")
+    implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
-    implementation("org.hibernate.validator:hibernate-validator:8.0.0.Final")
-
-    implementation("org.mapstruct:mapstruct:1.5.3.Final")
-    kapt("org.mapstruct:mapstruct-processor:1.5.3.Final")
-    kaptTest("org.mapstruct:mapstruct-processor:1.5.3.Final")
-
     testImplementation("org.springframework.boot:spring-boot-starter-test")
 }

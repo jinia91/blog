@@ -16,7 +16,7 @@ interface DraftArticleCommands {
     )
 
     data class CreateDraftArticleResult(
-        val draftArticleId: Long,
+        val draftArticleId: DraftArticleId,
     )
 
     data class UpdateDraftArticleCommand(
@@ -28,7 +28,7 @@ interface DraftArticleCommands {
     )
 
     data class UpdateDraftArticleResult(
-        val draftArticleId: Long,
+        val draftArticleId: DraftArticleId,
     )
 
     data class DeleteDraftArticleCommand(

@@ -17,10 +17,8 @@ internal class EventsTransactionSynchronization(
     }
 
     override fun afterCommit() {
-        DomainEventManager.getDomainEvents().forEach { e ->
-            val eventName: String = e.javaClass.simpleName
-            domainEventPublisher.publish(eventName, e)
-        }
+        DomainEventManager.getDomainEvents()
+            .forEach { domainEventPublisher.publish(it) }
     }
 
     override fun afterCompletion(status: Int) {

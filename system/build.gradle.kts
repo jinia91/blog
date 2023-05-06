@@ -81,7 +81,8 @@ subprojects {
             it.enabled = false
         }
 
-        tasks.getByName("jar") {
+        tasks.named<Jar>("jar") {
+            duplicatesStrategy = DuplicatesStrategy.EXCLUDE
             enabled = true
         }
 

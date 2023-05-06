@@ -4,5 +4,5 @@ jar.archiveFileName.set("${project.name}.jar")
 
 dependencies {
     api(project(":system:blog-core:domain"))
-//    implementation(project(":system:shared-application-infra-kernel"))
+    testImplementation("com.navercorp.fixturemonkey:fixture-monkey-starter:0.5.0")
 }
