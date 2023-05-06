@@ -21,7 +21,7 @@ private val log = KotlinLogging.logger { }
 @RestControllerAdvice
 class GlobalRestControllerExceptionAdvice {
 
-    @ExceptionHandler(ValidationException::class)
+    @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     fun handleValidationException(e: ValidationException): ResponseEntity<ErrorResponse> {
         if (e.isNecessaryToLog) {
@@ -49,7 +49,7 @@ class GlobalRestControllerExceptionAdvice {
             .body(ErrorResponse(e.javaClass.simpleName, e.message ?: "Bad Request"))
     }
 
-    @ExceptionHandler(ResourceNotFoundException::class)
+    @ExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND)
     fun handleResourceNotFoundException(e: ResourceNotFoundException): ResponseEntity<ErrorResponse> {
         if (e.isNecessaryToLog) {
@@ -61,7 +61,7 @@ class GlobalRestControllerExceptionAdvice {
             .body(ErrorResponse(e.javaClass.simpleName ,e.message ?: "Resource Not Found"))
     }
 
-    @ExceptionHandler(BusinessException::class)
+    @ExceptionHandler
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     fun handleBusinessException(e: BusinessException): ResponseEntity<ErrorResponse> {
         if (e.isNecessaryToLog) {
@@ -73,7 +73,7 @@ class GlobalRestControllerExceptionAdvice {
             .body(ErrorResponse(e.javaClass.simpleName, e.message ?: "Business Error"))
     }
     
-    @ExceptionHandler(Throwable::class)
+    @ExceptionHandler
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     fun handleThrowable(e: Throwable): ResponseEntity<ErrorResponse> {
         log.error { e.message }

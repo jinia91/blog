@@ -17,9 +17,10 @@ internal class DomainEventPublisherImpl(
     private val applicationContext: ApplicationContext,
     @param:Qualifier("domainEventPublishExecutor") private val taskExecutor: TaskExecutor,
 ) : DomainEventPublisher {
-    override fun publish(eventName: String, message: Message) = taskExecutor.execute {
-        log.info { "publish event : $message" }
-        resolveChannel(eventName).send(GenericMessage(message))
+    override fun publish(event: Message) = taskExecutor.execute {
+        log.info { "publish event : $event" }
+        val eventName: String = event::class.simpleName!!
+        resolveChannel(eventName).send(GenericMessage(event))
     }
 
     private fun resolveChannel(eventName: String) = (applicationContext.getBean(eventName + "Channel") as MessageChannel)
