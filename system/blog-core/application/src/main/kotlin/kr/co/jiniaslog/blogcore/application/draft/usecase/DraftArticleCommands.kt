@@ -4,9 +4,9 @@ import kr.co.jiniaslog.blogcore.domain.draft.DraftArticleId
 import kr.co.jiniaslog.blogcore.domain.user.UserId
 
 interface DraftArticleCommands {
-    fun createDraftArticle(command: CreateDraftArticleCommand): CreateDraftArticleResult
-    fun updateDraftArticle(command: UpdateDraftArticleCommand): UpdateDraftArticleResult
-    fun deleteDraftArticle(command: DeleteDraftArticleCommand)
+    fun create(command: CreateDraftArticleCommand): CreateDraftArticleResult
+    fun update(command: UpdateDraftArticleCommand): UpdateDraftArticleResult
+    fun delete(command: DeleteDraftArticleCommand)
 
     data class CreateDraftArticleCommand(
         val writerId: UserId,

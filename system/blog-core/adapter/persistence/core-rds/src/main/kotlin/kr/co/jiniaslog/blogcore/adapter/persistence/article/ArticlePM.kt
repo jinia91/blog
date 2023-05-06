@@ -4,7 +4,6 @@ import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.Id
 import jakarta.persistence.Table
-import kr.co.jiniaslog.blogcore.domain.article.Article
 import kr.co.jiniaslog.shared.persistence.BasePersistenceModel
 
 @Entity
@@ -25,28 +24,12 @@ class ArticlePM(
     @Column(columnDefinition = "bigint default 0", nullable = false, name = "hit")
     var hit: Long,
 
-    @Column(nullable = true, name = "thumbnail_url")
-    var thumbnailUrl: String?,
+    @Column(nullable = false, name = "thumbnail_url")
+    var thumbnailUrl: String,
 
     @Column(nullable = false, name = "writer_id")
     var writerId: Long,
 
-    @Column(nullable = true, name = "category_id")
-    var categoryId: Long?,
-
-    @Column(nullable = false, name = "status")
-    var status: String,
-) : BasePersistenceModel() {
-    fun toDomain(): Article {
-        return Article.Factory.from(
-            id = id,
-            title = title,
-            content = content,
-            hit = hit,
-            thumbnailUrl = thumbnailUrl,
-            writerId = writerId,
-            categoryId = categoryId,
-            status = status,
-        )
-    }
-}
+    @Column(nullable = false, name = "category_id")
+    var categoryId: Long,
+) : BasePersistenceModel()

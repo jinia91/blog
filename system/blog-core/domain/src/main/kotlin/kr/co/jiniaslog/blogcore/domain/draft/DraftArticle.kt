@@ -1,7 +1,7 @@
 package kr.co.jiniaslog.blogcore.domain.draft
 
 import kr.co.jiniaslog.blogcore.domain.user.UserId
-import kr.co.jiniaslog.shared.core.domain.DomainEntity
+import kr.co.jiniaslog.shared.core.domain.AggregateRoot
 import java.time.LocalDateTime
 
 class DraftArticle private constructor(
@@ -12,7 +12,7 @@ class DraftArticle private constructor(
     thumbnailUrl: String?,
     createdAt: LocalDateTime?,
     updatedAt: LocalDateTime?,
-) : DomainEntity<DraftArticleId>() {
+) : AggregateRoot<DraftArticleId>(createdAt, updatedAt) {
 
     override val id: DraftArticleId = id
 
@@ -27,10 +27,6 @@ class DraftArticle private constructor(
     var thumbnailUrl: String? = thumbnailUrl
         private set
 
-    override val createdDate: LocalDateTime? = createdAt
-
-    override val updatedDate: LocalDateTime? = updatedAt
-
     fun update(
         title: String?,
         content: String?,
@@ -42,7 +38,7 @@ class DraftArticle private constructor(
     }
 
     object Factory {
-        fun fromPm(
+        fun from(
             id: DraftArticleId,
             writerId: UserId,
             title: String? = null,

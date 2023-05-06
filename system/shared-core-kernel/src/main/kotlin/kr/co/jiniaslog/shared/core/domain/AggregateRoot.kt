@@ -1,6 +1,11 @@
 package kr.co.jiniaslog.shared.core.domain
 
-abstract class AggregateRoot<T : ValueObject> : DomainEntity<T>() {
+import java.time.LocalDateTime
+
+abstract class AggregateRoot<T : ValueObject>(
+    createdDate: LocalDateTime?,
+    updatedDate: LocalDateTime?,
+) : DomainEntity<T>(createdDate, updatedDate) {
     protected fun registerEvent(event: DomainEvent): DomainEvent {
         DomainEventManager.register(event)
         return event

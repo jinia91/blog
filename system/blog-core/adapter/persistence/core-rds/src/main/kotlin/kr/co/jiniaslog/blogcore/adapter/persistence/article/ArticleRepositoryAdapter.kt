@@ -4,8 +4,12 @@ import kr.co.jiniaslog.blogcore.domain.article.Article
 import kr.co.jiniaslog.blogcore.domain.article.ArticleId
 import kr.co.jiniaslog.blogcore.domain.article.ArticleIdGenerator
 import kr.co.jiniaslog.blogcore.domain.article.ArticleRepository
+import kr.co.jiniaslog.blogcore.domain.category.CategoryId
+import kr.co.jiniaslog.blogcore.domain.user.UserId
 import kr.co.jiniaslog.shared.core.domain.ResourceNotFoundException
 import kr.co.jiniaslog.shared.persistence.id.IdGenerator
+import org.springframework.data.jpa.domain.AbstractAuditable_.createdDate
+import org.springframework.data.jpa.domain.AbstractPersistable_.id
 import org.springframework.stereotype.Repository
 import kotlin.jvm.optionals.getOrElse
 import kotlin.jvm.optionals.getOrNull
@@ -32,5 +36,19 @@ class ArticleRepositoryAdapter(
 
     override fun generate(): ArticleId {
         return ArticleId(idGenerator.generate())
+    }
+
+    fun ArticlePM.toDomain(): Article {
+        return Article.Factory.from(
+            id = ArticleId(id),
+            title = title,
+            content = content,
+            hit = hit,
+            thumbnailUrl = thumbnailUrl,
+            writerId = UserId(writerId),
+            categoryId = CategoryId(categoryId),
+            createdAt = createdDate,
+            updatedAt = updatedDate,
+        )
     }
 }

@@ -22,7 +22,7 @@ internal class DraftArticleUseCaseInteractor(
     private val userServiceClient: UserServiceClient,
 ) : DraftArticleCommands, DraftArticleQueries {
 
-    override fun createDraftArticle(command: CreateDraftArticleCommand): CreateDraftArticleResult = with(command) {
+    override fun create(command: CreateDraftArticleCommand): CreateDraftArticleResult = with(command) {
         command.isValid()
 
         val draftArticle = DraftArticle.Factory.newOne(
@@ -44,7 +44,7 @@ internal class DraftArticleUseCaseInteractor(
         if (!userServiceClient.userExists(writerId)) throw ResourceNotFoundException()
     }
 
-    override fun updateDraftArticle(command: UpdateDraftArticleCommand): UpdateDraftArticleResult = with(command) {
+    override fun update(command: UpdateDraftArticleCommand): UpdateDraftArticleResult = with(command) {
         command.isValid()
 
         val draftArticle = draftArticleRepository.getById(draftArticleId) ?: throw ResourceNotFoundException()
@@ -66,7 +66,7 @@ internal class DraftArticleUseCaseInteractor(
         if (!userServiceClient.userExists(writerId)) throw ResourceNotFoundException()
     }
 
-    override fun deleteDraftArticle(command: DeleteDraftArticleCommand) {
+    override fun delete(command: DeleteDraftArticleCommand) {
         transactionHandler.runInReadCommittedTransaction {
             draftArticleRepository.deleteById(command.draftArticleId)
         }

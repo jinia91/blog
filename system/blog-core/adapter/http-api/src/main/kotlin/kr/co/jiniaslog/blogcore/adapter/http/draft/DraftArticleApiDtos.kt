@@ -12,10 +12,13 @@ import java.time.LocalDateTime
 data class DraftArticleCreateApiRequest(
     @Schema(description = "작성자 ID", example = "1")
     val writerId: Long,
+
     @Schema(description = "제목", example = "제목")
     val title: String?,
+
     @Schema(description = "내용", example = "내용")
     val content: String?,
+
     @Schema(description = "썸네일 URL", example = "https://example.com/thumbnail.png")
     val thumbnailUrl: String?,
 ) {
@@ -39,10 +42,13 @@ data class DraftArticleCreateApiResponse(
 data class DraftArticleUpdateApiRequest(
     @Schema(description = "작성자 ID", example = "1")
     val writerId: Long,
+
     @Schema(description = "제목", example = "제목")
     val title: String?,
+
     @Schema(description = "내용", example = "내용")
     val content: String?,
+
     @Schema(description = "썸네일 URL", example = "https://example.com/thumbnail.png")
     val thumbnailUrl: String?,
 ) {
@@ -67,16 +73,22 @@ data class DraftArticleUpdateApiResponse(
 data class DraftArticleGetApiResponse(
     @Schema(description = "DraftArticle ID", example = "1")
     val draftArticleId: Long,
+
     @Schema(description = "작성자 ID", example = "1")
     val writerId: Long,
+
     @Schema(description = "제목", example = "제목")
     val title: String?,
+
     @Schema(description = "내용", example = "내용")
     val content: String?,
+
     @Schema(description = "썸네일 URL", example = "https://example.com/thumbnail.png")
     val thumbnailUrl: String?,
+
     @Schema(description = "생성일시", example = "2021-01-01T00:00:00")
     val createdAt: LocalDateTime,
+
     @Schema(description = "수정일시", example = "2021-01-01T00:00:00")
     val updatedAt: LocalDateTime,
 ) {
