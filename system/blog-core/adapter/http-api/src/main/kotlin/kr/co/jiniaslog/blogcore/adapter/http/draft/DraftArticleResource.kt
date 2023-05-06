@@ -4,13 +4,15 @@ import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
 import io.swagger.v3.oas.annotations.tags.Tag
-import kr.co.jiniaslog.blogcore.adapter.http.config.ExceptionApiResponse
-import kr.co.jiniaslog.blogcore.adapter.http.config.ExceptionsApiResponses
+import jakarta.validation.Valid
+import jakarta.validation.constraints.Min
 import kr.co.jiniaslog.blogcore.application.draft.usecase.DraftArticleCommands
 import kr.co.jiniaslog.blogcore.application.draft.usecase.DraftArticleCommands.DeleteDraftArticleCommand
 import kr.co.jiniaslog.blogcore.application.draft.usecase.DraftArticleQueries
 import kr.co.jiniaslog.blogcore.domain.draft.DraftArticleId
 import kr.co.jiniaslog.shared.core.domain.ResourceNotFoundException
+import kr.co.jiniaslog.shared.http.swagger.ExceptionApiResponse
+import kr.co.jiniaslog.shared.http.swagger.ExceptionsApiResponses
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.DeleteMapping
@@ -37,7 +39,8 @@ internal class DraftArticleResource(
         ExceptionApiResponse(httpStatusCode = HttpStatus.NOT_FOUND, exceptions = [ResourceNotFoundException::class]),
     )
     fun createDraftArticle(
-        @RequestBody request: DraftArticleCreateApiRequest,
+        @RequestBody @Valid
+        request: DraftArticleCreateApiRequest,
     ): ResponseEntity<DraftArticleCreateApiResponse> =
         draftArticleCommands.create(request.toCommand())
             .let {
@@ -52,7 +55,9 @@ internal class DraftArticleResource(
         ExceptionApiResponse(httpStatusCode = HttpStatus.NOT_FOUND, exceptions = [ResourceNotFoundException::class]),
     )
     fun getDraftArticle(
-        @PathVariable draftArticleId: Long,
+        @PathVariable
+        @Min(1)
+        draftArticleId: Long,
     ): ResponseEntity<DraftArticleGetApiResponse> =
         draftArticleQueries.getDraftArticle(DraftArticleId(draftArticleId))
             .let { ResponseEntity.ok(DraftArticleGetApiResponse.from(it)) }
@@ -64,7 +69,9 @@ internal class DraftArticleResource(
         ExceptionApiResponse(httpStatusCode = HttpStatus.NOT_FOUND, exceptions = [ResourceNotFoundException::class]),
     )
     fun updateDraftArticle(
-        @PathVariable draftArticleId: Long,
+        @PathVariable
+        @Min(1)
+        draftArticleId: Long,
         @RequestBody request: DraftArticleUpdateApiRequest,
     ): ResponseEntity<DraftArticleUpdateApiResponse> =
         draftArticleCommands.update(request.toCommand(draftArticleId))
@@ -74,7 +81,9 @@ internal class DraftArticleResource(
     @Operation(summary = "아티클 초안 삭제")
     @ApiResponses(ApiResponse(responseCode = "204", description = "아티클 초안 삭제 성공", content = []))
     fun deleteDraftArticle(
-        @PathVariable draftArticleId: Long,
+        @PathVariable
+        @Min(1)
+        draftArticleId: Long,
     ): ResponseEntity<Unit> =
         draftArticleCommands.delete(DeleteDraftArticleCommand(DraftArticleId(draftArticleId)))
             .let { ResponseEntity.noContent().build() }

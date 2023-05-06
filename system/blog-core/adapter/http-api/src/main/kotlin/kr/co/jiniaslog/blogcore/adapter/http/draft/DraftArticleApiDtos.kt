@@ -1,6 +1,8 @@
 package kr.co.jiniaslog.blogcore.adapter.http.draft
 
 import io.swagger.v3.oas.annotations.media.Schema
+import jakarta.validation.constraints.Min
+import jakarta.validation.constraints.NotNull
 import kr.co.jiniaslog.blogcore.application.draft.usecase.DraftArticleCommands.CreateDraftArticleCommand
 import kr.co.jiniaslog.blogcore.application.draft.usecase.DraftArticleCommands.UpdateDraftArticleCommand
 import kr.co.jiniaslog.blogcore.domain.draft.DraftArticle
@@ -10,6 +12,8 @@ import java.time.LocalDateTime
 
 @Schema(description = "DraftArticle 생성 요청")
 data class DraftArticleCreateApiRequest(
+    @field:NotNull
+    @field:Min(1)
     @Schema(description = "작성자 ID", example = "1")
     val writerId: Long,
 
@@ -34,12 +38,16 @@ data class DraftArticleCreateApiRequest(
 
 @Schema(description = "DraftArticle 생성 응답")
 data class DraftArticleCreateApiResponse(
+    @field:NotNull
+    @field:Min(1)
     @Schema(description = "생성된 DraftArticle ID", example = "1")
     val draftArticleId: Long,
 )
 
 @Schema(description = "DraftArticle 수정 요청")
 data class DraftArticleUpdateApiRequest(
+    @field:NotNull
+    @field:Min(1)
     @Schema(description = "작성자 ID", example = "1")
     val writerId: Long,
 
@@ -65,15 +73,21 @@ data class DraftArticleUpdateApiRequest(
 
 @Schema(description = "DraftArticle 수정 응답")
 data class DraftArticleUpdateApiResponse(
+    @field:NotNull
+    @field:Min(1)
     @Schema(description = "수정된 DraftArticle ID", example = "1")
     val draftArticleId: Long,
 )
 
 @Schema(description = "DraftArticle 조회 응답")
 data class DraftArticleGetApiResponse(
+    @field:NotNull
+    @field:Min(1)
     @Schema(description = "DraftArticle ID", example = "1")
     val draftArticleId: Long,
 
+    @field:NotNull
+    @field:Min(1)
     @Schema(description = "작성자 ID", example = "1")
     val writerId: Long,
 
