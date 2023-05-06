@@ -1,7 +1,9 @@
 package kr.co.jiniaslog
+
 import kr.co.jiniaslog.shared.core.domain.BusinessException
 import kr.co.jiniaslog.shared.core.domain.ResourceNotFoundException
 import kr.co.jiniaslog.shared.core.domain.ValidationException
+import kr.co.jiniaslog.shared.http.model.ErrorResponse
 import mu.KotlinLogging
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -63,7 +65,7 @@ class GlobalRestControllerExceptionAdvice {
         if (e.isNecessaryToLog) {
             log.error(e.message)
         }
-        
+
         return ResponseEntity
             .status(HttpStatus.NOT_FOUND)
             .body(ErrorResponse(e.javaClass.simpleName ,e.message ?: "Resource Not Found"))
@@ -75,24 +77,19 @@ class GlobalRestControllerExceptionAdvice {
         if (e.isNecessaryToLog) {
             log.error(e.message)
         }
-        
+
         return ResponseEntity
             .status(HttpStatus.INTERNAL_SERVER_ERROR)
             .body(ErrorResponse(e.javaClass.simpleName, e.message ?: "Business Error"))
     }
-    
+
     @ExceptionHandler
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     fun handleThrowable(e: Throwable): ResponseEntity<ErrorResponse> {
         log.error { e.message }
-        
+
         return ResponseEntity
             .status(HttpStatus.INTERNAL_SERVER_ERROR)
             .body(ErrorResponse(e.javaClass.simpleName, e.message ?: "Unknown Error"))
     }
 }
-
-data class ErrorResponse(
-    val type : String,
-    val message: String
-)
