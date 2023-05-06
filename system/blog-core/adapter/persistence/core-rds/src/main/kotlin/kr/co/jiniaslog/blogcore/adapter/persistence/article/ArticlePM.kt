@@ -29,4 +29,7 @@ class ArticlePM(
 
     @Column(nullable = false, name = "writer_id")
     var writerId: Long,
+
+    @Column(nullable = false, name = "category_id")
+    var categoryId: Long,
 ) : BasePersistenceModel()

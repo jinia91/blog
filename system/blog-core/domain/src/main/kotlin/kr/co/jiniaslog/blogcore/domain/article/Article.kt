@@ -1,140 +1,145 @@
 package kr.co.jiniaslog.blogcore.domain.article
 
 import kr.co.jiniaslog.blogcore.domain.category.CategoryId
+import kr.co.jiniaslog.blogcore.domain.draft.DraftArticleId
 import kr.co.jiniaslog.blogcore.domain.tag.TagId
+import kr.co.jiniaslog.blogcore.domain.user.UserId
 import kr.co.jiniaslog.shared.core.domain.AggregateRoot
-import kr.co.jiniaslog.shared.core.extentions.shouldBe
 import java.time.LocalDateTime
 
 class Article private constructor(
     id: ArticleId,
     title: String,
     content: String,
-    thumbnailUrl: String?,
+    thumbnailUrl: String,
     userId: UserId,
-    categoryId: CategoryId?,
+    categoryId: CategoryId,
     tags: Set<TagId>,
-) : AggregateRoot<ArticleId>() {
+    hit: Long = 0,
+    createdAt: LocalDateTime?,
+    updatedAt: LocalDateTime?,
+) : AggregateRoot<ArticleId>(createdAt, updatedAt) {
 
     override val id: ArticleId = id
+
     var title: String = title
         private set
+
     var content: String = content
         private set
-    var hit: Long = 0L
+
+    var hit: Long = hit
         private set
-    var thumbnailUrl: String? = thumbnailUrl
+
+    var thumbnailUrl: String = thumbnailUrl
         private set
+
     val writerId: UserId = userId
-    var categoryId: CategoryId? = categoryId
+
+    var categoryId: CategoryId = categoryId
         private set
+
     var tags: Set<TagId> = tags
         private set
-    var status: ArticleStatus = ArticleStatus.DRAFT
-        private set
 
-    val updatedDate: LocalDateTime? = null
-
-    val createdDate: LocalDateTime? = null
-
-    enum class ArticleStatus {
-        PUBLISHED, DRAFT
-    }
-
-    fun edit(title: String, content: String, thumbnailUrl: String?, categoryId: CategoryId?, tags: Set<TagId>) {
-        when (this.status) {
-            ArticleStatus.PUBLISHED -> ArticleValidatePolicy.validatePublishingArticle(this.writerId, title, content, thumbnailUrl, categoryId, tags)
-            ArticleStatus.DRAFT -> ArticleValidatePolicy.validateDraftingArticle(this.writerId, title, content)
-        }
-
+    fun edit(title: String, content: String, thumbnailUrl: String, categoryId: CategoryId, tags: Set<TagId>) {
+        ArticleValidatePolicy.validate(
+            this.writerId,
+            title,
+            content,
+            thumbnailUrl,
+            categoryId,
+            tags,
+        )
         this.title = title
         this.content = content
         this.thumbnailUrl = thumbnailUrl
         this.categoryId = categoryId
         this.tags = tags
-        registerEvent(ArticleEditedEvent(this.id, this.writerId))
-    }
-
-    fun publish() {
-        ArticleValidatePolicy.validatePublishingArticle(this.writerId, this.title, this.content, this.thumbnailUrl, this.categoryId, this.tags)
-        this.status = ArticleStatus.PUBLISHED
-        registerEvent(ArticlePublishedEvent(this.id, this.writerId))
-    }
-
-    fun drafting() {
-        ArticleValidatePolicy.validateDraftingArticle(this.writerId, this.title, this.content)
-        this.status = ArticleStatus.DRAFT
-        registerEvent(ArticleDraftEvent(this.id, this.writerId))
     }
 
     fun hit() {
-        if (status == ArticleStatus.DRAFT) return
         this.hit++
     }
 
-    object ArticleValidatePolicy {
-
-        fun validateDraftingArticle(writerId: UserId, title: String, content: String) =
-            defaultValidate(writerId, title, content)
-
-        fun validatePublishingArticle(writerId: UserId, title: String, content: String, thumbnailUrl: String?, categoryId: CategoryId?, tags: Set<TagId>) {
-            defaultValidate(writerId, title, content)
-            shouldBe<ArticleNotValidException>(categoryId != CategoryId(0) && categoryId != null) { "shouldHaveCategory" }
-            shouldBe<ArticleNotValidException>(tags.isNotEmpty()) { "shouldHaveTags" }
-            shouldBe<ArticleNotValidException>(thumbnailUrl != null) { "shouldHaveThumbnail" }
-        }
-
-        private fun defaultValidate(writerId: UserId, title: String, content: String) {
-            shouldBe<ArticleNotValidException>(writerId != UserId(0)) { "shouldHaveWriter" }
-            shouldBe<ArticleNotValidException>(title.isNotBlank()) { "shouldHaveTitle" }
-            shouldBe<ArticleNotValidException>(content.isNotBlank()) { "shouldHaveContent" }
-        }
+    fun registerPublishedArticleDeletedEvent() {
+        registerEvent(PublishedArticleDeletedEvent(this.id, this.writerId))
     }
 
-    object Factory {
-
-        fun newDraftOne(
-            id: ArticleId,
-            userId: UserId,
-            title: String,
-            content: String,
-            thumbnailUrl: String?,
-            categoryId: CategoryId?,
-            tags: Set<TagId>,
-        ): Article {
-            val newOne = Article(
-                id = id,
-                userId = userId,
-                title = title,
-                content = content,
-                thumbnailUrl = thumbnailUrl,
-                categoryId = categoryId,
-                tags = tags,
-            )
-            newOne.drafting()
-            return newOne
-        }
-
-        fun newPublishedArticle(
-            id: ArticleId,
-            userId: UserId,
+    object ArticleValidatePolicy {
+        fun validate(
+            writerId: UserId,
             title: String,
             content: String,
             thumbnailUrl: String,
             categoryId: CategoryId,
             tags: Set<TagId>,
+        ) {
+            if (writerId == UserId(0)) throw ArticleNotValidException("shouldHaveWriter")
+            if (title.isBlank()) throw ArticleNotValidException("shouldHaveTitle")
+            if (content.isBlank()) throw ArticleNotValidException("shouldHaveContent")
+            if (categoryId == CategoryId(0)) throw ArticleNotValidException("shouldHaveCategory")
+            if (tags.isEmpty()) throw ArticleNotValidException("shouldHaveTags")
+            if (thumbnailUrl.isBlank()) throw ArticleNotValidException("shouldHaveThumbnail")
+        }
+    }
+
+    object Factory {
+        fun newPublishedArticle(
+            id: ArticleId,
+            writerId: UserId,
+            title: String,
+            content: String,
+            thumbnailUrl: String,
+            categoryId: CategoryId,
+            tags: Set<TagId>,
+            draftArticleId: DraftArticleId?,
         ): Article {
             val newOne = Article(
                 id = id,
-                userId = userId,
+                userId = writerId,
                 title = title,
                 content = content,
                 thumbnailUrl = thumbnailUrl,
                 categoryId = categoryId,
                 tags = tags,
-            )
-            newOne.publish()
+                createdAt = null,
+                updatedAt = null,
+            ).apply {
+                ArticleValidatePolicy.validate(
+                    this.writerId,
+                    this.title,
+                    this.content,
+                    this.thumbnailUrl,
+                    this.categoryId,
+                    this.tags,
+                )
+                registerEvent(PublishedArticleCreatedEvent(this.id, this.writerId, draftArticleId))
+            }
             return newOne
         }
+
+        fun from(
+            id: ArticleId,
+            writerId: UserId,
+            title: String,
+            content: String,
+            hit: Long,
+            thumbnailUrl: String,
+            categoryId: CategoryId,
+            createdAt: LocalDateTime?,
+            updatedAt: LocalDateTime?,
+        ): Article = Article(
+            id = id,
+            title = title,
+            content = content,
+            hit = hit,
+            thumbnailUrl = thumbnailUrl,
+            userId = writerId,
+            categoryId = categoryId,
+            tags = emptySet(),
+            createdAt = createdAt,
+            updatedAt = updatedAt,
+        )
     }
 }

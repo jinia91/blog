@@ -2,10 +2,12 @@ package kr.co.jiniaslog.infra.events
 
 import kr.co.jiniaslog.shared.core.domain.DomainEventPublisher
 import org.aspectj.lang.JoinPoint
+import org.aspectj.lang.annotation.Aspect
 import org.aspectj.lang.annotation.Before
 import org.springframework.stereotype.Component
 import org.springframework.transaction.support.TransactionSynchronizationManager
 
+@Aspect
 @Component
 internal class EventsTransactionSynchronizationAspect(
     private val domainEventPublisher: DomainEventPublisher,
