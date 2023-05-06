@@ -42,7 +42,7 @@ internal class DraftArticleResource(
         draftArticleCommands.create(request.toCommand())
             .let {
                 ResponseEntity.status(HttpStatus.CREATED)
-                    .body(DraftArticleCreateApiResponse(it.draftArticleId))
+                    .body(DraftArticleCreateApiResponse(it.draftArticleId.value))
             }
 
     @GetMapping("/{draftArticleId}")
@@ -68,7 +68,7 @@ internal class DraftArticleResource(
         @RequestBody request: DraftArticleUpdateApiRequest,
     ): ResponseEntity<DraftArticleUpdateApiResponse> =
         draftArticleCommands.update(request.toCommand(draftArticleId))
-            .let { ResponseEntity.ok(DraftArticleUpdateApiResponse(it.draftArticleId)) }
+            .let { ResponseEntity.ok(DraftArticleUpdateApiResponse(it.draftArticleId.value)) }
 
     @DeleteMapping("/{draftArticleId}")
     @Operation(summary = "아티클 초안 삭제")
