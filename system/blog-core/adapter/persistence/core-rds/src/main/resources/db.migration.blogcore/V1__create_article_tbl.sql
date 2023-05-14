@@ -1,4 +1,4 @@
-CREATE TABLE article
+CREATE TABLE articles
 (
     article_id    BIGINT      NOT NULL,
     title         VARCHAR(50) NOT NULL,
@@ -13,4 +13,4 @@ CREATE TABLE article
     PRIMARY KEY (article_id)
 );
 
-CREATE FULLTEXT INDEX title_content_fts ON article (title, content);
+CREATE FULLTEXT INDEX title_content_fts ON articles (title, content);

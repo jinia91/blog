@@ -47,6 +47,7 @@ class ArticleRepositoryAdapter(
             thumbnailUrl = thumbnailUrl,
             writerId = UserId(writerId),
             categoryId = CategoryId(categoryId),
+            tags = setOf(),
             createdAt = createdDate,
             updatedAt = updatedDate,
         )
