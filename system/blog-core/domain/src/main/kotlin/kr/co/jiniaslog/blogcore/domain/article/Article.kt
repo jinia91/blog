@@ -44,6 +44,7 @@ class Article private constructor(
 
     fun edit(title: String, content: String, thumbnailUrl: String, categoryId: CategoryId, tags: Set<TagId>) {
         ArticleValidatePolicy.validate(
+            this.id,
             this.writerId,
             title,
             content,
@@ -68,6 +69,7 @@ class Article private constructor(
 
     object ArticleValidatePolicy {
         fun validate(
+            id: ArticleId,
             writerId: UserId,
             title: String,
             content: String,
@@ -75,6 +77,7 @@ class Article private constructor(
             categoryId: CategoryId,
             tags: Set<TagId>,
         ) {
+            if (id == ArticleId(0)) throw ArticleNotValidException("shouldHaveId")
             if (writerId == UserId(0)) throw ArticleNotValidException("shouldHaveWriter")
             if (title.isBlank()) throw ArticleNotValidException("shouldHaveTitle")
             if (content.isBlank()) throw ArticleNotValidException("shouldHaveContent")
@@ -94,8 +97,16 @@ class Article private constructor(
             categoryId: CategoryId,
             tags: Set<TagId>,
             draftArticleId: DraftArticleId?,
-        ): Article {
-            val newOne = Article(
+        ): Article = ArticleValidatePolicy.validate(
+            id,
+            writerId,
+            title,
+            content,
+            thumbnailUrl,
+            categoryId,
+            tags,
+        ).let {
+            Article(
                 id = id,
                 userId = writerId,
                 title = title,
@@ -106,17 +117,8 @@ class Article private constructor(
                 createdAt = null,
                 updatedAt = null,
             ).apply {
-                ArticleValidatePolicy.validate(
-                    this.writerId,
-                    this.title,
-                    this.content,
-                    this.thumbnailUrl,
-                    this.categoryId,
-                    this.tags,
-                )
                 registerEvent(PublishedArticleCreatedEvent(this.id, this.writerId, draftArticleId))
             }
-            return newOne
         }
 
         fun from(
@@ -127,19 +129,30 @@ class Article private constructor(
             hit: Long,
             thumbnailUrl: String,
             categoryId: CategoryId,
+            tags: Set<TagId>,
             createdAt: LocalDateTime?,
             updatedAt: LocalDateTime?,
-        ): Article = Article(
-            id = id,
-            title = title,
-            content = content,
-            hit = hit,
-            thumbnailUrl = thumbnailUrl,
-            userId = writerId,
-            categoryId = categoryId,
-            tags = emptySet(),
-            createdAt = createdAt,
-            updatedAt = updatedAt,
-        )
+        ): Article = ArticleValidatePolicy.validate(
+            id,
+            writerId,
+            title,
+            content,
+            thumbnailUrl,
+            categoryId,
+            tags,
+        ).let {
+            Article(
+                id = id,
+                title = title,
+                content = content,
+                hit = hit,
+                thumbnailUrl = thumbnailUrl,
+                userId = writerId,
+                categoryId = categoryId,
+                tags = tags,
+                createdAt = createdAt,
+                updatedAt = updatedAt,
+            )
+        }
     }
 }
