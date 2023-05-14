@@ -173,7 +173,7 @@ class DraftArticleIntegrationTests : TestContainerConfig() {
     }
 
     @Test
-    fun `publishedArticle 생성시 이벤트 리슨으로 draftArticle 삭제 테스트`() {
+    fun `publishedArticle pub시 이벤트 subscribe로 draftArticle 삭제 테스트`() {
         val draftArticleId = DraftArticleId(7777L)
 
         draftArticleRepository.save(

@@ -7,7 +7,6 @@ CREATE TABLE articles
     thumbnail_url VARCHAR(255)NOT NULL,
     writer_id     BIGINT      NOT NULL,
     category_id   BIGINT      NOT NULL,
-    status        VARCHAR(20) NOT NULL,
     created_date  DATETIME(6),
     updated_date  DATETIME(6),
     PRIMARY KEY (article_id)

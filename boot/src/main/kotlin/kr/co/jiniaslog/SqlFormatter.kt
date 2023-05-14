@@ -1,5 +1,6 @@
 package kr.co.jiniaslog
 
+import com.p6spy.engine.common.P6Util
 import com.p6spy.engine.logging.Category
 import com.p6spy.engine.spy.appender.MessageFormattingStrategy
 import org.hibernate.engine.jdbc.internal.FormatStyle
@@ -20,29 +21,29 @@ class SqlFormatter : MessageFormattingStrategy {
         sql: String,
         url: String
     ): String {
-        var sql: String? = sql
-        sql = formatSql(category, sql)
+        var targetSql: String? = sql
+        targetSql = formatSql(category, targetSql)
         val currentDate = Date()
         val format1 = SimpleDateFormat("yy.MM.dd HH:mm:ss")
 
-        //return now + "|" + elapsed + "ms|" + category + "|connection " + connectionId + "|" + P6Util.singleLine(prepared) + sql;
-        return format1.format(currentDate) + " | " + "OperationTime : " + elapsed + "ms" + sql
+//        return now + "|" + elapsed + "ms|" + category + "|connection " + connectionId + "|" + P6Util.singleLine(prepared) + sql;
+        return format1.format(currentDate) + " | " + "OperationTime : " + elapsed + "ms" + targetSql
     }
 
     private fun formatSql(category: String, sql: String?): String? {
-        var sql = sql
-        if (sql == null || sql.trim { it <= ' ' } == "") return sql
+        var targetSql = sql
+        if (targetSql == null || targetSql.trim { it <= ' ' } == "") return targetSql
 
         // Only format Statement, distinguish DDL And DML
         if (Category.STATEMENT.name.equals(category)) {
-            val tmpsql = sql.trim { it <= ' ' }.lowercase(Locale.ROOT)
-            sql = if (tmpsql.startsWith("create") || tmpsql.startsWith("alter") || tmpsql.startsWith("comment")) {
-                FormatStyle.DDL.formatter.format(sql)
+            val tmpSql = targetSql.trim { it <= ' ' }.lowercase(Locale.ROOT)
+            targetSql = if (tmpSql.startsWith("create") || tmpSql.startsWith("alter") || tmpSql.startsWith("comment")) {
+                FormatStyle.DDL.formatter.format(targetSql)
             } else {
-                FormatStyle.BASIC.formatter.format(sql)
+                FormatStyle.BASIC.formatter.format(targetSql)
             }
-            sql = "|\nHeFormatSql(P6Spy sql,Hibernate format):$sql"
+            targetSql = "|\nHeFormatSql(P6Spy sql,Hibernate format):$targetSql"
         }
-        return sql
+        return targetSql
     }
 }
