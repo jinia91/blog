@@ -8,7 +8,7 @@ import kr.co.jiniaslog.shared.persistence.BasePersistenceModel
 
 @Entity
 @Table(
-    name = "article",
+    name = "articles",
 )
 class ArticlePM(
     @Id
@@ -32,4 +32,5 @@ class ArticlePM(
 
     @Column(nullable = false, name = "category_id")
     var categoryId: Long,
+
 ) : BasePersistenceModel()

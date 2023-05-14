@@ -1,4 +1,4 @@
-CREATE TABLE draft_article
+CREATE TABLE draft_articles
 (
     draft_article_id BIGINT NOT NULL,
     title            VARCHAR(50) NULL,

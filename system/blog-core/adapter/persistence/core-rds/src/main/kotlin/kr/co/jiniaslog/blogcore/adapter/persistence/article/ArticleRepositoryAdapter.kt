@@ -5,6 +5,7 @@ import kr.co.jiniaslog.blogcore.domain.article.ArticleId
 import kr.co.jiniaslog.blogcore.domain.article.ArticleIdGenerator
 import kr.co.jiniaslog.blogcore.domain.article.ArticleRepository
 import kr.co.jiniaslog.blogcore.domain.category.CategoryId
+import kr.co.jiniaslog.blogcore.domain.tag.TagId
 import kr.co.jiniaslog.blogcore.domain.user.UserId
 import kr.co.jiniaslog.shared.core.domain.ResourceNotFoundException
 import kr.co.jiniaslog.shared.persistence.id.IdGenerator
@@ -47,6 +48,7 @@ class ArticleRepositoryAdapter(
             thumbnailUrl = thumbnailUrl,
             writerId = UserId(writerId),
             categoryId = CategoryId(categoryId),
+            tags = setOf(TagId(1L)), // fixme: 더미로 넣음, 수정필요
             createdAt = createdDate,
             updatedAt = updatedDate,
         )

@@ -9,7 +9,7 @@ import java.time.LocalDateTime
 
 @Entity
 @Table(
-    name = "draft_article",
+    name = "draft_articles",
 )
 class DraftArticlePM(
     @Id
