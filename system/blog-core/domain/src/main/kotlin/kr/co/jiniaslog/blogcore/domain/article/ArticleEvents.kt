@@ -11,8 +11,8 @@ data class PublishedArticleCreatedEvent(
     val articleId: ArticleId,
     val userId: UserId,
     val draftArticleId: DraftArticleId?,
-    private val occurredAt: LocalDateTime = LocalDateTime.now(),
-) : DomainEvent(CURRENT_VERSION, occurredAt, false) {
+    override val occurredAt: LocalDateTime = LocalDateTime.now(),
+) : DomainEvent(CURRENT_VERSION, false) {
     companion object {
         private const val CURRENT_VERSION = 1
     }
@@ -22,8 +22,8 @@ data class PublishedArticleCreatedEvent(
 data class PublishedArticleDeletedEvent(
     val articleId: ArticleId,
     val userId: UserId,
-    private val occurredAt: LocalDateTime = LocalDateTime.now(),
-) : DomainEvent(CURRENT_VERSION, occurredAt, false) {
+    override val occurredAt: LocalDateTime = LocalDateTime.now(),
+) : DomainEvent(CURRENT_VERSION, false) {
     companion object {
         private const val CURRENT_VERSION = 1
     }

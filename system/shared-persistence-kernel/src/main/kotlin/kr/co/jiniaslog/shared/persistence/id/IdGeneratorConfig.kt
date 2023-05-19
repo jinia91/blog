@@ -1,5 +1,6 @@
 package kr.co.jiniaslog.shared.persistence.id
 
+import kr.co.jiniaslog.shared.core.domain.IdGenerator
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 

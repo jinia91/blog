@@ -8,7 +8,6 @@ import java.util.function.Supplier
 
 @Component
 class BlogCoreDbTransactionHandlerImpl : TransactionHandler {
-
     @Transactional(isolation = Isolation.READ_COMMITTED)
     override fun <T> runInReadCommittedTransaction(supplier: Supplier<T>): T {
         return supplier.get()

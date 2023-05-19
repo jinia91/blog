@@ -1,4 +1,4 @@
-package kr.co.jiniaslog.infra.events
+package kr.co.jiniaslog.shared.messaging.events
 
 import kr.co.jiniaslog.shared.core.domain.DomainEventManager
 import kr.co.jiniaslog.shared.core.domain.DomainEventPublisher

@@ -5,7 +5,7 @@ import kr.co.jiniaslog.blogcore.domain.draft.DraftArticleId
 import kr.co.jiniaslog.blogcore.domain.draft.DraftArticleIdGenerator
 import kr.co.jiniaslog.blogcore.domain.draft.DraftArticleRepository
 import kr.co.jiniaslog.blogcore.domain.user.UserId
-import kr.co.jiniaslog.shared.persistence.id.IdGenerator
+import kr.co.jiniaslog.shared.core.domain.IdGenerator
 import org.springframework.stereotype.Repository
 import java.time.LocalDateTime
 import kotlin.jvm.optionals.getOrNull

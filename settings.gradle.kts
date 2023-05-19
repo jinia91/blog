@@ -28,5 +28,6 @@ include(
     "system:shared-core-kernel",
     "system:shared-persistence-kernel",
     "system:shared-web-kernel",
-    "system:infra",
+    "system:shared-messaging-kernel",
+    "system:shared-cache-kernel",
 )
