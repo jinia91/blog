@@ -67,6 +67,7 @@ internal class DraftArticleUseCaseInteractor(
     }
 
     override fun delete(command: DeleteDraftArticleCommand) = with(command) {
+        draftArticleRepository.getById(draftArticleId) ?: throw ResourceNotFoundException()
         transactionHandler.runInReadCommittedTransaction {
             draftArticleRepository.deleteById(draftArticleId)
         }
