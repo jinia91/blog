@@ -17,7 +17,6 @@ import org.springframework.scheduling.annotation.EnableScheduling
 @SpringBootApplication
 @ConfigurationPropertiesScan
 @EnableJpaAuditing
-@EnableScheduling
 class App
 
 fun main(args: Array<String>) {
