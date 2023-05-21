@@ -31,7 +31,7 @@ class DraftArticleRepositoryTests : TestContainerConfig() {
         )
         draftArticleRepository.save(draftArticle)
         em.clear()
-        val temp = draftArticleRepository.getById(id)
+        val temp = draftArticleRepository.findById(id)
 
         // then
         assertThat(temp).isNotNull
@@ -54,6 +54,6 @@ class DraftArticleRepositoryTests : TestContainerConfig() {
         draftArticleRepository.deleteById(id)
 
         // then
-        assertThat(draftArticleRepository.getById(id)).isNull()
+        assertThat(draftArticleRepository.findById(id)).isNull()
     }
 }

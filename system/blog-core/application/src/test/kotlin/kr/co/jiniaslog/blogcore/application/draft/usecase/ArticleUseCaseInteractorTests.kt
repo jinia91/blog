@@ -164,5 +164,40 @@ class ArticleUseCaseInteractorTests : BehaviorSpec() {
                 }
             }
         }
+
+        Given("공개아티클을 삭제하려할때") {
+            val articleId = ArticleId(value = 3)
+            And("해당 아티클이 존재하지 않는다면") {
+                every { articleRepository.findById(articleId) } returns null
+                When("공개아티클을 삭제하면") {
+                    Then("예외가 발생한다") {
+                        shouldThrow<ResourceNotFoundException> {
+                            sut.delete(ArticleCommands.DeleteArticleCommand(articleId))
+                        }
+                    }
+                }
+            }
+            And("해당 아티클이 존재한다면") {
+                val mockArticle = Article.Factory.from(
+                    id = articleId,
+                    title = "empty",
+                    content = "empty",
+                    thumbnailUrl = "thumbnailUrl",
+                    categoryId = CategoryId(value = 1),
+                    tags = setOf(TagId(1), TagId(2)),
+                    writerId = UserId(value = 1),
+                    hit = 0,
+                    createdAt = LocalDateTime.now(),
+                    updatedAt = LocalDateTime.now(),
+                )
+                every { articleRepository.findById(articleId) } returns mockArticle
+                When("공개아티클을 삭제하면") {
+                    sut.delete(ArticleCommands.DeleteArticleCommand(articleId))
+                    Then("해당 아티클이 삭제된다") {
+                        verify(exactly = 1) { articleRepository.delete(mockArticle.id) }
+                    }
+                }
+            }
+        }
     }
 }

@@ -14,8 +14,6 @@ import kr.co.jiniaslog.blogcore.domain.user.UserServiceClient
 import kr.co.jiniaslog.shared.core.context.UseCaseInteractor
 import kr.co.jiniaslog.shared.core.domain.ResourceNotFoundException
 
-private val log = mu.KotlinLogging.logger {}
-
 @UseCaseInteractor
 internal class ArticleUseCaseInteractor(
     private val articleIdGenerator: ArticleIdGenerator,

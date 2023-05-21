@@ -23,7 +23,6 @@ class FailCommandAspect(
     fun logCommandFailure(joinPoint: JoinPoint, command: Command, throwable: Throwable) {
         val commandFailureLog: CommandFailureLog =
             CommandFailureLog.newOne(idGenerator.generate(), joinPoint, command, throwable)
-        log.error("command is recovery: ${commandFailureLog.commandClass}")
         storage.store(commandFailureLog)
     }
 }

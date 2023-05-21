@@ -47,7 +47,7 @@ internal class DraftArticleUseCaseInteractor(
     override fun update(command: UpdateDraftArticleCommand): UpdateDraftArticleResult = with(command) {
         command.isValid()
 
-        val draftArticle = draftArticleRepository.getById(draftArticleId) ?: throw ResourceNotFoundException()
+        val draftArticle = draftArticleRepository.findById(draftArticleId) ?: throw ResourceNotFoundException()
 
         draftArticle.update(
             title = title,
@@ -67,12 +67,12 @@ internal class DraftArticleUseCaseInteractor(
     }
 
     override fun delete(command: DeleteDraftArticleCommand) = with(command) {
-        draftArticleRepository.getById(draftArticleId) ?: throw ResourceNotFoundException()
+        draftArticleRepository.findById(draftArticleId) ?: throw ResourceNotFoundException()
         transactionHandler.runInReadCommittedTransaction {
             draftArticleRepository.deleteById(draftArticleId)
         }
     }
 
     override fun getDraftArticle(draftArticleId: DraftArticleId): DraftArticle =
-        draftArticleRepository.getById(draftArticleId) ?: throw ResourceNotFoundException()
+        draftArticleRepository.findById(draftArticleId) ?: throw ResourceNotFoundException()
 }
