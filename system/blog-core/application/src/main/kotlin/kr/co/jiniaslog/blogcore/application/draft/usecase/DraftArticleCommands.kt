@@ -34,5 +34,5 @@ interface DraftArticleCommands {
 
     data class DeleteDraftArticleCommand(
         val draftArticleId: DraftArticleId,
-    ) : Command(isRecovery = true)
+    ) : Command(isRecovery = false)
 }
