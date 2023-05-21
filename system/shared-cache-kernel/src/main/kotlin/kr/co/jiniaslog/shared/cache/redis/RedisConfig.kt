@@ -1,5 +1,6 @@
 package kr.co.jiniaslog.shared.cache.redis
 
+import kr.co.jiniaslog.shared.core.infra.ObjectMapperUtils
 import mu.KotlinLogging
 import org.redisson.Redisson
 import org.redisson.api.RedissonClient
@@ -17,7 +18,7 @@ open class RedissonConfig {
     @Bean
     open fun redissonClient(address: RedisAddress): RedissonClient {
         val config = Config()
-        config.codec = JsonJacksonCodec()
+        config.codec = JsonJacksonCodec(ObjectMapperUtils.defaultMapper)
         config.useSingleServer().apply {
             this.address = address.address
             this.connectionPoolSize = 20

@@ -1,4 +1,4 @@
-package kr.co.jiniaslog.shared.messaging.events
+package kr.co.jiniaslog.infra.events
 
 import kr.co.jiniaslog.shared.core.infra.CacheClient
 import org.springframework.integration.metadata.ConcurrentMetadataStore

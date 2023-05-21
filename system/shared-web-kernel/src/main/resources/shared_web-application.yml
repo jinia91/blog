@@ -1,0 +1,10 @@
+springdoc:
+  packages-to-scan: kr.co.jiniaslog
+  swagger-ui.path: /api-docs
+  swagger-ui.tags-sorter: alpha
+  swagger-ui.operations-sorter: alpha
+  api-docs.path: /api-docs/json
+  api-docs.groups.enabled: true
+  cache.disabled: true
+  default-consumes-media-type: application/json;charset=UTF-8
+  default-produces-media-type: application/json;charset=UTF-8

@@ -1,4 +1,4 @@
-package kr.co.jiniaslog.shared.messaging.events
+package kr.co.jiniaslog.infra.events
 
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration

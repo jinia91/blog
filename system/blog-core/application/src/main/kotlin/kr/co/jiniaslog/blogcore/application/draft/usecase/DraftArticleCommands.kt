@@ -2,6 +2,7 @@ package kr.co.jiniaslog.blogcore.application.draft.usecase
 
 import kr.co.jiniaslog.blogcore.domain.draft.DraftArticleId
 import kr.co.jiniaslog.blogcore.domain.user.UserId
+import kr.co.jiniaslog.shared.core.domain.Command
 
 interface DraftArticleCommands {
     fun create(command: CreateDraftArticleCommand): CreateDraftArticleResult
@@ -13,7 +14,7 @@ interface DraftArticleCommands {
         val title: String?,
         val content: String?,
         val thumbnailUrl: String?,
-    )
+    ) : Command(isRecovery = false)
 
     data class CreateDraftArticleResult(
         val draftArticleId: DraftArticleId,
@@ -25,7 +26,7 @@ interface DraftArticleCommands {
         val title: String?,
         val content: String?,
         val thumbnailUrl: String?,
-    )
+    ) : Command(isRecovery = false)
 
     data class UpdateDraftArticleResult(
         val draftArticleId: DraftArticleId,
@@ -33,5 +34,5 @@ interface DraftArticleCommands {
 
     data class DeleteDraftArticleCommand(
         val draftArticleId: DraftArticleId,
-    )
+    ) : Command(isRecovery = true)
 }

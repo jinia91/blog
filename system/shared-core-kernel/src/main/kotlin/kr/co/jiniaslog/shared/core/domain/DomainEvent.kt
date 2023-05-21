@@ -4,8 +4,6 @@ import java.io.Serializable
 import java.time.LocalDateTime
 import java.util.UUID
 
-abstract class Message(val isRecovery: Boolean)
-
 abstract class DomainEvent(
     val eventVersion: Int,
     isRecovery: Boolean,

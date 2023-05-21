@@ -1,36 +1,17 @@
 server:
   port: 7777
 
-spring:
-  jpa:
-    open-in-view: false
-    properties:
-      hibernate:
-        format_sql: true
-        use_sql_comments: true
-      show-sql: true
-
+  #===========#
+  #  logging  #
+  #===========#
 logging:
   level:
-
     org.hibernate: INFO
     org.hibernate.SQL: INFO
     org.hibernate.type.descriptor.sql.BasicBinder: INFO
     org.hibernate.transaction: INFO
     sql: INFO
-
 decorator:
   datasource:
     p6spy:
       enable-logging: false
-
-springdoc:
-  packages-to-scan: kr.co.jiniaslog
-  swagger-ui.path: /api-docs
-  swagger-ui.tags-sorter: alpha
-  swagger-ui.operations-sorter: alpha
-  api-docs.path: /api-docs/json
-  api-docs.groups.enabled: true
-  cache.disabled: true
-  default-consumes-media-type: application/json;charset=UTF-8
-  default-produces-media-type: application/json;charset=UTF-8

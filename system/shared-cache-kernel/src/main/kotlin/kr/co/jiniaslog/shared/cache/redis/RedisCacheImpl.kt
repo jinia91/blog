@@ -26,4 +26,24 @@ internal class RedisCacheImpl(
         val bucket: RBucket<T> = redisClient.getBucket(key)
         bucket.set(value, duration.toMillis(), TimeUnit.MILLISECONDS)
     }
+
+    override fun <K, V> getMap(key: String): MutableMap<K, V> {
+        return redisClient.getMap(key)
+    }
+
+    override fun <K, V> saveInMap(mapKey: String, key: K, value: V) {
+        getMap<K, V>(mapKey)[key] = value
+    }
+
+    override fun <K, V> findInMap(mapKey: String, key: K): V? {
+        return getMap<K, V>(mapKey)[key]
+    }
+
+    override fun <K, V> deleteInMap(mapKey: String, key: K) {
+        getMap<K, V>(mapKey).remove(key)
+    }
+
+    override fun <K, V> findAllInMap(mapKey: String): Collection<V> {
+        return getMap<K, V>(mapKey).values
+    }
 }

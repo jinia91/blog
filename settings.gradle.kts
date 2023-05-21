@@ -25,6 +25,7 @@ include(
     "system:chat",
     "system:notification",
     "system:seo",
+    "system:infra",
     "system:shared-core-kernel",
     "system:shared-persistence-kernel",
     "system:shared-web-kernel",

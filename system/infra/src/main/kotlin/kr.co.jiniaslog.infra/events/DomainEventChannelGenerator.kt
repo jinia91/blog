@@ -1,4 +1,4 @@
-package kr.co.jiniaslog.shared.messaging.events
+package kr.co.jiniaslog.infra.events
 
 import mu.KotlinLogging
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory
@@ -40,7 +40,7 @@ internal class DomainEventChannelGenerator : BeanDefinitionRegistryPostProcessor
     private fun createSubscriber(): ThreadPoolTaskExecutor {
         val taskExecutor = ThreadPoolTaskExecutor()
         taskExecutor.corePoolSize = 5
-
+        taskExecutor.maxPoolSize = 50
         taskExecutor.setThreadNamePrefix("Sub-Worker-")
         taskExecutor.initialize()
         return taskExecutor
