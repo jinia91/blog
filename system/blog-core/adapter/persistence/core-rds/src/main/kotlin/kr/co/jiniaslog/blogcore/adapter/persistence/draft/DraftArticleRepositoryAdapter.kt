@@ -23,7 +23,7 @@ internal class DraftArticleRepositoryAdapter(
         )
     }
 
-    override fun getById(draftArticleId: DraftArticleId): DraftArticle? = draftArticleJpaRepository.findById(draftArticleId.value)
+    override fun findById(draftArticleId: DraftArticleId): DraftArticle? = draftArticleJpaRepository.findById(draftArticleId.value)
         .getOrNull()?.toDomain()
 
     override fun deleteById(draftArticleId: DraftArticleId) {

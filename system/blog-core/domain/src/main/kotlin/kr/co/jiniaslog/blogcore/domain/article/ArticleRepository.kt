@@ -6,4 +6,6 @@ interface ArticleRepository {
     fun findById(articleId: ArticleId): Article?
 
     fun delete(articleId: ArticleId)
+
+    fun findAll(): List<Article>
 }

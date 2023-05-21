@@ -33,11 +33,15 @@ class ArticleRepositoryAdapter(
         jpaArticleRepository.delete(target)
     }
 
+    override fun findAll(): List<Article> {
+        return jpaArticleRepository.findAll().map { it.toDomain() }
+    }
+
     override fun generate(): ArticleId {
         return ArticleId(idGenerator.generate())
     }
 
-    fun ArticlePM.toDomain(): Article {
+    private fun ArticlePM.toDomain(): Article {
         return Article.Factory.from(
             id = ArticleId(id),
             title = title,

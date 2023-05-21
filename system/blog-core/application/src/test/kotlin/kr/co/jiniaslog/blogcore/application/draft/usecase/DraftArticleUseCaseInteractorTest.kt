@@ -91,7 +91,7 @@ class DraftArticleUseCaseInteractorTest : BehaviorSpec() {
             And("validation을 통과하고") {
                 every { userServiceClient.userExists(command.writerId) } returns true
                 And("해당 아티클이 없다면") {
-                    every { draftArticleRepository.getById(draftArticleId) } returns null
+                    every { draftArticleRepository.findById(draftArticleId) } returns null
                     When("아티클 초안 수정 명령을 실행하면") {
                         Then("예외가 발생한다.") {
                             shouldThrow<ResourceNotFoundException> {
@@ -111,7 +111,7 @@ class DraftArticleUseCaseInteractorTest : BehaviorSpec() {
                         createdAt = LocalDateTime.now(),
                         updatedAt = LocalDateTime.now(),
                     )
-                    every { draftArticleRepository.getById(draftArticleId) } returns mockArticle
+                    every { draftArticleRepository.findById(draftArticleId) } returns mockArticle
 
                     When("아티클 초안 수정 명령을 실행하면") {
                         sut.update(command)
@@ -128,7 +128,7 @@ class DraftArticleUseCaseInteractorTest : BehaviorSpec() {
             val command = DeleteDraftArticleCommand(draftArticleId = draftArticleId)
 
             and("아티클 초안이 없다면") {
-                every { draftArticleRepository.getById(command.draftArticleId) } returns null
+                every { draftArticleRepository.findById(command.draftArticleId) } returns null
                 When("아티클 초안 삭제 명령을 실행하면") {
                     Then("예외가 발생한다") {
                         shouldThrow<ResourceNotFoundException> {
@@ -148,7 +148,7 @@ class DraftArticleUseCaseInteractorTest : BehaviorSpec() {
                     createdAt = LocalDateTime.now(),
                     updatedAt = LocalDateTime.now(),
                 )
-                every { draftArticleRepository.getById(draftArticleId) } returns mockArticle
+                every { draftArticleRepository.findById(draftArticleId) } returns mockArticle
 
                 When("아티클 초안 삭제 명령을 실행하면") {
                     sut.delete(command)
@@ -161,7 +161,7 @@ class DraftArticleUseCaseInteractorTest : BehaviorSpec() {
         Given("아티클 초안 조회 쿼리가 존재할때") {
             val query = DraftArticleId(5L)
             And("아티클이 없다면") {
-                every { draftArticleRepository.getById(query) } returns null
+                every { draftArticleRepository.findById(query) } returns null
                 When("아티클 초안 조회 쿼리를 실행하면") {
                     Then("예외가 발생한다.") {
                         shouldThrow<ResourceNotFoundException> { sut.getDraftArticle(query) }
@@ -178,7 +178,7 @@ class DraftArticleUseCaseInteractorTest : BehaviorSpec() {
                     createdAt = LocalDateTime.now(),
                     updatedAt = LocalDateTime.now(),
                 )
-                every { draftArticleRepository.getById(query) } returns mockArticle
+                every { draftArticleRepository.findById(query) } returns mockArticle
                 When("아티클 초안 조회 쿼리를 실행하면") {
                     val result = sut.getDraftArticle(query)
                     Then("정상적으로 조회된다.") {
