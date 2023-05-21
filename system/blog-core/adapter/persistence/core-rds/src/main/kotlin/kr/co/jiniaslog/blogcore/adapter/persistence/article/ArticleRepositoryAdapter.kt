@@ -7,10 +7,8 @@ import kr.co.jiniaslog.blogcore.domain.article.ArticleRepository
 import kr.co.jiniaslog.blogcore.domain.category.CategoryId
 import kr.co.jiniaslog.blogcore.domain.tag.TagId
 import kr.co.jiniaslog.blogcore.domain.user.UserId
+import kr.co.jiniaslog.shared.core.domain.IdGenerator
 import kr.co.jiniaslog.shared.core.domain.ResourceNotFoundException
-import kr.co.jiniaslog.shared.persistence.id.IdGenerator
-import org.springframework.data.jpa.domain.AbstractAuditable_.createdDate
-import org.springframework.data.jpa.domain.AbstractPersistable_.id
 import org.springframework.stereotype.Repository
 import kotlin.jvm.optionals.getOrElse
 import kotlin.jvm.optionals.getOrNull

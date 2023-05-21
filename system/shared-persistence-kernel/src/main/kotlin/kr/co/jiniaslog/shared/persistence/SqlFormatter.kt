@@ -1,13 +1,11 @@
-package kr.co.jiniaslog
+package kr.co.jiniaslog.shared.persistence
 
-import com.p6spy.engine.common.P6Util
 import com.p6spy.engine.logging.Category
 import com.p6spy.engine.spy.appender.MessageFormattingStrategy
 import org.hibernate.engine.jdbc.internal.FormatStyle
 import org.springframework.stereotype.Component
 import java.text.SimpleDateFormat
 import java.util.*
-
 
 @Component
 class SqlFormatter : MessageFormattingStrategy {
@@ -19,7 +17,7 @@ class SqlFormatter : MessageFormattingStrategy {
         category: String,
         prepared: String,
         sql: String,
-        url: String
+        url: String,
     ): String {
         var targetSql: String? = sql
         targetSql = formatSql(category, targetSql)

@@ -1,4 +1,4 @@
-package kr.co.jiniaslog
+package kr.co.jiniaslog.shared.http
 
 import kr.co.jiniaslog.shared.core.domain.BusinessException
 import kr.co.jiniaslog.shared.core.domain.ResourceNotFoundException
@@ -28,9 +28,8 @@ class GlobalRestControllerExceptionAdvice {
             log.error(e.message)
         }
 
-        return ResponseEntity
-            .status(HttpStatus.BAD_REQUEST)
-            .body(ErrorResponse(e.javaClass.simpleName ,e.message ?: "Validation Error"))
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+            .body(ErrorResponse(e.javaClass.simpleName, e.message ?: "Validation Error"))
     }
 
     @ExceptionHandler
@@ -40,8 +39,7 @@ class GlobalRestControllerExceptionAdvice {
             fieldError.field to fieldError.defaultMessage
         }
 
-        return ResponseEntity
-            .status(HttpStatus.BAD_REQUEST)
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
             .body(ErrorResponse(e.javaClass.simpleName, errors.toString()))
     }
 
@@ -54,8 +52,7 @@ class GlobalRestControllerExceptionAdvice {
     )
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     fun handleBadRequestException(e: Exception): ResponseEntity<ErrorResponse> {
-        return ResponseEntity
-            .status(HttpStatus.BAD_REQUEST)
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
             .body(ErrorResponse(e.javaClass.simpleName, e.message ?: "Bad Request"))
     }
 
@@ -66,9 +63,8 @@ class GlobalRestControllerExceptionAdvice {
             log.error(e.message)
         }
 
-        return ResponseEntity
-            .status(HttpStatus.NOT_FOUND)
-            .body(ErrorResponse(e.javaClass.simpleName ,e.message ?: "Resource Not Found"))
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+            .body(ErrorResponse(e.javaClass.simpleName, e.message ?: "Resource Not Found"))
     }
 
     @ExceptionHandler
@@ -78,8 +74,7 @@ class GlobalRestControllerExceptionAdvice {
             log.error(e.message)
         }
 
-        return ResponseEntity
-            .status(HttpStatus.INTERNAL_SERVER_ERROR)
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
             .body(ErrorResponse(e.javaClass.simpleName, e.message ?: "Business Error"))
     }
 
@@ -88,8 +83,7 @@ class GlobalRestControllerExceptionAdvice {
     fun handleThrowable(e: Throwable): ResponseEntity<ErrorResponse> {
         log.error { e.message }
 
-        return ResponseEntity
-            .status(HttpStatus.INTERNAL_SERVER_ERROR)
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
             .body(ErrorResponse(e.javaClass.simpleName, e.message ?: "Unknown Error"))
     }
 }

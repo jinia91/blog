@@ -1,5 +1,5 @@
 package kr.co.jiniaslog.shared.core.domain
 
 interface DomainEventPublisher {
-    fun publish(event: Message)
+    fun publish(event: DomainEvent)
 }

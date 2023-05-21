@@ -4,18 +4,21 @@ import kr.co.jiniaslog.blogcore.application.draft.usecase.DraftArticleCommands
 import kr.co.jiniaslog.blogcore.application.draft.usecase.DraftArticleCommands.DeleteDraftArticleCommand
 import kr.co.jiniaslog.blogcore.domain.article.PublishedArticleCreatedEvent
 import mu.KotlinLogging
+import org.springframework.integration.annotation.IdempotentReceiver
 import org.springframework.integration.annotation.ServiceActivator
 import org.springframework.stereotype.Controller
 
 private val log = KotlinLogging.logger { }
 
 @Controller
-class ArticleEventHandler(
+class BlogCoreArticleEventHandler(
     private val draftArticleCommands: DraftArticleCommands,
 ) {
     @ServiceActivator(inputChannel = "PublishedArticleCreatedEventChannel")
+    @IdempotentReceiver("blogCoreIdempotentReceiverInterceptor")
     fun articleCreatedEventHandler(event: PublishedArticleCreatedEvent) = with(event) {
         log.info { "listen Event : $this" }
-        draftArticleId?.let { draftArticleCommands.delete(DeleteDraftArticleCommand(it)) }
+        runCatching { draftArticleId?.let { draftArticleCommands.delete(DeleteDraftArticleCommand(it)) } }
+            .getOrElse { log.warn { "delete draft article failed : $it" } }
     }
 }

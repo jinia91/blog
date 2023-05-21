@@ -8,6 +8,13 @@ spring:
       username: root
       password: 1
       driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    open-in-view: false
+    properties:
+      hibernate:
+        format_sql: true
+        use_sql_comments: true
+      show-sql: true
 
 jpa:
   ddl:

@@ -22,23 +22,25 @@ internal class DomainEventChannelGenerator : BeanDefinitionRegistryPostProcessor
     override fun postProcessBeanDefinitionRegistry(registry: BeanDefinitionRegistry) {
         val findAnnotatedEventClasses = DomainEventScanner.findAnnotatedEventClasses(ROOT_PACKAGE)
         findAnnotatedEventClasses.forEach { clazz ->
+            val pubsubChannelDefinition = createBeanDefinitionBuilder()
             val subscriber = createSubscriber()
-
-            val beanDefinitionBuilder = BeanDefinitionBuilder.genericBeanDefinition(
-                PublishSubscribeChannel::class.java,
-            )
-            beanDefinitionBuilder.addConstructorArgValue(subscriber)
-
+            pubsubChannelDefinition.addConstructorArgValue(subscriber)
             val channelName = generateChannelBeanName(clazz)
-            registry.registerBeanDefinition(channelName, beanDefinitionBuilder.beanDefinition)
+            registry.registerBeanDefinition(channelName, pubsubChannelDefinition.beanDefinition)
             log.info { "register success $channelName" }
         }
+    }
+
+    private fun createBeanDefinitionBuilder(): BeanDefinitionBuilder {
+        return BeanDefinitionBuilder.genericBeanDefinition(
+            PublishSubscribeChannel::class.java,
+        )
     }
 
     private fun createSubscriber(): ThreadPoolTaskExecutor {
         val taskExecutor = ThreadPoolTaskExecutor()
         taskExecutor.corePoolSize = 5
-
+        taskExecutor.maxPoolSize = 50
         taskExecutor.setThreadNamePrefix("Sub-Worker-")
         taskExecutor.initialize()
         return taskExecutor

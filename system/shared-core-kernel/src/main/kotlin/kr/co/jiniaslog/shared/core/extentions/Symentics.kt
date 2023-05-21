@@ -4,7 +4,7 @@ import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 
 @OptIn(ExperimentalContracts::class)
-inline fun Long?.isNullOrZero(): Boolean {
+fun Long?.isNullOrZero(): Boolean {
     contract {
         returns(false) implies (this@isNullOrZero != null)
     }
