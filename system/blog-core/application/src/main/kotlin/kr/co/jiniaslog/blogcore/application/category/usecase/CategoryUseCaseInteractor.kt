@@ -22,22 +22,18 @@ class CategoryUseCaseInteractor(
         }
     }
 
-    private fun CategoryCommands.SyncCategoryCommand.upsert() {
+    private fun CategoryCommands.SyncCategoryCommand.upsert() =
         categoryVos.forEach { categoryVo ->
             val id = categoryVo.id ?: categoryIdGenerator.generate()
             categoryRepository.save(categoryVo.toDomain(id))
         }
-    }
 
-    private fun CategoryCommands.SyncCategoryCommand.delete(
-        existingCategories: List<Category>,
-    ) {
+    private fun CategoryCommands.SyncCategoryCommand.delete(existingCategories: List<Category>) =
         existingCategories.filter { existingCategory ->
             categoryVos.notContains(existingCategory.id)
         }.forEach { categoryToDelete ->
             categoryRepository.delete(categoryToDelete.id)
         }
-    }
 
     private fun List<CategoryCommands.CategoryVo>.notContains(id: CategoryId): Boolean =
         this.none { categoryVo -> categoryVo.id == id }
