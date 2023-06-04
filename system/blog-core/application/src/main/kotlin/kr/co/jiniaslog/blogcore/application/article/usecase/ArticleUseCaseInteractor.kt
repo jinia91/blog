@@ -24,16 +24,7 @@ internal class ArticleUseCaseInteractor(
     override fun post(command: PostArticleCommand): PostArticleResult = with(command) {
         command.isValid()
 
-        val article = Article.Factory.newPublishedArticle(
-            id = articleIdGenerator.generate(),
-            writerId = writerId,
-            title = title,
-            content = content,
-            thumbnailUrl = thumbnailUrl,
-            categoryId = categoryId,
-            tags = tags,
-            draftArticleId = draftArticleId,
-        )
+        val article = command.toDomain()
 
         transactionHandler.runInReadCommittedTransaction {
             articleRepository.save(article)
@@ -45,6 +36,17 @@ internal class ArticleUseCaseInteractor(
     private fun PostArticleCommand.isValid() {
         if (!userServiceClient.userExists(writerId)) throw ResourceNotFoundException()
     }
+
+    private fun PostArticleCommand.toDomain() = Article.Factory.newPublishedArticle(
+        id = articleIdGenerator.generate(),
+        writerId = writerId,
+        title = title,
+        content = content,
+        thumbnailUrl = thumbnailUrl,
+        categoryId = categoryId,
+        tags = tags,
+        draftArticleId = draftArticleId,
+    )
 
     override fun edit(command: EditArticleCommand): EditArticleResult = with(command) {
         command.isValid()
