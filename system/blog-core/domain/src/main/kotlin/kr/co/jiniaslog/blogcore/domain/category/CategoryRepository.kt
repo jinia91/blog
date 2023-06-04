@@ -7,5 +7,7 @@ interface CategoryRepository {
 
     fun findByLabel(label: String): Category?
 
+    fun findAll(): List<Category>
+
     fun delete(categoryId: CategoryId)
 }
