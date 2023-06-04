@@ -5,9 +5,7 @@ import kr.co.jiniaslog.blogcore.domain.category.Category
 import kr.co.jiniaslog.blogcore.domain.category.CategoryId
 import kr.co.jiniaslog.blogcore.domain.category.CategoryIdGenerator
 import kr.co.jiniaslog.blogcore.domain.category.CategoryRepository
-import kr.co.jiniaslog.shared.core.context.UseCaseInteractor
 
-@UseCaseInteractor
 class CategoryUseCaseInteractor(
     private val categoryIdGenerator: CategoryIdGenerator,
     private val categoryRepository: CategoryRepository,
@@ -17,8 +15,8 @@ class CategoryUseCaseInteractor(
         val existingCategories = categoryRepository.findAll()
 
         transactionHandler.runInReadCommittedTransaction {
-            upsert()
-            delete(existingCategories)
+            command.upsert()
+            command.delete(existingCategories)
         }
     }
 
