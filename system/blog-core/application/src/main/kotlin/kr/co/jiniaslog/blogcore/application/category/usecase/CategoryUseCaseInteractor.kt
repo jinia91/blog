@@ -21,7 +21,7 @@ class CategoryUseCaseInteractor(
         command.validate()
         val (newCategoriesData, toBeUpdatedCategoriesData) = categoriesData.partition { it.isNew }
         val existingCategories = categoryRepository.findAll()
-        val toBeUpdatedCategories = toBeUpdatedCategoriesData.map { data ->
+        val toBeUpdatedCategoriesAndData = toBeUpdatedCategoriesData.map { data ->
             val category = existingCategories.find { it.id == data.id }
                 ?: throw ResourceNotFoundException("category ${data.id} not found")
             data to category
@@ -32,7 +32,7 @@ class CategoryUseCaseInteractor(
 
         transactionHandler.runInReadCommittedTransaction {
             save(newCategoriesData)
-            update(toBeUpdatedCategories)
+            update(toBeUpdatedCategoriesAndData)
             delete(toBeDeletedCategories)
         }
     }
