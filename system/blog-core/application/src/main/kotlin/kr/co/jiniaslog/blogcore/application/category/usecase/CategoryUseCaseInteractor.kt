@@ -14,19 +14,42 @@ class CategoryUseCaseInteractor(
     private val transactionHandler: TransactionHandler,
 ) : CategoryCommands {
     override fun syncCategories(command: SyncCategoryCommand) = with(command) {
-        val existingCategories = categoryRepository.findAll()
+        command.validate()
+        val (newCategoryVos, toBeUpdatedCategoryVos) = categoryVos.partition { it.id == null }
+        val toBeDeletedCategories = categoryRepository.findAll()
+            .filter { existingCategory ->
+                categoryVos.notContains(existingCategory.id)
+            }
 
         transactionHandler.runInReadCommittedTransaction {
-            command.upsert()
-            command.delete(existingCategories)
+            save(newCategoryVos)
+            update(toBeUpdatedCategoryVos)
+            delete(toBeDeletedCategories)
         }
     }
 
-    private fun SyncCategoryCommand.upsert() =
-        categoryVos.forEach { categoryVo ->
-            val id = categoryVo.id ?: categoryIdGenerator.generate()
+    private fun SyncCategoryCommand.validate() {
+        TODO("Not yet implemented")
+    }
+
+    private fun save(newCategoryVos: List<CategoryVo>) {
+        newCategoryVos.forEach { categoryVo ->
+            val id = categoryIdGenerator.generate()
             categoryRepository.save(categoryVo.toDomain(id))
         }
+    }
+
+    private fun update(toBeUpdateCategoryVos: List<CategoryVo>) {
+        toBeUpdateCategoryVos.forEach { categoryVo ->
+            categoryRepository.save(categoryVo.toDomain(categoryVo.id!!))
+        }
+    }
+
+    private fun delete(toBeDeleteCategories: List<Category>) {
+        toBeDeleteCategories.forEach { categoryToDelete ->
+            categoryRepository.delete(categoryToDelete.id)
+        }
+    }
 
     private fun CategoryVo.toDomain(id: CategoryId): Category = Category.from(
         id = id,
@@ -36,14 +59,6 @@ class CategoryUseCaseInteractor(
         createdAt = createAt,
         updatedAt = updatedAt,
     )
-
-    private fun SyncCategoryCommand.delete(existingCategories: List<Category>) =
-        existingCategories.filter { existingCategory ->
-            categoryVos.notContains(existingCategory.id)
-        }.forEach { categoryToDelete ->
-            categoryRepository.delete(categoryToDelete.id)
-        }
-
     private fun List<CategoryVo>.notContains(id: CategoryId): Boolean =
         this.none { categoryVo -> categoryVo.id == id }
 }
