@@ -10,7 +10,9 @@ import kr.co.jiniaslog.blogcore.adapter.persistence.CoreDB
 import kr.co.jiniaslog.blogcore.domain.article.Article
 import kr.co.jiniaslog.blogcore.domain.article.ArticleId
 import kr.co.jiniaslog.blogcore.domain.article.ArticleRepository
+import kr.co.jiniaslog.blogcore.domain.category.Category
 import kr.co.jiniaslog.blogcore.domain.category.CategoryId
+import kr.co.jiniaslog.blogcore.domain.category.CategoryRepository
 import kr.co.jiniaslog.blogcore.domain.draft.DraftArticleRepository
 import kr.co.jiniaslog.blogcore.domain.tag.TagId
 import kr.co.jiniaslog.blogcore.domain.user.UserId
@@ -28,12 +30,16 @@ class ArticleIntegrationTests : TestContainerConfig() {
     @Autowired
     private lateinit var draftArticleRepository: DraftArticleRepository
 
+    @Autowired
+    private lateinit var categoryRepository: CategoryRepository
+
     @PersistenceContext(unitName = CoreDB.PERSISTENT_UNIT)
     private lateinit var em: EntityManager
 
     @Test
     fun `post Article 저장 테스트`() {
         // given:
+        givenCategories()
         val request = given()
             .header(HTTP.CONTENT_TYPE, "application/json")
             .body(
@@ -42,7 +48,7 @@ class ArticleIntegrationTests : TestContainerConfig() {
   "title": "test_d0ce030f400d",
   "content": "test_d0ce030f400d",
   "thumbnailUrl": "https://example.com/thumbnail.png",
-  "categoryId": 1,
+  "categoryId": 2,
   "tags": [
     1,
     2,
@@ -70,6 +76,7 @@ class ArticleIntegrationTests : TestContainerConfig() {
     @Test
     fun `post Article 수정 테스트`() {
 // given:
+        givenCategories()
         val articleId = ArticleId(1)
         articleRepository.save(
             Article.Factory.newPublishedArticle(
@@ -78,7 +85,7 @@ class ArticleIntegrationTests : TestContainerConfig() {
                 title = "test_d0ce030f400d",
                 content = "test_d0ce030f400d",
                 thumbnailUrl = "https://example.com/thumbnail.png",
-                categoryId = CategoryId(1),
+                categoryId = CategoryId(2),
                 tags = setOf(TagId(3)),
                 draftArticleId = null
             )
@@ -94,7 +101,7 @@ class ArticleIntegrationTests : TestContainerConfig() {
     "title": "edit",
     "content": "edit",
     "thumbnailUrl": "https://example.com/thumbnail.png",
-    "categoryId": 1,
+    "categoryId": 2,
     "tags": [
       1,
       2,
@@ -122,6 +129,7 @@ class ArticleIntegrationTests : TestContainerConfig() {
     @Test
     fun `article delete 테스트`() {
         // given:
+        givenCategories()
         val articleId = ArticleId(1)
         articleRepository.save(
             Article.Factory.newPublishedArticle(
@@ -130,7 +138,7 @@ class ArticleIntegrationTests : TestContainerConfig() {
                 title = "test_d0ce030f400d",
                 content = "test_d0ce030f400d",
                 thumbnailUrl = "https://example.com/thumbnail.png",
-                categoryId = CategoryId(1),
+                categoryId = CategoryId(2),
                 tags = setOf(TagId(3)),
                 draftArticleId = null
             )
@@ -147,5 +155,26 @@ class ArticleIntegrationTests : TestContainerConfig() {
         em.clear()
         val foundOne = articleRepository.findById(articleId)
         assertThat(foundOne).isNull()
+    }
+
+    private fun givenCategories() {
+        val parentCategory = Category.newOne(
+            id = CategoryId(1),
+            label = "parent",
+            parentId = null,
+            order = 1
+        )
+
+        categoryRepository.save(parentCategory)
+
+        val childCategory = Category.newOne(
+            id = CategoryId(2),
+
+            label = "child",
+            parentId = CategoryId(1),
+            order = 1
+        )
+
+        categoryRepository.save(childCategory)
     }
 }

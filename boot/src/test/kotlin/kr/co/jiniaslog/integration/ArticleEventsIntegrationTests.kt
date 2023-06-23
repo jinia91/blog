@@ -8,10 +8,14 @@ import kr.co.jiniaslog.blogcore.adapter.http.article.ArticlePostApiResponse
 import kr.co.jiniaslog.blogcore.adapter.persistence.CoreDB
 import kr.co.jiniaslog.blogcore.domain.article.ArticleId
 import kr.co.jiniaslog.blogcore.domain.article.ArticleRepository
+import kr.co.jiniaslog.blogcore.domain.category.Category
+import kr.co.jiniaslog.blogcore.domain.category.CategoryId
+import kr.co.jiniaslog.blogcore.domain.category.CategoryRepository
 import kr.co.jiniaslog.blogcore.domain.draft.DraftArticle
 import kr.co.jiniaslog.blogcore.domain.draft.DraftArticleId
 import kr.co.jiniaslog.blogcore.domain.draft.DraftArticleRepository
 import kr.co.jiniaslog.blogcore.domain.user.UserId
+import kr.co.jiniaslog.shared.core.domain.DomainEventPublisher
 import org.apache.http.protocol.HTTP
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -26,12 +30,16 @@ class ArticleEventsIntegrationTests : TestContainerConfig() {
     @Autowired
     private lateinit var draftArticleRepository: DraftArticleRepository
 
+    @Autowired
+    private lateinit var categoryRepository: CategoryRepository
+
     @PersistenceContext(unitName = CoreDB.PERSISTENT_UNIT)
     private lateinit var em: EntityManager
 
     @Test
     fun `post Article 저장시 draft Article 삭제 테스트`() {
         // given:
+        givenCategories()
         val draftArticleId = DraftArticleId(5)
         draftArticleRepository.save(
             DraftArticle.Factory.newOne(
@@ -52,7 +60,7 @@ class ArticleEventsIntegrationTests : TestContainerConfig() {
     "title": "test_d0ce030f400d",
     "content": "test_d0ce030f400d",
     "thumbnailUrl": "https://example.com/thumbnail.png",
-    "categoryId": 1,
+    "categoryId": 2,
     "tags": [
       1,
       2,
@@ -80,5 +88,26 @@ class ArticleEventsIntegrationTests : TestContainerConfig() {
         assertThat(foundArticle!!.id).isEqualTo(ArticleId(deSerializedResponse.articleId))
         assertThat(foundArticle.title).isEqualTo("test_d0ce030f400d")
         assertThat(foundDraftArticle).isNull()
+    }
+
+    private fun givenCategories() {
+        val parentCategory = Category.newOne(
+            id = CategoryId(1),
+            label = "parent",
+            parentId = null,
+            order = 1
+        )
+
+        categoryRepository.save(parentCategory)
+
+        val childCategory = Category.newOne(
+            id = CategoryId(2),
+
+            label = "child",
+            parentId = CategoryId(1),
+            order = 1
+        )
+
+        categoryRepository.save(childCategory)
     }
 }

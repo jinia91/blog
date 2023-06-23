@@ -9,7 +9,7 @@ import javax.sql.DataSource
 /**
  * Db cleaner
  *
- * 각 배치 통합 테스트 코드 실행 후 모든 DB table의 row를 날리는 클리너
+ * 각 통합 테스트 코드 실행 후 모든 DB table의 row를 날리는 클리너
  *
  */
 @Component
@@ -34,10 +34,11 @@ class DbCleaner(private val dataSources: List<DataSource>) {
             ) { resultSet, _ ->
                 resultSet.getString("table_name")
             }
-
+            jdbcTemplate.execute("SET FOREIGN_KEY_CHECKS=0;")
             tableNames.forEach { tableName ->
                 jdbcTemplate.execute("TRUNCATE TABLE $tableName")
             }
+            jdbcTemplate.execute("SET FOREIGN_KEY_CHECKS=1;")
         } finally {
             if (connection != null) {
                 DataSourceUtils.releaseConnection(connection, jdbcTemplate.dataSource!!)

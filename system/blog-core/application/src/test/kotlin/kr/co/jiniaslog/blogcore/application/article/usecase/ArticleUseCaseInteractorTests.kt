@@ -7,6 +7,7 @@ import io.kotest.matchers.shouldNotBe
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
+import kr.co.jiniaslog.blogcore.application.category.usecase.CategoryQueries
 import kr.co.jiniaslog.blogcore.application.infra.TransactionHandler
 import kr.co.jiniaslog.blogcore.domain.article.Article
 import kr.co.jiniaslog.blogcore.domain.article.ArticleId
@@ -25,11 +26,13 @@ class ArticleUseCaseInteractorTests : BehaviorSpec() {
     private val articleRepository: ArticleRepository = mockk(relaxed = true)
     private val transactionHandler: TransactionHandler = mockk()
     private val userServiceClient: UserServiceClient = mockk()
+    private val categoryQueries: CategoryQueries = mockk()
     private val sut: ArticleUseCaseInteractor = ArticleUseCaseInteractor(
         articleIdGenerator = articleIdGenerator,
         articleRepository = articleRepository,
         transactionHandler = transactionHandler,
         userServiceClient = userServiceClient,
+        categoryQueries = categoryQueries,
     )
 
     init {
@@ -45,6 +48,7 @@ class ArticleUseCaseInteractorTests : BehaviorSpec() {
                 tags = setOf(TagId(1), TagId(2)),
                 draftArticleId = null,
             )
+            every { categoryQueries.findCategory(command.categoryId) } returns mockk()
             And("validation을 통과하지 못하면 - writerId가 존재하지 않는다면") {
                 every { userServiceClient.userExists(command.writerId) } returns false
                 When("공개 아티클 명령을 실행하면") {
