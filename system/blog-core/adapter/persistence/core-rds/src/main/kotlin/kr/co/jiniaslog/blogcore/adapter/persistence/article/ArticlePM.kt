@@ -5,6 +5,7 @@ import jakarta.persistence.Entity
 import jakarta.persistence.Id
 import jakarta.persistence.Table
 import kr.co.jiniaslog.shared.persistence.BasePersistenceModel
+import java.time.LocalDateTime
 
 @Entity
 @Table(
@@ -33,4 +34,7 @@ class ArticlePM(
     @Column(nullable = false, name = "category_id")
     var categoryId: Long,
 
-) : BasePersistenceModel()
+    createdDate: LocalDateTime? = null,
+
+    updatedDate: LocalDateTime? = null,
+) : BasePersistenceModel(createdDate, updatedDate)

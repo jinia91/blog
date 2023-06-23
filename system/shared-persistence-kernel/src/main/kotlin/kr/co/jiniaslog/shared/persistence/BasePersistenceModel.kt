@@ -23,9 +23,9 @@ abstract class BasePersistenceModel(
     abstract val id: Long
 
     @Transient
-    var isNewFlag: Boolean = false
+    var newFlag: Boolean = false
 
-    override fun isNew(): Boolean = isNewFlag
+    override fun isNew(): Boolean = newFlag
 
     override fun getId(): Long? = id
 }

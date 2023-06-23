@@ -14,22 +14,20 @@ internal class DraftArticleRepositoryAdapter(
     private val draftArticleJpaRepository: DraftArticleJpaRepository,
     private val idGenerator: IdGenerator,
 ) : DraftArticleRepository, DraftArticleIdGenerator {
-    override fun save(newDraftArticle: DraftArticle): DraftArticle {
-        val returnPm = draftArticleJpaRepository.save(newDraftArticle.toPm().apply { isNewFlag = true })
+    override fun save(newDraftArticle: DraftArticle) {
+        val returnPm = draftArticleJpaRepository.save(newDraftArticle.toPm().apply { newFlag = true })
         newDraftArticle.syncAuditAfterPersist(
             returnPm.createdDate!!,
             returnPm.updatedDate!!,
         )
-        return newDraftArticle
     }
 
-    override fun update(draftArticle: DraftArticle): DraftArticle {
-        val returnPm = draftArticleJpaRepository.save(draftArticle.toPm().apply { isNewFlag = false })
+    override fun update(draftArticle: DraftArticle) {
+        val returnPm = draftArticleJpaRepository.save(draftArticle.toPm().apply { newFlag = false })
         draftArticle.syncAuditAfterPersist(
             returnPm.createdDate!!,
             returnPm.updatedDate!!,
         )
-        return draftArticle
     }
 
     override fun findById(draftArticleId: DraftArticleId): DraftArticle? = draftArticleJpaRepository.findById(draftArticleId.value)
