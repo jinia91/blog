@@ -63,8 +63,6 @@ class CategoryUseCaseInteractorTest : BehaviorSpec() {
                     label = dummy1.label,
                     parentId = dummy1.parentId,
                     order = dummy1.order,
-                    createAt = dummy1.createdAt,
-                    updatedAt = dummy1.updatedAt,
                 )
 
                 val dummy2Data = CategoryCommands.CategoryData(
@@ -72,8 +70,6 @@ class CategoryUseCaseInteractorTest : BehaviorSpec() {
                     label = dummy2.label,
                     parentId = dummy2.parentId,
                     order = dummy2.order,
-                    createAt = dummy2.createdAt,
-                    updatedAt = dummy2.updatedAt,
                 )
 
                 val dummy3Data = CategoryCommands.CategoryData(
@@ -81,8 +77,6 @@ class CategoryUseCaseInteractorTest : BehaviorSpec() {
                     label = dummy3.label,
                     parentId = dummy3.parentId,
                     order = dummy3.order,
-                    createAt = dummy3.createdAt,
-                    updatedAt = dummy3.updatedAt,
                 )
 
                 val newData = CategoryCommands.CategoryData(
@@ -90,8 +84,6 @@ class CategoryUseCaseInteractorTest : BehaviorSpec() {
                     label = "newOne",
                     parentId = null,
                     order = 2,
-                    createAt = null,
-                    updatedAt = null,
                 )
 
                 And("기존카테고리는 없는 command가 존재하면") {
