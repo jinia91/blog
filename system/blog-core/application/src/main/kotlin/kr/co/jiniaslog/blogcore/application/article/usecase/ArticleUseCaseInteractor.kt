@@ -5,6 +5,7 @@ import kr.co.jiniaslog.blogcore.application.article.usecase.ArticleCommands.Edit
 import kr.co.jiniaslog.blogcore.application.article.usecase.ArticleCommands.EditArticleResult
 import kr.co.jiniaslog.blogcore.application.article.usecase.ArticleCommands.PostArticleCommand
 import kr.co.jiniaslog.blogcore.application.article.usecase.ArticleCommands.PostArticleResult
+import kr.co.jiniaslog.blogcore.application.category.usecase.CategoryQueries
 import kr.co.jiniaslog.blogcore.application.infra.TransactionHandler
 import kr.co.jiniaslog.blogcore.domain.article.Article
 import kr.co.jiniaslog.blogcore.domain.article.ArticleId
@@ -13,6 +14,7 @@ import kr.co.jiniaslog.blogcore.domain.article.ArticleRepository
 import kr.co.jiniaslog.blogcore.domain.user.UserServiceClient
 import kr.co.jiniaslog.shared.core.context.UseCaseInteractor
 import kr.co.jiniaslog.shared.core.domain.ResourceNotFoundException
+import kr.co.jiniaslog.shared.core.extentions.isNull
 
 @UseCaseInteractor
 internal class ArticleUseCaseInteractor(
@@ -20,6 +22,7 @@ internal class ArticleUseCaseInteractor(
     private val articleRepository: ArticleRepository,
     private val transactionHandler: TransactionHandler,
     private val userServiceClient: UserServiceClient,
+    private val categoryQueries: CategoryQueries,
 ) : ArticleCommands, ArticleQueries {
     override fun post(command: PostArticleCommand): PostArticleResult = with(command) {
         command.isValid()
@@ -35,6 +38,7 @@ internal class ArticleUseCaseInteractor(
 
     private fun PostArticleCommand.isValid() {
         if (!userServiceClient.userExists(writerId)) throw ResourceNotFoundException()
+        if (categoryQueries.findCategory(categoryId).isNull()) throw ResourceNotFoundException()
     }
 
     private fun PostArticleCommand.toDomain() = Article.Factory.newPublishedArticle(
@@ -68,6 +72,7 @@ internal class ArticleUseCaseInteractor(
 
     private fun EditArticleCommand.isValid() {
         if (!userServiceClient.userExists(writerId)) throw ResourceNotFoundException()
+        if (categoryQueries.findCategory(categoryId).isNull()) throw ResourceNotFoundException()
     }
 
     override fun delete(command: DeleteArticleCommand) = with(command) {
@@ -79,7 +84,7 @@ internal class ArticleUseCaseInteractor(
         }
     }
 
-    override fun getArticle(articleId: ArticleId): Article? {
+    override fun findArticle(articleId: ArticleId): Article? {
         return articleRepository.findById(articleId)
     }
 }

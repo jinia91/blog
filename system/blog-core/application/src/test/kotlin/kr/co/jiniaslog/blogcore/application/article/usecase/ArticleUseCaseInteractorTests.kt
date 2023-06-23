@@ -132,7 +132,7 @@ class ArticleUseCaseInteractorTests : BehaviorSpec() {
             And("해당 아티클이 존재하지 않는다면") {
                 every { articleRepository.findById(articleId) } returns null
                 When("공개아티클을 조회하면") {
-                    val result = sut.getArticle(articleId)
+                    val result = sut.findArticle(articleId)
                     Then("null이 반환된다") {
                         result shouldBe null
                     }
@@ -154,7 +154,7 @@ class ArticleUseCaseInteractorTests : BehaviorSpec() {
                 )
                 every { articleRepository.findById(articleId) } returns mockArticle
                 When("공개아티클을 조회하면") {
-                    val result = sut.getArticle(articleId)
+                    val result = sut.findArticle(articleId)
                     Then("해당 아티클이 조회된다") {
                         result shouldNotBe null
                         result!!.id shouldBe ArticleId(value = 2)

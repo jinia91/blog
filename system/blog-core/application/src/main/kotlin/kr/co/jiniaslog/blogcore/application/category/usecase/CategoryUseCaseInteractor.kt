@@ -16,7 +16,7 @@ class CategoryUseCaseInteractor(
     private val categoryIdGenerator: CategoryIdGenerator,
     private val categoryRepository: CategoryRepository,
     private val transactionHandler: TransactionHandler,
-) : CategoryCommands {
+) : CategoryCommands, CategoryQueries {
     override fun syncCategories(command: SyncCategoryCommand) = with(command) {
         command.validate()
         val (newCategoriesData, toBeUpdatedCategoriesData) = categoriesData.partition { it.isNew }
@@ -84,4 +84,7 @@ class CategoryUseCaseInteractor(
 
     private fun List<CategoryData>.notContains(id: CategoryId): Boolean =
         this.none { categoryVo -> categoryVo.id == id }
+
+    override fun findCategory(categoryId: CategoryId): Category? =
+        categoryRepository.findById(categoryId)
 }
