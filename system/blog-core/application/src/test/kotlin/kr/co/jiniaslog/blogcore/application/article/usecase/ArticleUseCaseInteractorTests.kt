@@ -48,7 +48,9 @@ class ArticleUseCaseInteractorTests : BehaviorSpec() {
                 tags = setOf(TagId(1), TagId(2)),
                 draftArticleId = null,
             )
-            every { categoryQueries.findCategory(command.categoryId) } returns mockk()
+            every { categoryQueries.findCategory(command.categoryId) } returns mockk {
+                every { isRoot } returns false
+            }
             And("validation을 통과하지 못하면 - writerId가 존재하지 않는다면") {
                 every { userServiceClient.doesUserExist(command.writerId) } returns false
                 When("공개 아티클 명령을 실행하면") {
