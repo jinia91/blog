@@ -5,6 +5,7 @@ import kr.co.jiniaslog.blogcore.application.article.usecase.ArticleCommands.Edit
 import kr.co.jiniaslog.blogcore.application.article.usecase.ArticleCommands.EditArticleResult
 import kr.co.jiniaslog.blogcore.application.article.usecase.ArticleCommands.PostArticleCommand
 import kr.co.jiniaslog.blogcore.application.article.usecase.ArticleCommands.PostArticleResult
+import kr.co.jiniaslog.blogcore.application.category.usecase.CategoryQueries
 import kr.co.jiniaslog.blogcore.application.infra.TransactionHandler
 import kr.co.jiniaslog.blogcore.domain.article.Article
 import kr.co.jiniaslog.blogcore.domain.article.ArticleId
@@ -12,7 +13,9 @@ import kr.co.jiniaslog.blogcore.domain.article.ArticleIdGenerator
 import kr.co.jiniaslog.blogcore.domain.article.ArticleRepository
 import kr.co.jiniaslog.blogcore.domain.user.UserServiceClient
 import kr.co.jiniaslog.shared.core.context.UseCaseInteractor
+import kr.co.jiniaslog.shared.core.domain.ResourceConflictException
 import kr.co.jiniaslog.shared.core.domain.ResourceNotFoundException
+import kr.co.jiniaslog.shared.core.extentions.isNull
 
 @UseCaseInteractor
 internal class ArticleUseCaseInteractor(
@@ -20,20 +23,11 @@ internal class ArticleUseCaseInteractor(
     private val articleRepository: ArticleRepository,
     private val transactionHandler: TransactionHandler,
     private val userServiceClient: UserServiceClient,
+    private val categoryQueries: CategoryQueries,
 ) : ArticleCommands, ArticleQueries {
     override fun post(command: PostArticleCommand): PostArticleResult = with(command) {
         command.isValid()
-
-        val article = Article.Factory.newPublishedArticle(
-            id = articleIdGenerator.generate(),
-            writerId = writerId,
-            title = title,
-            content = content,
-            thumbnailUrl = thumbnailUrl,
-            categoryId = categoryId,
-            tags = tags,
-            draftArticleId = draftArticleId,
-        )
+        val article = command.toDomain()
 
         transactionHandler.runInReadCommittedTransaction {
             articleRepository.save(article)
@@ -43,8 +37,22 @@ internal class ArticleUseCaseInteractor(
     }
 
     private fun PostArticleCommand.isValid() {
-        if (!userServiceClient.userExists(writerId)) throw ResourceNotFoundException()
+        if (userServiceClient.doesUserExist(writerId).not()) throw ResourceNotFoundException("User does not exist.")
+        val category = categoryQueries.findCategory(categoryId)
+        if (category.isNull()) throw ResourceNotFoundException("Category does not exist.")
+        if (category.isRoot) throw ResourceConflictException("Root category cannot be used for article")
     }
+
+    private fun PostArticleCommand.toDomain() = Article.Factory.newPublishedArticle(
+        id = articleIdGenerator.generate(),
+        writerId = writerId,
+        title = title,
+        content = content,
+        thumbnailUrl = thumbnailUrl,
+        categoryId = categoryId,
+        tags = tags,
+        draftArticleId = draftArticleId,
+    )
 
     override fun edit(command: EditArticleCommand): EditArticleResult = with(command) {
         command.isValid()
@@ -58,14 +66,17 @@ internal class ArticleUseCaseInteractor(
         )
 
         transactionHandler.runInReadCommittedTransaction {
-            articleRepository.save(targetArticle)
+            articleRepository.update(targetArticle)
         }
 
-        return@with EditArticleResult(articleId = targetArticle.id)
+        return EditArticleResult(articleId = targetArticle.id)
     }
 
     private fun EditArticleCommand.isValid() {
-        if (!userServiceClient.userExists(writerId)) throw ResourceNotFoundException()
+        if (userServiceClient.doesUserExist(writerId).not()) throw ResourceNotFoundException("User does not exist.")
+        val category = categoryQueries.findCategory(categoryId)
+        if (category.isNull()) throw ResourceNotFoundException("Category does not exist.")
+        if (category.isRoot) throw ResourceConflictException("Root category cannot be used for article")
     }
 
     override fun delete(command: DeleteArticleCommand) = with(command) {
@@ -77,7 +88,7 @@ internal class ArticleUseCaseInteractor(
         }
     }
 
-    override fun getArticle(articleId: ArticleId): Article? {
+    override fun findArticle(articleId: ArticleId): Article? {
         return articleRepository.findById(articleId)
     }
 }

@@ -1,4 +1,4 @@
-package kr.co.jiniaslog.blogcore.application.draft.usecase
+package kr.co.jiniaslog.blogcore.application.article.usecase
 
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.BehaviorSpec
@@ -7,8 +7,7 @@ import io.kotest.matchers.shouldNotBe
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import kr.co.jiniaslog.blogcore.application.article.usecase.ArticleCommands
-import kr.co.jiniaslog.blogcore.application.article.usecase.ArticleUseCaseInteractor
+import kr.co.jiniaslog.blogcore.application.category.usecase.CategoryQueries
 import kr.co.jiniaslog.blogcore.application.infra.TransactionHandler
 import kr.co.jiniaslog.blogcore.domain.article.Article
 import kr.co.jiniaslog.blogcore.domain.article.ArticleId
@@ -27,11 +26,13 @@ class ArticleUseCaseInteractorTests : BehaviorSpec() {
     private val articleRepository: ArticleRepository = mockk(relaxed = true)
     private val transactionHandler: TransactionHandler = mockk()
     private val userServiceClient: UserServiceClient = mockk()
+    private val categoryQueries: CategoryQueries = mockk()
     private val sut: ArticleUseCaseInteractor = ArticleUseCaseInteractor(
         articleIdGenerator = articleIdGenerator,
         articleRepository = articleRepository,
         transactionHandler = transactionHandler,
         userServiceClient = userServiceClient,
+        categoryQueries = categoryQueries,
     )
 
     init {
@@ -47,8 +48,11 @@ class ArticleUseCaseInteractorTests : BehaviorSpec() {
                 tags = setOf(TagId(1), TagId(2)),
                 draftArticleId = null,
             )
+            every { categoryQueries.findCategory(command.categoryId) } returns mockk {
+                every { isRoot } returns false
+            }
             And("validation을 통과하지 못하면 - writerId가 존재하지 않는다면") {
-                every { userServiceClient.userExists(command.writerId) } returns false
+                every { userServiceClient.doesUserExist(command.writerId) } returns false
                 When("공개 아티클 명령을 실행하면") {
                     Then("예외가 발생한다") {
                         shouldThrow<ResourceNotFoundException> {
@@ -59,7 +63,7 @@ class ArticleUseCaseInteractorTests : BehaviorSpec() {
             }
 
             And("validations를 통과한다면") {
-                every { userServiceClient.userExists(command.writerId) } returns true
+                every { userServiceClient.doesUserExist(command.writerId) } returns true
                 every { articleIdGenerator.generate() } returns ArticleId(value = 1)
                 When("공개 아티클 명령을 실행하면") {
                     val result = sut.post(command)
@@ -83,7 +87,7 @@ class ArticleUseCaseInteractorTests : BehaviorSpec() {
                 writerId = UserId(value = 1),
             )
             And("validation을 통과하지 못하면 - writerId가 존재하지 않는다면") {
-                every { userServiceClient.userExists(command.writerId) } returns false
+                every { userServiceClient.doesUserExist(command.writerId) } returns false
                 When("공개 아티클 수정 명령을 실행하면") {
                     Then("예외가 발생한다") {
                         shouldThrow<ResourceNotFoundException> {
@@ -117,12 +121,12 @@ class ArticleUseCaseInteractorTests : BehaviorSpec() {
                     updatedAt = LocalDateTime.now(),
                 )
 
-                every { userServiceClient.userExists(command.writerId) } returns true
+                every { userServiceClient.doesUserExist(command.writerId) } returns true
                 every { articleRepository.findById(command.articleId) } returns mockArticle
                 When("공개 아티클 수정 명령을 실행하면") {
                     val result = sut.edit(command)
                     Then("아티클이 수정된다") {
-                        verify(exactly = 1) { articleRepository.save(mockArticle) }
+                        verify(exactly = 1) { articleRepository.update(mockArticle) }
                         result.articleId shouldBe ArticleId(value = 2)
                     }
                 }
@@ -134,7 +138,7 @@ class ArticleUseCaseInteractorTests : BehaviorSpec() {
             And("해당 아티클이 존재하지 않는다면") {
                 every { articleRepository.findById(articleId) } returns null
                 When("공개아티클을 조회하면") {
-                    val result = sut.getArticle(articleId)
+                    val result = sut.findArticle(articleId)
                     Then("null이 반환된다") {
                         result shouldBe null
                     }
@@ -156,7 +160,7 @@ class ArticleUseCaseInteractorTests : BehaviorSpec() {
                 )
                 every { articleRepository.findById(articleId) } returns mockArticle
                 When("공개아티클을 조회하면") {
-                    val result = sut.getArticle(articleId)
+                    val result = sut.findArticle(articleId)
                     Then("해당 아티클이 조회된다") {
                         result shouldNotBe null
                         result!!.id shouldBe ArticleId(value = 2)

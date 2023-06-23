@@ -28,7 +28,7 @@ class DraftArticlePM(
     @Column(nullable = true, name = "thumbnail_url")
     var thumbnailUrl: String?,
 
-    createdDate: LocalDateTime?,
+    createdDate: LocalDateTime? = null,
 
-    updatedDate: LocalDateTime?,
+    updatedDate: LocalDateTime? = null,
 ) : BasePersistenceModel(createdDate, updatedDate)

@@ -20,8 +20,25 @@ class ArticleRepositoryAdapter(
     private val idGenerator: IdGenerator,
 ) : ArticleRepository, ArticleIdGenerator {
     override fun save(newArticle: Article) {
-        val articlePM = articleMapper.toPm(newArticle)
+        val articlePM = articleMapper.toPm(newArticle).apply {
+            newFlag = true
+        }
         jpaArticleRepository.save(articlePM)
+        newArticle.syncAuditAfterPersist(
+            articlePM.createdDate!!,
+            articlePM.updatedDate!!,
+        )
+    }
+
+    override fun update(article: Article) {
+        val articlePM = articleMapper.toPm(article).apply {
+            newFlag = false
+        }
+        jpaArticleRepository.save(articlePM)
+        article.syncAuditAfterPersist(
+            articlePM.createdDate!!,
+            articlePM.updatedDate!!,
+        )
     }
 
     override fun findById(articleId: ArticleId): Article? =

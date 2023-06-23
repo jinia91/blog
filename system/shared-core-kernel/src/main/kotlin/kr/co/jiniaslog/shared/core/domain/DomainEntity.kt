@@ -9,7 +9,7 @@ abstract class DomainEntity<out T : ValueObject>(
 
     abstract val id: T
 
-    fun persist(createdDate: LocalDateTime, updatedDate: LocalDateTime) {
+    fun syncAuditAfterPersist(createdDate: LocalDateTime, updatedDate: LocalDateTime) {
         this.createdDate = createdDate
         this.updatedDate = updatedDate
     }

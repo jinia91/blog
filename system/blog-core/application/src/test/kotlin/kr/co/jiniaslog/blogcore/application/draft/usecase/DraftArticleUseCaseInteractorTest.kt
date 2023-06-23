@@ -44,7 +44,7 @@ class DraftArticleUseCaseInteractorTest : BehaviorSpec() {
             )
 
             and("validation을 통과하지 못하면") {
-                every { userServiceClient.userExists(command.writerId) } returns false
+                every { userServiceClient.doesUserExist(command.writerId) } returns false
                 When("아티클 초안 등록 명령을 실행하면") {
                     Then("예외가 발생한다") {
                         shouldThrow<ResourceNotFoundException> {
@@ -55,7 +55,7 @@ class DraftArticleUseCaseInteractorTest : BehaviorSpec() {
             }
 
             and("저자 아이디가 존재한다면") {
-                every { userServiceClient.userExists(command.writerId) } returns true
+                every { userServiceClient.doesUserExist(command.writerId) } returns true
                 every { draftArticleIdGenerator.generate() } returns DraftArticleId(value = 1)
                 When("임시 아티클 등록 명령을 실행하면") {
                     val result = sut.create(command)
@@ -78,7 +78,7 @@ class DraftArticleUseCaseInteractorTest : BehaviorSpec() {
             )
 
             and("validation을 통과하지 못하면") {
-                every { userServiceClient.userExists(command.writerId) } returns false
+                every { userServiceClient.doesUserExist(command.writerId) } returns false
                 When("아티클 초안 등록 명령을 실행하면") {
                     Then("예외가 발생한다") {
                         shouldThrow<ResourceNotFoundException> {
@@ -89,7 +89,7 @@ class DraftArticleUseCaseInteractorTest : BehaviorSpec() {
             }
 
             And("validation을 통과하고") {
-                every { userServiceClient.userExists(command.writerId) } returns true
+                every { userServiceClient.doesUserExist(command.writerId) } returns true
                 And("해당 아티클이 없다면") {
                     every { draftArticleRepository.findById(draftArticleId) } returns null
                     When("아티클 초안 수정 명령을 실행하면") {
@@ -116,7 +116,7 @@ class DraftArticleUseCaseInteractorTest : BehaviorSpec() {
                     When("아티클 초안 수정 명령을 실행하면") {
                         sut.update(command)
                         Then("정상적으로 수정된다.") {
-                            verify(exactly = 1) { draftArticleRepository.save(mockArticle) }
+                            verify(exactly = 1) { draftArticleRepository.update(mockArticle) }
                         }
                     }
                 }
