@@ -6,8 +6,10 @@ import kr.co.jiniaslog.blogcore.domain.category.CategoryIdGenerator
 import kr.co.jiniaslog.blogcore.domain.category.CategoryRepository
 import kr.co.jiniaslog.shared.core.domain.IdGenerator
 import kr.co.jiniaslog.shared.core.domain.ResourceNotFoundException
+import org.springframework.stereotype.Repository
 import kotlin.jvm.optionals.getOrNull
 
+@Repository
 class CategoryRepositoryAdapter(
     private val categoryJpaRepository: CategoryJpaRepository,
     private val categoryIdGenerator: IdGenerator,
