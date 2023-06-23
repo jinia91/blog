@@ -36,6 +36,22 @@ class Category private constructor(
     }
 
     companion object Factory {
+        fun newOne(
+            id: CategoryId,
+            label: String,
+            parentId: CategoryId?,
+            order: Int,
+        ): Category {
+            return Category(
+                id = id,
+                label = label,
+                parentId = parentId,
+                order = order,
+                createdAt = null,
+                updatedAt = null,
+            )
+        }
+
         fun from(
             id: CategoryId,
             label: String,

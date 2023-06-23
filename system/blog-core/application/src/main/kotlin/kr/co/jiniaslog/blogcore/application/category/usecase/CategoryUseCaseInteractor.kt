@@ -7,9 +7,11 @@ import kr.co.jiniaslog.blogcore.domain.category.Category
 import kr.co.jiniaslog.blogcore.domain.category.CategoryId
 import kr.co.jiniaslog.blogcore.domain.category.CategoryIdGenerator
 import kr.co.jiniaslog.blogcore.domain.category.CategoryRepository
+import kr.co.jiniaslog.shared.core.context.UseCaseInteractor
 import kr.co.jiniaslog.shared.core.domain.ResourceNotFoundException
 import kr.co.jiniaslog.shared.core.domain.ValidationException
 
+@UseCaseInteractor
 class CategoryUseCaseInteractor(
     private val categoryIdGenerator: CategoryIdGenerator,
     private val categoryRepository: CategoryRepository,
@@ -73,13 +75,11 @@ class CategoryUseCaseInteractor(
         }
     }
 
-    private fun CategoryData.toDomain(id: CategoryId): Category = Category.from(
+    private fun CategoryData.toDomain(id: CategoryId): Category = Category.newOne(
         id = id,
         label = label,
         parentId = parentId,
         order = order,
-        createdAt = createAt,
-        updatedAt = updatedAt,
     )
 
     private fun List<CategoryData>.notContains(id: CategoryId): Boolean =

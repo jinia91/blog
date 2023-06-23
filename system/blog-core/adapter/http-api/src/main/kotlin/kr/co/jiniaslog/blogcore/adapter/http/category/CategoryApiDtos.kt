@@ -1,0 +1,30 @@
+package kr.co.jiniaslog.blogcore.adapter.http.category
+
+import kr.co.jiniaslog.blogcore.application.category.usecase.CategoryCommands
+import kr.co.jiniaslog.blogcore.domain.category.CategoryId
+
+data class CategorySyncApiRequest(
+    val categories: List<CategoryApiData>,
+) {
+    data class CategoryApiData(
+        val id: Long?,
+        val label: String,
+        val order: Int,
+        val parentId: Long?,
+    ) {
+        fun toVo(): CategoryCommands.CategoryData {
+            return CategoryCommands.CategoryData(
+                id = id?.let { CategoryId(it) },
+                label = label,
+                order = order,
+                parentId = parentId?.let { CategoryId(it) },
+            )
+        }
+    }
+
+    fun toCommand(): CategoryCommands.SyncCategoryCommand {
+        return CategoryCommands.SyncCategoryCommand(
+            categoriesData = categories.map { it.toVo() },
+        )
+    }
+}
