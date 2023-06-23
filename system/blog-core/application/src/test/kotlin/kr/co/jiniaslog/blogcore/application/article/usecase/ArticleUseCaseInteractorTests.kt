@@ -1,4 +1,4 @@
-package kr.co.jiniaslog.blogcore.application.draft.usecase
+package kr.co.jiniaslog.blogcore.application.article.usecase
 
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.BehaviorSpec
@@ -7,8 +7,6 @@ import io.kotest.matchers.shouldNotBe
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import kr.co.jiniaslog.blogcore.application.article.usecase.ArticleCommands
-import kr.co.jiniaslog.blogcore.application.article.usecase.ArticleUseCaseInteractor
 import kr.co.jiniaslog.blogcore.application.infra.TransactionHandler
 import kr.co.jiniaslog.blogcore.domain.article.Article
 import kr.co.jiniaslog.blogcore.domain.article.ArticleId
@@ -122,7 +120,7 @@ class ArticleUseCaseInteractorTests : BehaviorSpec() {
                 When("공개 아티클 수정 명령을 실행하면") {
                     val result = sut.edit(command)
                     Then("아티클이 수정된다") {
-                        verify(exactly = 1) { articleRepository.save(mockArticle) }
+                        verify(exactly = 1) { articleRepository.update(mockArticle) }
                         result.articleId shouldBe ArticleId(value = 2)
                     }
                 }

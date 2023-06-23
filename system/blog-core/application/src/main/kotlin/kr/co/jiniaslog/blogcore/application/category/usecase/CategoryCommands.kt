@@ -7,15 +7,18 @@ interface CategoryCommands {
     fun syncCategories(command: SyncCategoryCommand)
 
     data class SyncCategoryCommand(
-        val categoryVos: List<CategoryVo>,
+        val categoriesData: List<CategoryData>,
     )
 
-    data class CategoryVo(
+    data class CategoryData(
         val id: CategoryId?,
         val label: String,
-        val parentId: CategoryId,
+        val parentId: CategoryId?,
         val order: Int,
         val createAt: LocalDateTime?,
         val updatedAt: LocalDateTime?,
-    )
+    ) {
+        val isNew: Boolean
+            get() = id == null
+    }
 }

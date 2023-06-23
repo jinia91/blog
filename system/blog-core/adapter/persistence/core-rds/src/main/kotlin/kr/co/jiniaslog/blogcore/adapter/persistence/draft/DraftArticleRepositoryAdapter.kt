@@ -7,7 +7,6 @@ import kr.co.jiniaslog.blogcore.domain.draft.DraftArticleRepository
 import kr.co.jiniaslog.blogcore.domain.user.UserId
 import kr.co.jiniaslog.shared.core.domain.IdGenerator
 import org.springframework.stereotype.Repository
-import java.time.LocalDateTime
 import kotlin.jvm.optionals.getOrNull
 
 @Repository
@@ -16,11 +15,21 @@ internal class DraftArticleRepositoryAdapter(
     private val idGenerator: IdGenerator,
 ) : DraftArticleRepository, DraftArticleIdGenerator {
     override fun save(newDraftArticle: DraftArticle): DraftArticle {
-        val returnPm = draftArticleJpaRepository.save(newDraftArticle.toPm())
-        return newDraftArticle.persist(
-            returnPm.createdDate,
-            returnPm.updatedDate,
+        val returnPm = draftArticleJpaRepository.save(newDraftArticle.toPm().apply { isNewFlag = true })
+        newDraftArticle.syncAuditAfterPersist(
+            returnPm.createdDate!!,
+            returnPm.updatedDate!!,
         )
+        return newDraftArticle
+    }
+
+    override fun update(draftArticle: DraftArticle): DraftArticle {
+        val returnPm = draftArticleJpaRepository.save(draftArticle.toPm().apply { isNewFlag = false })
+        draftArticle.syncAuditAfterPersist(
+            returnPm.createdDate!!,
+            returnPm.updatedDate!!,
+        )
+        return draftArticle
     }
 
     override fun findById(draftArticleId: DraftArticleId): DraftArticle? = draftArticleJpaRepository.findById(draftArticleId.value)
@@ -53,8 +62,4 @@ internal class DraftArticleRepositoryAdapter(
         createdAt = createdDate!!,
         updatedAt = updatedDate!!,
     )
-
-    private fun DraftArticle.persist(createdDate: LocalDateTime?, updatedDate: LocalDateTime?): DraftArticle {
-        return this
-    }
 }

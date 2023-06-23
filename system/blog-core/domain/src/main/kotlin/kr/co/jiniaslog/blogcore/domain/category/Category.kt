@@ -8,8 +8,8 @@ class Category private constructor(
     label: String,
     parentId: CategoryId?,
     order: Int,
-    createdAt: LocalDateTime?,
-    updatedAt: LocalDateTime?,
+    var createdAt: LocalDateTime?,
+    var updatedAt: LocalDateTime?,
 ) : AggregateRoot<CategoryId>(createdAt, updatedAt) {
     override val id: CategoryId = id
 
@@ -22,8 +22,17 @@ class Category private constructor(
     var order: Int = order
         private set
 
-    fun reLabeling(label: String) {
+    val isRoot: Boolean
+        get() = parentId == null
+
+    fun update(
+        label: String,
+        parentId: CategoryId?,
+        order: Int,
+    ) {
         this.label = label
+        this.parentId = parentId
+        this.order = order
     }
 
     companion object Factory {

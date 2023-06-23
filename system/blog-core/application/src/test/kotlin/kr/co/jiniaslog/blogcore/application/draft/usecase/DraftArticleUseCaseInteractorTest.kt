@@ -116,7 +116,7 @@ class DraftArticleUseCaseInteractorTest : BehaviorSpec() {
                     When("아티클 초안 수정 명령을 실행하면") {
                         sut.update(command)
                         Then("정상적으로 수정된다.") {
-                            verify(exactly = 1) { draftArticleRepository.save(mockArticle) }
+                            verify(exactly = 1) { draftArticleRepository.update(mockArticle) }
                         }
                     }
                 }

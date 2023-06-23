@@ -60,10 +60,10 @@ internal class ArticleUseCaseInteractor(
         )
 
         transactionHandler.runInReadCommittedTransaction {
-            articleRepository.save(targetArticle)
+            articleRepository.update(targetArticle)
         }
 
-        return@with EditArticleResult(articleId = targetArticle.id)
+        return EditArticleResult(articleId = targetArticle.id)
     }
 
     private fun EditArticleCommand.isValid() {

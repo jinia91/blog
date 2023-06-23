@@ -6,7 +6,6 @@ import jakarta.persistence.MappedSuperclass
 import org.springframework.data.annotation.CreatedDate
 import org.springframework.data.annotation.LastModifiedDate
 import org.springframework.data.domain.Persistable
-import org.springframework.data.jpa.domain.AbstractAuditable_.createdDate
 import org.springframework.data.jpa.domain.support.AuditingEntityListener
 import java.time.LocalDateTime
 
@@ -23,7 +22,10 @@ abstract class BasePersistenceModel(
 ) : Persistable<Long> {
     abstract val id: Long
 
-    override fun isNew(): Boolean = createdDate == null
+    @Transient
+    var isNewFlag: Boolean = false
+
+    override fun isNew(): Boolean = isNewFlag
 
     override fun getId(): Long? = id
 }

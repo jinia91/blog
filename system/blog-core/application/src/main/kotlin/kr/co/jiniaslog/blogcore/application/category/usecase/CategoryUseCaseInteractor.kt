@@ -1,12 +1,13 @@
 package kr.co.jiniaslog.blogcore.application.category.usecase
 
-import kr.co.jiniaslog.blogcore.application.category.usecase.CategoryCommands.CategoryVo
+import kr.co.jiniaslog.blogcore.application.category.usecase.CategoryCommands.CategoryData
 import kr.co.jiniaslog.blogcore.application.category.usecase.CategoryCommands.SyncCategoryCommand
 import kr.co.jiniaslog.blogcore.application.infra.TransactionHandler
 import kr.co.jiniaslog.blogcore.domain.category.Category
 import kr.co.jiniaslog.blogcore.domain.category.CategoryId
 import kr.co.jiniaslog.blogcore.domain.category.CategoryIdGenerator
 import kr.co.jiniaslog.blogcore.domain.category.CategoryRepository
+import kr.co.jiniaslog.shared.core.domain.ResourceNotFoundException
 
 class CategoryUseCaseInteractor(
     private val categoryIdGenerator: CategoryIdGenerator,
@@ -15,33 +16,42 @@ class CategoryUseCaseInteractor(
 ) : CategoryCommands {
     override fun syncCategories(command: SyncCategoryCommand) = with(command) {
         command.validate()
-        val (newCategoryVos, toBeUpdatedCategoryVos) = categoryVos.partition { it.id == null }
-        val toBeDeletedCategories = categoryRepository.findAll()
-            .filter { existingCategory ->
-                categoryVos.notContains(existingCategory.id)
-            }
+        val (newCategoriesData, toBeUpdatedCategoriesData) = categoriesData.partition { it.isNew }
+        val existingCategories = categoryRepository.findAll()
+        val toBeUpdatedCategories = toBeUpdatedCategoriesData.map { data ->
+            val category = existingCategories.find { it.id == data.id }
+                ?: throw ResourceNotFoundException("category ${data.id} not found")
+            data to category
+        }
+        val toBeDeletedCategories = existingCategories.filter { existingCategory ->
+            categoriesData.notContains(existingCategory.id)
+        }
 
         transactionHandler.runInReadCommittedTransaction {
-            save(newCategoryVos)
-            update(toBeUpdatedCategoryVos)
+            save(newCategoriesData)
+            update(toBeUpdatedCategories)
             delete(toBeDeletedCategories)
         }
     }
 
-    private fun SyncCategoryCommand.validate() {
-        TODO("Not yet implemented")
-    }
+    // todo
+    private fun SyncCategoryCommand.validate() {}
 
-    private fun save(newCategoryVos: List<CategoryVo>) {
+    private fun save(newCategoryVos: List<CategoryData>) {
         newCategoryVos.forEach { categoryVo ->
             val id = categoryIdGenerator.generate()
             categoryRepository.save(categoryVo.toDomain(id))
         }
     }
 
-    private fun update(toBeUpdateCategoryVos: List<CategoryVo>) {
-        toBeUpdateCategoryVos.forEach { categoryVo ->
-            categoryRepository.save(categoryVo.toDomain(categoryVo.id!!))
+    private fun update(toBeUpdatedCategoriesData: List<Pair<CategoryData, Category>>) {
+        toBeUpdatedCategoriesData.forEach { (data, category) ->
+            category.update(
+                label = data.label,
+                parentId = data.parentId,
+                order = data.order,
+            )
+            categoryRepository.update(category)
         }
     }
 
@@ -51,7 +61,7 @@ class CategoryUseCaseInteractor(
         }
     }
 
-    private fun CategoryVo.toDomain(id: CategoryId): Category = Category.from(
+    private fun CategoryData.toDomain(id: CategoryId): Category = Category.from(
         id = id,
         label = label,
         parentId = parentId,
@@ -59,6 +69,7 @@ class CategoryUseCaseInteractor(
         createdAt = createAt,
         updatedAt = updatedAt,
     )
-    private fun List<CategoryVo>.notContains(id: CategoryId): Boolean =
+
+    private fun List<CategoryData>.notContains(id: CategoryId): Boolean =
         this.none { categoryVo -> categoryVo.id == id }
 }

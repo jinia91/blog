@@ -56,7 +56,7 @@ internal class DraftArticleUseCaseInteractor(
         )
 
         transactionHandler.runInReadCommittedTransaction {
-            draftArticleRepository.save(draftArticle)
+            draftArticleRepository.update(draftArticle)
         }
 
         return UpdateDraftArticleResult(draftArticleId = draftArticle.id)

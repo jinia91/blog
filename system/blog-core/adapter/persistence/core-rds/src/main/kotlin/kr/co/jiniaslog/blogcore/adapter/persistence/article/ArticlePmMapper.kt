@@ -16,5 +16,6 @@ interface ArticlePmMapper {
     @Mapping(source = "id.value", target = "id")
     @Mapping(source = "writerId.value", target = "writerId")
     @Mapping(source = "categoryId.value", target = "categoryId")
+    @Mapping(ignore = true, target = "newFlag")
     fun toPm(article: Article): ArticlePM
 }

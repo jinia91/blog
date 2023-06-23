@@ -20,7 +20,16 @@ class ArticleRepositoryAdapter(
     private val idGenerator: IdGenerator,
 ) : ArticleRepository, ArticleIdGenerator {
     override fun save(newArticle: Article) {
-        val articlePM = articleMapper.toPm(newArticle)
+        val articlePM = articleMapper.toPm(newArticle).apply {
+            isNewFlag = true
+        }
+        jpaArticleRepository.save(articlePM)
+    }
+
+    override fun update(article: Article) {
+        val articlePM = articleMapper.toPm(article).apply {
+            isNewFlag = false
+        }
         jpaArticleRepository.save(articlePM)
     }
 
