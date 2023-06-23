@@ -13,6 +13,7 @@ import kr.co.jiniaslog.blogcore.domain.article.ArticleIdGenerator
 import kr.co.jiniaslog.blogcore.domain.article.ArticleRepository
 import kr.co.jiniaslog.blogcore.domain.user.UserServiceClient
 import kr.co.jiniaslog.shared.core.context.UseCaseInteractor
+import kr.co.jiniaslog.shared.core.domain.ResourceConflictException
 import kr.co.jiniaslog.shared.core.domain.ResourceNotFoundException
 import kr.co.jiniaslog.shared.core.extentions.isNull
 
@@ -26,7 +27,6 @@ internal class ArticleUseCaseInteractor(
 ) : ArticleCommands, ArticleQueries {
     override fun post(command: PostArticleCommand): PostArticleResult = with(command) {
         command.isValid()
-
         val article = command.toDomain()
 
         transactionHandler.runInReadCommittedTransaction {
@@ -37,8 +37,10 @@ internal class ArticleUseCaseInteractor(
     }
 
     private fun PostArticleCommand.isValid() {
-        if (!userServiceClient.userExists(writerId)) throw ResourceNotFoundException()
-        if (categoryQueries.findCategory(categoryId).isNull()) throw ResourceNotFoundException()
+        if (userServiceClient.doesUserExist(writerId).not()) throw ResourceNotFoundException("User does not exist.")
+        val category = categoryQueries.findCategory(categoryId)
+        if (category.isNull()) throw ResourceNotFoundException("Category does not exist.")
+        if (category.isRoot) throw ResourceConflictException("Root category cannot be used for article")
     }
 
     private fun PostArticleCommand.toDomain() = Article.Factory.newPublishedArticle(
@@ -71,8 +73,10 @@ internal class ArticleUseCaseInteractor(
     }
 
     private fun EditArticleCommand.isValid() {
-        if (!userServiceClient.userExists(writerId)) throw ResourceNotFoundException()
-        if (categoryQueries.findCategory(categoryId).isNull()) throw ResourceNotFoundException()
+        if (userServiceClient.doesUserExist(writerId).not()) throw ResourceNotFoundException("User does not exist.")
+        val category = categoryQueries.findCategory(categoryId)
+        if (category.isNull()) throw ResourceNotFoundException("Category does not exist.")
+        if (category.isRoot) throw ResourceConflictException("Root category cannot be used for article")
     }
 
     override fun delete(command: DeleteArticleCommand) = with(command) {

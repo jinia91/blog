@@ -9,5 +9,5 @@ import kr.co.jiniaslog.user.application.UserServiceStub
 internal class UserAcl(
     private val userServiceStub: UserServiceStub,
 ) : UserServiceClient {
-    override fun userExists(userId: UserId): Boolean = true
+    override fun doesUserExist(userId: UserId): Boolean = true
 }

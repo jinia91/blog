@@ -50,7 +50,7 @@ class ArticleUseCaseInteractorTests : BehaviorSpec() {
             )
             every { categoryQueries.findCategory(command.categoryId) } returns mockk()
             And("validation을 통과하지 못하면 - writerId가 존재하지 않는다면") {
-                every { userServiceClient.userExists(command.writerId) } returns false
+                every { userServiceClient.doesUserExist(command.writerId) } returns false
                 When("공개 아티클 명령을 실행하면") {
                     Then("예외가 발생한다") {
                         shouldThrow<ResourceNotFoundException> {
@@ -61,7 +61,7 @@ class ArticleUseCaseInteractorTests : BehaviorSpec() {
             }
 
             And("validations를 통과한다면") {
-                every { userServiceClient.userExists(command.writerId) } returns true
+                every { userServiceClient.doesUserExist(command.writerId) } returns true
                 every { articleIdGenerator.generate() } returns ArticleId(value = 1)
                 When("공개 아티클 명령을 실행하면") {
                     val result = sut.post(command)
@@ -85,7 +85,7 @@ class ArticleUseCaseInteractorTests : BehaviorSpec() {
                 writerId = UserId(value = 1),
             )
             And("validation을 통과하지 못하면 - writerId가 존재하지 않는다면") {
-                every { userServiceClient.userExists(command.writerId) } returns false
+                every { userServiceClient.doesUserExist(command.writerId) } returns false
                 When("공개 아티클 수정 명령을 실행하면") {
                     Then("예외가 발생한다") {
                         shouldThrow<ResourceNotFoundException> {
@@ -119,7 +119,7 @@ class ArticleUseCaseInteractorTests : BehaviorSpec() {
                     updatedAt = LocalDateTime.now(),
                 )
 
-                every { userServiceClient.userExists(command.writerId) } returns true
+                every { userServiceClient.doesUserExist(command.writerId) } returns true
                 every { articleRepository.findById(command.articleId) } returns mockArticle
                 When("공개 아티클 수정 명령을 실행하면") {
                     val result = sut.edit(command)
