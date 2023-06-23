@@ -40,14 +40,12 @@ class CategoryUseCaseInteractor(
     private fun SyncCategoryCommand.validate() {
         val groupedByParent = categoriesData.groupBy { it.parentId }
         for (categories in groupedByParent.values) {
-            if (hasDuplicateOrder(categories)) {
-                throw ValidationException("Order conflict")
-            }
+            if (categories.hasDuplicateOrder()) throw ValidationException("Order conflict")
         }
     }
 
-    private fun hasDuplicateOrder(categories: List<CategoryData>): Boolean {
-        val orders = categories.map { it.order }
+    private fun List<CategoryData>.hasDuplicateOrder(): Boolean {
+        val orders = this.map { it.order }
         return orders.size != orders.toSet().size
     }
 
