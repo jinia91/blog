@@ -12,6 +12,7 @@ import kr.co.jiniaslog.blogcore.domain.category.CategoryId
 import kr.co.jiniaslog.blogcore.domain.category.CategoryIdGenerator
 import kr.co.jiniaslog.blogcore.domain.category.CategoryRepository
 import kr.co.jiniaslog.shared.core.domain.ResourceNotFoundException
+import kr.co.jiniaslog.shared.core.domain.ValidationException
 import utils.TestUtils
 import java.time.LocalDateTime
 
@@ -88,7 +89,7 @@ class CategoryUseCaseInteractorTest : BehaviorSpec() {
                     id = null,
                     label = "newOne",
                     parentId = null,
-                    order = 1,
+                    order = 2,
                     createAt = null,
                     updatedAt = null,
                 )
@@ -160,6 +161,26 @@ class CategoryUseCaseInteractorTest : BehaviorSpec() {
                                 shouldThrow<ResourceNotFoundException> {
                                     sut.syncCategories(command)
                                 }
+                            }
+                        }
+                    }
+                }
+
+                clearMocks(categoryRepository)
+                And("부모가 동일한 카테고리간 order 가 중복되는경우") {
+                    val command = CategoryCommands.SyncCategoryCommand(
+                        categoriesData = listOf(
+                            newData,
+                            dummy1Data,
+                            dummy2Data.copy(order = 1),
+                            dummy3Data.copy(order = 1),
+                        ),
+                    )
+                    every { categoryIdGenerator.generate() } returns CategoryId(value = 4)
+                    When("카테고리를 동기화하면") {
+                        Then("validation 예외가 발생한다.") {
+                            shouldThrow<ValidationException> {
+                                sut.syncCategories(command)
                             }
                         }
                     }

@@ -8,6 +8,7 @@ import kr.co.jiniaslog.blogcore.domain.category.CategoryId
 import kr.co.jiniaslog.blogcore.domain.category.CategoryIdGenerator
 import kr.co.jiniaslog.blogcore.domain.category.CategoryRepository
 import kr.co.jiniaslog.shared.core.domain.ResourceNotFoundException
+import kr.co.jiniaslog.shared.core.domain.ValidationException
 
 class CategoryUseCaseInteractor(
     private val categoryIdGenerator: CategoryIdGenerator,
@@ -34,8 +35,19 @@ class CategoryUseCaseInteractor(
         }
     }
 
-    // todo
-    private fun SyncCategoryCommand.validate() {}
+    private fun SyncCategoryCommand.validate() {
+        val groupedByParent = categoriesData.groupBy { it.parentId }
+        for (categories in groupedByParent.values) {
+            if (hasDuplicateOrder(categories)) {
+                throw ValidationException("Order conflict")
+            }
+        }
+    }
+
+    private fun hasDuplicateOrder(categories: List<CategoryData>): Boolean {
+        val orders = categories.map { it.order }
+        return orders.size != orders.toSet().size
+    }
 
     private fun save(newCategoryVos: List<CategoryData>) {
         newCategoryVos.forEach { categoryVo ->
