@@ -1,6 +1,5 @@
 plugins {
-    val kotlinVersion = "1.8.10"
-    kotlin("jvm") version kotlinVersion
+    kotlin("jvm")
 }
 
 repositories {

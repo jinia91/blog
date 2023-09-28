@@ -9,8 +9,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
  */
 
 plugins {
-    val kotlinVersion = "1.8.10"
-    kotlin("jvm") version kotlinVersion
+    kotlin("jvm")
     id("org.jmailen.kotlinter") version "3.14.0" apply false
 }
 
