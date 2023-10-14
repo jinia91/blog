@@ -10,25 +10,16 @@ include(
      * ################
       */
     "boot", // framework 의존성을 가진 main module
-    "system",
-    "system:blog-core:domain",
-    "system:blog-core:application",
-    "system:blog-core:adapter:persistence:core-rds",
-    "system:blog-core:adapter:http-api",
-    "system:blog-core:adapter:acl-user",
-    "system:blog-core:adapter:messaging",
-    "system:user:domain",
-    "system:user:application",
-    "system:user:adapter:persistence:user-rds",
-    "system:user:adapter:http-api",
+
+    "system:shared:core_kernel",
+    "system:shared:messaging_kernel",
+    "system:shared:rdb_kernel",
+    "system:shared:http_kernel",
+
+    "system:blog:core",
+    "system:user:core",
+
     "system:media",
-    "system:chat",
-    "system:notification",
     "system:seo",
     "system:infra",
-    "system:shared-core-kernel",
-    "system:shared-persistence-kernel",
-    "system:shared-web-kernel",
-    "system:shared-messaging-kernel",
-    "system:shared-cache-kernel",
 )

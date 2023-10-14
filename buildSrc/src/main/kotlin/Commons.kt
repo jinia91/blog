@@ -6,5 +6,8 @@ import org.gradle.plugin.use.PluginDependencySpec
 
 val Project.libs get() = the<LibrariesForLibs>()
 
-inline val PluginDependenciesSpec.convention: PluginDependencySpec
-    get() = id("convention")
+val PluginDependenciesSpec.conventions: PluginDependencySpec
+    get() = id("conventions")
+
+val PluginDependenciesSpec.springBootConventions: PluginDependencySpec
+    get() = id("spring-boot-conventions")

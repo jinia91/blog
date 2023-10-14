@@ -6,7 +6,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.context.properties.ConfigurationPropertiesScan
 import org.springframework.context.annotation.ComponentScan
 import org.springframework.context.annotation.FilterType
-import org.springframework.data.jpa.repository.config.EnableJpaAuditing
 
 @ComponentScan(
     includeFilters = [
@@ -15,7 +14,6 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing
 )
 @SpringBootApplication
 @ConfigurationPropertiesScan
-@EnableJpaAuditing
 class App
 
 fun main(args: Array<String>) {
