@@ -21,15 +21,13 @@ class CustomAutoConfigYmlImportInitializer : ApplicationContextInitializer<Confi
                         loader.load(resource.filename, resource)?.forEach {
                             environment.propertySources.addLast(it)
                         }
-                    }
-                    else if (activeProfiles.any { profile -> resource.filename!!.endsWith("application-$profile.yml") }) {
+                    } else if (activeProfiles.any { profile -> resource.filename!!.endsWith("application-$profile.yml") }) {
                         loader.load(resource.filename, resource)?.forEach {
                             environment.propertySources.addLast(it)
                         }
                     }
                 }
             }
-
         } catch (e: IOException) {
             throw IllegalStateException("Failed to load YAML files", e)
         }

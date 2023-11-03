@@ -1,3 +1,4 @@
+
 tasks.register("importGitPreCommitHook", Copy::class) {
     val preCommitHookFile = file(".git/hooks/pre-commit")
     if (preCommitHookFile.exists()) {

@@ -10,7 +10,7 @@ import org.springframework.context.annotation.FilterType
 @ComponentScan(
     includeFilters = [
         ComponentScan.Filter(type = FilterType.ANNOTATION, value = [CustomComponent::class]),
-    ]
+    ],
 )
 @SpringBootApplication
 @ConfigurationPropertiesScan
@@ -21,4 +21,3 @@ fun main(args: Array<String>) {
     application.addInitializers(CustomAutoConfigYmlImportInitializer())
     application.run(*args)
 }
-
