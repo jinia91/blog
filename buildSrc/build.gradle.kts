@@ -10,10 +10,10 @@ repositories {
 java.sourceCompatibility = JavaVersion.VERSION_17
 
 dependencies {
-    implementation(files(libs.javaClass.superclass.protectionDomain.codeSource.location))
-    implementation(libs.bundles.kotlin.plugins)
-    implementation(libs.bundles.spring.plugins)
-    implementation(libs.kotlinter.gradle) {
-        exclude(group = "io.github.microutils", module = "kotlin-logging-jvm")
-    }
+    implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:1.9.0")
+    implementation("org.jetbrains.kotlin:kotlin-allopen:1.9.0")
+    implementation("org.jetbrains.kotlin:kotlin-noarg:1.9.0")
+    implementation("org.jmailen.gradle:kotlinter-gradle:4.0.0")
+    implementation("org.springframework.boot:spring-boot-gradle-plugin:3.1.4")
+    implementation("io.spring.gradle:dependency-management-plugin:1.1.3")
 }

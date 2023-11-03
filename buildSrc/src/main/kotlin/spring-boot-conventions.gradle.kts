@@ -20,12 +20,10 @@ jar.enabled = true
 jar.archiveFileName.set("${project.parent?.name}-${project.name}.jar")
 
 dependencies {
-    implementation(libs.spring.boot.webflux)
-    implementation(libs.spring.boot.validation)
-    implementation(libs.spring.boot.configuration.processor)
-
-    testImplementation(libs.kotest.extensions.spring)
-    testImplementation(libs.spring.boot.test) {
-        exclude(module = "mockito-core")
-    }
+    implementation("io.projectreactor.kotlin:reactor-kotlin-extensions")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
+    implementation("org.springframework.boot:spring-boot-starter-webflux")
+    implementation("org.springframework.boot:spring-boot-configuration-processor")
+    testImplementation("org.springframework.boot:spring-boot-starter-test")
+    testImplementation("io.projectreactor:reactor-test")
 }

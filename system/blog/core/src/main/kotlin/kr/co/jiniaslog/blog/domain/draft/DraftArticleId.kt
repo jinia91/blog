@@ -1,5 +1,0 @@
-package kr.co.jiniaslog.blog.domain.draft
-
-import kr.co.jiniaslog.shared.core.domain.ValueObject
-
-data class DraftArticleId(val value: Long) : ValueObject

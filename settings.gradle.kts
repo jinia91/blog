@@ -9,17 +9,18 @@ include(
      * ## Jinia's Log##
      * ################
       */
-    "boot", // framework 의존성을 가진 main module
 
-    "system:shared:core_kernel",
-    "system:shared:messaging_kernel",
-    "system:shared:rdb_kernel",
-    "system:shared:http_kernel",
-
-    "system:blog:core",
-    "system:user:core",
-
-    "system:media",
-    "system:seo",
-    "system:infra",
+    // framework 의존성을 가지고 애플리케이션을 실행시키는 main module
+    "service:boot",
+    // 서비스 공용 라이브러리
+    "service:libs:core_kernel",
+    "service:libs:messaging_kernel",
+    "service:libs:rdb_kernel",
+    "service:libs:http_kernel",
+    "service:blog:core",
+    "service:user:core",
+    "service:comment",
+    "service:media",
+    "service:seo",
+    "service:infra",
 )
