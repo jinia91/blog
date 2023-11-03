@@ -9,26 +9,17 @@ include(
      * ## Jinia's Log##
      * ################
       */
-    "boot", // framework 의존성을 가진 main module
-    "system",
-    "system:blog-core:domain",
-    "system:blog-core:application",
-    "system:blog-core:adapter:persistence:core-rds",
-    "system:blog-core:adapter:http-api",
-    "system:blog-core:adapter:acl-user",
-    "system:blog-core:adapter:messaging",
-    "system:user:domain",
-    "system:user:application",
-    "system:user:adapter:persistence:user-rds",
-    "system:user:adapter:http-api",
-    "system:media",
-    "system:chat",
-    "system:notification",
-    "system:seo",
-    "system:infra",
-    "system:shared-core-kernel",
-    "system:shared-persistence-kernel",
-    "system:shared-web-kernel",
-    "system:shared-messaging-kernel",
-    "system:shared-cache-kernel",
+
+    // framework 의존성을 가지고 애플리케이션을 실행시키는 main module
+    "service:boot",
+    // 서비스 공용 라이브러리
+    "service:libs:core_kernel",
+    "service:libs:messaging_kernel",
+    "service:libs:rdb_kernel",
+    "service:libs:http_kernel",
+    "service:blog:core",
+    "service:user:core",
+    "service:comment",
+    "service:media",
+    "service:seo",
 )
