@@ -5,6 +5,7 @@ plugins {
     kotlin("jvm")
     kotlin("plugin.allopen")
     id("org.jmailen.kotlinter")
+    jacoco
 }
 
 allOpen {
@@ -65,4 +66,65 @@ dependencies {
     testImplementation("io.mockk:mockk:1.13.4")
     testImplementation("org.assertj:assertj-core:3.24.2")
     testImplementation("ch.qos.logback:logback-classic:1.4.5")
+}
+
+// jacoco setting
+
+jacoco {
+    toolVersion = "0.8.7"
+}
+
+tasks.test {
+    extensions.configure(JacocoTaskExtension::class) {
+        setDestinationFile(file("$buildDir/jacoco/jacoco.exec"))
+    }
+    finalizedBy("jacocoTestReport")
+}
+
+tasks.jacocoTestReport {
+    reports {
+        xml.required.set(false)
+        csv.required.set(false)
+        html.required.set(true)
+    }
+        finalizedBy("jacocoTestCoverageVerification")
+
+    classDirectories.setFrom(
+        fileTree(project.buildDir) {
+            exclude(
+                "**/Q*.*",
+                "**/*Test.*"
+            )
+            include(
+                "**/classes/**/main/**"
+            )
+        }
+    )
+}
+
+tasks.jacocoTestCoverageVerification {
+    violationRules {
+        rule {
+            limit {
+                counter = "BRANCH"
+                minimum = "0.5".toBigDecimal()
+            }
+
+            limit {
+                counter = "LINE"
+                minimum = "0.5".toBigDecimal()
+            }
+        }
+    }
+    classDirectories.setFrom(
+        fileTree(project.buildDir) {
+            exclude(
+                "**/Q*.*",
+                "**/*Test.*"
+            )
+            include(
+                "**/classes/**/main/**"
+            )
+        }
+    )
 }
