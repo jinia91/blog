@@ -22,5 +22,4 @@ include(
     "service:comment",
     "service:media",
     "service:seo",
-    "service:infra",
 )

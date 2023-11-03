@@ -1,17 +1,2 @@
 server:
   port: 7777
-
-  #===========#
-  #  logging  #
-  #===========#
-logging:
-  level:
-    org.hibernate: INFO
-    org.hibernate.SQL: INFO
-    org.hibernate.type.descriptor.sql.BasicBinder: INFO
-    org.hibernate.transaction: INFO
-    sql: INFO
-decorator:
-  datasource:
-    p6spy:
-      enable-logging: false

@@ -17,7 +17,5 @@ import org.springframework.context.annotation.FilterType
 class App
 
 fun main(args: Array<String>) {
-    val application = SpringApplication(App::class.java)
-    application.addInitializers(CustomAutoConfigYmlImportInitializer())
-    application.run(*args)
+    SpringApplication(App::class.java).run(*args)
 }
