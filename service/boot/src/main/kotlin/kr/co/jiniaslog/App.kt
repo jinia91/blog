@@ -1,7 +1,6 @@
 package kr.co.jiniaslog
 
 import kr.co.jiniaslog.shared.core.annotation.CustomComponent
-import org.springframework.boot.SpringApplication
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.context.properties.ConfigurationPropertiesScan
 import org.springframework.boot.runApplication

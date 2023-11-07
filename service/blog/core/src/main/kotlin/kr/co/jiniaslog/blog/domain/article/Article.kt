@@ -8,16 +8,19 @@ class Article private constructor(
     override val id: ArticleId,
     val writerId: WriterId,
 ) : AggregateRoot<ArticleId>() {
-    var history: ArrayList<ArticleCommit> = articleHistory; private set
-    var head: ArticleCommit = head; private set
-    var checkout: ArticleCommit? = null; private set
+    var history: ArrayList<ArticleCommit> = articleHistory
+        private set
+    var head: ArticleCommit = head
+        private set
+    var checkout: ArticleCommit? = null
+        private set
 //    var tags: Set<Tag> todo tags
 
-    companion object Factory{
+    companion object Factory {
         fun init(
             id: ArticleId,
             writerId: WriterId,
-        ) : Article {
+        ): Article {
             val initialCommit = ArticleCommit.initCommit()
             return Article(
                 articleHistory = arrayListOf(initialCommit),

@@ -32,7 +32,7 @@ value class ArticleCommitVersion(val value: Long) : ValueObject {
 }
 
 @JvmInline
-value class ArticleTitle(val value: String): ValueObject {
+value class ArticleTitle(val value: String) : ValueObject {
     init {
         validate()
     }
@@ -44,7 +44,7 @@ value class ArticleTitle(val value: String): ValueObject {
 }
 
 @JvmInline
-value class ArticleContent(val value: String): ValueObject {
+value class ArticleContent(val value: String) : ValueObject {
     init {
         validate()
     }
@@ -56,11 +56,12 @@ value class ArticleContent(val value: String): ValueObject {
 }
 
 @JvmInline
-value class ArticleThumbnailUrl(val value: String): ValueObject {
+value class ArticleThumbnailUrl(val value: String) : ValueObject {
     init {
         validate()
     }
 
     override fun validate() {
-        require(value.isNotBlank()) { "article thumbnail must not be blank" } }
+        require(value.isNotBlank()) { "article thumbnail must not be blank" }
+    }
 }

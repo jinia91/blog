@@ -7,10 +7,14 @@ class ArticleCommit(
     id: ArticleCommitVersion,
 ) : DomainEntity<ArticleCommitVersion>() {
     override val id: ArticleCommitVersion = id
-    var title: ArticleTitle? = null; private set
-    var content: ArticleContent? = null; private set
-    var thumbnailUrl: ArticleThumbnailUrl? = null; private set
-    var categoryId: CategoryId? = null; private set
+    var title: ArticleTitle? = null
+        private set
+    var content: ArticleContent? = null
+        private set
+    var thumbnailUrl: ArticleThumbnailUrl? = null
+        private set
+    var categoryId: CategoryId? = null
+        private set
 //    var tags: Set<Tag>? = null; private set todo implement tags
 
     fun updateTitle(title: ArticleTitle) {
@@ -31,5 +35,3 @@ class ArticleCommit(
         }
     }
 }
-
-

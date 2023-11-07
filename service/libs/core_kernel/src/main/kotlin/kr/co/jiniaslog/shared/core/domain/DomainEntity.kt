@@ -6,7 +6,6 @@ abstract class DomainEntity<out T : ValueObject>(
     val createdDate: LocalDateTime? = null,
     val updatedDate: LocalDateTime? = null,
 ) {
-
     abstract val id: T
 
     override fun equals(other: Any?): Boolean {

@@ -47,7 +47,6 @@ tasks.named<Jar>("jar") {
 }
 
 kotlinter {
-    ignoreFailures = true
     reporters = arrayOf("checkstyle", "plain")
 }
 

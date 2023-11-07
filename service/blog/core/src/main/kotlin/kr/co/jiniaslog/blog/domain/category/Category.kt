@@ -10,5 +10,6 @@ class Category(
     updatedAt: LocalDateTime?,
 ) : DomainEntity<CategoryId>(createdAt, updatedAt) {
     override val id: CategoryId = id
-    var name: CategoryName = name; private set
+    var name: CategoryName = name
+        private set
 }
