@@ -18,6 +18,8 @@ include(
     "service:libs:rdb_kernel",
     "service:libs:http_kernel",
     "service:blog:core",
+    "service:blog:adapter",
+    "service:blog:adapter:out-rdb",
     "service:user:core",
     "service:comment",
     "service:media",
