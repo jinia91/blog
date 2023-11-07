@@ -1,13 +1,13 @@
 package kr.co.jiniaslog.blog.domain.article
 
-import kr.co.jiniaslog.shared.core.domain.DomainEntity
+import kr.co.jiniaslog.shared.core.domain.AggregateRoot
 
-class ArticleMeta private constructor(
+class Article private constructor(
     articleHistory: ArrayList<ArticleCommit>,
     head: ArticleCommit,
     override val id: ArticleId,
     val writerId: WriterId,
-) : DomainEntity<ArticleId>() {
+) : AggregateRoot<ArticleId>() {
     var history: ArrayList<ArticleCommit> = articleHistory; private set
     var head: ArticleCommit = head; private set
     var checkout: ArticleCommit? = null; private set
@@ -17,9 +17,9 @@ class ArticleMeta private constructor(
         fun init(
             id: ArticleId,
             writerId: WriterId,
-        ) : ArticleMeta {
+        ) : Article {
             val initialCommit = ArticleCommit.initCommit()
-            return ArticleMeta(
+            return Article(
                 articleHistory = arrayListOf(initialCommit),
                 head = initialCommit,
                 id = id,
