@@ -3,11 +3,14 @@ package kr.co.jiniaslog.blog.domain.article
 import kr.co.jiniaslog.shared.core.domain.AggregateRoot
 
 class Article private constructor(
+    id: ArticleId,
+    writerId: WriterId,
     articleHistory: ArrayList<ArticleCommit>,
     head: ArticleCommit,
-    override val id: ArticleId,
-    val writerId: WriterId,
 ) : AggregateRoot<ArticleId>() {
+    override val id: ArticleId = id
+    var writerId: WriterId = writerId
+        private set
     var history: ArrayList<ArticleCommit> = articleHistory
         private set
     var head: ArticleCommit = head

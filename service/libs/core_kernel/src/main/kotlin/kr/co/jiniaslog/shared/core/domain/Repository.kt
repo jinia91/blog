@@ -11,8 +11,8 @@ abstract class Repository<T : AggregateRoot<I>, I : ValueObject> {
 
     suspend fun save(entity: T): T {
         val savedEntity = saveInternal(entity)
-        eventPublisher.publishEvent(entity.getEvents())
-        entity.clearEvents()
+        eventPublisher.publishEvent(savedEntity.getEvents())
+        savedEntity.clearEvents()
         return savedEntity
     }
 
