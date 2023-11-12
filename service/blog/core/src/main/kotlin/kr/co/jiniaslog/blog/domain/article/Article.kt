@@ -19,7 +19,7 @@ class Article private constructor(
         private set
 //    var tags: Set<Tag> todo tags
 
-    companion object Factory {
+    companion object {
         fun init(
             id: ArticleId,
             writerId: WriterId,
