@@ -1,6 +1,7 @@
 package kr.co.jiniaslog.infra.id
 
 import kr.co.jiniaslog.shared.core.domain.IdGenerator
+import kr.co.jiniaslog.shared.core.domain.IdManager
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 
@@ -16,6 +17,8 @@ class IdGeneratorConfig {
     ): IdGenerator {
         val serverId = 1
 //            allocator.allocate() : 분산환경에서 ServerId 할당기, 현재는 하드 코딩
-        return SnowFlake53StrategyIdGeneratorImpl(serverId, MACHINE_SEQUENCE_BIT_SIZE)
+        val impl = SnowFlake53StrategyIdGeneratorImpl(serverId, MACHINE_SEQUENCE_BIT_SIZE)
+        IdManager.idGenerator = impl
+        return impl
     }
 }

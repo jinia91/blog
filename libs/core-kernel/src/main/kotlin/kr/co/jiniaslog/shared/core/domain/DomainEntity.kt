@@ -3,10 +3,10 @@ package kr.co.jiniaslog.shared.core.domain
 import java.time.LocalDateTime
 
 abstract class DomainEntity<out T : ValueObject>(
-    val createdDate: LocalDateTime? = null,
-    val updatedDate: LocalDateTime? = null,
+    val createdAt: LocalDateTime? = null,
+    val updatedAt: LocalDateTime? = null,
 ) {
-    abstract val id: T
+    abstract val id: T?
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

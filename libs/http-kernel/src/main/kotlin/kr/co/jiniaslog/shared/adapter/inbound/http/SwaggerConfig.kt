@@ -20,8 +20,8 @@ class SwaggerConfig {
         return OpenAPI()
             .info(
                 Info()
-                    .title("Payment API")
-                    .description("Payment API"),
+                    .title("Jiniaslog API")
+                    .description("Jiniaslog API"),
             )
     }
 }

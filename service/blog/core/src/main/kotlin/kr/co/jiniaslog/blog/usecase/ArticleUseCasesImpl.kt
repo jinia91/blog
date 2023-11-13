@@ -15,14 +15,15 @@ class ArticleUseCasesImpl(
             validate(command)
 
             val article =
-                transactionHandler.runInRepeatableReadTransaction {
-                    articleRepository.save(
-                        Article.init(
-                            id = articleRepository.nextId(),
-                            writerId = command.writerId,
-                        ),
-                    )
-                }
+                Article.init(
+                    id = articleRepository.nextId(),
+                    writerId = command.writerId,
+                )
+
+            transactionHandler.runInRepeatableReadTransaction {
+                articleRepository.save(article)
+            }
+
             return InitialInfo(
                 articleId = article.id,
             )

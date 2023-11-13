@@ -16,7 +16,7 @@ class Article private constructor(
         private set
     var head: ArticleCommitVersion = head
         private set
-    var checkout: ArticleCommitVersion? = checkout
+    var checkout: ArticleCommitVersion = checkout
         private set
 //    var tags: Set<Tag> todo tags
 
@@ -39,6 +39,22 @@ class Article private constructor(
             }.also {
                 it.registerEvent(ArticleCreated(articleId = it.id.value, articleCommitId = it.head.value))
             }
+        }
+
+        fun from(
+            id: ArticleId,
+            writerId: WriterId,
+            articleHistory: MutableList<ArticleCommit>,
+            head: ArticleCommitVersion,
+            checkout: ArticleCommitVersion,
+        ): Article {
+            return Article(
+                id = id,
+                writerId = writerId,
+                articleHistory = articleHistory,
+                head = head,
+                checkout = checkout,
+            )
         }
     }
 }

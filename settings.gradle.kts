@@ -18,7 +18,7 @@ include(
 
     // 서비스 공용 라이브러리
     "libs:core-kernel",
-    "libs:messaging-kernel",
+    "libs:messaging-handler-generator",
     "libs:rdb-kernel",
     "libs:http-kernel",
 
@@ -26,6 +26,7 @@ include(
     "service:blog:core",
     "service:blog:adapter:out-rdb",
     "service:blog:adapter:in-http",
+    "service:blog:adapter:in-message",
 
     "service:user:core",
     "service:comment",
