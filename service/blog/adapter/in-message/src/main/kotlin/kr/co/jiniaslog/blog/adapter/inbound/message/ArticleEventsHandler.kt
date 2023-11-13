@@ -16,10 +16,10 @@ private val log = mu.KotlinLogging.logger { }
 
 @Controller
 class ArticleEventsHandler(
-    private val articleRepository: ArticleRepository
+    private val articleRepository: ArticleRepository,
 ) :
     ArticleCreatedEventHandleable,
-    ArticleCommittedEventHandleable{
+        ArticleCommittedEventHandleable {
     @ServiceActivator(inputChannel = ArticleCreatedEventHandleable.CHANNEL_NAME)
     override suspend fun handle(event: ArticleCreated) {
         delay(1000)

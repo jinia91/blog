@@ -35,4 +35,3 @@ object CompressionUtils {
         return stringBuilder.toString()
     }
 }
-

@@ -1,15 +1,10 @@
 package kr.co.jiniaslog.blog.adapter.out.rdb.article
 
 import kr.co.jiniaslog.blog.domain.article.Article
-import kr.co.jiniaslog.blog.domain.article.ArticleCommit
-import kr.co.jiniaslog.blog.domain.article.ArticleCommitVersion
-import kr.co.jiniaslog.blog.domain.article.ArticleId
-import kr.co.jiniaslog.blog.domain.article.WriterId
 import kr.co.jiniaslog.shared.adapter.out.rdb.AbstractPM
 import org.springframework.data.annotation.Id
 import org.springframework.data.relational.core.mapping.Table
 import java.time.LocalDateTime
-import kr.co.jiniaslog.blog.domain.article.ArticleStagingSnapShot
 
 @Table(name = "article")
 class ArticlePM(

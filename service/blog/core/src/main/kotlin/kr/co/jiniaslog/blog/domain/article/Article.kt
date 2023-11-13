@@ -1,10 +1,10 @@
 package kr.co.jiniaslog.blog.domain.article
 
-import java.time.LocalDateTime
 import kr.co.jiniaslog.blog.domain.category.CategoryId
 import kr.co.jiniaslog.message.nexus.event.ArticleCommitted
 import kr.co.jiniaslog.message.nexus.event.ArticleCreated
 import kr.co.jiniaslog.shared.core.domain.AggregateRoot
+import java.time.LocalDateTime
 
 class Article private constructor(
     id: ArticleId,
@@ -32,13 +32,14 @@ class Article private constructor(
         thumbnailUrl: ArticleThumbnailUrl?,
         categoryId: CategoryId?,
     ) {
-        this.stagingSnapShot = ArticleStagingSnapShot.capture(
-            id = this.id,
-            title = title,
-            content = content,
-            thumbnailUrl = thumbnailUrl,
-            categoryId = categoryId,
-        )
+        this.stagingSnapShot =
+            ArticleStagingSnapShot.capture(
+                id = this.id,
+                title = title,
+                content = content,
+                thumbnailUrl = thumbnailUrl,
+                categoryId = categoryId,
+            )
     }
 
     /**

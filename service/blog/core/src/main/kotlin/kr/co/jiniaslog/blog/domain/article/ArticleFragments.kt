@@ -61,19 +61,18 @@ value class ArticleContent(val value: String) : ValueObject {
         require(value.length in 0..10000) { "article content must be between 1 and 10000 characters" }
     }
 
-    fun calculateDelta(newContent: ArticleContent) : ArticleContentDelta {
+    fun calculateDelta(newContent: ArticleContent): ArticleContentDelta {
         return deltaUtil.diffMain(value, newContent.value)
             .let { deltaUtil.diffToDelta(it) }
             .let { ArticleContentDelta.build(it) }
     }
 
-    fun applyDelta(delta : ArticleContentDelta) : ArticleContent {
+    fun applyDelta(delta: ArticleContentDelta): ArticleContent {
         val diffs = deltaUtil.diffFromDelta(value, delta.getString())
         val patches = deltaUtil.patchMake(diffs)
         return ArticleContent(deltaUtil.patchApply(patches, value)[0].toString())
     }
 }
-
 
 @JvmInline
 value class ArticleContentDelta(private val value: ByteArray) : ValueObject {
@@ -98,7 +97,7 @@ value class ArticleContentDelta(private val value: ByteArray) : ValueObject {
             }
         }
 
-        fun from(value: ByteArray) : ArticleContentDelta {
+        fun from(value: ByteArray): ArticleContentDelta {
             return ArticleContentDelta(value)
         }
     }

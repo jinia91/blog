@@ -31,7 +31,7 @@ class ArticleCommitPM(
             thumbnailUrl = thumbnailUrl?.let { ArticleThumbnailUrl(it) },
             categoryId = categoryId?.let { CategoryId(it) },
             updatedAt = updatedAt,
-            createdAt = createdAt
+            createdAt = createdAt,
         )
 }
 

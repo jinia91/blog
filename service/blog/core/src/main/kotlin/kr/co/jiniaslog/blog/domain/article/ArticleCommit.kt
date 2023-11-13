@@ -1,10 +1,10 @@
 package kr.co.jiniaslog.blog.domain.article
 
-import java.time.LocalDateTime
 import kr.co.jiniaslog.blog.domain.category.CategoryId
 import kr.co.jiniaslog.shared.core.domain.DomainEntity
 import kr.co.jiniaslog.shared.core.domain.IdManager
 import org.bitbucket.cowwoc.diffmatchpatch.DiffMatchPatch
+import java.time.LocalDateTime
 
 class ArticleCommit(
     id: ArticleCommitVersion,
@@ -19,6 +19,7 @@ class ArticleCommit(
         private set
     var categoryId: CategoryId? = null
         private set
+
 //    var tags: Set<Tag>? = null; private set todo implement tags
     companion object {
         val deltaUtil = DiffMatchPatch()

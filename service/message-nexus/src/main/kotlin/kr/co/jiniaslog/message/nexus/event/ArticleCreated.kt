@@ -21,4 +21,3 @@ data class ArticleCommitted(
         eventVersion = 1,
         occurredAt = LocalDateTime.now(),
     )
-

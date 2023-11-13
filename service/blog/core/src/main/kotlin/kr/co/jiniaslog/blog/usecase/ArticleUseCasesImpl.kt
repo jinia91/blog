@@ -34,50 +34,53 @@ class ArticleUseCasesImpl(
         // todo
     }
 
-    override suspend fun staging(command: ArticleStagingCommand): StagingInfo = with(command) {
-        validate(command)
-        val article = articleRepository.findById(command.articleId, mode = FetchMode.NONE)
-            ?: throw IllegalArgumentException("article not found")
+    override suspend fun staging(command: ArticleStagingCommand): StagingInfo =
+        with(command) {
+            validate(command)
+            val article =
+                articleRepository.findById(command.articleId, mode = FetchMode.NONE)
+                    ?: throw IllegalArgumentException("article not found")
 
-        article.staging(title, content, thumbnailUrl, categoryId)
+            article.staging(title, content, thumbnailUrl, categoryId)
 
-        transactionHandler.runInRepeatableReadTransaction {
-            articleRepository.save(article)
+            transactionHandler.runInRepeatableReadTransaction {
+                articleRepository.save(article)
+            }
+
+            return StagingInfo(
+                articleId = article.id,
+            )
         }
-
-        return StagingInfo(
-            articleId = article.id,
-        )
-    }
 
     private fun validate(command: ArticleStagingCommand) {
         // todo
     }
 
-    override suspend fun commit(command: ArticleCommitCommand): CommitInfo = with(command) {
-        validate(command)
-        val article = articleRepository.findById(command.articleId, mode = FetchMode.ALL)
-            ?: throw IllegalArgumentException("article not found")
+    override suspend fun commit(command: ArticleCommitCommand): CommitInfo =
+        with(command) {
+            validate(command)
+            val article =
+                articleRepository.findById(command.articleId, mode = FetchMode.ALL)
+                    ?: throw IllegalArgumentException("article not found")
 
-        article.commit(
-            title = title,
-            newContent = content,
-            thumbnailUrl = thumbnailUrl,
-            categoryId = categoryId,
-        )
+            article.commit(
+                title = title,
+                newContent = content,
+                thumbnailUrl = thumbnailUrl,
+                categoryId = categoryId,
+            )
 
-        transactionHandler.runInRepeatableReadTransaction {
-            articleRepository.save(article)
+            transactionHandler.runInRepeatableReadTransaction {
+                articleRepository.save(article)
+            }
+
+            return CommitInfo(
+                articleId = article.id,
+                commitId = article.history.last().id,
+            )
         }
-
-        return CommitInfo(
-            articleId = article.id,
-            commitId = article.history.last().id,
-        )
-    }
 
     private fun validate(command: ArticleCommitCommand) {
         // todo
     }
-
 }

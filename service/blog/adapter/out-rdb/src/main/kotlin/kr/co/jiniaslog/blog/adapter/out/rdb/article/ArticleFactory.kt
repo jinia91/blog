@@ -13,17 +13,17 @@ class ArticleFactory {
     fun assemble(
         articlePM: ArticlePM,
         commits: MutableList<ArticleCommit> = mutableListOf(),
-        stagingSnapShot: ArticleStagingSnapShot? = null
+        stagingSnapShot: ArticleStagingSnapShot? = null,
     ): Article {
         return Article.from(
-                id = ArticleId(articlePM.id),
-                writerId = WriterId(articlePM.writerId),
-                head = ArticleCommitVersion(articlePM.head),
-                checkout = ArticleCommitVersion(articlePM.checkout),
-                articleHistory = commits,
-                stagingSnapShot = stagingSnapShot,
-                createdAt = articlePM.createdAt,
-                updatedAt = articlePM.updatedAt,
-            )
+            id = ArticleId(articlePM.id),
+            writerId = WriterId(articlePM.writerId),
+            head = ArticleCommitVersion(articlePM.head),
+            checkout = ArticleCommitVersion(articlePM.checkout),
+            articleHistory = commits,
+            stagingSnapShot = stagingSnapShot,
+            createdAt = articlePM.createdAt,
+            updatedAt = articlePM.updatedAt,
+        )
     }
 }

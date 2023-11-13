@@ -11,7 +11,7 @@ class ArticleResources(
 ) {
     @PostMapping("/articles")
     suspend fun init(
-        @RequestBody request: ArticleInitRequest
+        @RequestBody request: ArticleInitRequest,
     ): ArticleInitResponse {
         return articleUseCases
             .init(request.toCommand())
@@ -20,7 +20,7 @@ class ArticleResources(
 
     @PostMapping("/articles/{articleId}")
     suspend fun commit(
-        @RequestBody request: ArticleCommitRequest
+        @RequestBody request: ArticleCommitRequest,
     ): ArticleCommitResponse {
         return articleUseCases
             .commit(request.toCommand())

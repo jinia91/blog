@@ -2,7 +2,6 @@ package kr.co.jiniaslog.blog.usecase
 
 import kr.co.jiniaslog.blog.domain.article.ArticleCommitVersion
 import kr.co.jiniaslog.blog.domain.article.ArticleContent
-import kr.co.jiniaslog.blog.domain.article.ArticleContentDelta
 import kr.co.jiniaslog.blog.domain.article.ArticleId
 import kr.co.jiniaslog.blog.domain.article.ArticleThumbnailUrl
 import kr.co.jiniaslog.blog.domain.article.ArticleTitle
@@ -29,7 +28,7 @@ interface ArticleUseCases {
     /**
      * 커밋한 아티클을 처리한다.
      */
-    suspend fun commit(command: ArticleCommitCommand) : CommitInfo
+    suspend fun commit(command: ArticleCommitCommand): CommitInfo
 }
 
 /**
@@ -52,9 +51,10 @@ data class ArticleStagingCommand(
     val categoryId: CategoryId?,
     val thumbnailUrl: ArticleThumbnailUrl?,
 )
+
 data class StagingInfo(
     val articleId: ArticleId,
-    )
+)
 
 data class ArticleCommitCommand(
     val articleId: ArticleId,

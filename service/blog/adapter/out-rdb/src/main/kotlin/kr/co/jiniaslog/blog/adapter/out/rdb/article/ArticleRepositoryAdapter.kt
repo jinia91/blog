@@ -5,7 +5,6 @@ import kotlinx.coroutines.flow.toList
 import kr.co.jiniaslog.blog.domain.article.Article
 import kr.co.jiniaslog.blog.domain.article.ArticleId
 import kr.co.jiniaslog.blog.domain.article.ArticleRepository
-import kr.co.jiniaslog.blog.domain.article.ArticleStagingSnapShot
 import kr.co.jiniaslog.shared.adapter.out.rdb.isNew
 import kr.co.jiniaslog.shared.core.annotation.PersistenceAdapter
 import kr.co.jiniaslog.shared.core.domain.FetchMode
@@ -24,7 +23,10 @@ internal class ArticleRepositoryAdapter(
         }
     }
 
-    override suspend fun findById(id: ArticleId, mode: FetchMode): Article? {
+    override suspend fun findById(
+        id: ArticleId,
+        mode: FetchMode,
+    ): Article? {
         when (mode) {
             FetchMode.NONE -> {
                 return articleRepo.findById(id.value)?.let { articleFactory.assemble(articlePM = it) }
@@ -37,7 +39,7 @@ internal class ArticleRepositoryAdapter(
                 return articleFactory.assemble(
                     articlePM = article,
                     commits = commits,
-                    stagingSnapShot = stagingSnapShot
+                    stagingSnapShot = stagingSnapShot,
                 )
             }
         }
@@ -55,7 +57,7 @@ internal class ArticleRepositoryAdapter(
                     articleFactory.assemble(
                         articlePM = it,
                         commits = commits,
-                        stagingSnapShot = stagingSnapShot
+                        stagingSnapShot = stagingSnapShot,
                     )
                 }
             }
@@ -80,14 +82,15 @@ internal class ArticleRepositoryAdapter(
                         it
                     }
                 }.toMutableList()
-        val stagingRepoEntity = entity.stagingSnapShot?.let {
-            stagingRepo.save(it.toPM()).toEntity()
-        }
+        val stagingRepoEntity =
+            entity.stagingSnapShot?.let {
+                stagingRepo.save(it.toPM()).toEntity()
+            }
         val refreshedArticlePm = articleRepo.save(entity.toPM())
         return articleFactory.assemble(
             articlePM = refreshedArticlePm,
             commits = persistedCommitEntity,
-            stagingSnapShot = stagingRepoEntity
+            stagingSnapShot = stagingRepoEntity,
         )
     }
 }

@@ -1,8 +1,8 @@
 package kr.co.jiniaslog.blog.domain.article
 
-import java.time.LocalDateTime
 import kr.co.jiniaslog.blog.domain.category.CategoryId
 import kr.co.jiniaslog.shared.core.domain.DomainEntity
+import java.time.LocalDateTime
 
 class ArticleStagingSnapShot(
     override val id: ArticleId,

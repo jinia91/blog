@@ -30,13 +30,14 @@ data class ArticleCommitRequest(
     val thumbnailUrl: String?,
     val categoryId: Long?,
 ) {
-    fun toCommand() = ArticleCommitCommand(
-        articleId = ArticleId(articleId),
-        title = title?.let { ArticleTitle(it) },
-        content = ArticleContent(content),
-        thumbnailUrl = thumbnailUrl?.let { ArticleThumbnailUrl(thumbnailUrl) },
-        categoryId = categoryId?.let { CategoryId(it) },
-    )
+    fun toCommand() =
+        ArticleCommitCommand(
+            articleId = ArticleId(articleId),
+            title = title?.let { ArticleTitle(it) },
+            content = ArticleContent(content),
+            thumbnailUrl = thumbnailUrl?.let { ArticleThumbnailUrl(thumbnailUrl) },
+            categoryId = categoryId?.let { CategoryId(it) },
+        )
 }
 
 data class ArticleCommitResponse(
