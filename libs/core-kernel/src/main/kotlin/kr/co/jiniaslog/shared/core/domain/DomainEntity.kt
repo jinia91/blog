@@ -3,8 +3,8 @@ package kr.co.jiniaslog.shared.core.domain
 import java.time.LocalDateTime
 
 abstract class DomainEntity<out T : ValueObject>(
-    val createdAt: LocalDateTime? = null,
-    val updatedAt: LocalDateTime? = null,
+    var createdAt: LocalDateTime? = null,
+    var updatedAt: LocalDateTime? = null,
 ) {
     abstract val id: T?
 

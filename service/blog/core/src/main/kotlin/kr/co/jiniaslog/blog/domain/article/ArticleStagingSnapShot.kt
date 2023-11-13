@@ -3,62 +3,51 @@ package kr.co.jiniaslog.blog.domain.article
 import java.time.LocalDateTime
 import kr.co.jiniaslog.blog.domain.category.CategoryId
 import kr.co.jiniaslog.shared.core.domain.DomainEntity
-import kr.co.jiniaslog.shared.core.domain.IdManager
-import org.bitbucket.cowwoc.diffmatchpatch.DiffMatchPatch
 
-class ArticleCommit(
-    id: ArticleCommitVersion,
-) : DomainEntity<ArticleCommitVersion>() {
-    override val id: ArticleCommitVersion = id
-
+class ArticleStagingSnapShot(
+    override val id: ArticleId,
+) : DomainEntity<ArticleId>() {
     var title: ArticleTitle? = null
         private set
-    var delta: ArticleContentDelta = ArticleContentDelta.build("")
+    var content: ArticleContent? = null
         private set
     var thumbnailUrl: ArticleThumbnailUrl? = null
         private set
     var categoryId: CategoryId? = null
         private set
-//    var tags: Set<Tag>? = null; private set todo implement tags
+
     companion object {
-        val deltaUtil = DiffMatchPatch()
-
-        fun initCommit(): ArticleCommit {
-            return ArticleCommit(
-                id = ArticleCommitVersion(IdManager.generate()),
-            )
-        }
-
-        fun commit(
+        fun capture(
+            id: ArticleId,
             title: ArticleTitle?,
-            delta: ArticleContentDelta,
+            content: ArticleContent?,
             thumbnailUrl: ArticleThumbnailUrl?,
             categoryId: CategoryId?,
-        ): ArticleCommit {
-            return ArticleCommit(
-                id = ArticleCommitVersion(IdManager.generate()),
+        ): ArticleStagingSnapShot {
+            return ArticleStagingSnapShot(
+                id = id,
             ).apply {
                 this.title = title
-                this.delta = delta
+                this.content = content
                 this.thumbnailUrl = thumbnailUrl
                 this.categoryId = categoryId
             }
         }
 
         fun from(
-            id: ArticleCommitVersion,
+            id: ArticleId,
             title: ArticleTitle?,
-            content: ArticleContentDelta,
+            content: ArticleContent?,
             thumbnailUrl: ArticleThumbnailUrl?,
             categoryId: CategoryId?,
             createdAt: LocalDateTime?,
             updatedAt: LocalDateTime?,
-        ): ArticleCommit {
-            return ArticleCommit(
+        ): ArticleStagingSnapShot {
+            return ArticleStagingSnapShot(
                 id = id,
             ).apply {
                 this.title = title
-                this.delta = content
+                this.content = content
                 this.thumbnailUrl = thumbnailUrl
                 this.categoryId = categoryId
                 this.createdAt = createdAt

@@ -9,6 +9,7 @@ import kr.co.jiniaslog.shared.adapter.out.rdb.AbstractPM
 import org.springframework.data.annotation.Id
 import org.springframework.data.relational.core.mapping.Table
 import java.time.LocalDateTime
+import kr.co.jiniaslog.blog.domain.article.ArticleStagingSnapShot
 
 @Table(name = "article")
 class ArticlePM(
@@ -19,16 +20,7 @@ class ArticlePM(
     var checkout: Long,
     override var createdAt: LocalDateTime?,
     override var updatedAt: LocalDateTime?,
-) : AbstractPM() {
-    fun toEntity(commits: MutableList<ArticleCommit>) =
-        Article.from(
-            id = ArticleId(id),
-            writerId = WriterId(writerId),
-            head = ArticleCommitVersion(head),
-            checkout = ArticleCommitVersion(checkout),
-            articleHistory = commits,
-        )
-}
+) : AbstractPM()
 
 internal fun Article.toPM() =
     ArticlePM(

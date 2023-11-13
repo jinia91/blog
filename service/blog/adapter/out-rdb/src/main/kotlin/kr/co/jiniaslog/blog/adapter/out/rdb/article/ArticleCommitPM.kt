@@ -2,7 +2,7 @@ package kr.co.jiniaslog.blog.adapter.out.rdb.article
 
 import kr.co.jiniaslog.blog.domain.article.ArticleCommit
 import kr.co.jiniaslog.blog.domain.article.ArticleCommitVersion
-import kr.co.jiniaslog.blog.domain.article.ArticleContent
+import kr.co.jiniaslog.blog.domain.article.ArticleContentDelta
 import kr.co.jiniaslog.blog.domain.article.ArticleThumbnailUrl
 import kr.co.jiniaslog.blog.domain.article.ArticleTitle
 import kr.co.jiniaslog.blog.domain.category.CategoryId
@@ -16,7 +16,7 @@ class ArticleCommitPM(
     @Id
     override val id: Long,
     var title: String?,
-    var content: String?,
+    var delta: ByteArray,
     var thumbnailUrl: String?,
     var articleId: Long,
     var categoryId: Long?,
@@ -27,9 +27,11 @@ class ArticleCommitPM(
         ArticleCommit.from(
             id = ArticleCommitVersion(id),
             title = title?.let { ArticleTitle(it) },
-            content = content?.let { ArticleContent(it) },
+            content = delta.let { ArticleContentDelta.from(it) },
             thumbnailUrl = thumbnailUrl?.let { ArticleThumbnailUrl(it) },
             categoryId = categoryId?.let { CategoryId(it) },
+            updatedAt = updatedAt,
+            createdAt = createdAt
         )
 }
 
@@ -37,7 +39,7 @@ fun ArticleCommit.toPM(articleId: Long): ArticleCommitPM =
     ArticleCommitPM(
         id = this.id.value,
         title = this.title?.value,
-        content = this.content?.value,
+        delta = this.delta.getByteArray(),
         thumbnailUrl = this.thumbnailUrl?.value,
         articleId = articleId,
         categoryId = this.categoryId?.value,

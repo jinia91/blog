@@ -59,6 +59,8 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("io.github.microutils:kotlin-logging-jvm:3.0.5")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.2")
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.13.0")
+
     // test dependencies
     testImplementation("io.kotest:kotest-runner-junit5:5.7.2")
     testImplementation("io.kotest:kotest-assertions-core:5.7.2")

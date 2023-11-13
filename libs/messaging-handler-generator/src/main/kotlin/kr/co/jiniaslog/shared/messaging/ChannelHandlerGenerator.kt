@@ -28,7 +28,7 @@ class ChannelHandlerGenerator(
     ) {
         val packageName = "kr.co.jiniaslog.message.nexus.event"
         val className = classDeclaration.simpleName.asString()
-        val fileName = "Abstract${className}ChannelHandler"
+        val fileName = "${className}EventHandleable"
 
         val fileContent =
             buildString {
@@ -36,11 +36,11 @@ class ChannelHandlerGenerator(
                     """
                     package $packageName
 
-                    abstract class $fileName {
+                    interface $fileName {
                         companion object{
                                 const val CHANNEL_NAME = "${className}Channel"
                         }
-                        abstract suspend fun handle(event: $className)
+                        suspend fun handle(event: $className)
                     }
                     """.trimIndent(),
                 )

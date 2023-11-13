@@ -12,3 +12,13 @@ data class ArticleCreated(
         eventVersion = 1,
         occurredAt = LocalDateTime.now(),
     )
+
+@AbstractChannelHandlerBuilder
+data class ArticleCommitted(
+    val articleId: Long,
+    val articleCommitId: Long,
+) : DomainEvent(
+        eventVersion = 1,
+        occurredAt = LocalDateTime.now(),
+    )
+
