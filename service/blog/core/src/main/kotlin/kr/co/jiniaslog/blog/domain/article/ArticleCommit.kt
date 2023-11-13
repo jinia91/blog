@@ -7,6 +7,7 @@ class ArticleCommit(
     id: ArticleCommitVersion,
 ) : DomainEntity<ArticleCommitVersion>() {
     override val id: ArticleCommitVersion = id
+
     var title: ArticleTitle? = null
         private set
     var content: ArticleContent? = null
@@ -31,7 +32,9 @@ class ArticleCommit(
 
     companion object {
         fun initCommit(): ArticleCommit {
-            TODO("Not yet implemented")
+            return ArticleCommit(
+                id = ArticleCommitVersion(1),
+            )
         }
     }
 }
