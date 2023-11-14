@@ -34,13 +34,7 @@ internal class ArticleRepositoryAdapter(
 
             FetchMode.ALL -> {
                 val article = articleRepo.findById(id.value) ?: return null
-                val commits = commitRepo.findAllByArticleId(id.value).map { it.toEntity() }.toMutableList()
-                val stagingSnapShot = stagingRepo.findById(id.value)?.toEntity()
-                return articleFactory.assemble(
-                    articlePM = article,
-                    commits = commits,
-                    stagingSnapShot = stagingSnapShot,
-                )
+                return fetchedAllArticle(article)
             }
         }
     }
@@ -52,18 +46,23 @@ internal class ArticleRepositoryAdapter(
                     articleFactory.assemble(articlePM = it)
                 }
                 FetchMode.ALL -> {
-                    val commits = commitRepo.findAllByArticleId(it.id).map { it.toEntity() }.toMutableList()
-                    val stagingSnapShot = stagingRepo.findById(it.id)?.toEntity()
-                    articleFactory.assemble(
-                        articlePM = it,
-                        commits = commits,
-                        stagingSnapShot = stagingSnapShot,
-                    )
+                    fetchedAllArticle(it)
                 }
             }
         }.let {
             return it.toList()
         }
+    }
+
+    // todo : join 쿼리로 최적화
+    private suspend fun fetchedAllArticle(article: ArticlePM): Article {
+        val commits = commitRepo.findAllByArticleId(article.id).map { it.toEntity() }.toMutableList()
+        val stagingSnapShot = stagingRepo.findById(article.id)?.toEntity()
+        return articleFactory.assemble(
+            articlePM = article,
+            commits = commits,
+            stagingSnapShot = stagingSnapShot,
+        )
     }
 
     override suspend fun deleteById(id: ArticleId) {

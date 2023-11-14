@@ -1,10 +1,9 @@
 package kr.co.jiniaslog.blog.domain.article
 
-import kr.co.jiniaslog.blog.domain.article.ArticleCommit.Companion.deltaUtil
 import kr.co.jiniaslog.blog.domain.article.CompressionUtils.compressString
 import kr.co.jiniaslog.blog.domain.article.CompressionUtils.decompressString
 import kr.co.jiniaslog.shared.core.domain.ValueObject
-import kr.co.jiniaslog.shared.core.domain.ValueObjectId
+import org.bitbucket.cowwoc.diffmatchpatch.DiffMatchPatch
 
 /**
  * Article 관련 단순 ValueObject 정의 - value class 만 모음
@@ -13,8 +12,10 @@ import kr.co.jiniaslog.shared.core.domain.ValueObjectId
  *
  */
 
+private val deltaUtil = DiffMatchPatch()
+
 @JvmInline
-value class ArticleId(override val value: Long) : ValueObjectId {
+value class ArticleId(val value: Long) : ValueObject {
     init {
         validate()
     }
@@ -25,7 +26,7 @@ value class ArticleId(override val value: Long) : ValueObjectId {
 }
 
 @JvmInline
-value class ArticleCommitVersion(override val value: Long) : ValueObjectId, Comparable<ArticleCommitVersion> {
+value class ArticleCommitVersion(val value: Long) : ValueObject, Comparable<ArticleCommitVersion> {
     init {
         validate()
     }
@@ -67,10 +68,14 @@ value class ArticleContent(val value: String) : ValueObject {
             .let { ArticleContentDelta.build(it) }
     }
 
-    fun applyDelta(delta: ArticleContentDelta): ArticleContent {
-        val diffs = deltaUtil.diffFromDelta(value, delta.getString())
+    fun apply(commit: ArticleCommit): ArticleContent {
+        val diffs = deltaUtil.diffFromDelta(value, commit.delta.getString())
         val patches = deltaUtil.patchMake(diffs)
         return ArticleContent(deltaUtil.patchApply(patches, value)[0].toString())
+    }
+
+    companion object {
+        val EMPTY = ArticleContent("")
     }
 }
 
@@ -111,5 +116,27 @@ value class ArticleThumbnailUrl(val value: String) : ValueObject {
 
     override fun validate() {
         require(value.isNotBlank()) { "article thumbnail must not be blank" }
+    }
+}
+
+@JvmInline
+value class WriterId(val value: Long) : ValueObject {
+    init {
+        validate()
+    }
+
+    override fun validate() {
+        require(value > 0) { "user id must be positive" }
+    }
+}
+
+@JvmInline
+value class StagingSnapShotId(val value: Long) : ValueObject {
+    init {
+        validate()
+    }
+
+    override fun validate() {
+        require(value > 0) { "staging snapshot id must be positive" }
     }
 }

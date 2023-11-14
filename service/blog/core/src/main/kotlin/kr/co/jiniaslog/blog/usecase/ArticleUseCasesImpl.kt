@@ -2,12 +2,18 @@ package kr.co.jiniaslog.blog.usecase
 
 import kr.co.jiniaslog.blog.domain.article.Article
 import kr.co.jiniaslog.blog.domain.article.ArticleRepository
+import kr.co.jiniaslog.blog.usecase.ArticleCommitCommandUseCase.ArticleCommitCommand
+import kr.co.jiniaslog.blog.usecase.ArticleCommitCommandUseCase.CommitInfo
+import kr.co.jiniaslog.blog.usecase.ArticleInitCommandUseCase.ArticleInitCommand
+import kr.co.jiniaslog.blog.usecase.ArticleInitCommandUseCase.InitialInfo
+import kr.co.jiniaslog.blog.usecase.ArticleStagingCommandUseCase.ArticleStagingCommand
+import kr.co.jiniaslog.blog.usecase.ArticleStagingCommandUseCase.StagingInfo
 import kr.co.jiniaslog.shared.core.annotation.UseCaseInteractor
 import kr.co.jiniaslog.shared.core.domain.FetchMode
 import kr.co.jiniaslog.shared.core.domain.TransactionHandler
 
 @UseCaseInteractor
-class ArticleUseCasesImpl(
+internal class ArticleUseCasesImpl(
     private val articleRepository: ArticleRepository,
     private val transactionHandler: TransactionHandler,
 ) : ArticleUseCases {
@@ -18,7 +24,7 @@ class ArticleUseCasesImpl(
             val article =
                 Article.init(
                     id = articleRepository.nextId(),
-                    writerId = command.writerId,
+                    writerId = writerId,
                 )
 
             transactionHandler.runInRepeatableReadTransaction {
@@ -37,11 +43,17 @@ class ArticleUseCasesImpl(
     override suspend fun staging(command: ArticleStagingCommand): StagingInfo =
         with(command) {
             validate(command)
+
             val article =
                 articleRepository.findById(command.articleId, mode = FetchMode.NONE)
                     ?: throw IllegalArgumentException("article not found")
 
-            article.staging(title, content, thumbnailUrl, categoryId)
+            article.staging(
+                title = title,
+                content = content,
+                thumbnailUrl = thumbnailUrl,
+                categoryId = categoryId,
+            )
 
             transactionHandler.runInRepeatableReadTransaction {
                 articleRepository.save(article)
@@ -59,6 +71,7 @@ class ArticleUseCasesImpl(
     override suspend fun commit(command: ArticleCommitCommand): CommitInfo =
         with(command) {
             validate(command)
+
             val article =
                 articleRepository.findById(command.articleId, mode = FetchMode.ALL)
                     ?: throw IllegalArgumentException("article not found")
@@ -76,7 +89,7 @@ class ArticleUseCasesImpl(
 
             return CommitInfo(
                 articleId = article.id,
-                commitId = article.history.last().id,
+                commitId = article.latestCommit.id,
             )
         }
 

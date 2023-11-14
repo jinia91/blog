@@ -6,10 +6,12 @@ import kr.co.jiniaslog.blog.domain.article.ArticleThumbnailUrl
 import kr.co.jiniaslog.blog.domain.article.ArticleTitle
 import kr.co.jiniaslog.blog.domain.article.WriterId
 import kr.co.jiniaslog.blog.domain.category.CategoryId
-import kr.co.jiniaslog.blog.usecase.ArticleCommitCommand
-import kr.co.jiniaslog.blog.usecase.ArticleInitCommand
-import kr.co.jiniaslog.blog.usecase.CommitInfo
-import kr.co.jiniaslog.blog.usecase.InitialInfo
+import kr.co.jiniaslog.blog.usecase.ArticleCommitCommandUseCase.ArticleCommitCommand
+import kr.co.jiniaslog.blog.usecase.ArticleCommitCommandUseCase.CommitInfo
+import kr.co.jiniaslog.blog.usecase.ArticleInitCommandUseCase.ArticleInitCommand
+import kr.co.jiniaslog.blog.usecase.ArticleInitCommandUseCase.InitialInfo
+import kr.co.jiniaslog.blog.usecase.ArticleStagingCommandUseCase.ArticleStagingCommand
+import kr.co.jiniaslog.blog.usecase.ArticleStagingCommandUseCase.StagingInfo
 
 data class ArticleInitRequest(
     val writerId: Long,
@@ -46,3 +48,26 @@ data class ArticleCommitResponse(
 )
 
 fun CommitInfo.toResponse() = ArticleCommitResponse(this.articleId.value, this.commitId.value)
+
+data class ArticleStagingRequest(
+    val articleId: Long,
+    val title: String?,
+    val content: String?,
+    val thumbnailUrl: String?,
+    val categoryId: Long?,
+) {
+    fun toCommand() =
+        ArticleStagingCommand(
+            articleId = ArticleId(articleId),
+            title = title?.let { ArticleTitle(it) },
+            content = content?.let { ArticleContent(it) },
+            thumbnailUrl = thumbnailUrl?.let { ArticleThumbnailUrl(it) },
+            categoryId = categoryId?.let { CategoryId(it) },
+        )
+}
+
+data class ArticleStagingResponse(
+    val articleId: Long,
+)
+
+fun StagingInfo.toResponse() = ArticleStagingResponse(this.articleId.value)

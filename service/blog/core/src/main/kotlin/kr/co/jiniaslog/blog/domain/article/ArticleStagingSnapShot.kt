@@ -5,20 +5,17 @@ import kr.co.jiniaslog.shared.core.domain.DomainEntity
 import java.time.LocalDateTime
 
 class ArticleStagingSnapShot(
-    override val id: ArticleId,
-) : DomainEntity<ArticleId>() {
-    var title: ArticleTitle? = null
-        private set
-    var content: ArticleContent? = null
-        private set
-    var thumbnailUrl: ArticleThumbnailUrl? = null
-        private set
-    var categoryId: CategoryId? = null
-        private set
-
+    override val id: StagingSnapShotId,
+    val articleId: ArticleId,
+    val title: ArticleTitle? = null,
+    val content: ArticleContent,
+    val thumbnailUrl: ArticleThumbnailUrl? = null,
+    val categoryId: CategoryId? = null,
+) : DomainEntity<StagingSnapShotId>() {
     companion object {
         fun capture(
-            id: ArticleId,
+            id: StagingSnapShotId,
+            articleId: ArticleId,
             title: ArticleTitle?,
             content: ArticleContent?,
             thumbnailUrl: ArticleThumbnailUrl?,
@@ -26,18 +23,19 @@ class ArticleStagingSnapShot(
         ): ArticleStagingSnapShot {
             return ArticleStagingSnapShot(
                 id = id,
-            ).apply {
-                this.title = title
-                this.content = content
-                this.thumbnailUrl = thumbnailUrl
-                this.categoryId = categoryId
-            }
+                title = title,
+                articleId = articleId,
+                content = content ?: ArticleContent.EMPTY,
+                thumbnailUrl = thumbnailUrl,
+                categoryId = categoryId,
+            )
         }
 
         fun from(
-            id: ArticleId,
+            id: StagingSnapShotId,
+            articleId: ArticleId,
             title: ArticleTitle?,
-            content: ArticleContent?,
+            content: ArticleContent,
             thumbnailUrl: ArticleThumbnailUrl?,
             categoryId: CategoryId?,
             createdAt: LocalDateTime?,
@@ -45,11 +43,12 @@ class ArticleStagingSnapShot(
         ): ArticleStagingSnapShot {
             return ArticleStagingSnapShot(
                 id = id,
+                articleId = articleId,
+                title = title,
+                content = content,
+                thumbnailUrl = thumbnailUrl,
+                categoryId = categoryId,
             ).apply {
-                this.title = title
-                this.content = content
-                this.thumbnailUrl = thumbnailUrl
-                this.categoryId = categoryId
                 this.createdAt = createdAt
                 this.updatedAt = updatedAt
             }

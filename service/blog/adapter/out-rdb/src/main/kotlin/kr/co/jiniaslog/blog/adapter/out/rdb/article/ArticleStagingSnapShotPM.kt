@@ -5,6 +5,7 @@ import kr.co.jiniaslog.blog.domain.article.ArticleId
 import kr.co.jiniaslog.blog.domain.article.ArticleStagingSnapShot
 import kr.co.jiniaslog.blog.domain.article.ArticleThumbnailUrl
 import kr.co.jiniaslog.blog.domain.article.ArticleTitle
+import kr.co.jiniaslog.blog.domain.article.StagingSnapShotId
 import kr.co.jiniaslog.blog.domain.category.CategoryId
 import kr.co.jiniaslog.shared.adapter.out.rdb.AbstractPM
 import org.springframework.data.annotation.Id
@@ -15,8 +16,9 @@ import java.time.LocalDateTime
 class ArticleStagingSnapShotPM(
     @Id
     override val id: Long,
+    val articleId: ArticleId,
     val title: String?,
-    val content: String?,
+    val content: String,
     val thumbnailUrl: String?,
     val categoryId: Long?,
     override var updatedAt: LocalDateTime?,
@@ -24,9 +26,10 @@ class ArticleStagingSnapShotPM(
 ) : AbstractPM() {
     fun toEntity() =
         ArticleStagingSnapShot.from(
-            id = ArticleId(id),
+            id = StagingSnapShotId(id),
+            articleId = articleId,
             title = title?.let { ArticleTitle(it) },
-            content = content?.let { ArticleContent(it) },
+            content = ArticleContent(content),
             thumbnailUrl = thumbnailUrl?.let { ArticleThumbnailUrl(it) },
             categoryId = categoryId?.let { CategoryId(it) },
             updatedAt = updatedAt,
@@ -37,8 +40,9 @@ class ArticleStagingSnapShotPM(
 fun ArticleStagingSnapShot.toPM() =
     ArticleStagingSnapShotPM(
         id = this.id.value,
+        articleId = this.articleId,
         title = this.title?.value,
-        content = this.content?.value,
+        content = this.content.value,
         thumbnailUrl = this.thumbnailUrl?.value,
         categoryId = this.categoryId?.value,
         createdAt = this.createdAt,

@@ -26,4 +26,13 @@ class ArticleResources(
             .commit(request.toCommand())
             .toResponse()
     }
+
+    @PostMapping("/articles/{articleId}/staging")
+    suspend fun staging(
+        @RequestBody request: ArticleStagingRequest,
+    ): ArticleStagingResponse {
+        return articleUseCases
+            .staging(request.toCommand())
+            .toResponse()
+    }
 }

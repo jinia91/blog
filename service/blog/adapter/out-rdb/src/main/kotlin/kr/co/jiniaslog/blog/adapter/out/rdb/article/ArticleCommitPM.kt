@@ -27,7 +27,7 @@ class ArticleCommitPM(
         ArticleCommit.from(
             id = ArticleCommitVersion(id),
             title = title?.let { ArticleTitle(it) },
-            content = delta.let { ArticleContentDelta.from(it) },
+            delta = delta.let { ArticleContentDelta.from(it) },
             thumbnailUrl = thumbnailUrl?.let { ArticleThumbnailUrl(it) },
             categoryId = categoryId?.let { CategoryId(it) },
             updatedAt = updatedAt,

@@ -2,8 +2,10 @@ package kr.co.jiniaslog.shared.core.domain
 
 interface ValueObject {
     fun validate()
-}
 
-interface ValueObjectId : ValueObject {
-    val value: Long
+    override fun equals(other: Any?): Boolean
+
+    override fun hashCode(): Int
+
+    override fun toString(): String
 }

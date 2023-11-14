@@ -4,6 +4,7 @@ import kr.co.jiniaslog.blog.domain.category.CategoryId
 import kr.co.jiniaslog.message.nexus.event.ArticleCommitted
 import kr.co.jiniaslog.message.nexus.event.ArticleCreated
 import kr.co.jiniaslog.shared.core.domain.AggregateRoot
+import kr.co.jiniaslog.shared.core.domain.IdManager
 import java.time.LocalDateTime
 
 class Article private constructor(
@@ -26,6 +27,12 @@ class Article private constructor(
         private set
 //    var tags: Set<Tag> todo tags
 
+    val latestCommit: ArticleCommit
+        get() = history.last()
+
+    /**
+     * 작업중인 임시 데이터를 스테이징한다.
+     */
     fun staging(
         title: ArticleTitle?,
         content: ArticleContent?,
@@ -33,13 +40,15 @@ class Article private constructor(
         categoryId: CategoryId?,
     ) {
         this.stagingSnapShot =
-            ArticleStagingSnapShot.capture(
-                id = this.id,
-                title = title,
-                content = content,
-                thumbnailUrl = thumbnailUrl,
-                categoryId = categoryId,
-            )
+            ArticleStagingSnapShot
+                .capture(
+                    id = StagingSnapShotId(IdManager.generate()),
+                    articleId = this.id,
+                    title = title,
+                    content = content,
+                    thumbnailUrl = thumbnailUrl,
+                    categoryId = categoryId,
+                )
     }
 
     /**
@@ -65,22 +74,24 @@ class Article private constructor(
             this.head = it.id
             this.checkout = it.id
             clearSnapShot()
-        }.also {
             this.registerEvent(ArticleCommitted(articleId = this.id.value, articleCommitId = it.id.value))
-        }
-    }
-
-    fun getContentAtCommitVer(commitId: ArticleCommitVersion = history.last().id): ArticleContent {
-        return history.fold(ArticleContent("")) { acc, articleCommit ->
-            if (articleCommit.id <= commitId) {
-                return@fold acc.applyDelta(articleCommit.delta)
-            }
-            return@fold acc
         }
     }
 
     private fun clearSnapShot() {
         this.stagingSnapShot = null
+    }
+
+    /**
+     * 특정 커밋시점으로 컨텐츠를 재현한다
+     */
+    fun getContentAtCommitVer(commitId: ArticleCommitVersion = history.last().id): ArticleContent {
+        return history.fold(ArticleContent("")) { currentContent, commit ->
+            if (commit.id <= commitId) {
+                return@fold currentContent.apply(commit)
+            }
+            return@fold currentContent
+        }
     }
 
     companion object {

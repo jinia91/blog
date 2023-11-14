@@ -1,6 +1,6 @@
 package kr.co.jiniaslog.shared.core.domain
 
-interface Repository<T : AggregateRoot<I>, I : ValueObjectId> {
+interface Repository<T : AggregateRoot<I>, I : ValueObject> {
     suspend fun nextId(): I
 
     suspend fun findById(
