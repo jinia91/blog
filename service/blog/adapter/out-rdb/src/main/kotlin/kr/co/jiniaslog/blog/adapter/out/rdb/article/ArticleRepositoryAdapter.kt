@@ -14,7 +14,6 @@ import kr.co.jiniaslog.shared.core.domain.IdManager
 internal class ArticleRepositoryAdapter(
     private val articleRepo: ArticleRdbRepository,
     private val commitRepo: ArticleCommitRdbRepository,
-    private val stagingRepo: ArticleStagingSnapShotRdbRepository,
     private val articleFactory: ArticleFactory,
 ) : ArticleRepository {
     override suspend fun nextId(): ArticleId {
@@ -45,6 +44,7 @@ internal class ArticleRepositoryAdapter(
                 FetchMode.NONE -> {
                     articleFactory.assemble(articlePM = it)
                 }
+
                 FetchMode.ALL -> {
                     fetchedAllArticle(it)
                 }
@@ -57,18 +57,15 @@ internal class ArticleRepositoryAdapter(
     // todo : join 쿼리로 최적화
     private suspend fun fetchedAllArticle(article: ArticlePM): Article {
         val commits = commitRepo.findAllByArticleId(article.id).map { it.toEntity() }.toMutableList()
-        val stagingSnapShot = stagingRepo.findById(article.id)?.toEntity()
         return articleFactory.assemble(
             articlePM = article,
             commits = commits,
-            stagingSnapShot = stagingSnapShot,
         )
     }
 
     override suspend fun deleteById(id: ArticleId) {
         articleRepo.deleteById(id.value)
         commitRepo.deleteAllByArticleId(id.value)
-        stagingRepo.deleteById(id.value)
     }
 
     override suspend fun save(entity: Article): Article {
@@ -81,15 +78,10 @@ internal class ArticleRepositoryAdapter(
                         it
                     }
                 }.toMutableList()
-        val stagingRepoEntity =
-            entity.stagingSnapShot?.let {
-                stagingRepo.save(it.toPM()).toEntity()
-            }
         val refreshedArticlePm = articleRepo.save(entity.toPM())
         return articleFactory.assemble(
             articlePM = refreshedArticlePm,
             commits = persistedCommitEntity,
-            stagingSnapShot = stagingRepoEntity,
         )
     }
 }

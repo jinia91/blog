@@ -1,5 +1,6 @@
 package kr.co.jiniaslog.blog.usecase
 
+import kotlinx.coroutines.currentCoroutineContext
 import kr.co.jiniaslog.blog.domain.article.Article
 import kr.co.jiniaslog.blog.domain.article.ArticleRepository
 import kr.co.jiniaslog.blog.usecase.ArticleCommitCommandUseCase.ArticleCommitCommand
@@ -11,6 +12,8 @@ import kr.co.jiniaslog.blog.usecase.ArticleStagingCommandUseCase.StagingInfo
 import kr.co.jiniaslog.shared.core.annotation.UseCaseInteractor
 import kr.co.jiniaslog.shared.core.domain.FetchMode
 import kr.co.jiniaslog.shared.core.domain.TransactionHandler
+
+private val log = mu.KotlinLogging.logger {}
 
 @UseCaseInteractor
 internal class ArticleUseCasesImpl(
@@ -31,6 +34,15 @@ internal class ArticleUseCasesImpl(
                 articleRepository.save(article)
             }
 
+            val context = currentCoroutineContext()
+            log.info {
+                """"
+                |$context
+                """.trimMargin()
+            }
+
+            log.info { "article : $article" }
+
             return InitialInfo(
                 articleId = article.id,
             )
@@ -48,12 +60,12 @@ internal class ArticleUseCasesImpl(
                 articleRepository.findById(command.articleId, mode = FetchMode.NONE)
                     ?: throw IllegalArgumentException("article not found")
 
-            article.staging(
-                title = title,
-                content = content,
-                thumbnailUrl = thumbnailUrl,
-                categoryId = categoryId,
-            )
+//            article.staging(
+//                title = title,
+//                content = content,
+//                thumbnailUrl = thumbnailUrl,
+//                categoryId = categoryId,
+//            )
 
             transactionHandler.runInRepeatableReadTransaction {
                 articleRepository.save(article)

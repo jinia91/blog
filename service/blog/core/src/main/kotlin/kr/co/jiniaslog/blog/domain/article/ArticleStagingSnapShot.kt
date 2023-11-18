@@ -1,7 +1,7 @@
 package kr.co.jiniaslog.blog.domain.article
 
 import kr.co.jiniaslog.blog.domain.category.CategoryId
-import kr.co.jiniaslog.shared.core.domain.DomainEntity
+import kr.co.jiniaslog.shared.core.domain.AggregateRoot
 import java.time.LocalDateTime
 
 class ArticleStagingSnapShot(
@@ -11,7 +11,7 @@ class ArticleStagingSnapShot(
     val content: ArticleContent,
     val thumbnailUrl: ArticleThumbnailUrl? = null,
     val categoryId: CategoryId? = null,
-) : DomainEntity<StagingSnapShotId>() {
+) : AggregateRoot<StagingSnapShotId>() {
     companion object {
         fun capture(
             id: StagingSnapShotId,

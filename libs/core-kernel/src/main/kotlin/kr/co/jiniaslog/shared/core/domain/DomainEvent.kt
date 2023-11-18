@@ -6,7 +6,7 @@ import java.util.UUID.randomUUID
 
 abstract class DomainEvent(
     val eventVersion: Int,
-    val occurredAt: LocalDateTime,
+    val occurredAt: LocalDateTime = LocalDateTime.now(),
 ) : Serializable {
     val id: String = randomUUID().toString()
 

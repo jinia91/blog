@@ -21,6 +21,7 @@ include(
     "libs:messaging-handler-generator",
     "libs:rdb-kernel",
     "libs:http-kernel",
+    "libs:messaging-kernel",
 
     // 서비스
     "service:blog:core",

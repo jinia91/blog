@@ -21,7 +21,6 @@ class ArticleFactory {
             head = ArticleCommitVersion(articlePM.head),
             checkout = ArticleCommitVersion(articlePM.checkout),
             articleHistory = commits,
-            stagingSnapShot = stagingSnapShot,
             createdAt = articlePM.createdAt,
             updatedAt = articlePM.updatedAt,
         )

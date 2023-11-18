@@ -13,10 +13,6 @@ class ArticlePM(
     val writerId: Long,
     var head: Long,
     var checkout: Long,
-    val stagingTitle: String?,
-    val stagingContent: String?,
-    val stagingThumbnailUrl: String?,
-    val stagingCategoryId: Long?,
     override var createdAt: LocalDateTime?,
     override var updatedAt: LocalDateTime?,
 ) : AbstractPM()
@@ -27,10 +23,6 @@ internal fun Article.toPM() =
         writerId = this.writerId.value,
         head = this.head.value,
         checkout = this.checkout.value,
-        stagingTitle = this.stagingSnapShot?.title?.value,
-        stagingContent = this.stagingSnapShot?.content?.value,
-        stagingThumbnailUrl = this.stagingSnapShot?.thumbnailUrl?.value,
-        stagingCategoryId = this.stagingSnapShot?.categoryId?.value,
         createdAt = this.createdAt,
         updatedAt = this.updatedAt,
     )

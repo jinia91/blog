@@ -16,8 +16,8 @@ internal class DomainEventChannelGenerator : BeanDefinitionRegistryPostProcessor
     override fun postProcessBeanFactory(beanFactory: ConfigurableListableBeanFactory) {}
 
     override fun postProcessBeanDefinitionRegistry(registry: BeanDefinitionRegistry) {
-        val findAnnotatedEventClasses = DomainEventScanner.findEventClasses(ROOT_PACKAGE)
-        findAnnotatedEventClasses.forEach { clazz ->
+        val findEventClasses = DomainEventScanner.findEventClasses(ROOT_PACKAGE)
+        findEventClasses.forEach { clazz ->
             val pubsubChannelDefinition = createBeanDefinitionBuilder()
             val channelName = generateChannelBeanName(clazz)
             registry.registerBeanDefinition(channelName, pubsubChannelDefinition.beanDefinition)

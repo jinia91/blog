@@ -6,10 +6,10 @@ import kr.co.jiniaslog.shared.core.domain.DomainEventPublisher
 import kr.co.jiniaslog.shared.core.domain.EventContextManager
 import kr.co.jiniaslog.shared.core.domain.TransactionHandler
 import org.springframework.stereotype.Component
-import org.springframework.transaction.annotation.Isolation
-import org.springframework.transaction.annotation.Transactional
 import org.springframework.transaction.reactive.TransactionalOperator
 import org.springframework.transaction.reactive.executeAndAwait
+
+private val log = mu.KotlinLogging.logger { }
 
 @Component
 class TransactionAndEventPublishHandler(
@@ -17,7 +17,6 @@ class TransactionAndEventPublishHandler(
     private val domainEventPublisher: DomainEventPublisher,
     private val domainContextManager: EventContextManager,
 ) : TransactionHandler {
-    @Transactional(isolation = Isolation.REPEATABLE_READ)
     override suspend fun <T> runInRepeatableReadTransaction(supplier: suspend () -> T): T {
         return coroutineScope {
             val t =

@@ -1,6 +1,5 @@
-package kr.co.jiniaslog.infra.event
+package kr.co.jiniaslog.shared.core.domain
 
-import kr.co.jiniaslog.shared.core.domain.DomainEvent
 import java.util.concurrent.ConcurrentLinkedQueue
 
 data class DomainContext(

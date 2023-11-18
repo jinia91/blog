@@ -1,9 +1,12 @@
 package kr.co.jiniaslog.blog.adapter.inbound.http
 
+import kotlinx.coroutines.currentCoroutineContext
 import kr.co.jiniaslog.blog.usecase.ArticleUseCases
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RestController
+
+private val log = mu.KotlinLogging.logger { }
 
 @RestController
 class ArticleResources(
@@ -13,6 +16,13 @@ class ArticleResources(
     suspend fun init(
         @RequestBody request: ArticleInitRequest,
     ): ArticleInitResponse {
+        val context = currentCoroutineContext()
+        log.info {
+            """"
+                |$context
+            """.trimMargin()
+        }
+
         return articleUseCases
             .init(request.toCommand())
             .toResponse()

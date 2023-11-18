@@ -4,7 +4,6 @@ import kr.co.jiniaslog.blog.domain.category.CategoryId
 import kr.co.jiniaslog.message.nexus.event.ArticleCommitted
 import kr.co.jiniaslog.message.nexus.event.ArticleCreated
 import kr.co.jiniaslog.shared.core.domain.AggregateRoot
-import kr.co.jiniaslog.shared.core.domain.IdManager
 import java.time.LocalDateTime
 
 class Article private constructor(
@@ -13,7 +12,6 @@ class Article private constructor(
     articleHistory: MutableList<ArticleCommit>,
     head: ArticleCommitVersion,
     checkout: ArticleCommitVersion,
-    stagingSnapShot: ArticleStagingSnapShot? = null,
 ) : AggregateRoot<ArticleId>() {
     override val id: ArticleId = id
     val writerId: WriterId = writerId
@@ -23,33 +21,9 @@ class Article private constructor(
         private set
     var checkout: ArticleCommitVersion = checkout
         private set
-    var stagingSnapShot: ArticleStagingSnapShot? = stagingSnapShot
-        private set
-//    var tags: Set<Tag> todo tags
 
     val latestCommit: ArticleCommit
         get() = history.last()
-
-    /**
-     * 작업중인 임시 데이터를 스테이징한다.
-     */
-    fun staging(
-        title: ArticleTitle?,
-        content: ArticleContent?,
-        thumbnailUrl: ArticleThumbnailUrl?,
-        categoryId: CategoryId?,
-    ) {
-        this.stagingSnapShot =
-            ArticleStagingSnapShot
-                .capture(
-                    id = StagingSnapShotId(IdManager.generate()),
-                    articleId = this.id,
-                    title = title,
-                    content = content,
-                    thumbnailUrl = thumbnailUrl,
-                    categoryId = categoryId,
-                )
-    }
 
     /**
      * 가장 마지막 커밋의 델타를 기준으로 시도한 커밋의 델타를 계산하여 커밋객체를 생성한다.
@@ -73,13 +47,8 @@ class Article private constructor(
             this.history.add(it)
             this.head = it.id
             this.checkout = it.id
-            clearSnapShot()
             this.registerEvent(ArticleCommitted(articleId = this.id.value, articleCommitId = it.id.value))
         }
-    }
-
-    private fun clearSnapShot() {
-        this.stagingSnapShot = null
     }
 
     /**
@@ -121,7 +90,6 @@ class Article private constructor(
             articleHistory: MutableList<ArticleCommit>,
             head: ArticleCommitVersion,
             checkout: ArticleCommitVersion,
-            stagingSnapShot: ArticleStagingSnapShot?,
             createdAt: LocalDateTime?,
             updatedAt: LocalDateTime?,
         ): Article {
@@ -131,7 +99,6 @@ class Article private constructor(
                 articleHistory = articleHistory,
                 head = head,
                 checkout = checkout,
-                stagingSnapShot = stagingSnapShot,
             ).apply {
                 this.createdAt = createdAt
                 this.updatedAt = updatedAt
