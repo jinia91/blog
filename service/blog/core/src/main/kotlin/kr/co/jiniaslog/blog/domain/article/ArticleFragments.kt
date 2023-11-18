@@ -58,6 +58,10 @@ value class ArticleContent(val value: String) : ValueObject {
         validate()
     }
 
+    operator fun plus(other: ArticleContent): ArticleContent {
+        return ArticleContent(value + other.value)
+    }
+
     override fun validate() {
         require(value.length in 0..10000) { "article content must be between 0 and 10000 characters" }
     }
@@ -68,8 +72,8 @@ value class ArticleContent(val value: String) : ValueObject {
             .let { ArticleContentDelta.build(it) }
     }
 
-    fun apply(commit: ArticleCommit): ArticleContent {
-        val diffs = deltaUtil.diffFromDelta(value, commit.delta.getString())
+    fun apply(delta: ArticleContentDelta): ArticleContent {
+        val diffs = deltaUtil.diffFromDelta(value, delta.getString())
         val patches = deltaUtil.patchMake(diffs)
         return ArticleContent(deltaUtil.patchApply(patches, value)[0].toString())
     }

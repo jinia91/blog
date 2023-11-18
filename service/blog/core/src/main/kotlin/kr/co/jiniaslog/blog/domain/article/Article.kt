@@ -29,10 +29,24 @@ class Article private constructor(
     val latestCommit: ArticleCommit
         get() = history.last()
 
+    val title: ArticleTitle?
+        get() = history.firstOrNull { it.id == head }?.title
+
+    val thumbnailUrl: ArticleThumbnailUrl?
+        get() = history.firstOrNull { it.id == head }?.thumbnailUrl
+
+    val categoryId: CategoryId?
+        get() = history.firstOrNull { it.id == head }?.categoryId
+
+    val content: ArticleContent
+        get() = getContentByCommitVer()
+
     /**
      * 가장 마지막 커밋의 델타를 기준으로 시도한 커밋의 델타를 계산하여 커밋객체를 생성한다.
      *
      * 커밋시 기존의 스테이징 스냅샷은 지운다.
+     *
+     * 커밋시 head, checkout은 커밋한 커밋 버전으로 변경한다.
      */
     suspend fun commit(
         title: ArticleTitle?,
@@ -40,7 +54,7 @@ class Article private constructor(
         thumbnailUrl: ArticleThumbnailUrl?,
         categoryId: CategoryId?,
     ) {
-        val delta = getContentAtCommitVer().calculateDelta(newContent)
+        val delta = getContentByCommitVer().calculateDelta(newContent)
 
         ArticleCommit.commit(
             title = title,
@@ -58,15 +72,18 @@ class Article private constructor(
     /**
      * 특정 커밋시점으로 컨텐츠를 재현한다
      */
-    fun getContentAtCommitVer(commitId: ArticleCommitVersion = history.last().id): ArticleContent {
+    fun getContentByCommitVer(commitId: ArticleCommitVersion = history.last().id): ArticleContent {
         return history.fold(ArticleContent("")) { currentContent, commit ->
             if (commit.id <= commitId) {
-                return@fold currentContent.apply(commit)
+                return@fold currentContent.apply(commit.delta)
             }
             return@fold currentContent
         }
     }
 
+    /**
+     * 임시 저장할 데이터를 스냅샷으로 저장한다
+     */
     fun staging(
         title: ArticleTitle?,
         content: ArticleContent,
