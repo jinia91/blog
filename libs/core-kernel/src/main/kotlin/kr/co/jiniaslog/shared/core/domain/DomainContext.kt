@@ -1,5 +1,6 @@
 package kr.co.jiniaslog.shared.core.domain
 
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.util.concurrent.ConcurrentLinkedQueue
 import kotlin.coroutines.AbstractCoroutineContextElement
@@ -30,7 +31,7 @@ data class DomainContext(
 }
 
 suspend fun withDomainContext(block: suspend () -> Unit) {
-    withContext(DomainContext()) {
+    withContext(DomainContext() + Dispatchers.Default) {
         block()
     }
 }

@@ -1,5 +1,6 @@
 package kr.co.jiniaslog.blog.domain.article
 
+import io.kotest.matchers.shouldBe
 import kr.co.jiniaslog.blog.CustomBehaviorSpec
 import kr.co.jiniaslog.blog.domain.category.CategoryId
 import kr.co.jiniaslog.message.nexus.event.ArticleCommitted
@@ -42,6 +43,11 @@ class ArticleTests : CustomBehaviorSpec() {
                     Then("정상적인 커밋이 된다") {
                         assertThat(sut.history.size).isEqualTo(2)
                         assertThat(sut.stagingSnapShot).isNull()
+                        sut.title shouldBe title
+                        sut.content shouldBe content
+                        sut.thumbnailUrl shouldBe thumbnailUrl
+                        sut.categoryId shouldBe categoryId
+                        sut.writerId shouldBe WriterId(1)
                     }
 
                     Then("head와 checkout은 갱신된다") {
