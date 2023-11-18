@@ -57,7 +57,7 @@ interface ArticleStagingCommandUseCase {
     data class ArticleStagingCommand(
         val articleId: ArticleId,
         val title: ArticleTitle?,
-        val content: ArticleContent?,
+        val content: ArticleContent,
         val categoryId: CategoryId?,
         val thumbnailUrl: ArticleThumbnailUrl?,
     )

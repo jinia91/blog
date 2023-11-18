@@ -14,3 +14,9 @@ data class ArticleCommitted(
     val articleId: Long,
     val articleCommitId: Long,
 ) : DomainEvent(eventVersion = 1)
+
+@AbstractChannelHandlerBuilder
+data class ArticleStagingSnapped(
+    val articleId: Long,
+    val articleStagingId: Long,
+) : DomainEvent(eventVersion = 1)

@@ -10,5 +10,5 @@ abstract class AggregateRoot<out T : ValueObject> : DomainEntity<T>() {
 
     suspend fun clearEvents() = eventManager.clear()
 
-    suspend fun getEventManager() = eventManager.toListAndClear()
+    suspend fun getEvents() = eventManager.toListAndClear()
 }

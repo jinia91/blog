@@ -4,7 +4,7 @@ import kr.co.jiniaslog.blog.domain.category.CategoryId
 import kr.co.jiniaslog.shared.core.domain.AggregateRoot
 import java.time.LocalDateTime
 
-class ArticleStagingSnapShot(
+class ArticleStagingSnapShot private constructor(
     override val id: StagingSnapShotId,
     val articleId: ArticleId,
     val title: ArticleTitle? = null,

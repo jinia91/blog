@@ -2,7 +2,7 @@ package kr.co.jiniaslog.blog.domain.article
 
 import kr.co.jiniaslog.blog.domain.category.CategoryId
 import kr.co.jiniaslog.shared.core.domain.DomainEntity
-import kr.co.jiniaslog.shared.core.domain.IdManager
+import kr.co.jiniaslog.shared.core.domain.IdUtils
 import java.time.LocalDateTime
 
 class ArticleCommit(
@@ -23,7 +23,7 @@ class ArticleCommit(
     companion object {
         fun initCommit(): ArticleCommit {
             return ArticleCommit(
-                id = ArticleCommitVersion(IdManager.generate()),
+                id = ArticleCommitVersion(IdUtils.generate()),
             )
         }
 
@@ -34,7 +34,7 @@ class ArticleCommit(
             categoryId: CategoryId?,
         ): ArticleCommit {
             return ArticleCommit(
-                id = ArticleCommitVersion(IdManager.generate()),
+                id = ArticleCommitVersion(IdUtils.generate()),
             ).apply {
                 this.title = title
                 this.delta = delta

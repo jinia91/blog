@@ -1,10 +1,13 @@
 package kr.co.jiniaslog.shared.core.domain
 
+import kotlinx.coroutines.withContext
 import java.util.concurrent.ConcurrentLinkedQueue
+import kotlin.coroutines.AbstractCoroutineContextElement
+import kotlin.coroutines.CoroutineContext
 
 data class DomainContext(
     private var events: ConcurrentLinkedQueue<DomainEvent> = ConcurrentLinkedQueue(),
-) {
+) : AbstractCoroutineContextElement(key) {
     fun add(event: DomainEvent) {
         events.add(event)
     }
@@ -22,6 +25,12 @@ data class DomainContext(
     }
 
     companion object {
-        const val DOMAIN_EVENT_KEY = "DomainContext"
+        val key = object : CoroutineContext.Key<DomainContext> {}
+    }
+}
+
+suspend fun withDomainContext(block: suspend () -> Unit) {
+    withContext(DomainContext()) {
+        block()
     }
 }

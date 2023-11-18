@@ -11,12 +11,6 @@ val infra = listOf(
     moduleBlocks.addAll(it)
 }
 
-val lib = listOf(
-    project(":libs:core-kernel"),
-).also {
-    moduleBlocks.addAll(it)
-}
-
 val blog = listOf(
     project(":service:blog:core"),
     project(":service:blog:adapter:out-rdb"),

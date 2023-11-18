@@ -60,7 +60,7 @@ data class ArticleStagingRequest(
         ArticleStagingCommand(
             articleId = ArticleId(articleId),
             title = title?.let { ArticleTitle(it) },
-            content = content?.let { ArticleContent(it) },
+            content = content?.let { ArticleContent(it) } ?: ArticleContent.EMPTY,
             thumbnailUrl = thumbnailUrl?.let { ArticleThumbnailUrl(it) },
             categoryId = categoryId?.let { CategoryId(it) },
         )

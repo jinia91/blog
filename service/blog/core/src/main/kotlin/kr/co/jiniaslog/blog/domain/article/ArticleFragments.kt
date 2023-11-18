@@ -59,7 +59,7 @@ value class ArticleContent(val value: String) : ValueObject {
     }
 
     override fun validate() {
-        require(value.length in 0..10000) { "article content must be between 1 and 10000 characters" }
+        require(value.length in 0..10000) { "article content must be between 0 and 10000 characters" }
     }
 
     fun calculateDelta(newContent: ArticleContent): ArticleContentDelta {

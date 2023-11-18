@@ -35,13 +35,6 @@ internal class ArticleUseCasesImpl(
             }
 
             val context = currentCoroutineContext()
-            log.info {
-                """"
-                |$context
-                """.trimMargin()
-            }
-
-            log.info { "article : $article" }
 
             return InitialInfo(
                 articleId = article.id,
@@ -60,12 +53,12 @@ internal class ArticleUseCasesImpl(
                 articleRepository.findById(command.articleId, mode = FetchMode.NONE)
                     ?: throw IllegalArgumentException("article not found")
 
-//            article.staging(
-//                title = title,
-//                content = content,
-//                thumbnailUrl = thumbnailUrl,
-//                categoryId = categoryId,
-//            )
+            article.staging(
+                title = title,
+                content = content,
+                thumbnailUrl = thumbnailUrl,
+                categoryId = categoryId,
+            )
 
             transactionHandler.runInRepeatableReadTransaction {
                 articleRepository.save(article)

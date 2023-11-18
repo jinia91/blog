@@ -4,12 +4,14 @@ import kr.co.jiniaslog.blog.domain.category.CategoryId
 import kr.co.jiniaslog.message.nexus.event.ArticleCommitted
 import kr.co.jiniaslog.message.nexus.event.ArticleCreated
 import kr.co.jiniaslog.shared.core.domain.AggregateRoot
+import kr.co.jiniaslog.shared.core.domain.IdUtils
 import java.time.LocalDateTime
 
 class Article private constructor(
     id: ArticleId,
     writerId: WriterId,
     articleHistory: MutableList<ArticleCommit>,
+    stagingSnapShot: ArticleStagingSnapShot? = null,
     head: ArticleCommitVersion,
     checkout: ArticleCommitVersion,
 ) : AggregateRoot<ArticleId>() {
@@ -20,6 +22,8 @@ class Article private constructor(
     var head: ArticleCommitVersion = head
         private set
     var checkout: ArticleCommitVersion = checkout
+        private set
+    var stagingSnapShot: ArticleStagingSnapShot? = stagingSnapShot
         private set
 
     val latestCommit: ArticleCommit
@@ -63,6 +67,23 @@ class Article private constructor(
         }
     }
 
+    fun staging(
+        title: ArticleTitle?,
+        content: ArticleContent,
+        thumbnailUrl: ArticleThumbnailUrl?,
+        categoryId: CategoryId?,
+    ) {
+        this.stagingSnapShot =
+            ArticleStagingSnapShot.capture(
+                id = StagingSnapShotId(IdUtils.generate()),
+                articleId = this.id,
+                title = title,
+                content = content,
+                thumbnailUrl = thumbnailUrl,
+                categoryId = categoryId,
+            )
+    }
+
     companion object {
         suspend fun init(
             id: ArticleId,
@@ -89,6 +110,7 @@ class Article private constructor(
             writerId: WriterId,
             articleHistory: MutableList<ArticleCommit>,
             head: ArticleCommitVersion,
+            stagingSnapShot: ArticleStagingSnapShot?,
             checkout: ArticleCommitVersion,
             createdAt: LocalDateTime?,
             updatedAt: LocalDateTime?,
@@ -99,9 +121,12 @@ class Article private constructor(
                 articleHistory = articleHistory,
                 head = head,
                 checkout = checkout,
+                stagingSnapShot = stagingSnapShot,
             ).apply {
                 this.createdAt = createdAt
                 this.updatedAt = updatedAt
+            }.also {
+                check(it.history.isNotEmpty()) { "article history must not be empty" }
             }
         }
     }

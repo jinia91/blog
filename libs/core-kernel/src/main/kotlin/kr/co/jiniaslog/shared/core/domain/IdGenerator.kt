@@ -4,7 +4,7 @@ interface IdGenerator {
     fun generate(): Long
 }
 
-object IdManager {
+object IdUtils {
     lateinit var idGenerator: IdGenerator
 
     fun generate(): Long {

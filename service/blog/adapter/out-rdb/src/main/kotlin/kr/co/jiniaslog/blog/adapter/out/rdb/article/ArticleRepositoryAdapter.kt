@@ -8,16 +8,17 @@ import kr.co.jiniaslog.blog.domain.article.ArticleRepository
 import kr.co.jiniaslog.shared.adapter.out.rdb.isNew
 import kr.co.jiniaslog.shared.core.annotation.PersistenceAdapter
 import kr.co.jiniaslog.shared.core.domain.FetchMode
-import kr.co.jiniaslog.shared.core.domain.IdManager
+import kr.co.jiniaslog.shared.core.domain.IdUtils
 
 @PersistenceAdapter
 internal class ArticleRepositoryAdapter(
     private val articleRepo: ArticleRdbRepository,
+    private val stagingRepo: ArticleStagingSnapShotRdbRepository,
     private val commitRepo: ArticleCommitRdbRepository,
     private val articleFactory: ArticleFactory,
 ) : ArticleRepository {
     override suspend fun nextId(): ArticleId {
-        IdManager.generate().let {
+        IdUtils.generate().let {
             return ArticleId(it)
         }
     }
@@ -57,14 +58,17 @@ internal class ArticleRepositoryAdapter(
     // todo : join 쿼리로 최적화
     private suspend fun fetchedAllArticle(article: ArticlePM): Article {
         val commits = commitRepo.findAllByArticleId(article.id).map { it.toEntity() }.toMutableList()
+        val staging = stagingRepo.findByArticleId(article.id)?.toEntity()
         return articleFactory.assemble(
             articlePM = article,
             commits = commits,
+            stagingSnapShot = staging,
         )
     }
 
     override suspend fun deleteById(id: ArticleId) {
         articleRepo.deleteById(id.value)
+        stagingRepo.deleteByArticleId(id.value)
         commitRepo.deleteAllByArticleId(id.value)
     }
 
@@ -78,10 +82,15 @@ internal class ArticleRepositoryAdapter(
                         it
                     }
                 }.toMutableList()
+        val stagedEntity =
+            entity.stagingSnapShot?.let {
+                stagingRepo.save(it.toPM()).toEntity()
+            }
         val refreshedArticlePm = articleRepo.save(entity.toPM())
         return articleFactory.assemble(
             articlePM = refreshedArticlePm,
             commits = persistedCommitEntity,
+            stagingSnapShot = stagedEntity,
         )
     }
 }
