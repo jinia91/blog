@@ -23,6 +23,7 @@ class TransactionAndEventPublishHandler(
                 transactionalOperator.executeAndAwait {
                     supplier.invoke()
                 }
+            log.debug { "transactionalOperator.executeAndAwait : $t" }
             launch {
                 domainContextManager.getDomainEventsAndClear()
                     .forEach { launch { domainEventPublisher.publish(it) } }

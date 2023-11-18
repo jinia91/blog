@@ -4,13 +4,13 @@ import io.kotest.core.test.TestCase
 import io.kotest.core.test.TestResult
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
-import kr.co.jiniaslog.blog.CustomBehaviorSpec
 import kr.co.jiniaslog.blog.domain.article.Article
 import kr.co.jiniaslog.blog.domain.article.ArticleContent
 import kr.co.jiniaslog.blog.domain.article.ArticleId
 import kr.co.jiniaslog.blog.domain.article.ArticleRepository
 import kr.co.jiniaslog.blog.domain.article.ArticleTitle
 import kr.co.jiniaslog.blog.domain.article.WriterId
+import kr.co.jiniaslog.shared.CustomBehaviorSpec
 import kr.co.jiniaslog.shared.core.domain.FetchMode
 import kr.co.jiniaslog.shared.core.domain.IdUtils
 

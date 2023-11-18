@@ -5,7 +5,7 @@ import kr.co.jiniaslog.shared.core.domain.DomainEntity
 import kr.co.jiniaslog.shared.core.domain.IdUtils
 import java.time.LocalDateTime
 
-class ArticleCommit(
+class ArticleCommit private constructor(
     id: ArticleCommitVersion,
 ) : DomainEntity<ArticleCommitVersion>() {
     override val id: ArticleCommitVersion = id

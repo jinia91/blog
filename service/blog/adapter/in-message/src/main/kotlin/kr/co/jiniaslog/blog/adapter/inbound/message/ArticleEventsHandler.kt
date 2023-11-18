@@ -7,7 +7,7 @@ import kr.co.jiniaslog.message.nexus.event.ArticleCreated
 import kr.co.jiniaslog.message.nexus.event.ArticleCreatedEventHandleable
 import kr.co.jiniaslog.message.nexus.event.ArticleStagingSnapped
 import kr.co.jiniaslog.message.nexus.event.ArticleStagingSnappedEventHandleable
-import kr.co.jiniaslog.shared.adapter.inbound.messaging.withDomainContext
+import kr.co.jiniaslog.shared.core.domain.withDomainContext
 import org.springframework.integration.annotation.ServiceActivator
 import org.springframework.stereotype.Controller
 

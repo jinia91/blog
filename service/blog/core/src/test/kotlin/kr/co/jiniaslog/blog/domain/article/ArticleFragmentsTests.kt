@@ -2,7 +2,7 @@ package kr.co.jiniaslog.blog.domain.article
 
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.shouldBe
-import kr.co.jiniaslog.blog.CustomBehaviorSpec
+import kr.co.jiniaslog.shared.CustomBehaviorSpec
 import org.assertj.core.api.Assertions.assertThat
 
 class ArticleFragmentsTests : CustomBehaviorSpec() {

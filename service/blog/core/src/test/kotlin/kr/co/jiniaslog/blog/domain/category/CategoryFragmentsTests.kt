@@ -1,7 +1,8 @@
 package kr.co.jiniaslog.blog.domain.category
 
 import io.kotest.assertions.throwables.shouldThrow
-import kr.co.jiniaslog.blog.CustomBehaviorSpec
+import io.kotest.matchers.shouldBe
+import kr.co.jiniaslog.shared.CustomBehaviorSpec
 
 class CategoryFragmentsTests : CustomBehaviorSpec() {
     init {
@@ -30,8 +31,9 @@ class CategoryFragmentsTests : CustomBehaviorSpec() {
             And("categoryName의 값이 1자 이상이면") {
                 val value = "name"
                 When("생성시") {
+                    val categoryName = CategoryName(value)
                     Then("생성된다") {
-                        CategoryName(value)
+                        categoryName.value shouldBe value
                     }
                 }
             }

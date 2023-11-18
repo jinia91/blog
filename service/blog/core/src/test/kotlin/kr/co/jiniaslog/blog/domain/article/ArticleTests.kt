@@ -1,15 +1,39 @@
 package kr.co.jiniaslog.blog.domain.article
 
 import io.kotest.matchers.shouldBe
-import kr.co.jiniaslog.blog.CustomBehaviorSpec
 import kr.co.jiniaslog.blog.domain.category.CategoryId
 import kr.co.jiniaslog.message.nexus.event.ArticleCommitted
+import kr.co.jiniaslog.shared.CustomBehaviorSpec
 import org.assertj.core.api.Assertions.assertThat
 import java.time.LocalDateTime
 import kotlin.random.Random
 
 class ArticleTests : CustomBehaviorSpec() {
     init {
+        Given("유효한 아티클 아이디와 작성자 아이디가 있고") {
+            val articleId = ArticleId(Random.nextLong(1, 100))
+            val writerId = WriterId(Random.nextLong(1, 100))
+            When("아티클을 생성하면") {
+                Article.init(
+                    id = articleId,
+                    writerId = writerId,
+                )
+                Then("정상적으로 생성된다") {
+                    val sut =
+                        Article.init(
+                            id = articleId,
+                            writerId = writerId,
+                        )
+                    assertThat(sut.id).isEqualTo(articleId)
+                    assertThat(sut.writerId).isEqualTo(writerId)
+                    assertThat(sut.history.size).isEqualTo(1)
+                    assertThat(sut.stagingSnapShot).isNull()
+                    assertThat(sut.head).isEqualTo(sut.latestCommit.id)
+                    assertThat(sut.checkout).isEqualTo(sut.latestCommit.id)
+                }
+            }
+        }
+
         Given("유효한 기본 아티클이 있고") {
 
             val sut =

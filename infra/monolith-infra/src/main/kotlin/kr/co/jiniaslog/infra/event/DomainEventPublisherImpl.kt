@@ -14,7 +14,7 @@ internal class DomainEventPublisherImpl(
     private val applicationContext: ApplicationContext,
 ) : DomainEventPublisher {
     override suspend fun publish(event: DomainEvent) {
-        log.info { "publish event : $event" }
+        log.debug { "publish event : $event" }
         val message =
             MessageBuilder.withPayload(event)
                 .setHeader(DomainEvent.EVENT_ID, event.id)

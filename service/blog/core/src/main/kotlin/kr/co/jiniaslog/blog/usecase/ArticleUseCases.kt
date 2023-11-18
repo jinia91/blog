@@ -11,7 +11,8 @@ import kr.co.jiniaslog.blog.domain.category.CategoryId
 interface ArticleUseCases :
     ArticleInitCommandUseCase,
     ArticleCommitCommandUseCase,
-    ArticleStagingCommandUseCase
+    ArticleStagingCommandUseCase,
+    ArticleDeleteCommandUseCase
 
 /**
  * 최초의 아티클을 생성하고 최초 커밋한다.
@@ -64,5 +65,20 @@ interface ArticleStagingCommandUseCase {
 
     data class StagingInfo(
         val articleId: ArticleId,
+    )
+}
+
+/**
+ * 아티클을 삭제한다
+ */
+interface ArticleDeleteCommandUseCase {
+    suspend fun delete(command: ArticleDeleteCommand): DeleteInfo
+
+    data class ArticleDeleteCommand(
+        val articleId: ArticleId,
+    )
+
+    data class DeleteInfo(
+        val result: Boolean,
     )
 }

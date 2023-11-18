@@ -1,10 +1,11 @@
 package kr.co.jiniaslog.blog.usecase
 
-import kotlinx.coroutines.currentCoroutineContext
 import kr.co.jiniaslog.blog.domain.article.Article
 import kr.co.jiniaslog.blog.domain.article.ArticleRepository
 import kr.co.jiniaslog.blog.usecase.ArticleCommitCommandUseCase.ArticleCommitCommand
 import kr.co.jiniaslog.blog.usecase.ArticleCommitCommandUseCase.CommitInfo
+import kr.co.jiniaslog.blog.usecase.ArticleDeleteCommandUseCase.ArticleDeleteCommand
+import kr.co.jiniaslog.blog.usecase.ArticleDeleteCommandUseCase.DeleteInfo
 import kr.co.jiniaslog.blog.usecase.ArticleInitCommandUseCase.ArticleInitCommand
 import kr.co.jiniaslog.blog.usecase.ArticleInitCommandUseCase.InitialInfo
 import kr.co.jiniaslog.blog.usecase.ArticleStagingCommandUseCase.ArticleStagingCommand
@@ -22,6 +23,7 @@ internal class ArticleUseCasesImpl(
 ) : ArticleUseCases {
     override suspend fun init(command: ArticleInitCommand): InitialInfo =
         with(command) {
+            log.debug { "init article command: $command" }
             validate(command)
 
             val article =
@@ -34,11 +36,11 @@ internal class ArticleUseCasesImpl(
                 articleRepository.save(article)
             }
 
-            val context = currentCoroutineContext()
-
             return InitialInfo(
                 articleId = article.id,
-            )
+            ).also {
+                log.debug { "init article success: $it" }
+            }
         }
 
     private fun validate(command: ArticleInitCommand) {
@@ -47,6 +49,7 @@ internal class ArticleUseCasesImpl(
 
     override suspend fun staging(command: ArticleStagingCommand): StagingInfo =
         with(command) {
+            log.debug { "staging article command: $command" }
             validate(command)
 
             val article =
@@ -66,7 +69,9 @@ internal class ArticleUseCasesImpl(
 
             return StagingInfo(
                 articleId = article.id,
-            )
+            ).also {
+                log.debug { "staging article success: $it" }
+            }
         }
 
     private fun validate(command: ArticleStagingCommand) {
@@ -99,6 +104,27 @@ internal class ArticleUseCasesImpl(
         }
 
     private fun validate(command: ArticleCommitCommand) {
+        // todo
+    }
+
+    override suspend fun delete(command: ArticleDeleteCommand): DeleteInfo =
+        with(command) {
+            validate(command)
+
+            val article =
+                articleRepository.findById(command.articleId, mode = FetchMode.ALL)
+                    ?: throw IllegalArgumentException("article not found")
+
+            article.delete()
+
+            transactionHandler.runInRepeatableReadTransaction {
+                articleRepository.deleteById(article.id)
+            }
+
+            return DeleteInfo(result = true)
+        }
+
+    private fun validate(command: ArticleDeleteCommand) {
         // todo
     }
 }

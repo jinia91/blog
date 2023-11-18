@@ -3,6 +3,7 @@ package kr.co.jiniaslog.blog.domain.article
 import kr.co.jiniaslog.blog.domain.category.CategoryId
 import kr.co.jiniaslog.message.nexus.event.ArticleCommitted
 import kr.co.jiniaslog.message.nexus.event.ArticleCreated
+import kr.co.jiniaslog.message.nexus.event.ArticleDeleted
 import kr.co.jiniaslog.shared.core.domain.AggregateRoot
 import kr.co.jiniaslog.shared.core.domain.IdUtils
 import java.time.LocalDateTime
@@ -99,6 +100,13 @@ class Article private constructor(
                 thumbnailUrl = thumbnailUrl,
                 categoryId = categoryId,
             )
+    }
+
+    /**
+     * Delete Event를 발행한다
+     */
+    suspend fun delete() {
+        this.registerEvent(ArticleDeleted(articleId = this.id.value))
     }
 
     companion object {

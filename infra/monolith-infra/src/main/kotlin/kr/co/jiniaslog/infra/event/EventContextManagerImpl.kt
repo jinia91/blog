@@ -8,6 +8,8 @@ import kr.co.jiniaslog.shared.core.domain.DomainEventPublisher
 import kr.co.jiniaslog.shared.core.domain.EventContextManager
 import kr.co.jiniaslog.shared.core.domain.EventManger
 
+private val log = mu.KotlinLogging.logger {}
+
 @CustomComponent
 internal class EventContextManagerImpl(
     private var eventPublisher: DomainEventPublisher,
@@ -18,7 +20,9 @@ internal class EventContextManagerImpl(
 
     override suspend fun add(event: DomainEvent) {
         val events = getContext()
-        events.add(event)
+        events.add(event).also {
+            log.debug { "currentDomainContext : $it" }
+        }
     }
 
     override suspend fun clear() {

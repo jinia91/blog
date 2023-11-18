@@ -4,6 +4,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
     kotlin("jvm")
     kotlin("plugin.allopen")
+    id("java-test-fixtures")
     id("org.jmailen.kotlinter")
     jacoco
 }
@@ -70,16 +71,8 @@ dependencies {
 }
 
 // jacoco setting
-
 jacoco {
     toolVersion = "0.8.7"
-}
-
-tasks.test {
-    extensions.configure(JacocoTaskExtension::class) {
-        setDestinationFile(file("$buildDir/jacoco/jacoco.exec"))
-    }
-    finalizedBy("jacocoTestReport")
 }
 
 tasks.jacocoTestReport {

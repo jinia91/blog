@@ -1,4 +1,4 @@
-package kr.co.jiniaslog.blog
+package kr.co.jiniaslog.shared
 
 import io.kotest.core.spec.IsolationMode
 import io.kotest.core.spec.style.BehaviorSpec
