@@ -124,17 +124,6 @@ value class ArticleThumbnailUrl(val value: String) : ValueObject {
 }
 
 @JvmInline
-value class WriterId(val value: Long) : ValueObject {
-    init {
-        validate()
-    }
-
-    override fun validate() {
-        require(value > 0) { "user id must be positive" }
-    }
-}
-
-@JvmInline
 value class StagingSnapShotId(val value: Long) : ValueObject {
     init {
         validate()
@@ -143,4 +132,9 @@ value class StagingSnapShotId(val value: Long) : ValueObject {
     override fun validate() {
         require(value > 0) { "staging snapshot id must be positive" }
     }
+}
+
+enum class ArticleStatus {
+    DRAFT,
+    PUBLISHED,
 }

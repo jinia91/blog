@@ -8,10 +8,11 @@ import kr.co.jiniaslog.blog.usecase.ArticleDeleteCommandUseCase.ArticleDeleteCom
 import kr.co.jiniaslog.blog.usecase.ArticleDeleteCommandUseCase.DeleteInfo
 import kr.co.jiniaslog.blog.usecase.ArticleInitCommandUseCase.ArticleInitCommand
 import kr.co.jiniaslog.blog.usecase.ArticleInitCommandUseCase.InitialInfo
+import kr.co.jiniaslog.blog.usecase.ArticlePublishCommandUseCase.ArticlePublishCommand
+import kr.co.jiniaslog.blog.usecase.ArticlePublishCommandUseCase.PublishInfo
 import kr.co.jiniaslog.blog.usecase.ArticleStagingCommandUseCase.ArticleStagingCommand
 import kr.co.jiniaslog.blog.usecase.ArticleStagingCommandUseCase.StagingInfo
 import kr.co.jiniaslog.shared.core.annotation.UseCaseInteractor
-import kr.co.jiniaslog.shared.core.domain.FetchMode
 import kr.co.jiniaslog.shared.core.domain.TransactionHandler
 
 private val log = mu.KotlinLogging.logger {}
@@ -53,7 +54,7 @@ internal class ArticleUseCasesImpl(
             validate(command)
 
             val article =
-                articleRepository.findById(command.articleId, mode = FetchMode.NONE)
+                articleRepository.findById(command.articleId)
                     ?: throw IllegalArgumentException("article not found")
 
             article.staging(
@@ -83,7 +84,7 @@ internal class ArticleUseCasesImpl(
             validate(command)
 
             val article =
-                articleRepository.findById(command.articleId, mode = FetchMode.ALL)
+                articleRepository.findById(command.articleId)
                     ?: throw IllegalArgumentException("article not found")
 
             article.commit(
@@ -112,7 +113,7 @@ internal class ArticleUseCasesImpl(
             validate(command)
 
             val article =
-                articleRepository.findById(command.articleId, mode = FetchMode.ALL)
+                articleRepository.findById(command.articleId)
                     ?: throw IllegalArgumentException("article not found")
 
             article.delete()
@@ -125,6 +126,29 @@ internal class ArticleUseCasesImpl(
         }
 
     private fun validate(command: ArticleDeleteCommand) {
+        // todo
+    }
+
+    override suspend fun publish(command: ArticlePublishCommand): PublishInfo =
+        with(command) {
+            validate(command)
+
+            val article =
+                articleRepository.findById(command.articleId)
+                    ?: throw IllegalArgumentException("article not found")
+
+            article.publish(headVersion)
+
+            transactionHandler.runInRepeatableReadTransaction {
+                articleRepository.save(article)
+            }
+
+            return PublishInfo(
+                articleId = article.id,
+            )
+        }
+
+    private fun validate(command: ArticlePublishCommand) {
         // todo
     }
 }

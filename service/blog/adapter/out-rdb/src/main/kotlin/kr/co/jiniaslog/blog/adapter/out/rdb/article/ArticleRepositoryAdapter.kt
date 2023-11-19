@@ -7,7 +7,6 @@ import kr.co.jiniaslog.blog.domain.article.ArticleId
 import kr.co.jiniaslog.blog.domain.article.ArticleRepository
 import kr.co.jiniaslog.shared.adapter.out.rdb.isNew
 import kr.co.jiniaslog.shared.core.annotation.PersistenceAdapter
-import kr.co.jiniaslog.shared.core.domain.FetchMode
 import kr.co.jiniaslog.shared.core.domain.IdUtils
 
 @PersistenceAdapter
@@ -23,33 +22,14 @@ internal class ArticleRepositoryAdapter(
         }
     }
 
-    override suspend fun findById(
-        id: ArticleId,
-        mode: FetchMode,
-    ): Article? {
-        when (mode) {
-            FetchMode.NONE -> {
-                return articleRepo.findById(id.value)?.let { articleFactory.assemble(articlePM = it) }
-            }
-
-            FetchMode.ALL -> {
-                val article = articleRepo.findById(id.value) ?: return null
-                return fetchedAllArticle(article)
-            }
-        }
+    override suspend fun findById(id: ArticleId): Article? {
+        val article = articleRepo.findById(id.value) ?: return null
+        return fetchedAllArticle(article)
     }
 
-    override suspend fun findAll(mode: FetchMode): List<Article> {
+    override suspend fun findAll(): List<Article> {
         articleRepo.findAll().map {
-            when (mode) {
-                FetchMode.NONE -> {
-                    articleFactory.assemble(articlePM = it)
-                }
-
-                FetchMode.ALL -> {
-                    fetchedAllArticle(it)
-                }
-            }
+            fetchedAllArticle(it)
         }.let {
             return it.toList()
         }
@@ -85,6 +65,9 @@ internal class ArticleRepositoryAdapter(
         val stagedEntity =
             entity.stagingSnapShot?.let {
                 stagingRepo.save(it.toPM()).toEntity()
+            } ?: let {
+                stagingRepo.deleteByArticleId(entity.id.value)
+                null
             }
         val refreshedArticlePm = articleRepo.save(entity.toPM())
         return articleFactory.assemble(

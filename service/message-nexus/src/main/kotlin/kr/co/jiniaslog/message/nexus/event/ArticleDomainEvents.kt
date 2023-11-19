@@ -25,3 +25,9 @@ data class ArticleStagingSnapped(
 data class ArticleDeleted(
     val articleId: Long,
 ) : DomainEvent(eventVersion = 1)
+
+@AbstractChannelHandlerBuilder
+data class ArticlePublished(
+    val articleId: Long,
+    val articleCommitId: Long,
+) : DomainEvent(eventVersion = 1)

@@ -1,8 +1,12 @@
 package kr.co.jiniaslog.blog.domain.article
 
+import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.shouldBe
 import kr.co.jiniaslog.blog.domain.category.CategoryId
+import kr.co.jiniaslog.blog.domain.writer.WriterId
 import kr.co.jiniaslog.message.nexus.event.ArticleCommitted
+import kr.co.jiniaslog.message.nexus.event.ArticleDeleted
+import kr.co.jiniaslog.message.nexus.event.ArticlePublished
 import kr.co.jiniaslog.shared.CustomBehaviorSpec
 import org.assertj.core.api.Assertions.assertThat
 import java.time.LocalDateTime
@@ -29,7 +33,6 @@ class ArticleTests : CustomBehaviorSpec() {
                     assertThat(sut.history.size).isEqualTo(1)
                     assertThat(sut.stagingSnapShot).isNull()
                     assertThat(sut.head).isEqualTo(sut.latestCommit.id)
-                    assertThat(sut.checkout).isEqualTo(sut.latestCommit.id)
                 }
             }
         }
@@ -42,11 +45,18 @@ class ArticleTests : CustomBehaviorSpec() {
                     writerId = WriterId(1),
                     articleHistory = mutableListOf(ArticleCommit.initCommit()),
                     stagingSnapShot = null,
+                    status = ArticleStatus.DRAFT,
                     head = ArticleCommitVersion(1),
-                    checkout = ArticleCommitVersion(1),
                     createdAt = LocalDateTime.now(),
                     updatedAt = LocalDateTime.now(),
                 )
+
+            When("아티클을 삭제하면") {
+                sut.delete()
+                Then("삭제 이벤트가 등록된다") {
+                    assertThat(sut.getEvents().first()).isInstanceOf(ArticleDeleted::class.java)
+                }
+            }
 
             And("유효한 커밋 데이터가 있고") {
 
@@ -76,7 +86,6 @@ class ArticleTests : CustomBehaviorSpec() {
 
                     Then("head와 checkout은 갱신된다") {
                         assertThat(sut.head).isEqualTo(sut.latestCommit.id)
-                        assertThat(sut.checkout).isEqualTo(sut.latestCommit.id)
                     }
 
                     Then("커밋 이벤트가 등록된다") {
@@ -109,7 +118,6 @@ class ArticleTests : CustomBehaviorSpec() {
 
                     Then("head와 checkout은 갱신된다") {
                         assertThat(sut.head).isEqualTo(sut.latestCommit.id)
-                        assertThat(sut.checkout).isEqualTo(sut.latestCommit.id)
                     }
 
                     Then("커밋 이벤트가 등록된다") {
@@ -168,6 +176,139 @@ class ArticleTests : CustomBehaviorSpec() {
                         assertThat(sut.stagingSnapShot?.content).isEqualTo(content)
                         assertThat(sut.stagingSnapShot?.thumbnailUrl).isEqualTo(thumbnailUrl)
                         assertThat(sut.stagingSnapShot?.categoryId).isEqualTo(categoryId)
+                    }
+                }
+            }
+        }
+
+        Given("아티클을 공개해야하고") {
+
+            And("아티클의 제목이 없고") {
+                val sut =
+                    Article.from(
+                        id = ArticleId(1),
+                        writerId = WriterId(1),
+                        articleHistory = mutableListOf(ArticleCommit.initCommit()),
+                        stagingSnapShot = null,
+                        status = ArticleStatus.DRAFT,
+                        head = ArticleCommitVersion(1),
+                        createdAt = LocalDateTime.now(),
+                        updatedAt = LocalDateTime.now(),
+                    )
+
+                When("아티클 공개를 하면") {
+                    Then("예외가 발생한다") {
+                        val exception =
+                            shouldThrow<IllegalArgumentException> {
+                                sut.publish(sut.latestCommit.id)
+                            }
+                    }
+                }
+            }
+
+            And("아티클의 내용이 없고") {
+                val sut =
+                    Article.from(
+                        id = ArticleId(1),
+                        writerId = WriterId(1),
+                        articleHistory = mutableListOf(ArticleCommit.initCommit()),
+                        stagingSnapShot = null,
+                        status = ArticleStatus.DRAFT,
+                        head = ArticleCommitVersion(1),
+                        createdAt = LocalDateTime.now(),
+                        updatedAt = LocalDateTime.now(),
+                    )
+
+                When("아티클 공개를 하면") {
+                    Then("예외가 발생한다") {
+                        val exception =
+                            shouldThrow<IllegalArgumentException> {
+                                sut.publish(sut.latestCommit.id)
+                            }
+                    }
+                }
+            }
+
+            And("아티클의 썸네일이 없고") {
+                val sut =
+                    Article.from(
+                        id = ArticleId(1),
+                        writerId = WriterId(1),
+                        articleHistory = mutableListOf(ArticleCommit.initCommit()),
+                        stagingSnapShot = null,
+                        status = ArticleStatus.DRAFT,
+                        head = ArticleCommitVersion(1),
+                        createdAt = LocalDateTime.now(),
+                        updatedAt = LocalDateTime.now(),
+                    )
+
+                When("아티클 공개를 하면") {
+                    Then("예외가 발생한다") {
+                        val exception =
+                            shouldThrow<IllegalArgumentException> {
+                                sut.publish(sut.latestCommit.id)
+                            }
+                    }
+                }
+            }
+
+            And("아티클의 카테고리가 없고") {
+                val sut =
+                    Article.from(
+                        id = ArticleId(1),
+                        writerId = WriterId(1),
+                        articleHistory = mutableListOf(ArticleCommit.initCommit()),
+                        stagingSnapShot = null,
+                        status = ArticleStatus.DRAFT,
+                        head = ArticleCommitVersion(1),
+                        createdAt = LocalDateTime.now(),
+                        updatedAt = LocalDateTime.now(),
+                    )
+
+                When("아티클 공개를 하면") {
+                    Then("예외가 발생한다") {
+                        val exception =
+                            shouldThrow<IllegalArgumentException> {
+                                sut.publish(sut.latestCommit.id)
+                            }
+                    }
+                }
+            }
+
+            And("공개하기 유효한 아티클이고") {
+                val sut =
+                    Article.from(
+                        id = ArticleId(1),
+                        writerId = WriterId(1),
+                        articleHistory = mutableListOf(ArticleCommit.initCommit()),
+                        stagingSnapShot = null,
+                        status = ArticleStatus.DRAFT,
+                        head = ArticleCommitVersion(1),
+                        createdAt = LocalDateTime.now(),
+                        updatedAt = LocalDateTime.now(),
+                    )
+
+                sut.commit(
+                    title = ArticleTitle("title"),
+                    newContent = ArticleContent("content"),
+                    thumbnailUrl = ArticleThumbnailUrl("thumbnailUrl"),
+                    categoryId = CategoryId(1),
+                )
+
+                sut.getEvents() // consume init event
+
+                When("아티클 공개를 하면") {
+                    sut.publish(sut.latestCommit.id)
+
+                    Then("아티클이 공개된다") {
+                        assertThat(sut.status).isEqualTo(ArticleStatus.PUBLISHED)
+                    }
+
+                    Then("공개 이벤트가 등록된다") {
+                        val events = sut.getEvents()
+                        assertThat(events).isNotEmpty
+                        assertThat(events.size).isEqualTo(1)
+                        assertThat(events[0]).isInstanceOf(ArticlePublished::class.java)
                     }
                 }
             }

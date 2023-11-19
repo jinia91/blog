@@ -5,14 +5,15 @@ import kr.co.jiniaslog.blog.domain.article.ArticleContent
 import kr.co.jiniaslog.blog.domain.article.ArticleId
 import kr.co.jiniaslog.blog.domain.article.ArticleThumbnailUrl
 import kr.co.jiniaslog.blog.domain.article.ArticleTitle
-import kr.co.jiniaslog.blog.domain.article.WriterId
 import kr.co.jiniaslog.blog.domain.category.CategoryId
+import kr.co.jiniaslog.blog.domain.writer.WriterId
 
 interface ArticleUseCases :
     ArticleInitCommandUseCase,
     ArticleCommitCommandUseCase,
     ArticleStagingCommandUseCase,
-    ArticleDeleteCommandUseCase
+    ArticleDeleteCommandUseCase,
+    ArticlePublishCommandUseCase
 
 /**
  * 최초의 아티클을 생성하고 최초 커밋한다.
@@ -80,5 +81,21 @@ interface ArticleDeleteCommandUseCase {
 
     data class DeleteInfo(
         val result: Boolean,
+    )
+}
+
+/**
+ * 아티클을 공개한다
+ */
+interface ArticlePublishCommandUseCase {
+    suspend fun publish(command: ArticlePublishCommand): PublishInfo
+
+    data class ArticlePublishCommand(
+        val articleId: ArticleId,
+        val headVersion: ArticleCommitVersion,
+    )
+
+    data class PublishInfo(
+        val articleId: ArticleId,
     )
 }

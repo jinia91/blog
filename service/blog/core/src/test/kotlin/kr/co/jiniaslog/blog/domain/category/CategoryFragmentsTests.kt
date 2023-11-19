@@ -1,6 +1,7 @@
 package kr.co.jiniaslog.blog.domain.category
 
 import io.kotest.assertions.throwables.shouldThrow
+import io.kotest.matchers.comparables.shouldBeLessThanOrEqualTo
 import io.kotest.matchers.shouldBe
 import kr.co.jiniaslog.shared.CustomBehaviorSpec
 
@@ -53,6 +54,43 @@ class CategoryFragmentsTests : CustomBehaviorSpec() {
                     Then("예외가 발생한다") {
                         shouldThrow<IllegalArgumentException> {
                             CategoryName(value)
+                        }
+                    }
+                }
+            }
+        }
+
+        Given("sortingOrder 생성시") {
+            And("sortingOrder의 값이 양수이면") {
+                val value = 1
+                When("생성시") {
+                    Then("생성된다") {
+                        SortingOrder(value)
+                    }
+                }
+            }
+            And("sortingOrder의 값이 0이하이면") {
+                val value = 0
+                When("생성시") {
+                    Then("예외가 발생한다") {
+                        shouldThrow<IllegalArgumentException> {
+                            SortingOrder(value)
+                        }
+                    }
+                }
+            }
+            And("무작위로 여러개 생성되고") {
+                val list =
+                    (1..10).map {
+                        val randomNumber = (1..100).random()
+                        SortingOrder(randomNumber)
+                    }
+                When("정렬을 하면") {
+                    val sorted = list.sorted()
+                    Then("정렬된다") {
+                        sorted.forEachIndexed { index, sortingOrder ->
+                            if (index == sorted.lastIndex) return@forEachIndexed
+                            sortingOrder shouldBeLessThanOrEqualTo sorted[index + 1]
                         }
                     }
                 }

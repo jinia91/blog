@@ -19,11 +19,11 @@ class ArticleFactory {
             id = ArticleId(articlePM.id),
             writerId = WriterId(articlePM.writerId),
             head = ArticleCommitVersion(articlePM.head),
-            checkout = ArticleCommitVersion(articlePM.checkout),
             articleHistory = commits,
             stagingSnapShot = stagingSnapShot,
             createdAt = articlePM.createdAt,
             updatedAt = articlePM.updatedAt,
+            status = articlePM.status,
         )
     }
 }
