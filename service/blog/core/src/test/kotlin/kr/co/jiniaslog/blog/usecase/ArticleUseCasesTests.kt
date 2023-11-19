@@ -14,16 +14,19 @@ import kr.co.jiniaslog.blog.domain.article.ArticleTitle
 import kr.co.jiniaslog.blog.domain.category.CategoryId
 import kr.co.jiniaslog.blog.domain.writer.WriterId
 import kr.co.jiniaslog.blog.fakeArticleRepository
+import kr.co.jiniaslog.blog.fakeWriterProvider
 import kr.co.jiniaslog.blog.usecase.ArticleCommitCommandUseCase.ArticleCommitCommand
 import kr.co.jiniaslog.shared.CustomBehaviorSpec
 import kr.co.jiniaslog.shared.core.domain.IdUtils
 
 class ArticleUseCasesTests : CustomBehaviorSpec() {
     private var fakeRepo = fakeArticleRepository()
+    private var writerProvider = fakeWriterProvider()
     private val sut =
         ArticleUseCasesImpl(
             articleRepository = fakeRepo,
             transactionHandler = testTransactionHandler,
+            writerProvider = writerProvider,
         )
 
     override suspend fun afterEach(
@@ -129,18 +132,19 @@ class ArticleUseCasesTests : CustomBehaviorSpec() {
                                 thumbnailUrl = ArticleThumbnailUrl("thumbnailUrl"),
                                 categoryId = CategoryId(1),
                             )
-                        sut.commit(command2)
+                        val info2 = sut.commit(command2)
+
                         And("아티클 공개 command 가 있고") {
                             val command3 =
                                 ArticlePublishCommandUseCase.ArticlePublishCommand(
                                     articleId = articleId,
-                                    headVersion = info.commitId,
+                                    headVersion = info2.commitId,
                                 )
                             When("아티클 공개 usecase를 실행하면") {
-                                val info2 = sut.publish(command3)
+                                val info3 = sut.publish(command3)
 
                                 Then("아티클 공개가 실행된다") {
-                                    val foundOne = fakeRepo.findById(info2.articleId)
+                                    val foundOne = fakeRepo.findById(info3.articleId)
                                     foundOne shouldNotBe null
                                     info.articleId shouldBe foundOne!!.id
                                     foundOne.stagingSnapShot shouldBe null

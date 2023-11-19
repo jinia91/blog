@@ -25,11 +25,11 @@ class Category private constructor(
     fun update(
         name: CategoryName = this.name,
         order: SortingOrder = this.order,
-        parentCategory: CategoryId? = this.parentCategoryId,
+        parentCategoryId: CategoryId? = this.parentCategoryId,
     ): Category {
         this.name = name
         this.order = order
-        this.parentCategoryId = parentCategory
+        this.parentCategoryId = parentCategoryId
         return this
     }
 

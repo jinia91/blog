@@ -20,6 +20,7 @@ import kr.co.jiniaslog.blog.fakeWriterProvider
 import kr.co.jiniaslog.blog.usecase.ArticleViewUpsertUseCase.ArticleViewUpsertCommand
 import kr.co.jiniaslog.shared.CustomBehaviorSpec
 import kr.co.jiniaslog.shared.core.domain.IdUtils
+import java.time.LocalDateTime
 
 class ArticleViewUseCasesTests : CustomBehaviorSpec() {
     private var articleRepository = fakeArticleRepository()
@@ -113,6 +114,8 @@ class ArticleViewUseCasesTests : CustomBehaviorSpec() {
                                 categoryName = null,
                                 content = null,
                                 status = ArticleStatus.PUBLISHED,
+                                createdAt = LocalDateTime.now(),
+                                updatedAt = LocalDateTime.now(),
                             ),
                         )
                     When("아티클 뷰 생성 usecase를 실행하면") {

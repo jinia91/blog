@@ -19,7 +19,7 @@ class CategoryTests : CustomBehaviorSpec() {
                         id = CategoryId(2L),
                         name = CategoryName("child"),
                         order = SortingOrder(1),
-                        parentCategoryId = parent,
+                        parentCategoryId = parent.id,
                     )
                 When("부모 카테고리와 자식 카테고리를 비교하면") {
                     Then("부모 카테고리가 자식 카테고리보다 우선된다") {
@@ -40,7 +40,7 @@ class CategoryTests : CustomBehaviorSpec() {
                         id = CategoryId(2L),
                         name = CategoryName("child"),
                         order = SortingOrder(1),
-                        parentCategoryId = parent,
+                        parentCategoryId = parent.id,
                     )
                 When("부모 카테고리와 자식 카테고리를 비교하면") {
                     Then("부모 카테고리가 자식 카테고리보다 우선된다") {
@@ -69,14 +69,14 @@ class CategoryTests : CustomBehaviorSpec() {
                         id = CategoryId(2L),
                         name = CategoryName("child"),
                         order = SortingOrder(1),
-                        parentCategoryId = parent2,
+                        parentCategoryId = parent2.id,
                     )
                 val child2 =
                     Category.create(
                         id = CategoryId(2L),
                         name = CategoryName("child"),
                         order = SortingOrder(3),
-                        parentCategoryId = parent1,
+                        parentCategoryId = parent1.id,
                     )
                 When("각 카테고리를 모두 비교해보면") {
                     Then("부모카테고리끼리 정렬된다") {
@@ -101,7 +101,7 @@ class CategoryTests : CustomBehaviorSpec() {
                     }
 
                     And("자식 카테고리의 부모를 변경하면") {
-                        child1.update(parentCategory = parent1)
+                        child1.update(parentCategoryId = parent1.id)
                         val reorder = listByHierarchy.sortByHierarchy()
                         Then("트리로 정렬된다") {
                             reorder[0] shouldBe parent2
