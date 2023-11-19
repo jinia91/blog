@@ -16,6 +16,7 @@ val blog = listOf(
     project(":service:blog:adapter:out-rdb"),
     project(":service:blog:adapter:in-http"),
     project(":service:blog:adapter:in-message"),
+    project(":service:blog:adapter:acl-user"),
 ).also {
     moduleBlocks.addAll(it)
 }

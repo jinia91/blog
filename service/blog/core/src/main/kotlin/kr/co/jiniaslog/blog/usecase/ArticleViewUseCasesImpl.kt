@@ -17,7 +17,7 @@ import kr.co.jiniaslog.shared.core.annotation.UseCaseInteractor
 import kr.co.jiniaslog.shared.core.domain.TransactionHandler
 
 @UseCaseInteractor
-class ArticleViewUseCasesImpl(
+internal class ArticleViewUseCasesImpl(
     private val articleRepository: ArticleRepository,
     private val writerProvider: WriterProvider,
     private val categoryRepository: CategoryRepository,
@@ -37,6 +37,7 @@ class ArticleViewUseCasesImpl(
                         thumbnailUrl = article.thumbnailUrl,
                         categoryName = category?.name,
                         writer = writer.name,
+                        status = article.status,
                     ) ?: ArticleView.create(
                         id = articleId,
                         title = article.title,
@@ -44,6 +45,7 @@ class ArticleViewUseCasesImpl(
                         thumbnailUrl = article.thumbnailUrl,
                         categoryName = category?.name,
                         writer = writer.name,
+                        status = article.status,
                     )
 
                 transactionHandler.runInRepeatableReadTransaction {

@@ -1,6 +1,7 @@
 package kr.co.jiniaslog.blog.domain.article
 
 import io.kotest.assertions.throwables.shouldThrow
+import io.kotest.matchers.ints.shouldBeLessThan
 import io.kotest.matchers.shouldBe
 import kr.co.jiniaslog.shared.CustomBehaviorSpec
 import org.assertj.core.api.Assertions.assertThat
@@ -143,6 +144,37 @@ class ArticleFragmentsTests : CustomBehaviorSpec() {
                             StagingSnapShotId(value)
                         }
                     }
+                }
+            }
+        }
+
+        Given("articleDelta 생성시") {
+            And("컨텐츠 before after가 주어지고") {
+                val beforeContent = ArticleContent("before")
+                val afterContent = ArticleContent("after")
+                When("생성하면") {
+                    Then("생성된다") {
+                        val sut = beforeContent.calculateDelta(afterContent)
+                    }
+                }
+            }
+        }
+
+        Given("articleDelta가 주어지면") {
+            val beforeContent = ArticleContent("beforebeforebeforebeforebeforebeforebeforebeforebeforebefore")
+            val afterContent = ArticleContent("afterafterafterafterafterafterafterafterafterafterafterafter")
+            val sut = beforeContent.calculateDelta(afterContent)
+            When("변경값을 적용하면") {
+                val result = beforeContent.apply(sut)
+                Then("변경된 값이 반환된다") {
+                    result.value shouldBe afterContent.value
+                }
+            }
+            When("원본과 바이트 어레이 길이를 비교하면") {
+                val zipped = sut.getByteArray().size
+                val unZipped = sut.getString().toByteArray().size
+                Then("원본이 더 크다") {
+                    zipped shouldBeLessThan unZipped
                 }
             }
         }

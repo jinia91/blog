@@ -1,15 +1,20 @@
 package kr.co.jiniaslog.blog.adapter.inbound.http
 
+import kr.co.jiniaslog.blog.domain.article.ArticleCommitVersion
 import kr.co.jiniaslog.blog.domain.article.ArticleContent
 import kr.co.jiniaslog.blog.domain.article.ArticleId
 import kr.co.jiniaslog.blog.domain.article.ArticleThumbnailUrl
 import kr.co.jiniaslog.blog.domain.article.ArticleTitle
-import kr.co.jiniaslog.blog.domain.article.WriterId
 import kr.co.jiniaslog.blog.domain.category.CategoryId
+import kr.co.jiniaslog.blog.domain.writer.WriterId
 import kr.co.jiniaslog.blog.usecase.ArticleCommitCommandUseCase.ArticleCommitCommand
 import kr.co.jiniaslog.blog.usecase.ArticleCommitCommandUseCase.CommitInfo
+import kr.co.jiniaslog.blog.usecase.ArticleDeleteCommandUseCase.ArticleDeleteCommand
+import kr.co.jiniaslog.blog.usecase.ArticleDeleteCommandUseCase.DeleteInfo
 import kr.co.jiniaslog.blog.usecase.ArticleInitCommandUseCase.ArticleInitCommand
 import kr.co.jiniaslog.blog.usecase.ArticleInitCommandUseCase.InitialInfo
+import kr.co.jiniaslog.blog.usecase.ArticlePublishCommandUseCase.ArticlePublishCommand
+import kr.co.jiniaslog.blog.usecase.ArticlePublishCommandUseCase.PublishInfo
 import kr.co.jiniaslog.blog.usecase.ArticleStagingCommandUseCase.ArticleStagingCommand
 import kr.co.jiniaslog.blog.usecase.ArticleStagingCommandUseCase.StagingInfo
 
@@ -71,3 +76,28 @@ data class ArticleStagingResponse(
 )
 
 fun StagingInfo.toResponse() = ArticleStagingResponse(this.articleId.value)
+
+data class ArticleDeleteRequest(
+    val articleId: Long,
+) {
+    fun toCommand() = ArticleDeleteCommand(ArticleId(articleId))
+}
+
+fun DeleteInfo.toResponse() = ArticleDeleteResponse(this.result)
+
+data class ArticleDeleteResponse(
+    val result: Boolean,
+)
+
+data class ArticlePublishRequest(
+    val articleId: Long,
+    val commitId: Long,
+) {
+    fun toCommand() = ArticlePublishCommand(ArticleId(articleId), ArticleCommitVersion(commitId))
+}
+
+data class ArticlePublishResponse(
+    val articleId: Long,
+)
+
+fun PublishInfo.toResponse() = ArticlePublishResponse(this.articleId.value)

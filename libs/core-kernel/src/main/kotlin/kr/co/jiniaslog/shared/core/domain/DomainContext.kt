@@ -6,6 +6,8 @@ import java.util.concurrent.ConcurrentLinkedQueue
 import kotlin.coroutines.AbstractCoroutineContextElement
 import kotlin.coroutines.CoroutineContext
 
+private val log = mu.KotlinLogging.logger {}
+
 data class DomainContext(
     private var events: ConcurrentLinkedQueue<DomainEvent> = ConcurrentLinkedQueue(),
 ) : AbstractCoroutineContextElement(key) {
@@ -30,8 +32,7 @@ data class DomainContext(
     }
 }
 
-suspend fun withDomainContext(block: suspend () -> Unit) {
+suspend fun withDomainContext(block: suspend () -> Unit) =
     withContext(DomainContext() + Dispatchers.Default) {
         block()
     }
-}

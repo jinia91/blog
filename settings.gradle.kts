@@ -28,6 +28,7 @@ include(
     "service:blog:adapter:out-rdb",
     "service:blog:adapter:in-http",
     "service:blog:adapter:in-message",
+    "service:blog:adapter:acl-user",
 
     "service:user:core",
     "service:comment",

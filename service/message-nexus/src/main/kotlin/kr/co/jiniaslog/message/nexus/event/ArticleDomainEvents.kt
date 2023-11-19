@@ -13,6 +13,9 @@ data class ArticleCreated(
 data class ArticleCommitted(
     val articleId: Long,
     val articleCommitId: Long,
+    val writerId: Long,
+    val categoryId: Long?,
+    val head: Long,
 ) : DomainEvent(eventVersion = 1)
 
 @AbstractChannelHandlerBuilder
@@ -30,4 +33,7 @@ data class ArticleDeleted(
 data class ArticlePublished(
     val articleId: Long,
     val articleCommitId: Long,
+    val writerId: Long,
+    val categoryId: Long,
+    val head: Long,
 ) : DomainEvent(eventVersion = 1)

@@ -69,7 +69,15 @@ class Article private constructor(
             this.history.add(it)
             this.head = it.id
             this.stagingSnapShot = null
-            this.registerEvent(ArticleCommitted(articleId = this.id.value, articleCommitId = it.id.value))
+            this.registerEvent(
+                ArticleCommitted(
+                    articleId = this.id.value,
+                    articleCommitId = it.id.value,
+                    writerId = this.writerId.value,
+                    categoryId = categoryId?.value,
+                    head = this.head.value,
+                ),
+            )
         }
     }
 
@@ -119,7 +127,15 @@ class Article private constructor(
         require(content.value.isNotBlank()) { "article content must not be blank at publishing" }
         this.head = checkoutVersion
         this.status = ArticleStatus.PUBLISHED
-        this.registerEvent(ArticlePublished(articleId = this.id.value, articleCommitId = this.head.value))
+        this.registerEvent(
+            ArticlePublished(
+                articleId = this.id.value,
+                articleCommitId = this.head.value,
+                writerId = this.writerId.value,
+                categoryId = this.categoryId!!.value,
+                head = this.head.value,
+            ),
+        )
     }
 
     companion object {

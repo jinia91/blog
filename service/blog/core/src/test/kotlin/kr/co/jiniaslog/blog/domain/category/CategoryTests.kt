@@ -12,14 +12,14 @@ class CategoryTests : CustomBehaviorSpec() {
                         id = CategoryId(1L),
                         name = CategoryName("parent"),
                         order = SortingOrder(1),
-                        parentCategory = null,
+                        parentCategoryId = null,
                     )
                 val child =
                     Category.create(
                         id = CategoryId(2L),
                         name = CategoryName("child"),
                         order = SortingOrder(1),
-                        parentCategory = parent,
+                        parentCategoryId = parent,
                     )
                 When("부모 카테고리와 자식 카테고리를 비교하면") {
                     Then("부모 카테고리가 자식 카테고리보다 우선된다") {
@@ -33,14 +33,14 @@ class CategoryTests : CustomBehaviorSpec() {
                         id = CategoryId(1L),
                         name = CategoryName("parent"),
                         order = SortingOrder(5),
-                        parentCategory = null,
+                        parentCategoryId = null,
                     )
                 val child =
                     Category.create(
                         id = CategoryId(2L),
                         name = CategoryName("child"),
                         order = SortingOrder(1),
-                        parentCategory = parent,
+                        parentCategoryId = parent,
                     )
                 When("부모 카테고리와 자식 카테고리를 비교하면") {
                     Then("부모 카테고리가 자식 카테고리보다 우선된다") {
@@ -55,28 +55,28 @@ class CategoryTests : CustomBehaviorSpec() {
                         id = CategoryId(1L),
                         name = CategoryName("parent"),
                         order = SortingOrder(5),
-                        parentCategory = null,
+                        parentCategoryId = null,
                     )
                 val parent2 =
                     Category.create(
                         id = CategoryId(2L),
                         name = CategoryName("parent"),
                         order = SortingOrder(1),
-                        parentCategory = null,
+                        parentCategoryId = null,
                     )
                 val child1 =
                     Category.create(
                         id = CategoryId(2L),
                         name = CategoryName("child"),
                         order = SortingOrder(1),
-                        parentCategory = parent2,
+                        parentCategoryId = parent2,
                     )
                 val child2 =
                     Category.create(
                         id = CategoryId(2L),
                         name = CategoryName("child"),
                         order = SortingOrder(3),
-                        parentCategory = parent1,
+                        parentCategoryId = parent1,
                     )
                 When("각 카테고리를 모두 비교해보면") {
                     Then("부모카테고리끼리 정렬된다") {

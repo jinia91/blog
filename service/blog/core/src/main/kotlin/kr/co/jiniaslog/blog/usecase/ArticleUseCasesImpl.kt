@@ -2,6 +2,7 @@ package kr.co.jiniaslog.blog.usecase
 
 import kr.co.jiniaslog.blog.domain.article.Article
 import kr.co.jiniaslog.blog.domain.article.ArticleRepository
+import kr.co.jiniaslog.blog.domain.writer.WriterProvider
 import kr.co.jiniaslog.blog.usecase.ArticleCommitCommandUseCase.ArticleCommitCommand
 import kr.co.jiniaslog.blog.usecase.ArticleCommitCommandUseCase.CommitInfo
 import kr.co.jiniaslog.blog.usecase.ArticleDeleteCommandUseCase.ArticleDeleteCommand
@@ -20,6 +21,7 @@ private val log = mu.KotlinLogging.logger {}
 @UseCaseInteractor
 internal class ArticleUseCasesImpl(
     private val articleRepository: ArticleRepository,
+    private val writerProvider: WriterProvider,
     private val transactionHandler: TransactionHandler,
 ) : ArticleUseCases {
     override suspend fun init(command: ArticleInitCommand): InitialInfo =
@@ -44,8 +46,8 @@ internal class ArticleUseCasesImpl(
             }
         }
 
-    private fun validate(command: ArticleInitCommand) {
-        // todo
+    private suspend fun validate(command: ArticleInitCommand) {
+        check(writerProvider.isExist(command.writerId)) { "writer not found" }
     }
 
     override suspend fun staging(command: ArticleStagingCommand): StagingInfo =
@@ -75,7 +77,7 @@ internal class ArticleUseCasesImpl(
             }
         }
 
-    private fun validate(command: ArticleStagingCommand) {
+    private suspend fun validate(command: ArticleStagingCommand) {
         // todo
     }
 

@@ -8,6 +8,7 @@ import io.kotest.matchers.shouldNotBe
 import kr.co.jiniaslog.blog.domain.article.Article
 import kr.co.jiniaslog.blog.domain.article.ArticleContent
 import kr.co.jiniaslog.blog.domain.article.ArticleId
+import kr.co.jiniaslog.blog.domain.article.ArticleStatus
 import kr.co.jiniaslog.blog.domain.article.ArticleTitle
 import kr.co.jiniaslog.blog.domain.articleview.ArticleView
 import kr.co.jiniaslog.blog.domain.category.CategoryId
@@ -111,6 +112,7 @@ class ArticleViewUseCasesTests : CustomBehaviorSpec() {
                                 thumbnailUrl = null,
                                 categoryName = null,
                                 content = null,
+                                status = ArticleStatus.PUBLISHED,
                             ),
                         )
                     When("아티클 뷰 생성 usecase를 실행하면") {

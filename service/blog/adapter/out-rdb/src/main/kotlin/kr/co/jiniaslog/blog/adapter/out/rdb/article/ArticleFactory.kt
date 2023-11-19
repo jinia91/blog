@@ -5,7 +5,7 @@ import kr.co.jiniaslog.blog.domain.article.ArticleCommit
 import kr.co.jiniaslog.blog.domain.article.ArticleCommitVersion
 import kr.co.jiniaslog.blog.domain.article.ArticleId
 import kr.co.jiniaslog.blog.domain.article.ArticleStagingSnapShot
-import kr.co.jiniaslog.blog.domain.article.WriterId
+import kr.co.jiniaslog.blog.domain.writer.WriterId
 import kr.co.jiniaslog.shared.core.annotation.CustomComponent
 
 @CustomComponent

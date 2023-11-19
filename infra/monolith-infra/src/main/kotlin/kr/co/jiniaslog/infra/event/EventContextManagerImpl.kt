@@ -1,6 +1,7 @@
 package kr.co.jiniaslog.infra.event
 
 import kotlinx.coroutines.currentCoroutineContext
+import kotlinx.coroutines.reactor.ReactorContext
 import kr.co.jiniaslog.shared.core.annotation.CustomComponent
 import kr.co.jiniaslog.shared.core.domain.DomainContext
 import kr.co.jiniaslog.shared.core.domain.DomainEvent
@@ -35,5 +36,7 @@ internal class EventContextManagerImpl(
         return events.toListAndClear()
     }
 
-    private suspend fun getContext() = currentCoroutineContext()[DomainContext.key]!!
+    private suspend fun getContext() =
+        currentCoroutineContext()[DomainContext.key]
+            ?: currentCoroutineContext()[ReactorContext.Key]?.context?.get(DomainContext.key)!!
 }
