@@ -4,6 +4,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
     kotlin("jvm")
     kotlin("plugin.allopen")
+    id("java-test-fixtures")
     id("org.jmailen.kotlinter")
     jacoco
 }
@@ -47,7 +48,6 @@ tasks.named<Jar>("jar") {
 }
 
 kotlinter {
-    ignoreFailures = true
     reporters = arrayOf("checkstyle", "plain")
 }
 
@@ -60,6 +60,8 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("io.github.microutils:kotlin-logging-jvm:3.0.5")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.2")
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.13.0")
+
     // test dependencies
     testImplementation("io.kotest:kotest-runner-junit5:5.7.2")
     testImplementation("io.kotest:kotest-assertions-core:5.7.2")
@@ -69,16 +71,8 @@ dependencies {
 }
 
 // jacoco setting
-
 jacoco {
     toolVersion = "0.8.7"
-}
-
-tasks.test {
-    extensions.configure(JacocoTaskExtension::class) {
-        setDestinationFile(file("$buildDir/jacoco/jacoco.exec"))
-    }
-    finalizedBy("jacocoTestReport")
 }
 
 tasks.jacocoTestReport {
@@ -107,12 +101,12 @@ tasks.jacocoTestCoverageVerification {
         rule {
             limit {
                 counter = "BRANCH"
-                minimum = "0.5".toBigDecimal()
+                minimum = "0.7".toBigDecimal()
             }
 
             limit {
                 counter = "LINE"
-                minimum = "0.5".toBigDecimal()
+                minimum = "0.7".toBigDecimal()
             }
         }
     }
