@@ -61,8 +61,8 @@ dependencies {
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.13.0")
 
     // test dependencies
-    testImplementation("io.kotest:kotest-runner-junit5:5.7.2")
-    testImplementation("io.kotest:kotest-assertions-core:5.7.2")
+    testImplementation("io.kotest:kotest-runner-junit5:5.8.0")
+    testImplementation("io.kotest:kotest-assertions-core:5.8.0")
     testImplementation("io.mockk:mockk:1.13.4")
     testImplementation("org.assertj:assertj-core:3.24.2")
     testImplementation("ch.qos.logback:logback-classic:1.4.5")
