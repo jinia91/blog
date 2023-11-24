@@ -25,7 +25,6 @@ java {
     targetCompatibility = JavaVersion.VERSION_17
 }
 
-
 tasks.withType<KotlinCompile> {
     kotlinOptions {
         freeCompilerArgs = listOf("-Xjsr305=strict")
