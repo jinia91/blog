@@ -1,15 +1,15 @@
 package kr.co.jiniaslog.shared.core.domain
 
 interface Repository<T : AggregateRoot<I>, I : ValueObject> {
-    suspend fun nextId(): I
+    fun nextId(): I
 
-    suspend fun findById(id: I): T?
+    fun findById(id: I): T?
 
-    suspend fun findAll(): List<T>
+    fun findAll(): List<T>
 
-    suspend fun deleteById(id: I)
+    fun deleteById(id: I)
 
-    suspend fun save(entity: T): T
+    fun save(entity: T): T
 }
 
 enum class FetchMode {

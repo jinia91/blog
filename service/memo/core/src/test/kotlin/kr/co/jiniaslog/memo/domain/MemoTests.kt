@@ -13,8 +13,11 @@ internal class MemoTests : CustomBehaviorSpec() {
                 val newMemo = Memo.newOne(id, content)
                 Then("메모가 작성된다") {
                     newMemo.content shouldBe content
+                    newMemo.isPersisted shouldBe false
                 }
             }
         }
+
+        //
     }
 }
