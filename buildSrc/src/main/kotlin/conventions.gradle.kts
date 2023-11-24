@@ -25,7 +25,6 @@ java {
     targetCompatibility = JavaVersion.VERSION_17
 }
 
-
 tasks.withType<KotlinCompile> {
     kotlinOptions {
         freeCompilerArgs = listOf("-Xjsr305=strict")
@@ -59,7 +58,6 @@ dependencies {
     // core
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("io.github.microutils:kotlin-logging-jvm:3.0.5")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.2")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.13.0")
 
     // test dependencies

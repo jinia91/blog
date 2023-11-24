@@ -30,6 +30,8 @@ include(
     "service:blog:adapter:in-message",
     "service:blog:adapter:acl-user",
 
+    "service:memo:core",
+
     "service:user:core",
     "service:comment",
     "service:media",

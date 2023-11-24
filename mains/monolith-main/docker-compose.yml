@@ -17,6 +17,29 @@ services:
       test: "mysqladmin ping --silent"
       interval: 1s
       retries: 120
+
+  monolith-main:
+    ports:
+      - "7777:7777"
+      - "7778:7778"
+
+    environment:
+      JAVA_TOOL_OPTIONS: -Dcom.sun.management.jmxremote=true -Dcom.sun.management.jmxremote.port=7778 -Dcom.sun.management.jmxremote.rmi.port=7778 -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Djava.rmi.server.hostname=${HOST_IP:-$DEFAULT_IP} -Xms1G -Xmx1G
+      SPRING_APPLICATION_JSON: '{
+        "spring.r2dbc.url" : "r2dbc:mysql://db_mysql_1/blog_core",
+        "spring.flyway.url" : "jdbc:mysql://db_mysql_1/blog_core"
+      }'
+    container_name: jinias_log_monolith_main
+    build:
+      dockerfile: Dockerfile
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    depends_on:
+      db_mysql_1:
+        condition: service_healthy
+    restart: always
+    networks:
+      - internal-network
     deploy:
       resources:
         limits:
