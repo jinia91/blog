@@ -13,17 +13,23 @@ val infra = listOf(
 
 val blog = listOf(
     project(":service:blog:core"),
-    project(":service:blog:adapter:out-rdb"),
-    project(":service:blog:adapter:in-http"),
-    project(":service:blog:adapter:in-message"),
-    project(":service:blog:adapter:acl-user"),
+).also {
+//    moduleBlocks.addAll(it)
+}
+
+val memo = listOf(
+    project(":service:memo:core"),
+    project(":service:memo:adapter:out-file"),
+    project(":service:memo:adapter:out-rdb"),
+    project(":service:memo:adapter:in-http"),
+    project(":service:memo:adapter:in-websocket"),
 ).also {
     moduleBlocks.addAll(it)
 }
 
 dependencies {
-    moduleBlocks.forEach() {
-        implementation(project(it.path))
+    moduleBlocks.forEach {
+        implementation(it)
     }
 }
 

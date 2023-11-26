@@ -16,7 +16,7 @@ import java.util.concurrent.atomic.AtomicLong
 abstract class CustomBehaviorSpec : BehaviorSpec() {
     protected val testTransactionHandler =
         object : TransactionHandler {
-            override suspend fun <T> runInRepeatableReadTransaction(supplier: suspend () -> T): T {
+            override fun <T> runInRepeatableReadTransaction(supplier: () -> T): T {
                 return supplier()
             }
         }
@@ -45,15 +45,15 @@ abstract class CustomBehaviorSpec : BehaviorSpec() {
 
             EventManger.eventContextManager =
                 object : EventContextManager {
-                    override suspend fun add(event: DomainEvent) {
+                    override fun add(event: DomainEvent) {
                         domainContext.add(event)
                     }
 
-                    override suspend fun clear() {
+                    override fun clear() {
                         domainContext.clear()
                     }
 
-                    override suspend fun getDomainEventsAndClear(): List<DomainEvent> {
+                    override fun getDomainEventsAndClear(): List<DomainEvent> {
                         return domainContext.toListAndClear()
                     }
                 }

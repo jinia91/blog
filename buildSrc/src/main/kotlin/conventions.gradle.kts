@@ -52,18 +52,18 @@ kotlinter {
 
 val jar: Jar by tasks
 jar.enabled = true
-jar.archiveFileName.set("${project.parent?.name}-${project.name}.jar")
+jar.archiveFileName.set("${project.parent?.parent?.name}-${project.parent?.name}-${project.name}.jar")
 
 dependencies {
     // core
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("io.github.microutils:kotlin-logging-jvm:3.0.5")
-    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.13.0")
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.16.0")
 
     // test dependencies
     testImplementation("io.kotest:kotest-runner-junit5:5.8.0")
     testImplementation("io.kotest:kotest-assertions-core:5.8.0")
-    testImplementation("io.mockk:mockk:1.13.4")
+    testImplementation("io.mockk:mockk:1.13.8")
     testImplementation("org.assertj:assertj-core:3.24.2")
     testImplementation("ch.qos.logback:logback-classic:1.4.5")
 }

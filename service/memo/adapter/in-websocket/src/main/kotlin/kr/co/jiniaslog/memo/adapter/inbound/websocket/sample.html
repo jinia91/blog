@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Memo WebSocket Client</title>
+</head>
+<body>
+<input type="text" id="authorId" placeholder="Author ID"><br>
+<textarea id="memoTitle" placeholder="Memo Title"></textarea><br>
+<textarea id="memoContent" placeholder="Memo Content" oninput="initMemo();"></textarea><br>
+<div id="recommendations"></div>
+<button onclick="getRecommendations()">Get Recommendations</button><br> <!-- 추천 버튼 추가 -->
+<input type="text" id="tags" placeholder="Tags (comma-separated)"><br>
+<button onclick="addTag()">Add Tag</button>
+<button onclick="commitMemo()">Commit Memo</button> <!-- 커밋 버튼 추가 -->
+
+
+<script type="text/javascript">
+    var webSocket = new WebSocket("ws://localhost:7777/memo");
+    var memoId = null;
+    var relatedMemoIds = []; // 연관된 메모 ID 저장을 위한 배열
+
+    webSocket.onopen = function(event) {
+        console.log("Connection opened");
+    };
+
+    webSocket.onmessage = function(event) {
+        handleServerResponse(JSON.parse(event.data));
+    };
+
+    webSocket.onclose = function(event) {
+        console.log("Connection closed");
+    };
+
+    function initMemo() {
+        if (memoId === null) {
+            var command = {
+                type: "InitMemo",
+                authorId: document.getElementById("authorId").value,
+                content: document.getElementById("memoContent").value
+            };
+            webSocket.send(JSON.stringify(command));
+            memoId = "pending"; // 초기화 요청을 보냈다는 표시를 위해 임시 값 설정
+        }
+    }
+
+    function getRecommendations() {
+        var command = {
+            type: "GetRecommendRelatedMemo",
+            query: document.getElementById("memoContent").value
+        };
+        webSocket.send(JSON.stringify(command));
+    }
+
+    function handleServerResponse(response) {
+        if (response.type === "InitMemoInfo") {
+            memoId = response.id;
+        } else if (response.type === "GetRecommendRelatedMemoInfo") {
+            console.log(response)
+            displayRecommendations(response.relatedMemoCandidates);
+        }
+    }
+
+    function displayRecommendations(candidates) {
+        var recommendationsDiv = document.getElementById("recommendations");
+        recommendationsDiv.innerHTML = '';
+        candidates.forEach(function(candidate) {
+            var div = document.createElement("div");
+            div.innerHTML = candidate.second; // MemoTitle
+            div.onclick = function() { addRelatedMemo(candidate.first); }; // MemoId
+            recommendationsDiv.appendChild(div);
+        });
+    }
+
+    function addRelatedMemo(memoId) {
+        if (!relatedMemoIds.includes(memoId)) {
+            relatedMemoIds.push(memoId);
+            console.log("Related memo added: " + memoId);
+        }
+    }
+    function addTag() {
+        var tags = document.getElementById("tags").value.split(',');
+        console.log("Tags added: " + tags);
+        // Add logic to handle tags
+    }
+
+    function commitMemo() {
+        var command = {
+            type: "CommitMemo",
+            id: memoId,
+            content: document.getElementById("memoContent").value,
+            title: document.getElementById("memoTitle").value,
+            authorId: document.getElementById("authorId").value,
+            links: relatedMemoIds,
+        };
+        webSocket.send(JSON.stringify(command));
+
+        resetState();
+    }
+
+    function resetState() {
+        // 상태 초기화
+        memoId = null;
+        relatedMemoIds = [];
+        document.getElementById("memoTitle").value = '';
+        document.getElementById("memoContent").value = '';
+        document.getElementById("tags").value = '';
+        document.getElementById("recommendations").innerHTML = '';
+    }
+</script>
+</body>
+</html>

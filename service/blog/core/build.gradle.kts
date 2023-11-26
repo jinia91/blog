@@ -7,10 +7,3 @@ dependencies {
     implementation(project(":service:message-nexus"))
     testImplementation(testFixtures(project(":libs:core-kernel")))
 }
-
-tasks.test {
-    extensions.configure(JacocoTaskExtension::class) {
-        destinationFile = file("$buildDir/jacoco/jacoco.exec")
-    }
-    finalizedBy("jacocoTestReport")
-}

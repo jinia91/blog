@@ -4,5 +4,6 @@ plugins {
 
 dependencies {
     implementation(project(":libs:core-kernel"))
-    implementation("org.springdoc:springdoc-openapi-starter-webflux-ui:2.0.4")
+    //swagger
+    implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.0.2")
 }

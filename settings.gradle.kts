@@ -23,14 +23,20 @@ include(
     "libs:http-kernel",
     "libs:messaging-kernel",
 
-    // 서비스
+    // blog
     "service:blog:core",
     "service:blog:adapter:out-rdb",
     "service:blog:adapter:in-http",
     "service:blog:adapter:in-message",
     "service:blog:adapter:acl-user",
 
+    // memo
     "service:memo:core",
+    "service:memo:adapter:in-http",
+    "service:memo:adapter:in-websocket",
+    "service:memo:adapter:in-message",
+    "service:memo:adapter:out-file",
+    "service:memo:adapter:out-rdb",
 
     "service:user:core",
     "service:comment",

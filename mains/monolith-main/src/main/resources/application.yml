@@ -1,21 +1,46 @@
 server:
   port: 7777
 
-spring:
-  r2dbc:
-    url: r2dbc:mysql://localhost:3307/blog_core?allowPublicKeyRetrieval=true&useSSL=false
-    username: root
-
-  flyway:
-    url: jdbc:mysql://localhost:3307/blog_core?allowPublicKeyRetrieval=true&useSSL=false
-    enabled: true
-    baseline-on-migrate: true
-    baseline-version: 0
-    validateMigrationNaming: true
-    locations: db.migration.blogcore
-
+  #===========#
+  #  logging  #
+  #===========#
 logging:
   level:
-    org:
-      springframework:
-        r2dbc: INFO
+    org.hibernate: INFO
+    org.hibernate.SQL: INFO
+    org.hibernate.type.descriptor.sql.BasicBinder: INFO
+    org.hibernate.transaction: INFO
+    sql: INFO
+decorator:
+  datasource:
+    p6spy:
+      enable-logging: false
+
+spring:
+  #===========#
+  #   MySQL   #
+  #===========#
+  datasource:
+      url: jdbc:mysql://localhost:3307/jiniaslog?serverTimezone=Asia/Seoul
+      username: root
+      password: password
+      driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: create
+    open-in-view: false
+    properties:
+      hibernate:
+        format_sql: true
+        use_sql_comments: true
+      show-sql: true
+
+
+
+#  flyway:
+#    url: jdbc:mysql://localhost:3307/blog_core?allowPublicKeyRetrieval=true&useSSL=false
+#    enabled: true
+#    baseline-on-migrate: true
+#    baseline-version: 0
+#    validateMigrationNaming: true
+#    locations: db.migration.blogcore
