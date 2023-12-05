@@ -2,34 +2,40 @@
 <html>
 <head>
     <title>Memo WebSocket Client</title>
+    <script src="https://cdn.jsdelivr.net/npm/sockjs-client/dist/sockjs.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
 </head>
 <body>
 <input type="text" id="authorId" placeholder="Author ID"><br>
 <textarea id="memoTitle" placeholder="Memo Title"></textarea><br>
 <textarea id="memoContent" placeholder="Memo Content" oninput="initMemo();"></textarea><br>
 <div id="recommendations"></div>
-<button onclick="getRecommendations()">Get Recommendations</button><br> <!-- 추천 버튼 추가 -->
+<button onclick="getRecommendations()">Get Recommendations</button>
+<br> <!-- 추천 버튼 추가 -->
 <input type="text" id="tags" placeholder="Tags (comma-separated)"><br>
 <button onclick="addTag()">Add Tag</button>
 <button onclick="commitMemo()">Commit Memo</button> <!-- 커밋 버튼 추가 -->
 
-
 <script type="text/javascript">
-    var webSocket = new WebSocket("ws://localhost:7777/memo");
+    var stompClient = null;
     var memoId = null;
     var relatedMemoIds = []; // 연관된 메모 ID 저장을 위한 배열
-
-    webSocket.onopen = function(event) {
-        console.log("Connection opened");
+    window.onload = function () {
+        connect();
     };
 
-    webSocket.onmessage = function(event) {
-        handleServerResponse(JSON.parse(event.data));
-    };
+    function connect() {
+        var socket = new SockJS('http://localhost:7777/memo');
+        stompClient = Stomp.over(socket);
+        stompClient.connect({}, function (frame) {
+            console.log('Connected: ' + frame);
+            stompClient.subscribe('/topic/memoResponse', function (response) {
+                console.log(response.body)
+                handleServerResponse(JSON.parse(response.body));
+            });
+        });
+    }
 
-    webSocket.onclose = function(event) {
-        console.log("Connection closed");
-    };
 
     function initMemo() {
         if (memoId === null) {
@@ -38,7 +44,7 @@
                 authorId: document.getElementById("authorId").value,
                 content: document.getElementById("memoContent").value
             };
-            webSocket.send(JSON.stringify(command));
+            stompClient.send("/app/initMemo", {}, JSON.stringify(command));
             memoId = "pending"; // 초기화 요청을 보냈다는 표시를 위해 임시 값 설정
         }
     }
@@ -48,11 +54,12 @@
             type: "GetRecommendRelatedMemo",
             query: document.getElementById("memoContent").value
         };
-        webSocket.send(JSON.stringify(command));
+        stompClient.send("/app/getRecommendRelatedMemo", {}, JSON.stringify(command));
     }
 
     function handleServerResponse(response) {
         if (response.type === "InitMemoInfo") {
+            console.log(response)
             memoId = response.id;
         } else if (response.type === "GetRecommendRelatedMemoInfo") {
             console.log(response)
@@ -63,10 +70,12 @@
     function displayRecommendations(candidates) {
         var recommendationsDiv = document.getElementById("recommendations");
         recommendationsDiv.innerHTML = '';
-        candidates.forEach(function(candidate) {
+        candidates.forEach(function (candidate) {
             var div = document.createElement("div");
             div.innerHTML = candidate.second; // MemoTitle
-            div.onclick = function() { addRelatedMemo(candidate.first); }; // MemoId
+            div.onclick = function () {
+                addRelatedMemo(candidate.first);
+            }
             recommendationsDiv.appendChild(div);
         });
     }
@@ -77,6 +86,7 @@
             console.log("Related memo added: " + memoId);
         }
     }
+
     function addTag() {
         var tags = document.getElementById("tags").value.split(',');
         console.log("Tags added: " + tags);
@@ -92,7 +102,7 @@
             authorId: document.getElementById("authorId").value,
             links: relatedMemoIds,
         };
-        webSocket.send(JSON.stringify(command));
+        stompClient.send("/app/commitMemo", {}, JSON.stringify(command));
 
         resetState();
     }

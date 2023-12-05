@@ -2,14 +2,20 @@ package kr.co.jiniaslog.memo.usecase
 
 import kr.co.jiniaslog.memo.domain.memo.AuthorId
 import kr.co.jiniaslog.memo.domain.memo.MemoContent
+import kr.co.jiniaslog.memo.domain.memo.MemoId
+import kr.co.jiniaslog.memo.domain.memo.MemoTitle
+import kr.co.jiniaslog.memo.domain.tag.TagId
 
 interface IInitMemo {
-    fun init(command: InitMemoCommand): InitMemoInfo
+    fun handle(command: Command): Info
 
-    data class InitMemoCommand(
+    data class Command(
         val authorId: AuthorId,
-        val content: MemoContent,
+        val title: MemoTitle = MemoTitle(""),
+        val content: MemoContent = MemoContent(""),
+        val references: Set<MemoId> = mutableSetOf(),
+        val tags: Set<TagId> = mutableSetOf(),
     )
 
-    data class InitMemoInfo(val id: Long)
+    data class Info(val id: MemoId)
 }

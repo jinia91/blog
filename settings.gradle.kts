@@ -35,8 +35,7 @@ include(
     "service:memo:adapter:in-http",
     "service:memo:adapter:in-websocket",
     "service:memo:adapter:in-message",
-    "service:memo:adapter:out-file",
-    "service:memo:adapter:out-rdb",
+    "service:memo:adapter:persistence",
 
     "service:user:core",
     "service:comment",

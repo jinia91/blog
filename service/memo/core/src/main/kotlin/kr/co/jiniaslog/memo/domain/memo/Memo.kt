@@ -1,17 +1,26 @@
 package kr.co.jiniaslog.memo.domain.memo
 
+import kr.co.jiniaslog.memo.domain.tag.Tag
 import kr.co.jiniaslog.shared.core.domain.AggregateRoot
+import kr.co.jiniaslog.shared.core.domain.IdUtils
 import java.time.LocalDateTime
 
 class Memo private constructor(
     id: MemoId,
+    authorId: AuthorId,
     content: MemoContent,
     title: MemoTitle,
-    tags: List<Tagging>,
-    links: List<MemoLink>,
-    status: MemoStatus,
+    references: MutableSet<MemoReference>,
+    tags: MutableSet<Tag>,
+    memoState: MemoState,
 ) : AggregateRoot<MemoId>() {
+    init {
+        memoState.validate(this)
+    }
+
     override val id: MemoId = id
+
+    val authorId: AuthorId = authorId
 
     var title: MemoTitle = title
         private set
@@ -19,61 +28,99 @@ class Memo private constructor(
     var content: MemoContent = content
         private set
 
-    var links: List<MemoLink> = links
+    private var _references: MutableSet<MemoReference> = references
+
+    private var _tags: MutableSet<Tag> = tags
+
+    val references: Set<MemoReference>
+        get() = _references.toSet()
+
+    val tags: Set<Tag>
+        get() = _tags.toSet()
+
+    var state: MemoState = memoState
         private set
 
-    var tags: List<Tagging> = tags
-        private set
+    fun update(
+        title: MemoTitle? = null,
+        content: MemoContent? = null,
+    ) {
+        title?.let {
+            this.title = it
+        }
+        content?.let {
+            this.content = it
+        }
+    }
 
-    var status = status
-        private set
+    fun addReference(referenceId: MemoId) {
+        this._references.add(MemoReference(this.id, referenceId))
+    }
+
+    fun removeReference(referenceId: MemoId) {
+        this._references.remove(MemoReference(this.id, referenceId))
+    }
+
+    fun addTag(tag: Tag) {
+        this._tags.add(tag)
+    }
+
+    fun removeTag(tag: Tag) {
+        this._tags.remove(tag)
+    }
 
     fun commit(
         title: MemoTitle,
         content: MemoContent,
-        linkedList: List<MemoId>,
-//        tags: List<Tagging>,
     ) {
-        this.title = title
-        this.content = content
-        this.links = linkedList.map { MemoLink.create(this.id, MemoLinkType.REFERENCE, it) }
-//        this.tags = tags
-        this.status = MemoStatus.COMMITTED
+        update(title, content)
+        MemoState.COMMITTED.validate(memo = this)
+        this.state = MemoState.COMMITTED
+    }
+
+    override fun toString(): String {
+        return "Memo(id=$id, authorId=$authorId, title=$title, content=$content, reference=$_references, memoState=$state)"
     }
 
     companion object {
         fun init(
-            id: MemoId,
-            title: MemoTitle? = null,
-            content: MemoContent,
+            title: MemoTitle = MemoTitle(""),
+            content: MemoContent = MemoContent(""),
+            authorId: AuthorId,
+            references: Set<MemoId> = setOf(),
+            tags: Set<Tag> = setOf(),
         ): Memo {
+            val id = MemoId(IdUtils.idGenerator.generate())
             return Memo(
                 id = id,
                 content = content,
-                title = title ?: MemoTitle.from(content),
-                tags = emptyList(),
-                links = emptyList(),
-                status = MemoStatus.STAGED,
+                title = title,
+                references = references.map { MemoReference(id, it) }.toMutableSet(),
+                authorId = authorId,
+                memoState = MemoState.DRAFT,
+                tags = tags.toMutableSet(),
             )
         }
 
         fun from(
             id: MemoId,
-            title: MemoTitle?,
+            authorId: AuthorId,
+            title: MemoTitle,
             content: MemoContent,
-            tags: List<Tagging>,
-            status: MemoStatus,
-            links: List<MemoLink>,
+            reference: MutableSet<MemoReference>,
+            state: MemoState,
+            tags: MutableSet<Tag>,
             createdAt: LocalDateTime?,
             updatedAt: LocalDateTime?,
         ): Memo {
             return Memo(
                 id = id,
+                authorId = authorId,
                 content = content,
-                title = title ?: MemoTitle.from(content),
+                title = title,
+                references = reference,
+                memoState = state,
                 tags = tags,
-                status = status,
-                links = links,
             ).apply {
                 this.createdAt = createdAt
                 this.updatedAt = updatedAt

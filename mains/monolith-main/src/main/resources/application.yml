@@ -11,29 +11,34 @@ logging:
     org.hibernate.type.descriptor.sql.BasicBinder: INFO
     org.hibernate.transaction: INFO
     sql: INFO
-decorator:
-  datasource:
-    p6spy:
-      enable-logging: false
+#decorator:
+#  datasource:
+#    p6spy:
+#      enable-logging: false
 
 spring:
+  neo4j:
+    uri: bolt://localhost:7687
+    authentication:
+      username: neo4j
+      password: password
   #===========#
   #   MySQL   #
   #===========#
-  datasource:
-      url: jdbc:mysql://localhost:3307/jiniaslog?serverTimezone=Asia/Seoul
-      username: root
-      password: password
-      driver-class-name: com.mysql.cj.jdbc.Driver
-  jpa:
-    hibernate:
-      ddl-auto: create
-    open-in-view: false
-    properties:
-      hibernate:
-        format_sql: true
-        use_sql_comments: true
-      show-sql: true
+#  datasource:
+#      url: jdbc:mysql://localhost:3307/jiniaslog?serverTimezone=Asia/Seoul
+#      username: root
+#      password: password
+#      driver-class-name: com.mysql.cj.jdbc.Driver
+#  jpa:
+#    hibernate:
+#      ddl-auto: create
+#    open-in-view: false
+#    properties:
+#      hibernate:
+#        format_sql: true
+#        use_sql_comments: true
+#      show-sql: true
 
 
 

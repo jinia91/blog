@@ -1,9 +1,10 @@
 package kr.co.jiniaslog.memo.domain.tag
 
 import kr.co.jiniaslog.shared.core.domain.AggregateRoot
+import kr.co.jiniaslog.shared.core.domain.IdUtils
 import java.time.LocalDateTime
 
-class Tag(
+class Tag private constructor(
     id: TagId,
     name: TagName,
 ) : AggregateRoot<TagId>() {
@@ -12,6 +13,13 @@ class Tag(
         private set
 
     companion object {
+        fun init(name: TagName): Tag {
+            return Tag(
+                id = TagId(IdUtils.generate()),
+                name = name,
+            )
+        }
+
         fun from(
             id: TagId,
             name: TagName,

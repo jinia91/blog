@@ -19,8 +19,7 @@ val blog = listOf(
 
 val memo = listOf(
     project(":service:memo:core"),
-    project(":service:memo:adapter:out-file"),
-    project(":service:memo:adapter:out-rdb"),
+    project(":service:memo:adapter:persistence"),
     project(":service:memo:adapter:in-http"),
     project(":service:memo:adapter:in-websocket"),
 ).also {
