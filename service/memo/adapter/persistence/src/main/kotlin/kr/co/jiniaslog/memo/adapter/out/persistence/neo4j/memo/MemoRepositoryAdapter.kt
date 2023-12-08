@@ -4,6 +4,7 @@ import kr.co.jiniaslog.memo.adapter.out.persistence.neo4j.tag.TagNeo4jRepository
 import kr.co.jiniaslog.memo.domain.memo.Memo
 import kr.co.jiniaslog.memo.domain.memo.MemoId
 import kr.co.jiniaslog.memo.domain.memo.MemoRepository
+import kr.co.jiniaslog.memo.domain.memo.SimpleMemoInfo
 import kr.co.jiniaslog.shared.core.annotation.PersistenceAdapter
 
 @PersistenceAdapter
@@ -11,6 +12,16 @@ class MemoRepositoryAdapter(
     private val memoNeo4jRepository: MemoNeo4jRepository,
     private val tagNeo4jRepository: TagNeo4jRepository,
 ) : MemoRepository {
+    override fun findByRelatedMemo(keyword: String): List<SimpleMemoInfo> {
+        return memoNeo4jRepository.findByKeywordFullTextSearching(keyword).map {
+            SimpleMemoInfo(
+                id = it.id,
+                title = it.title,
+                content = it.content,
+            )
+        }
+    }
+
     override fun findById(id: MemoId): Memo? {
         return memoNeo4jRepository.findById(id.value).orElse(null)?.toDomain()
     }

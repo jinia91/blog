@@ -14,10 +14,6 @@ class Memo private constructor(
     tags: MutableSet<Tag>,
     memoState: MemoState,
 ) : AggregateRoot<MemoId>() {
-    init {
-        memoState.validate(this)
-    }
-
     override val id: MemoId = id
 
     val authorId: AuthorId = authorId
@@ -124,6 +120,8 @@ class Memo private constructor(
             ).apply {
                 this.createdAt = createdAt
                 this.updatedAt = updatedAt
+            }.also {
+                it.state.validate(it)
             }
         }
     }

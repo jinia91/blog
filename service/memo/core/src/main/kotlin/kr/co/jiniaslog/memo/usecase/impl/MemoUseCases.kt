@@ -1,10 +1,13 @@
-package kr.co.jiniaslog.memo.usecase
+package kr.co.jiniaslog.memo.usecase.impl
 
 import kr.co.jiniaslog.memo.domain.memo.Memo
 import kr.co.jiniaslog.memo.domain.memo.MemoId
 import kr.co.jiniaslog.memo.domain.memo.MemoRepository
 import kr.co.jiniaslog.memo.domain.tag.TagId
 import kr.co.jiniaslog.memo.domain.tag.TagRepository
+import kr.co.jiniaslog.memo.usecase.ICommitMemo
+import kr.co.jiniaslog.memo.usecase.IInitMemo
+import kr.co.jiniaslog.memo.usecase.IUpdateMemo
 import kr.co.jiniaslog.shared.core.annotation.UseCaseInteractor
 
 interface MemoUseCasesFacade :
@@ -74,7 +77,7 @@ internal class MemoUseCases(
         return ICommitMemo.Info(memo.id)
     }
 
-    private fun getMemo(referenceId: MemoId) =
-        memoRepository.findById(referenceId)
-            ?: throw IllegalArgumentException("MemoId : $referenceId, memo not found")
+    private fun getMemo(id: MemoId) =
+        memoRepository.findById(id)
+            ?: throw IllegalArgumentException("MemoId : $id, memo not found")
 }

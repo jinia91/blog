@@ -57,16 +57,6 @@
         stompClient.send("/app/getRecommendRelatedMemo", {}, JSON.stringify(command));
     }
 
-    function handleServerResponse(response) {
-        if (response.type === "InitMemoInfo") {
-            console.log(response)
-            memoId = response.id;
-        } else if (response.type === "GetRecommendRelatedMemoInfo") {
-            console.log(response)
-            displayRecommendations(response.relatedMemoCandidates);
-        }
-    }
-
     function displayRecommendations(candidates) {
         var recommendationsDiv = document.getElementById("recommendations");
         recommendationsDiv.innerHTML = '';
@@ -115,6 +105,16 @@
         document.getElementById("memoContent").value = '';
         document.getElementById("tags").value = '';
         document.getElementById("recommendations").innerHTML = '';
+    }
+
+    function handleServerResponse(response) {
+        if (response.type === "InitMemoInfo") {
+            console.log(response)
+            memoId = response.id;
+        } else if (response.type === "GetRecommendRelatedMemoInfo") {
+            console.log(response)
+            displayRecommendations(response.relatedMemoCandidates);
+        }
     }
 </script>
 </body>

@@ -9,9 +9,7 @@ value class TagId(val value: Long) : ValueObject {
     }
 
     override fun validate() {
-        if (value < 0) {
-            throw IllegalArgumentException("태그 ID는 0 이상이어야 합니다.")
-        }
+        require(value > 0) { "태그 아이디는 0보다 커야 합니다." }
     }
 }
 
@@ -22,8 +20,6 @@ value class TagName(val value: String) : ValueObject {
     }
 
     override fun validate() {
-        if (value.isEmpty()) {
-            throw IllegalArgumentException("태그 이름은 1자 이상이어야 합니다.")
-        }
+        require(value.length in 1..20) { "태그 이름은 1자 이상 20자 이하여야 합니다." }
     }
 }

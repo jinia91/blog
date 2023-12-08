@@ -19,8 +19,8 @@ import kr.co.jiniaslog.memo.usecase.IUpdateMemo
 )
 @JsonSubTypes(
     JsonSubTypes.Type(value = InitMemoPayload::class, name = "InitMemo"),
-    JsonSubTypes.Type(value = CommitMemoPayload::class, name = "CommitMemo"),
     JsonSubTypes.Type(value = UpdateMemoPayload::class, name = "UpdateMemo"),
+    JsonSubTypes.Type(value = CommitMemoPayload::class, name = "CommitMemo"),
     JsonSubTypes.Type(value = AddReferencePayload::class, name = "AddReference"),
     JsonSubTypes.Type(value = RemoveReferencePayload::class, name = "RemoveReference"),
     JsonSubTypes.Type(value = AddTagPayload::class, name = "AddTag"),

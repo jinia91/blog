@@ -1,0 +1,17 @@
+package kr.co.jiniaslog.memo.queries
+
+import kr.co.jiniaslog.memo.domain.memo.MemoId
+import kr.co.jiniaslog.memo.domain.memo.MemoReference
+import kr.co.jiniaslog.memo.domain.memo.MemoTitle
+
+interface IGetAllMemos {
+    fun handle(query: Query): List<Info>
+
+    class Query()
+
+    data class Info(
+        val memoId: MemoId,
+        val title: MemoTitle,
+        val references: Set<MemoReference>,
+    )
+}

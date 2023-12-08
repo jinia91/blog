@@ -1,16 +1,17 @@
 package kr.co.jiniaslog.memo.adapter.inbound.websocket
 
 import kr.co.jiniaslog.memo.queries.IRecommendRelatedMemo
-import kr.co.jiniaslog.memo.queries.MemoQueriesFacade
+import kr.co.jiniaslog.memo.queries.impl.MemoQueriesFacade
 import kr.co.jiniaslog.memo.usecase.ICommitMemo
 import kr.co.jiniaslog.memo.usecase.IInitMemo
 import kr.co.jiniaslog.memo.usecase.IUpdateMemo
-import kr.co.jiniaslog.memo.usecase.MemoUseCasesFacade
+import kr.co.jiniaslog.memo.usecase.impl.MemoUseCasesFacade
 import org.springframework.messaging.handler.annotation.MessageMapping
 import org.springframework.messaging.handler.annotation.SendTo
 import org.springframework.stereotype.Controller
 
 private const val MEMO_PROTOCOL = "/topic/memoResponse"
+private val log = mu.KotlinLogging.logger { }
 
 @Controller
 class MemoWebSocketHandler(
@@ -20,6 +21,7 @@ class MemoWebSocketHandler(
     @MessageMapping("/initMemo")
     @SendTo(MEMO_PROTOCOL)
     fun handle(payload: InitMemoPayload): InitMemoResponse {
+        log.debug { "payload: $payload" }
         val command: IInitMemo.Command = payload.toCommand()
         return memoUseCases.handle(command)
             .toResponse()

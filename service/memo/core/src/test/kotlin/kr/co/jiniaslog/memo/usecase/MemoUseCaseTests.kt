@@ -13,6 +13,8 @@ import kr.co.jiniaslog.memo.domain.memo.MemoTitle
 import kr.co.jiniaslog.memo.domain.tag.Tag
 import kr.co.jiniaslog.memo.domain.tag.TagName
 import kr.co.jiniaslog.memo.domain.tag.TagRepository
+import kr.co.jiniaslog.memo.usecase.impl.MemoUseCases
+import kr.co.jiniaslog.memo.usecase.impl.MemoUseCasesFacade
 import kr.co.jiniaslog.shared.CustomBehaviorSpec
 
 internal class MemoUseCaseTests : CustomBehaviorSpec() {
