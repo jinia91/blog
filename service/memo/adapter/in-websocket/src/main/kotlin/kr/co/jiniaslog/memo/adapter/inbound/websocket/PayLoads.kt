@@ -2,14 +2,11 @@ package kr.co.jiniaslog.memo.adapter.inbound.websocket
 
 import com.fasterxml.jackson.annotation.JsonSubTypes
 import com.fasterxml.jackson.annotation.JsonTypeInfo
-import kr.co.jiniaslog.memo.domain.memo.AuthorId
 import kr.co.jiniaslog.memo.domain.memo.MemoContent
 import kr.co.jiniaslog.memo.domain.memo.MemoId
 import kr.co.jiniaslog.memo.domain.memo.MemoTitle
 import kr.co.jiniaslog.memo.domain.tag.TagId
 import kr.co.jiniaslog.memo.queries.IRecommendRelatedMemo
-import kr.co.jiniaslog.memo.usecase.ICommitMemo
-import kr.co.jiniaslog.memo.usecase.IInitMemo
 import kr.co.jiniaslog.memo.usecase.IUpdateMemo
 
 @JsonTypeInfo(
@@ -18,65 +15,14 @@ import kr.co.jiniaslog.memo.usecase.IUpdateMemo
     property = "type",
 )
 @JsonSubTypes(
-    JsonSubTypes.Type(value = InitMemoPayload::class, name = "InitMemo"),
     JsonSubTypes.Type(value = UpdateMemoPayload::class, name = "UpdateMemo"),
-    JsonSubTypes.Type(value = CommitMemoPayload::class, name = "CommitMemo"),
     JsonSubTypes.Type(value = AddReferencePayload::class, name = "AddReference"),
     JsonSubTypes.Type(value = RemoveReferencePayload::class, name = "RemoveReference"),
     JsonSubTypes.Type(value = AddTagPayload::class, name = "AddTag"),
     JsonSubTypes.Type(value = RemoveTagPayload::class, name = "RemoveTag"),
-    JsonSubTypes.Type(value = RecommendRelatedMemoPayload::class, name = "GetRecommendRelatedMemo"),
 )
 sealed class PayLoad {
     abstract val type: String
-}
-
-data class InitMemoPayload(
-    override val type: String = "InitMemo",
-    val authorId: Long,
-    val title: String?,
-    val content: String?,
-    val references: Set<Long>?,
-    val tags: Set<Long>?,
-) : PayLoad() {
-    fun toCommand(): IInitMemo.Command {
-        return IInitMemo.Command(
-            authorId = AuthorId(authorId),
-            title = title?.let { MemoTitle(title) } ?: MemoTitle(""),
-            content = content?.let { MemoContent(content) } ?: MemoContent(""),
-            references = references?.map { MemoId(it) }?.toMutableSet() ?: mutableSetOf(),
-            tags = tags?.map { TagId(it) }?.toMutableSet() ?: mutableSetOf(),
-        )
-    }
-}
-
-data class InitMemoResponse(
-    val type: String,
-    val id: Long,
-) {
-    companion object {
-        fun from(id: Long): InitMemoResponse {
-            return InitMemoResponse(
-                type = "InitMemoInfo",
-                id = id,
-            )
-        }
-    }
-}
-
-fun IInitMemo.Info.toResponse(): InitMemoResponse {
-    return InitMemoResponse.from(id.value)
-}
-
-data class RecommendRelatedMemoPayload(
-    override val type: String = "GetRecommendRelatedMemo",
-    val query: String,
-) : PayLoad() {
-    fun toQuery(): IRecommendRelatedMemo.Query {
-        return IRecommendRelatedMemo.Query(
-            query = query,
-        )
-    }
 }
 
 data class RecommendRelatedMemoResponse(
@@ -93,21 +39,6 @@ fun IRecommendRelatedMemo.Info.toResponse(): RecommendRelatedMemoResponse {
     )
 }
 
-data class CommitMemoPayload(
-    override val type: String = "CommitMemo",
-    val id: Long,
-    val content: String,
-    val title: String,
-) : PayLoad() {
-    fun toCommand(): ICommitMemo.Command {
-        return ICommitMemo.Command(
-            content = MemoContent(content),
-            title = MemoTitle(title),
-            memoId = MemoId(id),
-        )
-    }
-}
-
 data class CommitMemoResponse(
     val id: Long,
 ) {
@@ -118,10 +49,6 @@ data class CommitMemoResponse(
             )
         }
     }
-}
-
-fun ICommitMemo.Info.toResponse(): CommitMemoResponse {
-    return CommitMemoResponse.from(id.value)
 }
 
 data class UpdateMemoPayload(

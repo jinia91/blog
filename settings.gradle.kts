@@ -35,6 +35,7 @@ include(
     "service:memo:adapter:in-http",
     "service:memo:adapter:in-websocket",
     "service:memo:adapter:in-message",
+    "service:memo:adapter:in-batch",
     "service:memo:adapter:persistence",
 
     "service:user:core",

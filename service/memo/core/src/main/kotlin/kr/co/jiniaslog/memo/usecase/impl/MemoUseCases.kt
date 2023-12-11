@@ -5,7 +5,7 @@ import kr.co.jiniaslog.memo.domain.memo.MemoId
 import kr.co.jiniaslog.memo.domain.memo.MemoRepository
 import kr.co.jiniaslog.memo.domain.tag.TagId
 import kr.co.jiniaslog.memo.domain.tag.TagRepository
-import kr.co.jiniaslog.memo.usecase.ICommitMemo
+import kr.co.jiniaslog.memo.usecase.IDeleteMemo
 import kr.co.jiniaslog.memo.usecase.IInitMemo
 import kr.co.jiniaslog.memo.usecase.IUpdateMemo
 import kr.co.jiniaslog.shared.core.annotation.UseCaseInteractor
@@ -13,7 +13,7 @@ import kr.co.jiniaslog.shared.core.annotation.UseCaseInteractor
 interface MemoUseCasesFacade :
     IInitMemo,
     IUpdateMemo,
-    ICommitMemo
+    IDeleteMemo
 
 @UseCaseInteractor
 internal class MemoUseCases(
@@ -66,16 +66,15 @@ internal class MemoUseCases(
         return IUpdateMemo.Info(memo.id)
     }
 
+    override fun handle(command: IDeleteMemo.Command): IDeleteMemo.Info {
+        val memo = getMemo(command.id)
+        memoRepository.deleteById(memo.id)
+        return IDeleteMemo.Info()
+    }
+
     private fun getTag(tagId: TagId) =
         tagRepository.findById(tagId)
             ?: throw IllegalArgumentException("TagId : $tagId, tag not found")
-
-    override fun handle(command: ICommitMemo.Command): ICommitMemo.Info {
-        val memo = getMemo(command.memoId)
-        memo.commit(command.title, command.content)
-        memoRepository.save(memo)
-        return ICommitMemo.Info(memo.id)
-    }
 
     private fun getMemo(id: MemoId) =
         memoRepository.findById(id)

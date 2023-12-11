@@ -20,7 +20,7 @@ interface MemoNeo4jRepository : Neo4jRepository<MemoNeo4jEntity, Long> {
             node.state AS state, 
             node.createdAt AS createdAt, 
             node.updatedAt AS updatedAt
-        LIMIT 3
+        LIMIT 6
     """,
     )
     fun findByKeywordFullTextSearching(

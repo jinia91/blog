@@ -12,7 +12,8 @@ import kr.co.jiniaslog.shared.core.annotation.UseCaseInteractor
 interface MemoQueriesFacade :
     IGetAllMemos,
     IRecommendRelatedMemo,
-    IGetAllTags
+    IGetAllTags,
+    IGetMemoById
 
 @UseCaseInteractor
 internal class MemoQueries(
@@ -31,11 +32,25 @@ internal class MemoQueries(
 
     override fun handle(query: IRecommendRelatedMemo.Query): IRecommendRelatedMemo.Info {
         return IRecommendRelatedMemo.Info(
-            relatedMemoCandidates = memoRepository.findByRelatedMemo(query.query).map { MemoId(it.id) to MemoTitle(it.title) },
+            relatedMemoCandidates =
+                memoRepository.findByRelatedMemo(query.query)
+                    .filterNot { it.id == query.thisId.value }
+                    .take(5)
+                    .map { MemoId(it.id) to MemoTitle(it.title) },
         )
     }
 
     override fun handle(query: IGetAllTags.Query): List<IGetAllTags.Info> {
         return tagRepository.findAll().map { IGetAllTags.Info(tagId = it.id, name = it.name) }
+    }
+
+    override fun handle(query: IGetMemoById.Query): IGetMemoById.Info {
+        val memo = memoRepository.findById(query.memoId) ?: throw IllegalArgumentException("memo not found")
+        return IGetMemoById.Info(
+            memoId = memo.id,
+            title = memo.title,
+            content = memo.content,
+            references = memo.references.map { IGetMemoById.Info.Reference(rootId = it.rootId, referenceId = it.referenceId) }.toSet(),
+        )
     }
 }

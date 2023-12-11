@@ -11,6 +11,9 @@ logging:
     org.hibernate.type.descriptor.sql.BasicBinder: INFO
     org.hibernate.transaction: INFO
     sql: INFO
+    org.springframework.data.neo4j: off
+
+
 #decorator:
 #  datasource:
 #    p6spy:
