@@ -1,13 +1,12 @@
 package kr.co.jiniaslog.memo.usecase.impl
 
-import kr.co.jiniaslog.memo.domain.folder.Folder
+import kr.co.jiniaslog.memo.domain.folder.FolderId
 import kr.co.jiniaslog.memo.domain.folder.FolderRepository
 import kr.co.jiniaslog.memo.domain.memo.Memo
 import kr.co.jiniaslog.memo.domain.memo.MemoId
 import kr.co.jiniaslog.memo.domain.memo.MemoRepository
 import kr.co.jiniaslog.memo.domain.tag.TagId
 import kr.co.jiniaslog.memo.domain.tag.TagRepository
-import kr.co.jiniaslog.memo.usecase.ICreateNewFolder
 import kr.co.jiniaslog.memo.usecase.IDeleteMemo
 import kr.co.jiniaslog.memo.usecase.IInitMemo
 import kr.co.jiniaslog.memo.usecase.IMakeRelationShipFolderAndMemo
@@ -18,7 +17,6 @@ interface MemoUseCasesFacade :
     IInitMemo,
     IUpdateMemo,
     IDeleteMemo,
-    ICreateNewFolder,
     IMakeRelationShipFolderAndMemo
 
 @UseCaseInteractor
@@ -79,24 +77,20 @@ internal class MemoUseCases(
         return IDeleteMemo.Info()
     }
 
-    override fun handle(command: ICreateNewFolder.Command): ICreateNewFolder.Info {
-        val newOne =
-            Folder.init(
-                authorId = command.authorId,
-                parent = command.parent,
-            )
-        folderRepository.save(newOne)
-        return ICreateNewFolder.Info(newOne.id)
-    }
-
     override fun handle(command: IMakeRelationShipFolderAndMemo.Command): IMakeRelationShipFolderAndMemo.Info {
-        folderRepository.findById(command.folderId) ?: throw IllegalArgumentException("FolderId : ${command.folderId}, folder not found")
+        getFolder(command.folderId)
         val memo = getMemo(command.memoId)
 
         memo.addParentFolder(command.folderId)
         memoRepository.save(memo)
         return IMakeRelationShipFolderAndMemo.Info(memo.id, command.folderId)
     }
+
+    private fun getFolder(id: FolderId) =
+        (
+            folderRepository.findById(id)
+                ?: throw IllegalArgumentException("FolderId : $id, folder not found")
+        )
 
     private fun getTag(tagId: TagId) =
         tagRepository.findById(tagId)

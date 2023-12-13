@@ -21,7 +21,7 @@ class FolderRepositoryAdapter(
     }
 
     override fun deleteById(id: FolderId) {
-        folderNeo4jRepository.deleteFolderAndContentsById(id.value)
+        folderNeo4jRepository.deleteFolderRecursivelyById(id.value)
     }
 
     override fun save(entity: Folder): Folder {
@@ -34,14 +34,6 @@ class FolderRepositoryAdapter(
                         entity.parent?.let {
                             folderNeo4jRepository.findById(it.value).getOrNull()
                         }
-                    val childrenFolder =
-                        entity.children.mapNotNull {
-                            folderNeo4jRepository.findById(it.value).getOrNull()
-                        }.toMutableSet()
-                    val memos =
-                        entity.memos.mapNotNull {
-                            memoNeo4jRepository.findById(it.value).getOrNull()
-                        }.toMutableSet()
 
                     val folderNeo4jEntity =
                         FolderNeo4jEntity(
@@ -49,8 +41,6 @@ class FolderRepositoryAdapter(
                             name = entity.name.value,
                             authorId = entity.authorId.value,
                             parent = parentFolder,
-                            children = childrenFolder,
-                            memos = memos,
                         )
                     folderNeo4jRepository.save(folderNeo4jEntity)
                 }
@@ -71,39 +61,6 @@ class FolderRepositoryAdapter(
                             updatedParentId?.let {
                                 folderNeo4jRepository.findById(it).getOrNull()
                             }
-                    }
-
-                    // children
-                    val updatedChildrenIds = updateData.children.map { it.value }.toSet()
-                    val addedChildrenIds = updatedChildrenIds.minus(origin.children.map { it.id }.toSet())
-                    addedChildrenIds.forEach {
-                        val child = folderNeo4jRepository.findById(it).getOrNull()
-                        if (child != null) {
-                            origin.children.add(child)
-                        }
-                    }
-                    val removedChildrenIds = origin.children.map { it.id }.toSet().minus(updatedChildrenIds)
-                    removedChildrenIds.forEach {
-                        val child = folderNeo4jRepository.findById(it).getOrNull()
-                        if (child != null) {
-                            origin.children.remove(child)
-                        }
-                    }
-                    // memos
-                    val updatedMemosIds = updateData.memos.map { it.value }.toSet()
-                    val addedMemosIds = updatedMemosIds.minus(origin.memos.map { it.id }.toSet())
-                    addedMemosIds.forEach {
-                        val memo = memoNeo4jRepository.findById(it).getOrNull()
-                        if (memo != null) {
-                            origin.memos.add(memo)
-                        }
-                    }
-                    val removedMemosIds = origin.memos.map { it.id }.toSet().minus(updatedMemosIds)
-                    removedMemosIds.forEach {
-                        val memo = memoNeo4jRepository.findById(it).getOrNull()
-                        if (memo != null) {
-                            origin.memos.remove(memo)
-                        }
                     }
                     folderNeo4jRepository.save(origin)
                 }

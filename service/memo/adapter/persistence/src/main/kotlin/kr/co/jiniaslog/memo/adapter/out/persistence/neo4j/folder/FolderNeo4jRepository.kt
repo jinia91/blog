@@ -5,18 +5,25 @@ import org.springframework.data.neo4j.repository.query.Query
 import org.springframework.data.repository.query.Param
 
 interface FolderNeo4jRepository : Neo4jRepository<FolderNeo4jEntity, Long> {
-    @Query("MATCH (parent:Folder {id: ${'$'}folderId}) DETACH DELETE parent")
-    fun deleteFolderAndContentsById(
+    @Query(
+        """
+        MATCH (parentFolder:folder { id: ${'$'}folderId })
+OPTIONAL MATCH (parentFolder)-[:CONTAINS*]->(childFolder:folder)
+OPTIONAL MATCH (parentFolder)-[:CONTAINS_MEMO]->(memo1:memo)
+OPTIONAL MATCH (childFolder)-[:CONTAINS_MEMO]->(memo2:memo)
+DETACH DELETE parentFolder, childFolder, memo1, memo2
+    """,
+    )
+    fun deleteFolderRecursivelyById(
         @Param("folderId") folderId: Long,
     )
 
     @Query(
         """
-    MATCH (f:Folder)-[:CONTAINS]->(child:Folder), 
-          (f)<-[:CONTAINS]-(parent:Folder),
-          (f)-[:CONTAINS]->(m:Memo)
+    MATCH (f:Folder)-[:CONTAINS]->(child:folder), 
+          (f)<-[:CONTAINS]-(parent:folder)
     WHERE f.id =${'$'}folderId
-    RETURN f, collect(child) as children, parent, collect(m) as memos
+    RETURN f, collect(child) as children, parent
 """,
     )
     fun findByIdWithRelations(folderId: Long): FolderNeo4jEntity?

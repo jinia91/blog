@@ -1,18 +1,33 @@
 package kr.co.jiniaslog.memo.domain.folder
 
 import kr.co.jiniaslog.memo.domain.memo.AuthorId
-import kr.co.jiniaslog.memo.domain.memo.MemoId
 import kr.co.jiniaslog.shared.core.domain.AggregateRoot
 import kr.co.jiniaslog.shared.core.domain.IdUtils
 
 open class Folder(
-    override val id: FolderId,
-    open val name: FolderName,
-    open val authorId: AuthorId,
-    open val parent: FolderId?,
-    open val children: MutableSet<FolderId>,
-    open val memos: MutableSet<MemoId>,
+    id: FolderId,
+    name: FolderName,
+    authorId: AuthorId,
+    parent: FolderId?,
 ) : AggregateRoot<FolderId>() {
+    override val id: FolderId = id
+
+    var name: FolderName = name
+        private set
+
+    val authorId: AuthorId = authorId
+
+    var parent: FolderId? = parent
+        private set
+
+    fun changeName(name: FolderName) {
+        this.name = name
+    }
+
+    fun changeParent(parent: Folder?) {
+        this.parent = parent?.id
+    }
+
     companion object {
         fun init(
             authorId: AuthorId,
@@ -23,8 +38,6 @@ open class Folder(
                 name = FolderName.UNTITLED,
                 authorId = authorId,
                 parent = parent,
-                children = mutableSetOf(),
-                memos = mutableSetOf(),
             )
         }
 
@@ -33,16 +46,12 @@ open class Folder(
             name: FolderName,
             authorId: AuthorId,
             parent: FolderId?,
-            children: MutableSet<FolderId>,
-            memos: MutableSet<MemoId>,
         ): Folder {
             return Folder(
                 id = id,
                 name = name,
                 authorId = authorId,
                 parent = parent,
-                children = children,
-                memos = memos,
             )
         }
     }
