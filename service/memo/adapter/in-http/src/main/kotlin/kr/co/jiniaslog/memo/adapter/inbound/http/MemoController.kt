@@ -32,7 +32,6 @@ class MemoController(
     fun initMemo(
         @RequestBody request: InitMemoRequest,
     ): InitMemoResponse {
-        log.info { "request: $request" }
         val info =
             memoUseCases.handle(
                 IInitMemo.Command(authorId = AuthorId(request.authorId)),
@@ -46,8 +45,6 @@ class MemoController(
         @RequestParam keyword: String?,
         @RequestParam thisId: Long?,
     ): MemoResponse {
-        log.info { "keyword: $keyword, thisId: $thisId" }
-
         if (keyword.isNullOrBlank() && thisId == null) {
             return memoQueries.handle(IGetAllMemos.Query()).sortedBy { it.memoId.value }
                 .toResponse()
@@ -62,7 +59,6 @@ class MemoController(
     fun getMemoById(
         @PathVariable id: Long,
     ): GetMemoByIdResponse {
-        log.info { "id: $id" }
         return memoQueries.handle(IGetMemoById.Query(MemoId(id)))
             .toResponse()
     }
@@ -72,7 +68,6 @@ class MemoController(
     fun deleteMemoById(
         @PathVariable id: Long,
     ): DeleteMemoByIdResponse {
-        log.info { "id: $id" }
         memoUseCases.handle(IDeleteMemo.Command(MemoId(id)))
         return DeleteMemoByIdResponse()
     }

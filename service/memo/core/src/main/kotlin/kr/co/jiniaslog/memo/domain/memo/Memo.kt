@@ -120,6 +120,8 @@ class Memo private constructor(
             ).apply {
                 this.createdAt = createdAt
                 this.updatedAt = updatedAt
+            }.also {
+                it.state.validate(it)
             }
         }
     }
