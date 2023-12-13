@@ -1,5 +1,6 @@
 package kr.co.jiniaslog.memo.domain.memo
 
+import kr.co.jiniaslog.memo.domain.folder.FolderId
 import kr.co.jiniaslog.memo.domain.tag.Tag
 import kr.co.jiniaslog.shared.core.domain.AggregateRoot
 import kr.co.jiniaslog.shared.core.domain.IdUtils
@@ -13,6 +14,7 @@ class Memo private constructor(
     references: MutableSet<MemoReference>,
     tags: MutableSet<Tag>,
     memoState: MemoState,
+    parentFolderId: FolderId?,
 ) : AggregateRoot<MemoId>() {
     override val id: MemoId = id
 
@@ -35,6 +37,9 @@ class Memo private constructor(
         get() = _tags.toSet()
 
     var state: MemoState = memoState
+        private set
+
+    var parentFolderId: FolderId? = parentFolderId
         private set
 
     fun update(
@@ -74,6 +79,10 @@ class Memo private constructor(
         this.state = MemoState.COMMITTED
     }
 
+    fun addParentFolder(folderId: FolderId) {
+        this.parentFolderId = folderId
+    }
+
     override fun toString(): String {
         return "Memo(id=$id, authorId=$authorId, title=$title, content=$content, reference=$_references, memoState=$state)"
     }
@@ -83,6 +92,7 @@ class Memo private constructor(
             title: MemoTitle = MemoTitle(""),
             content: MemoContent = MemoContent(""),
             authorId: AuthorId,
+            parentFolderId: FolderId? = null,
             references: Set<MemoId> = setOf(),
             tags: Set<Tag> = setOf(),
         ): Memo {
@@ -95,6 +105,7 @@ class Memo private constructor(
                 authorId = authorId,
                 memoState = MemoState.DRAFT,
                 tags = tags.toMutableSet(),
+                parentFolderId = parentFolderId,
             )
         }
 
@@ -106,6 +117,7 @@ class Memo private constructor(
             reference: MutableSet<MemoReference>,
             state: MemoState,
             tags: MutableSet<Tag>,
+            parentFolderId: FolderId?,
             createdAt: LocalDateTime?,
             updatedAt: LocalDateTime?,
         ): Memo {
@@ -117,6 +129,7 @@ class Memo private constructor(
                 references = reference,
                 memoState = state,
                 tags = tags,
+                parentFolderId = parentFolderId,
             ).apply {
                 this.createdAt = createdAt
                 this.updatedAt = updatedAt

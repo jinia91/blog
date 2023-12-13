@@ -3,6 +3,7 @@ package kr.co.jiniaslog.memo.domain.folder
 import kr.co.jiniaslog.memo.domain.memo.AuthorId
 import kr.co.jiniaslog.memo.domain.memo.MemoId
 import kr.co.jiniaslog.shared.core.domain.AggregateRoot
+import kr.co.jiniaslog.shared.core.domain.IdUtils
 
 open class Folder(
     override val id: FolderId,
@@ -13,6 +14,20 @@ open class Folder(
     open val memos: MutableSet<MemoId>,
 ) : AggregateRoot<FolderId>() {
     companion object {
+        fun init(
+            authorId: AuthorId,
+            parent: FolderId? = null,
+        ): Folder {
+            return Folder(
+                id = FolderId(IdUtils.idGenerator.generate()),
+                name = FolderName.UNTITLED,
+                authorId = authorId,
+                parent = parent,
+                children = mutableSetOf(),
+                memos = mutableSetOf(),
+            )
+        }
+
         fun from(
             id: FolderId,
             name: FolderName,

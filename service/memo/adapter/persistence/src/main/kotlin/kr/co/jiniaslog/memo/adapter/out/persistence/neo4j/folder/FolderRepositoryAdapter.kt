@@ -25,7 +25,7 @@ class FolderRepositoryAdapter(
     }
 
     override fun save(entity: Folder): Folder {
-        var pm = folderNeo4jRepository.findById(entity.id.value).getOrNull()
+        var pm = folderNeo4jRepository.findByIdWithRelations(entity.id.value)
 
         pm =
             when (pm) {
@@ -35,13 +35,13 @@ class FolderRepositoryAdapter(
                             folderNeo4jRepository.findById(it.value).getOrNull()
                         }
                     val childrenFolder =
-                        entity.children.map {
+                        entity.children.mapNotNull {
                             folderNeo4jRepository.findById(it.value).getOrNull()
-                        }.filterNotNull().toMutableSet()
+                        }.toMutableSet()
                     val memos =
-                        entity.memos.map {
+                        entity.memos.mapNotNull {
                             memoNeo4jRepository.findById(it.value).getOrNull()
-                        }.filterNotNull().toMutableSet()
+                        }.toMutableSet()
 
                     val folderNeo4jEntity =
                         FolderNeo4jEntity(

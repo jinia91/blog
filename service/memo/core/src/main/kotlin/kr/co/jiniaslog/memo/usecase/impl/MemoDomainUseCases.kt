@@ -1,24 +1,31 @@
 package kr.co.jiniaslog.memo.usecase.impl
 
+import kr.co.jiniaslog.memo.domain.folder.Folder
+import kr.co.jiniaslog.memo.domain.folder.FolderRepository
 import kr.co.jiniaslog.memo.domain.memo.Memo
 import kr.co.jiniaslog.memo.domain.memo.MemoId
 import kr.co.jiniaslog.memo.domain.memo.MemoRepository
 import kr.co.jiniaslog.memo.domain.tag.TagId
 import kr.co.jiniaslog.memo.domain.tag.TagRepository
+import kr.co.jiniaslog.memo.usecase.ICreateNewFolder
 import kr.co.jiniaslog.memo.usecase.IDeleteMemo
 import kr.co.jiniaslog.memo.usecase.IInitMemo
+import kr.co.jiniaslog.memo.usecase.IMakeRelationShipFolderAndMemo
 import kr.co.jiniaslog.memo.usecase.IUpdateMemo
 import kr.co.jiniaslog.shared.core.annotation.UseCaseInteractor
 
 interface MemoUseCasesFacade :
     IInitMemo,
     IUpdateMemo,
-    IDeleteMemo
+    IDeleteMemo,
+    ICreateNewFolder,
+    IMakeRelationShipFolderAndMemo
 
 @UseCaseInteractor
 internal class MemoUseCases(
     private val memoRepository: MemoRepository,
     private val tagRepository: TagRepository,
+    private val folderRepository: FolderRepository,
 ) : MemoUseCasesFacade {
     override fun handle(command: IInitMemo.Command): IInitMemo.Info {
         val tags = command.tags.map { getTag(it) }.toSet()
@@ -70,6 +77,25 @@ internal class MemoUseCases(
         val memo = getMemo(command.id)
         memoRepository.deleteById(memo.id)
         return IDeleteMemo.Info()
+    }
+
+    override fun handle(command: ICreateNewFolder.Command): ICreateNewFolder.Info {
+        val newOne =
+            Folder.init(
+                authorId = command.authorId,
+                parent = command.parent,
+            )
+        folderRepository.save(newOne)
+        return ICreateNewFolder.Info(newOne.id)
+    }
+
+    override fun handle(command: IMakeRelationShipFolderAndMemo.Command): IMakeRelationShipFolderAndMemo.Info {
+        folderRepository.findById(command.folderId) ?: throw IllegalArgumentException("FolderId : ${command.folderId}, folder not found")
+        val memo = getMemo(command.memoId)
+
+        memo.addParentFolder(command.folderId)
+        memoRepository.save(memo)
+        return IMakeRelationShipFolderAndMemo.Info(memo.id, command.folderId)
     }
 
     private fun getTag(tagId: TagId) =

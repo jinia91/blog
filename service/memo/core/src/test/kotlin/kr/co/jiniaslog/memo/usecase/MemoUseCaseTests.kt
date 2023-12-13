@@ -8,7 +8,6 @@ import kr.co.jiniaslog.memo.domain.memo.AuthorId
 import kr.co.jiniaslog.memo.domain.memo.Memo
 import kr.co.jiniaslog.memo.domain.memo.MemoContent
 import kr.co.jiniaslog.memo.domain.memo.MemoRepository
-import kr.co.jiniaslog.memo.domain.memo.MemoState
 import kr.co.jiniaslog.memo.domain.memo.MemoTitle
 import kr.co.jiniaslog.memo.domain.tag.Tag
 import kr.co.jiniaslog.memo.domain.tag.TagName
@@ -171,33 +170,6 @@ internal class MemoUseCaseTests : CustomBehaviorSpec() {
                                 }
                             }
                         }
-                    }
-                }
-            }
-        }
-
-        /**
-         * 메모 커밋
-         */
-        Given("유효한 메모가 존재하고") {
-            val memo =
-                Memo.init(
-                    authorId = AuthorId(1),
-                )
-            memoRepository.save(memo)
-            And("커밋할 내용이 주어지고") {
-                val command =
-                    ICommitMemo.Command(
-                        memoId = memo.id,
-                        title = MemoTitle("title"),
-                        content = MemoContent("content"),
-                    )
-                When("메모 커밋을 하면") {
-                    sut.handle(command)
-                    Then("메모의 내용이 변경된다") {
-                        val foundMemo = memoRepository.findById(memo.id)!!
-                        foundMemo.content shouldBe MemoContent("content")
-                        foundMemo.state shouldBe MemoState.COMMITTED
                     }
                 }
             }

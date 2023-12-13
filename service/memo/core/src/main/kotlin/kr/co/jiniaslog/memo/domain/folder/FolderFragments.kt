@@ -10,4 +10,8 @@ value class FolderId(val value: Long) : ValueObject {
 }
 
 @JvmInline
-value class FolderName(val value: String)
+value class FolderName(val value: String) {
+    companion object {
+        val UNTITLED: FolderName = FolderName("untitled")
+    }
+}
