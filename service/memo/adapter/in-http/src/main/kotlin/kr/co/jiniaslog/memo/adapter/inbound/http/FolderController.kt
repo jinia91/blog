@@ -1,11 +1,14 @@
 package kr.co.jiniaslog.memo.adapter.inbound.http
 
 import kr.co.jiniaslog.memo.domain.folder.FolderId
+import kr.co.jiniaslog.memo.queries.IGetFoldersAll
+import kr.co.jiniaslog.memo.queries.impl.FolderQueriesFacade
 import kr.co.jiniaslog.memo.usecase.IDeleteFoldersRecursively
 import kr.co.jiniaslog.memo.usecase.IMakeRelationShipFolderAndFolder
 import kr.co.jiniaslog.memo.usecase.impl.FolderUseCasesFacade
 import org.springframework.web.bind.annotation.CrossOrigin
 import org.springframework.web.bind.annotation.DeleteMapping
+import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.PutMapping
@@ -17,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController
 @RequestMapping("/api/v1")
 class FolderController(
     private val folderUseCases: FolderUseCasesFacade,
+    private val folderQueries: FolderQueriesFacade,
 ) {
     @PostMapping("/folder")
     @CrossOrigin(origins = ["http://localhost:3000"])
@@ -59,5 +63,12 @@ class FolderController(
         val info =
             folderUseCases.handle(IDeleteFoldersRecursively.Command(FolderId(folderId)))
         return DeleteFolderResponse(info.folderId.value)
+    }
+
+    @GetMapping("/folder")
+    @CrossOrigin(origins = ["http://localhost:3000"])
+    fun getFoldersAll(): IGetFoldersAll.Info {
+        val info = folderQueries.handle(IGetFoldersAll.Query())
+        return info
     }
 }

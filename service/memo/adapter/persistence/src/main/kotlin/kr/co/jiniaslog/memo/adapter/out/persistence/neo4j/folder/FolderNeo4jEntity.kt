@@ -19,7 +19,7 @@ class FolderNeo4jEntity(
     @Property("authorId")
     val authorId: Long,
     @Property("parent")
-    @Relationship(type = "CONTAINS", direction = Relationship.Direction.OUTGOING)
+    @Relationship(type = "CONTAINS", direction = Relationship.Direction.INCOMING)
     var parent: FolderNeo4jEntity?,
 ) : Persistable<Long> {
     override fun isNew(): Boolean = true
