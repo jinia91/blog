@@ -4,7 +4,7 @@ import io.mockk.mockk
 import kr.co.jiniaslog.memo.domain.memo.Memo
 import kr.co.jiniaslog.memo.domain.memo.MemoId
 import kr.co.jiniaslog.memo.domain.memo.MemoRepository
-import kr.co.jiniaslog.memo.domain.memo.SimpleMemoInfo
+import kr.co.jiniaslog.memo.queries.model.SimpleMemoInfo
 import java.time.LocalDateTime
 
 class FakeMemoRepository : MemoRepository {

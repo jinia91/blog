@@ -1,8 +1,6 @@
 package kr.co.jiniaslog.memo.queries.impl
 
-import kr.co.jiniaslog.memo.domain.memo.MemoId
 import kr.co.jiniaslog.memo.domain.memo.MemoRepository
-import kr.co.jiniaslog.memo.domain.memo.MemoTitle
 import kr.co.jiniaslog.memo.queries.IGetAllMemos
 import kr.co.jiniaslog.memo.queries.IRecommendRelatedMemo
 import kr.co.jiniaslog.shared.core.annotation.UseCaseInteractor
@@ -30,9 +28,9 @@ internal class MemoQueries(
         return IRecommendRelatedMemo.Info(
             relatedMemoCandidates =
                 memoRepository.findByRelatedMemo(query.query)
-                    .filterNot { it.id == query.thisId.value }
+                    .filterNot { it.id == query.thisId }
                     .take(5)
-                    .map { MemoId(it.id) to MemoTitle(it.title) },
+                    .map { (it.id to it.title) },
         )
     }
 

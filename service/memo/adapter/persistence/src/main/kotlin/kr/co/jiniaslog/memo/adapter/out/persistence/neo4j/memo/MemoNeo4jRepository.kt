@@ -25,5 +25,5 @@ interface MemoNeo4jRepository : Neo4jRepository<MemoNeo4jEntity, Long> {
     )
     fun findByKeywordFullTextSearching(
         @Param("keyword") keyword: String,
-    ): List<MemoNeo4jEntity>
+    ): List<MemoNeo4jEntity> // todo 참조도 찾아올지 확인필요
 }

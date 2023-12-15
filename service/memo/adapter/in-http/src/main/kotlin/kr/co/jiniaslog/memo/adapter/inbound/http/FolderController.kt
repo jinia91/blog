@@ -1,9 +1,9 @@
 package kr.co.jiniaslog.memo.adapter.inbound.http
 
 import kr.co.jiniaslog.memo.domain.folder.FolderId
-import kr.co.jiniaslog.memo.queries.FolderInfo
 import kr.co.jiniaslog.memo.queries.IGetFoldersAll
 import kr.co.jiniaslog.memo.queries.impl.FolderQueriesFacade
+import kr.co.jiniaslog.memo.queries.model.FolderInfo
 import kr.co.jiniaslog.memo.usecase.IDeleteFoldersRecursively
 import kr.co.jiniaslog.memo.usecase.IMakeRelationShipFolderAndFolder
 import kr.co.jiniaslog.memo.usecase.impl.FolderUseCasesFacade

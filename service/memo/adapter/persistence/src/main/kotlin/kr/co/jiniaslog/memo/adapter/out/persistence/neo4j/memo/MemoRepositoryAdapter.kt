@@ -4,7 +4,9 @@ import kr.co.jiniaslog.memo.adapter.out.persistence.neo4j.folder.FolderNeo4jRepo
 import kr.co.jiniaslog.memo.domain.memo.Memo
 import kr.co.jiniaslog.memo.domain.memo.MemoId
 import kr.co.jiniaslog.memo.domain.memo.MemoRepository
-import kr.co.jiniaslog.memo.domain.memo.SimpleMemoInfo
+import kr.co.jiniaslog.memo.domain.memo.MemoTitle
+import kr.co.jiniaslog.memo.queries.model.MemoReferenceInfo
+import kr.co.jiniaslog.memo.queries.model.SimpleMemoInfo
 import kr.co.jiniaslog.shared.core.annotation.PersistenceAdapter
 
 @PersistenceAdapter
@@ -15,9 +17,15 @@ class MemoRepositoryAdapter(
     override fun findByRelatedMemo(keyword: String): List<SimpleMemoInfo> {
         return memoNeo4jRepository.findByKeywordFullTextSearching(keyword).map {
             SimpleMemoInfo(
-                id = it.id,
-                title = it.title,
-                content = it.content,
+                id = MemoId(it.id),
+                title = MemoTitle(it.title),
+                references =
+                    it.references.map { reference ->
+                        MemoReferenceInfo(
+                            id = MemoId(reference.id),
+                            title = MemoTitle(reference.title),
+                        )
+                    },
             )
         }
     }

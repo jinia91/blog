@@ -8,11 +8,11 @@ import kr.co.jiniaslog.memo.domain.folder.FolderName
 import kr.co.jiniaslog.memo.domain.folder.FolderRepository
 import kr.co.jiniaslog.memo.domain.memo.MemoId
 import kr.co.jiniaslog.memo.domain.memo.MemoTitle
-import kr.co.jiniaslog.memo.queries.FolderInfo
 import kr.co.jiniaslog.memo.queries.IGetFoldersAll
-import kr.co.jiniaslog.memo.queries.MemoReferenceInfo
-import kr.co.jiniaslog.memo.queries.SimpleMemoInfo
 import kr.co.jiniaslog.memo.queries.impl.FolderAndMemoQueries
+import kr.co.jiniaslog.memo.queries.model.FolderInfo
+import kr.co.jiniaslog.memo.queries.model.MemoReferenceInfo
+import kr.co.jiniaslog.memo.queries.model.SimpleMemoInfo
 import kr.co.jiniaslog.shared.core.annotation.PersistenceAdapter
 import kotlin.jvm.optionals.getOrNull
 
@@ -112,7 +112,7 @@ class FolderRepositoryAdapter(
 
     private fun MemoNeo4jEntity.toMemoInfo(): SimpleMemoInfo {
         return SimpleMemoInfo(
-            memoId = MemoId(this.id),
+            id = MemoId(this.id),
             title = MemoTitle(this.title),
             references = this.references.map { MemoReferenceInfo(MemoId(it.id), MemoTitle(it.title)) },
         )
