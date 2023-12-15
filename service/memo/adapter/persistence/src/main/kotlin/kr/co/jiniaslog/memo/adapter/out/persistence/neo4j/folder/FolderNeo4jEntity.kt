@@ -18,7 +18,6 @@ class FolderNeo4jEntity(
     var name: String,
     @Property("authorId")
     val authorId: Long,
-    @Property("parent")
     @Relationship(type = "CONTAINS", direction = Relationship.Direction.INCOMING)
     var parent: FolderNeo4jEntity?,
 ) : Persistable<Long> {

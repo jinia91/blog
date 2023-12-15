@@ -5,8 +5,6 @@ import kr.co.jiniaslog.memo.domain.folder.FolderRepository
 import kr.co.jiniaslog.memo.domain.memo.Memo
 import kr.co.jiniaslog.memo.domain.memo.MemoId
 import kr.co.jiniaslog.memo.domain.memo.MemoRepository
-import kr.co.jiniaslog.memo.domain.tag.TagId
-import kr.co.jiniaslog.memo.domain.tag.TagRepository
 import kr.co.jiniaslog.memo.usecase.IDeleteMemo
 import kr.co.jiniaslog.memo.usecase.IInitMemo
 import kr.co.jiniaslog.memo.usecase.IMakeRelationShipFolderAndMemo
@@ -22,19 +20,15 @@ interface MemoUseCasesFacade :
 @UseCaseInteractor
 internal class MemoUseCases(
     private val memoRepository: MemoRepository,
-    private val tagRepository: TagRepository,
     private val folderRepository: FolderRepository,
 ) : MemoUseCasesFacade {
     override fun handle(command: IInitMemo.Command): IInitMemo.Info {
-        val tags = command.tags.map { getTag(it) }.toSet()
-
         val newOne =
             Memo.init(
                 title = command.title,
                 content = command.content,
                 authorId = command.authorId,
                 references = command.references,
-                tags = tags,
             )
         memoRepository.save(newOne)
         return IInitMemo.Info(newOne.id)
@@ -52,14 +46,6 @@ internal class MemoUseCases(
             is IUpdateMemo.Command.RemoveReference -> {
                 getMemo(command.referenceId)
                 memo.removeReference(command.referenceId)
-            }
-
-            is IUpdateMemo.Command.AddTag -> {
-                memo.addTag(getTag(command.tagId))
-            }
-
-            is IUpdateMemo.Command.RemoveTag -> {
-                memo.removeTag(getTag(command.tagId))
             }
 
             is IUpdateMemo.Command.UpdateForm -> {
@@ -91,10 +77,6 @@ internal class MemoUseCases(
             folderRepository.findById(id)
                 ?: throw IllegalArgumentException("FolderId : $id, folder not found")
         )
-
-    private fun getTag(tagId: TagId) =
-        tagRepository.findById(tagId)
-            ?: throw IllegalArgumentException("TagId : $tagId, tag not found")
 
     private fun getMemo(id: MemoId) =
         memoRepository.findById(id)

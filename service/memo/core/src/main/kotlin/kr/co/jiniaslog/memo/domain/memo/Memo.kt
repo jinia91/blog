@@ -12,7 +12,6 @@ class Memo private constructor(
     content: MemoContent,
     title: MemoTitle,
     references: MutableSet<MemoReference>,
-    tags: MutableSet<Tag>,
     memoState: MemoState,
     parentFolderId: FolderId?,
 ) : AggregateRoot<MemoId>() {
@@ -28,13 +27,8 @@ class Memo private constructor(
 
     private var _references: MutableSet<MemoReference> = references
 
-    private var _tags: MutableSet<Tag> = tags
-
     val references: Set<MemoReference>
         get() = _references.toSet()
-
-    val tags: Set<Tag>
-        get() = _tags.toSet()
 
     var state: MemoState = memoState
         private set
@@ -60,14 +54,6 @@ class Memo private constructor(
 
     fun removeReference(referenceId: MemoId) {
         this._references.remove(MemoReference(this.id, referenceId))
-    }
-
-    fun addTag(tag: Tag) {
-        this._tags.add(tag)
-    }
-
-    fun removeTag(tag: Tag) {
-        this._tags.remove(tag)
     }
 
     fun commit(
@@ -104,7 +90,6 @@ class Memo private constructor(
                 references = references.map { MemoReference(id, it) }.toMutableSet(),
                 authorId = authorId,
                 memoState = MemoState.DRAFT,
-                tags = tags.toMutableSet(),
                 parentFolderId = parentFolderId,
             )
         }
@@ -128,7 +113,6 @@ class Memo private constructor(
                 title = title,
                 references = reference,
                 memoState = state,
-                tags = tags,
                 parentFolderId = parentFolderId,
             ).apply {
                 this.createdAt = createdAt

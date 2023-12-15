@@ -7,8 +7,6 @@ import kr.co.jiniaslog.memo.domain.memo.Memo
 import kr.co.jiniaslog.memo.domain.memo.MemoContent
 import kr.co.jiniaslog.memo.domain.memo.MemoState
 import kr.co.jiniaslog.memo.domain.memo.MemoTitle
-import kr.co.jiniaslog.memo.domain.tag.Tag
-import kr.co.jiniaslog.memo.domain.tag.TagName
 import kr.co.jiniaslog.shared.CustomBehaviorSpec
 
 internal class MemoTests : CustomBehaviorSpec() {
@@ -84,28 +82,6 @@ internal class MemoTests : CustomBehaviorSpec() {
                 )
                 Then("커밋상태가 된다") {
                     sutMemo.state shouldBe MemoState.COMMITTED
-                }
-            }
-        }
-
-        // context: 태그 편집
-        Given("유효한 메모와 태그가 주어지고") {
-            val sutMemo = Memo.init(authorId = AuthorId(1))
-            val tag = Tag.init(TagName("name"))
-            When("추가하면") {
-                sutMemo.addTag(tag)
-                Then("메모의 태그가 추가된다") {
-                    sutMemo.tags.size shouldBe 1
-                    sutMemo.tags.first() shouldBe tag
-                }
-            }
-            And("추가되어있고") {
-                sutMemo.addTag(tag)
-                When("제거하면") {
-                    sutMemo.removeTag(tag)
-                    Then("메모의 태그가 제거된다") {
-                        sutMemo.tags.size shouldBe 0
-                    }
                 }
             }
         }

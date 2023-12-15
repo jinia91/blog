@@ -35,6 +35,7 @@ class MemoController(
     fun initMemo(
         @RequestBody request: InitMemoRequest,
     ): InitMemoResponse {
+        log.info { "initMemo request: $request" }
         val info =
             memoUseCases.handle(
                 IInitMemo.Command(authorId = AuthorId(request.authorId)),
@@ -48,6 +49,7 @@ class MemoController(
         @RequestParam keyword: String?,
         @RequestParam thisId: Long?,
     ): MemoResponse {
+        log.info { "getMemos request: $keyword, $thisId" }
         if (keyword.isNullOrBlank() && thisId == null) {
             return memoQueries.handle(IGetAllMemos.Query()).sortedBy { it.memoId.value }
                 .toResponse()
@@ -62,6 +64,7 @@ class MemoController(
     fun getMemoById(
         @PathVariable id: Long,
     ): GetMemoByIdResponse {
+        log.info { "getMemoById request: $id" }
         return memoQueries.handle(IGetMemoById.Query(MemoId(id)))
             .toResponse()
     }

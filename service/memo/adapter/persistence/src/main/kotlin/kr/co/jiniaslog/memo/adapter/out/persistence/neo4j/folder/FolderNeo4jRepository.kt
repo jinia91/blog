@@ -27,13 +27,4 @@ DETACH DELETE parentFolder, childFolder, memo1, memo2
 """,
     )
     fun findByIdWithRelations(folderId: Long): FolderNeo4jEntity?
-
-    @Query(
-        """
-MATCH path = (rootFolder:folder)-[:CONTAINS*0..]->(childFolder:folder)
-WHERE NOT EXISTS {(parent:folder)-[:CONTAINS]->(rootFolder)}
-RETURN childFolder AS folder, length(path) AS depth
-        """,
-    )
-    fun findAllFoldersWithDepth(): List<FolderWithDepth>
 }

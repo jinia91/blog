@@ -1,5 +1,6 @@
 package kr.co.jiniaslog.folder.domain
 
+import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import kr.co.jiniaslog.memo.domain.folder.Folder
@@ -29,6 +30,20 @@ class FolderTests : CustomBehaviorSpec() {
                         newFolder.id shouldNotBe null
                         newFolder.name shouldBe FolderName.UNTITLED
                         newFolder.parent shouldBe parentFolder.id
+                    }
+                }
+            }
+        }
+
+        Given("두 폴더가 존재하고 상하관계가 존재하면") {
+            val authorId = AuthorId(1)
+            val parentFolder = Folder.init(authorId)
+            val childFolder = Folder.init(authorId)
+            childFolder.changeParent(parentFolder)
+            When("순환 참조를 하면") {
+                Then("예외가 발생한다.") {
+                    shouldThrow<IllegalArgumentException> {
+                        parentFolder.changeParent(childFolder)
                     }
                 }
             }

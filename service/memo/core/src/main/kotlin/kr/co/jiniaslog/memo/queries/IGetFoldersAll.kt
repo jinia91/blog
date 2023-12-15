@@ -18,11 +18,11 @@ data class FolderInfo(
     val name: FolderName?,
     val parent: FolderInfo?,
     var children: List<FolderInfo>,
-    var memos: List<MemoInfo>,
+    var memos: List<SimpleMemoInfo>,
 )
 
-data class MemoInfo(
-    val id: MemoId,
+data class SimpleMemoInfo(
+    val memoId: MemoId,
     val title: MemoTitle,
     val references: List<MemoReferenceInfo>,
 )

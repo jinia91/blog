@@ -1,6 +1,7 @@
 package kr.co.jiniaslog.memo.adapter.inbound.http
 
 import kr.co.jiniaslog.memo.domain.folder.FolderId
+import kr.co.jiniaslog.memo.queries.FolderInfo
 import kr.co.jiniaslog.memo.queries.IGetFoldersAll
 import kr.co.jiniaslog.memo.queries.impl.FolderQueriesFacade
 import kr.co.jiniaslog.memo.usecase.IDeleteFoldersRecursively
@@ -15,6 +16,8 @@ import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
+
+private val log = mu.KotlinLogging.logger {}
 
 @RestController
 @RequestMapping("/api/v1")
@@ -67,8 +70,19 @@ class FolderController(
 
     @GetMapping("/folder")
     @CrossOrigin(origins = ["http://localhost:3000"])
-    fun getFoldersAll(): IGetFoldersAll.Info {
+    fun getFoldersAll(): FolderAndMemoResponse {
+        log.info { "getFoldersAll" }
         val info = folderQueries.handle(IGetFoldersAll.Query())
-        return info
+        return info.toResponse()
     }
+}
+
+data class FolderAndMemoResponse(
+    val folderInfos: List<FolderInfo>,
+)
+
+fun IGetFoldersAll.Info.toResponse(): FolderAndMemoResponse {
+    return FolderAndMemoResponse(
+        folderInfos = this.folderInfos,
+    )
 }

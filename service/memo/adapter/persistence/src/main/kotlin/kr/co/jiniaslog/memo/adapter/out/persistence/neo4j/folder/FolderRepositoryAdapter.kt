@@ -10,8 +10,8 @@ import kr.co.jiniaslog.memo.domain.memo.MemoId
 import kr.co.jiniaslog.memo.domain.memo.MemoTitle
 import kr.co.jiniaslog.memo.queries.FolderInfo
 import kr.co.jiniaslog.memo.queries.IGetFoldersAll
-import kr.co.jiniaslog.memo.queries.MemoInfo
 import kr.co.jiniaslog.memo.queries.MemoReferenceInfo
+import kr.co.jiniaslog.memo.queries.SimpleMemoInfo
 import kr.co.jiniaslog.memo.queries.impl.FolderAndMemoQueries
 import kr.co.jiniaslog.shared.core.annotation.PersistenceAdapter
 import kotlin.jvm.optionals.getOrNull
@@ -78,18 +78,18 @@ class FolderRepositoryAdapter(
     }
 
     override fun getFoldersAll(): IGetFoldersAll.Info {
-        val foldersWithDepth = folderNeo4jRepository.findAllFoldersWithDepth().sortedWith(compareBy { it.depth })
-        val folderMap = foldersWithDepth.associate { it.folder?.id to it.folder?.toFolderInfo() }
+        val foldersWithDepth = folderNeo4jRepository.findAll()
+        val folderMap = foldersWithDepth.associate { it.id to it.toFolderInfo() }
         val memos = memoNeo4jRepository.findAll().groupBy { it.parentFolder?.id }
 
-        foldersWithDepth.forEach { folderWithDepth ->
-            val folderInfo = folderMap[folderWithDepth.folder?.id]
-            folderInfo?.children = folderMap.values.filter { it?.parent?.id == folderInfo?.id }.filterNotNull()
+        foldersWithDepth.forEach { folder ->
+            val folderInfo = folderMap[folder.id]
+            folderInfo?.children = folderMap.values.filter { it.parent?.id == folderInfo?.id }
             folderInfo?.memos = memos[folderInfo?.id?.value]?.map { it.toMemoInfo() } ?: emptyList()
         }
 
         return IGetFoldersAll.Info(
-            folderMap.values.filter { it?.parent == null }.filterNotNull() +
+            folderMap.values.filter { it.parent == null } +
                 FolderInfo(
                     id = null,
                     name = FolderName("Uncategorized"),
@@ -110,9 +110,9 @@ class FolderRepositoryAdapter(
         )
     }
 
-    private fun MemoNeo4jEntity.toMemoInfo(): MemoInfo {
-        return MemoInfo(
-            id = MemoId(this.id),
+    private fun MemoNeo4jEntity.toMemoInfo(): SimpleMemoInfo {
+        return SimpleMemoInfo(
+            memoId = MemoId(this.id),
             title = MemoTitle(this.title),
             references = this.references.map { MemoReferenceInfo(MemoId(it.id), MemoTitle(it.title)) },
         )

@@ -3,7 +3,6 @@ package kr.co.jiniaslog.memo.usecase
 import kr.co.jiniaslog.memo.domain.memo.MemoContent
 import kr.co.jiniaslog.memo.domain.memo.MemoId
 import kr.co.jiniaslog.memo.domain.memo.MemoTitle
-import kr.co.jiniaslog.memo.domain.tag.TagId
 
 interface IUpdateMemo {
     fun handle(command: Command): Info
@@ -15,16 +14,6 @@ interface IUpdateMemo {
             override val memoId: MemoId,
             val title: MemoTitle? = null,
             val content: MemoContent? = null,
-        ) : Command()
-
-        data class AddTag(
-            override val memoId: MemoId,
-            val tagId: TagId,
-        ) : Command()
-
-        data class RemoveTag(
-            override val memoId: MemoId,
-            val tagId: TagId,
         ) : Command()
 
         data class AddReference(

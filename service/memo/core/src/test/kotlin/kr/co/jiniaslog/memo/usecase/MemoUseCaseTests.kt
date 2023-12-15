@@ -2,27 +2,25 @@ package kr.co.jiniaslog.memo.usecase
 
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
+import kr.co.jiniaslog.fakes.FakeFolderRepository
 import kr.co.jiniaslog.fakes.FakeMemoRepository
-import kr.co.jiniaslog.fakes.FakeTagRepository
+import kr.co.jiniaslog.memo.domain.folder.FolderRepository
 import kr.co.jiniaslog.memo.domain.memo.AuthorId
 import kr.co.jiniaslog.memo.domain.memo.Memo
 import kr.co.jiniaslog.memo.domain.memo.MemoContent
 import kr.co.jiniaslog.memo.domain.memo.MemoRepository
 import kr.co.jiniaslog.memo.domain.memo.MemoTitle
-import kr.co.jiniaslog.memo.domain.tag.Tag
-import kr.co.jiniaslog.memo.domain.tag.TagName
-import kr.co.jiniaslog.memo.domain.tag.TagRepository
 import kr.co.jiniaslog.memo.usecase.impl.MemoUseCases
 import kr.co.jiniaslog.memo.usecase.impl.MemoUseCasesFacade
 import kr.co.jiniaslog.shared.CustomBehaviorSpec
 
 internal class MemoUseCaseTests : CustomBehaviorSpec() {
     private var memoRepository: MemoRepository = FakeMemoRepository()
-    private var tagRepository: TagRepository = FakeTagRepository()
+    private var folderRepository: FolderRepository = FakeFolderRepository()
     private val sut: MemoUseCasesFacade =
         MemoUseCases(
             memoRepository = memoRepository,
-            tagRepository = tagRepository,
+            folderRepository = folderRepository,
         )
 
     init {
@@ -136,40 +134,6 @@ internal class MemoUseCaseTests : CustomBehaviorSpec() {
                     Then("메모의 참조가 삭제된다") {
                         val foundMemo = memoRepository.findById(memo.id)!!
                         foundMemo.references.size shouldBe 0
-                    }
-                }
-            }
-            And("태그가 존재하고") {
-                val tag = Tag.init(TagName("tag"))
-                tagRepository.save(tag)
-
-                And("태그 추가 커맨드가 주어지고") {
-                    val command =
-                        IUpdateMemo.Command.AddTag(
-                            memoId = memo.id,
-                            tagId = tag.id,
-                        )
-                    When("메모 업데이트를 하면") {
-                        sut.handle(command)
-                        Then("메모의 태그가 추가된다") {
-                            val foundMemo = memoRepository.findById(memo.id)!!
-                            foundMemo.tags.size shouldBe 1
-                            foundMemo.tags.first().name shouldBe TagName("tag")
-                        }
-                        And("태그 삭제를 하면") {
-                            val command =
-                                IUpdateMemo.Command.RemoveTag(
-                                    memoId = memo.id,
-                                    tagId = tag.id,
-                                )
-                            When("메모 업데이트를 하면") {
-                                sut.handle(command)
-                                Then("메모의 태그가 삭제된다") {
-                                    val foundMemo = memoRepository.findById(memo.id)!!
-                                    foundMemo.tags.size shouldBe 0
-                                }
-                            }
-                        }
                     }
                 }
             }

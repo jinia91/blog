@@ -25,6 +25,9 @@ open class Folder(
     }
 
     fun changeParent(parent: Folder?) {
+        if (parent?.parent == this.id) {
+            throw IllegalArgumentException("이미 두 폴더간 상하관계가 존재합니다.")
+        }
         this.parent = parent?.id
     }
 
