@@ -1,7 +1,6 @@
 package kr.co.jiniaslog.memo.adapter.out.persistence.neo4j.memo
 
 import kr.co.jiniaslog.memo.adapter.out.persistence.neo4j.folder.FolderNeo4jEntity
-import kr.co.jiniaslog.memo.adapter.out.persistence.neo4j.tag.TagNeo4jEntity
 import kr.co.jiniaslog.memo.domain.folder.FolderId
 import kr.co.jiniaslog.memo.domain.memo.AuthorId
 import kr.co.jiniaslog.memo.domain.memo.Memo
@@ -31,8 +30,6 @@ class MemoNeo4jEntity(
     var content: String,
     @Relationship(type = "references", direction = Relationship.Direction.OUTGOING)
     val references: Set<MemoNeo4jEntity>,
-    @Relationship(type = "tags", direction = Relationship.Direction.OUTGOING)
-    val tags: Set<TagNeo4jEntity>,
     @Property("state")
     var state: MemoState,
     @Property("parentFolder")
@@ -54,7 +51,6 @@ class MemoNeo4jEntity(
             title = MemoTitle(this.title),
             content = MemoContent(this.content),
             reference = this.references.map { MemoReference(MemoId(this.id), MemoId(it.id)) }.toMutableSet(),
-            tags = tags.map { it.toDomain() }.toMutableSet(),
             state = this.state,
             parentFolderId = this.parentFolder?.let { FolderId(it.id) },
             createdAt = this.createdAt,

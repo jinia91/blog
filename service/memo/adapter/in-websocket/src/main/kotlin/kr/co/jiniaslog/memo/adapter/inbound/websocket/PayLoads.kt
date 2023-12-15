@@ -5,7 +5,6 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo
 import kr.co.jiniaslog.memo.domain.memo.MemoContent
 import kr.co.jiniaslog.memo.domain.memo.MemoId
 import kr.co.jiniaslog.memo.domain.memo.MemoTitle
-import kr.co.jiniaslog.memo.domain.tag.TagId
 import kr.co.jiniaslog.memo.queries.IRecommendRelatedMemo
 import kr.co.jiniaslog.memo.usecase.IUpdateMemo
 
@@ -18,8 +17,6 @@ import kr.co.jiniaslog.memo.usecase.IUpdateMemo
     JsonSubTypes.Type(value = UpdateMemoPayload::class, name = "UpdateMemo"),
     JsonSubTypes.Type(value = AddReferencePayload::class, name = "AddReference"),
     JsonSubTypes.Type(value = RemoveReferencePayload::class, name = "RemoveReference"),
-    JsonSubTypes.Type(value = AddTagPayload::class, name = "AddTag"),
-    JsonSubTypes.Type(value = RemoveTagPayload::class, name = "RemoveTag"),
 )
 sealed class PayLoad {
     abstract val type: String
@@ -104,32 +101,6 @@ data class RemoveReferencePayload(
         return IUpdateMemo.Command.RemoveReference(
             memoId = MemoId(id),
             referenceId = MemoId(referenceId),
-        )
-    }
-}
-
-data class AddTagPayload(
-    override val type: String = "AddTag",
-    val id: Long,
-    val tagId: Long,
-) : PayLoad() {
-    fun toCommand(): IUpdateMemo.Command.AddTag {
-        return IUpdateMemo.Command.AddTag(
-            memoId = MemoId(id),
-            tagId = TagId(tagId),
-        )
-    }
-}
-
-data class RemoveTagPayload(
-    override val type: String = "RemoveTag",
-    val id: Long,
-    val tagId: Long,
-) : PayLoad() {
-    fun toCommand(): IUpdateMemo.Command.RemoveTag {
-        return IUpdateMemo.Command.RemoveTag(
-            memoId = MemoId(id),
-            tagId = TagId(tagId),
         )
     }
 }

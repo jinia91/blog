@@ -34,19 +34,6 @@ value class MemoTitle(val value: String) : ValueObject {
 }
 
 @JvmInline
-value class MemoTagId(val value: Long) : ValueObject {
-    init {
-        validate()
-    }
-
-    override fun validate() {
-        if (value < 0) {
-            throw IllegalArgumentException("메모 태그 ID는 0 이상이어야 합니다.")
-        }
-    }
-}
-
-@JvmInline
 value class AuthorId(val value: Long) : ValueObject {
     init {
         validate()

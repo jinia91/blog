@@ -36,20 +36,4 @@ class MemoWebSocketHandler(
         return memoUseCases.handle(command)
             .toResponse()
     }
-
-    @MessageMapping("/addTag")
-    @SendTo(MEMO_PROTOCOL)
-    fun handle(payload: AddTagPayload): UpdateMemoResponse {
-        val command: IUpdateMemo.Command.AddTag = payload.toCommand()
-        return memoUseCases.handle(command)
-            .toResponse()
-    }
-
-    @MessageMapping("/removeTag")
-    @SendTo(MEMO_PROTOCOL)
-    fun handle(payload: RemoveTagPayload): UpdateMemoResponse {
-        val command: IUpdateMemo.Command.RemoveTag = payload.toCommand()
-        return memoUseCases.handle(command)
-            .toResponse()
-    }
 }

@@ -1,7 +1,6 @@
 package kr.co.jiniaslog.memo.domain.memo
 
 import kr.co.jiniaslog.memo.domain.folder.FolderId
-import kr.co.jiniaslog.memo.domain.tag.Tag
 import kr.co.jiniaslog.shared.core.domain.AggregateRoot
 import kr.co.jiniaslog.shared.core.domain.IdUtils
 import java.time.LocalDateTime
@@ -80,7 +79,6 @@ class Memo private constructor(
             authorId: AuthorId,
             parentFolderId: FolderId? = null,
             references: Set<MemoId> = setOf(),
-            tags: Set<Tag> = setOf(),
         ): Memo {
             val id = MemoId(IdUtils.idGenerator.generate())
             return Memo(
@@ -101,7 +99,6 @@ class Memo private constructor(
             content: MemoContent,
             reference: MutableSet<MemoReference>,
             state: MemoState,
-            tags: MutableSet<Tag>,
             parentFolderId: FolderId?,
             createdAt: LocalDateTime?,
             updatedAt: LocalDateTime?,
