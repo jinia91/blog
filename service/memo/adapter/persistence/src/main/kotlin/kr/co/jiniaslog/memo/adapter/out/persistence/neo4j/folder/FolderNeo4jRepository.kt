@@ -18,13 +18,8 @@ DETACH DELETE parentFolder, childFolder, memo1, memo2
         @Param("folderId") folderId: Long,
     )
 
-    @Query(
-        """
-    MATCH (f:Folder)-[:CONTAINS]->(child:folder), 
-          (f)<-[:CONTAINS]-(parent:folder)
-    WHERE f.id =${'$'}folderId
-    RETURN f, collect(child) as children, parent
-""",
+    @Query("MATCH (parent:folder)-[r:CONTAINS]->(child:folder) WHERE child.id = ${'$'}folderId detach DELETE r")
+    fun deleteRelationshipContainsById(
+        @Param("folderId") folderId: Long,
     )
-    fun findByIdWithRelations(folderId: Long): FolderNeo4jEntity?
 }

@@ -1,4 +1,4 @@
-package kr.co.jiniaslog.memo.queries.impl
+package kr.co.jiniaslog.memo.queries
 
 import kr.co.jiniaslog.memo.domain.memo.MemoContent
 import kr.co.jiniaslog.memo.domain.memo.MemoId

@@ -9,23 +9,22 @@ import kr.co.jiniaslog.memo.usecase.IMakeRelationShipFolderAndFolder
 
 data class InitFolderRequest(
     val authorId: Long,
-    val parentFolderId: Long?,
 ) {
     fun toCommand(): ICreateNewFolder.Command {
         return ICreateNewFolder.Command(
             authorId = AuthorId(authorId),
-            parentFolderId = parentFolderId?.let { FolderId(it) },
         )
     }
 }
 
 data class InitFolderResponse(
     val folderId: Long,
+    val folderName: String,
 )
 
 data class AddParentFolderResponse(
     val memoId: Long,
-    val folderId: Long,
+    val folderId: Long?,
 )
 
 data class ChangeFolderNameRequest(

@@ -1,8 +1,8 @@
 package kr.co.jiniaslog.memo.adapter.inbound.http
 
 import kr.co.jiniaslog.memo.queries.IGetAllMemos
+import kr.co.jiniaslog.memo.queries.IGetMemoById
 import kr.co.jiniaslog.memo.queries.IRecommendRelatedMemo
-import kr.co.jiniaslog.memo.queries.impl.IGetMemoById
 
 data class MemoResponse(
     val memos: List<IGetAllMemos.Info>,

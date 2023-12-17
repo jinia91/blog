@@ -23,10 +23,9 @@ internal class FolderUseCases(
         val newOne =
             Folder.init(
                 authorId = command.authorId,
-                parent = command.parentFolderId,
             )
         folderRepository.save(newOne)
-        return ICreateNewFolder.Info(newOne.id)
+        return ICreateNewFolder.Info(newOne.id, newOne.name)
     }
 
     override fun handle(command: IChangeFolderName.Command): IChangeFolderName.Info {

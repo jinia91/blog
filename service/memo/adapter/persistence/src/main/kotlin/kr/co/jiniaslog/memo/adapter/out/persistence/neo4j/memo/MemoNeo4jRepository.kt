@@ -26,4 +26,9 @@ interface MemoNeo4jRepository : Neo4jRepository<MemoNeo4jEntity, Long> {
     fun findByKeywordFullTextSearching(
         @Param("keyword") keyword: String,
     ): List<MemoNeo4jEntity> // todo 참조도 찾아올지 확인필요
+
+    @Query("MATCH (parent:memo)-[r:REFERENCES]->(child:memo) WHERE child.id = ${'$'}memoId detach DELETE r")
+    fun deleteParentFolderById(
+        @Param("memoId") memoId: Long,
+    )
 }

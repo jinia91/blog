@@ -64,7 +64,11 @@ internal class MemoUseCases(
     }
 
     override fun handle(command: IMakeRelationShipFolderAndMemo.Command): IMakeRelationShipFolderAndMemo.Info {
-        getFolder(command.folderId)
+        val folder =
+            when (command.folderId) {
+                null -> null
+                else -> getFolder(command.folderId)
+            }
         val memo = getMemo(command.memoId)
 
         memo.addParentFolder(command.folderId)

@@ -1,6 +1,7 @@
 package kr.co.jiniaslog.memo.usecase
 
 import kr.co.jiniaslog.memo.domain.folder.FolderId
+import kr.co.jiniaslog.memo.domain.folder.FolderName
 import kr.co.jiniaslog.memo.domain.memo.AuthorId
 
 interface ICreateNewFolder {
@@ -8,8 +9,7 @@ interface ICreateNewFolder {
 
     data class Command(
         val authorId: AuthorId,
-        val parentFolderId: FolderId? = null,
     )
 
-    data class Info(val id: FolderId)
+    data class Info(val id: FolderId, val folderName: FolderName)
 }

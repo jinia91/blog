@@ -1,9 +1,8 @@
 package kr.co.jiniaslog.memo.adapter.inbound.http
 
 import kr.co.jiniaslog.memo.domain.folder.FolderId
+import kr.co.jiniaslog.memo.queries.FolderQueriesFacade
 import kr.co.jiniaslog.memo.queries.IGetFoldersAll
-import kr.co.jiniaslog.memo.queries.impl.FolderQueriesFacade
-import kr.co.jiniaslog.memo.queries.model.FolderInfo
 import kr.co.jiniaslog.memo.usecase.IDeleteFoldersRecursively
 import kr.co.jiniaslog.memo.usecase.IMakeRelationShipFolderAndFolder
 import kr.co.jiniaslog.memo.usecase.impl.FolderUseCasesFacade
@@ -32,10 +31,10 @@ class FolderController(
     ): InitFolderResponse {
         val info =
             folderUseCases.handle(request.toCommand())
-        return InitFolderResponse(info.id.value)
+        return InitFolderResponse(info.id.value, info.folderName.value)
     }
 
-    @PutMapping("/folder/{folderId}")
+    @PutMapping("/folder/{folderId}/name")
     @CrossOrigin(origins = ["http://localhost:3000"])
     fun changeFolderName(
         @RequestBody request: ChangeFolderNameRequest,
@@ -51,6 +50,7 @@ class FolderController(
         @PathVariable folderId: Long,
         @PathVariable parentFolderId: Long?,
     ): MakeFolderRelationshipResponse {
+        log.info { "makeRelationshipWithFolders request: $folderId, $parentFolderId" }
         val info =
             folderUseCases.handle(
                 IMakeRelationShipFolderAndFolder.Command(parentFolderId?.let { FolderId(parentFolderId) }, FolderId(folderId)),
@@ -78,7 +78,7 @@ class FolderController(
 }
 
 data class FolderAndMemoResponse(
-    val folderInfos: List<FolderInfo>,
+    val folderInfos: List<IGetFoldersAll.FolderInfo>,
 )
 
 fun IGetFoldersAll.Info.toResponse(): FolderAndMemoResponse {

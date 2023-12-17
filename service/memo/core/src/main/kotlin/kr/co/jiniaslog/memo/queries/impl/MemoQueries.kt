@@ -2,6 +2,7 @@ package kr.co.jiniaslog.memo.queries.impl
 
 import kr.co.jiniaslog.memo.domain.memo.MemoRepository
 import kr.co.jiniaslog.memo.queries.IGetAllMemos
+import kr.co.jiniaslog.memo.queries.IGetMemoById
 import kr.co.jiniaslog.memo.queries.IRecommendRelatedMemo
 import kr.co.jiniaslog.shared.core.annotation.UseCaseInteractor
 

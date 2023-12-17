@@ -8,11 +8,11 @@ interface IMakeRelationShipFolderAndMemo {
 
     data class Command(
         val memoId: MemoId,
-        val folderId: FolderId,
+        val folderId: FolderId?,
     )
 
     data class Info(
         val memoId: MemoId,
-        val folderId: FolderId,
+        val folderId: FolderId?,
     )
 }

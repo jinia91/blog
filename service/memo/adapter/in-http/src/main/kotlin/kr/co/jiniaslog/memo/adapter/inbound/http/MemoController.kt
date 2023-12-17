@@ -4,8 +4,8 @@ import kr.co.jiniaslog.memo.domain.folder.FolderId
 import kr.co.jiniaslog.memo.domain.memo.AuthorId
 import kr.co.jiniaslog.memo.domain.memo.MemoId
 import kr.co.jiniaslog.memo.queries.IGetAllMemos
+import kr.co.jiniaslog.memo.queries.IGetMemoById
 import kr.co.jiniaslog.memo.queries.IRecommendRelatedMemo
-import kr.co.jiniaslog.memo.queries.impl.IGetMemoById
 import kr.co.jiniaslog.memo.queries.impl.MemoQueriesFacade
 import kr.co.jiniaslog.memo.usecase.IDeleteMemo
 import kr.co.jiniaslog.memo.usecase.IInitMemo
@@ -82,12 +82,13 @@ class MemoController(
     @CrossOrigin(origins = ["http://localhost:3000"])
     fun addParentFolder(
         @PathVariable id: Long,
-        @PathVariable folderId: Long,
+        @PathVariable folderId: Long?,
     ): AddParentFolderResponse {
+        log.info { "addParentFolder request: $id, $folderId" }
         return memoUseCases.handle(
             IMakeRelationShipFolderAndMemo.Command(
                 memoId = MemoId(id),
-                folderId = FolderId(folderId),
+                folderId = folderId?.let { FolderId(folderId) },
             ),
         ).toResponse()
     }
@@ -96,6 +97,6 @@ class MemoController(
 private fun IMakeRelationShipFolderAndMemo.Info.toResponse(): AddParentFolderResponse {
     return AddParentFolderResponse(
         memoId = this.memoId.value,
-        folderId = this.folderId.value,
+        folderId = this.folderId?.value,
     )
 }
