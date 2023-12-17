@@ -52,6 +52,8 @@ open class FolderRepositoryAdapter(
                             name = entity.name.value,
                             authorId = entity.authorId.value,
                             parent = parentFolder,
+                            createdAt = entity.createdAt,
+                            updatedAt = entity.updatedAt,
                         )
                     folderNeo4jRepository.save(folderNeo4jEntity)
                 }

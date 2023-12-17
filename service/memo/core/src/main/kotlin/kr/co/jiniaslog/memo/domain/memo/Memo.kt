@@ -64,7 +64,7 @@ class Memo private constructor(
         this.state = MemoState.COMMITTED
     }
 
-    fun addParentFolder(folderId: FolderId?) {
+    fun setParentFolder(folderId: FolderId?) {
         this.parentFolderId = folderId
     }
 

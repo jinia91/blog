@@ -35,16 +35,37 @@ class FolderTests : CustomBehaviorSpec() {
             }
         }
 
-        Given("두 폴더가 존재하고 상하관계가 존재하면") {
+        Given("폴더가 존재하고") {
             val authorId = AuthorId(1)
             val parentFolder = Folder.init(authorId)
-            val childFolder = Folder.init(authorId)
-            childFolder.changeParent(parentFolder)
-            When("순환 참조를 하면") {
+            And("하위 폴더가 존재하고") {
+                val childFolder = Folder.init(authorId)
+                childFolder.changeParent(parentFolder)
+                When("순환 참조를 하면") {
+                    Then("예외가 발생한다.") {
+                        shouldThrow<IllegalArgumentException> {
+                            parentFolder.changeParent(childFolder)
+                        }
+                    }
+                }
+            }
+            And("자기 자신을 부모로 설정하면") {
                 Then("예외가 발생한다.") {
                     shouldThrow<IllegalArgumentException> {
-                        parentFolder.changeParent(childFolder)
+                        parentFolder.changeParent(parentFolder)
                     }
+                }
+            }
+        }
+
+        Given("유효한 존재하고") {
+            val authorId = AuthorId(1)
+            val folder = Folder.init(authorId)
+            When("폴더 이름을 변경하면") {
+                val newFolderName = FolderName("newFolderName")
+                folder.changeName(newFolderName)
+                Then("폴더 이름이 변경된다.") {
+                    folder.name shouldBe newFolderName
                 }
             }
         }

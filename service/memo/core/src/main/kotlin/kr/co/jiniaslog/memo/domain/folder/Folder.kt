@@ -3,6 +3,7 @@ package kr.co.jiniaslog.memo.domain.folder
 import kr.co.jiniaslog.memo.domain.memo.AuthorId
 import kr.co.jiniaslog.shared.core.domain.AggregateRoot
 import kr.co.jiniaslog.shared.core.domain.IdUtils
+import java.time.LocalDateTime
 
 open class Folder(
     id: FolderId,
@@ -26,7 +27,7 @@ open class Folder(
 
     fun changeParent(parent: Folder?) {
         require(parent?.id != this.id) { "자기 자신을 부모로 설정할 수 없습니다." }
-        check(parent?.parent != this.id) { "상위 폴더를 자식 폴더로 설정할 수 없습니다." }
+        require(parent?.parent != this.id) { "상위 폴더를 자식 폴더로 설정할 수 없습니다." }
         this.parent = parent?.id
     }
 
@@ -48,13 +49,18 @@ open class Folder(
             name: FolderName,
             authorId: AuthorId,
             parent: FolderId?,
+            createdAt: LocalDateTime?,
+            updatedAt: LocalDateTime?,
         ): Folder {
             return Folder(
                 id = id,
                 name = name,
                 authorId = authorId,
                 parent = parent,
-            )
+            ).apply {
+                this.createdAt = createdAt
+                this.updatedAt = updatedAt
+            }
         }
     }
 }

@@ -1,10 +1,8 @@
 package kr.co.jiniaslog.fakes
 
-import io.mockk.mockk
 import kr.co.jiniaslog.memo.domain.memo.Memo
 import kr.co.jiniaslog.memo.domain.memo.MemoId
 import kr.co.jiniaslog.memo.domain.memo.MemoRepository
-import kr.co.jiniaslog.memo.queries.model.SimpleMemoInfo
 import java.time.LocalDateTime
 
 class FakeMemoRepository : MemoRepository {
@@ -19,8 +17,8 @@ class FakeMemoRepository : MemoRepository {
         return memo
     }
 
-    override fun findByRelatedMemo(keyword: String): List<SimpleMemoInfo> {
-        return listOf(mockk<SimpleMemoInfo>())
+    override fun findByRelatedMemo(keyword: String): List<Memo> {
+        return memos.filter { it.title.value.contains(keyword) || it.content.value.contains(keyword) }
     }
 
     override fun findById(id: MemoId): Memo? {
