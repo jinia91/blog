@@ -15,9 +15,9 @@ interface IGetMemoById {
         val memoId: MemoId,
         val title: MemoTitle,
         val content: MemoContent,
-        val references: Set<Reference>,
+        val references: Set<ReferenceInfo>,
     ) {
-        data class Reference(
+        data class ReferenceInfo(
             val rootId: MemoId,
             val referenceId: MemoId,
         )

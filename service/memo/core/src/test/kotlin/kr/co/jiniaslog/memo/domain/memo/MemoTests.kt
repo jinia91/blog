@@ -2,6 +2,7 @@ package kr.co.jiniaslog.memo.domain.memo
 
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
+import kr.co.jiniaslog.memo.domain.folder.FolderId
 import kr.co.jiniaslog.shared.CustomBehaviorSpec
 
 internal class MemoTests : CustomBehaviorSpec() {
@@ -77,6 +78,43 @@ internal class MemoTests : CustomBehaviorSpec() {
                 )
                 Then("커밋상태가 된다") {
                     sutMemo.state shouldBe MemoState.COMMITTED
+                }
+            }
+        }
+        // from
+        Given("유효한 메모 데이터가 주어지고") {
+            val id = MemoId(1)
+            val authorId = AuthorId(1)
+            val title = MemoTitle("title")
+            val content = MemoContent("content")
+            val reference = mutableSetOf<MemoReference>()
+            val state = MemoState.COMMITTED
+            val parentFolderId = FolderId(1)
+            val createdAt = null
+            val updatedAt = null
+            When("메모를 생성하면") {
+                val sutMemo =
+                    Memo.from(
+                        id = id,
+                        authorId = authorId,
+                        title = title,
+                        content = content,
+                        reference = reference,
+                        state = state,
+                        parentFolderId = parentFolderId,
+                        createdAt = createdAt,
+                        updatedAt = updatedAt,
+                    )
+                Then("메모가 생성된다") {
+                    sutMemo.id shouldBe id
+                    sutMemo.authorId shouldBe authorId
+                    sutMemo.title shouldBe title
+                    sutMemo.content shouldBe content
+                    sutMemo.references shouldBe reference
+                    sutMemo.state shouldBe state
+                    sutMemo.parentFolderId shouldBe parentFolderId
+                    sutMemo.createdAt shouldBe createdAt
+                    sutMemo.updatedAt shouldBe updatedAt
                 }
             }
         }

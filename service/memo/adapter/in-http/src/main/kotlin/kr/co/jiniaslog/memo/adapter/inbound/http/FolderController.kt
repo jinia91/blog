@@ -1,8 +1,8 @@
 package kr.co.jiniaslog.memo.adapter.inbound.http
 
 import kr.co.jiniaslog.memo.domain.folder.FolderId
-import kr.co.jiniaslog.memo.queries.FolderQueriesFacade
 import kr.co.jiniaslog.memo.queries.IGetFoldersAll
+import kr.co.jiniaslog.memo.queries.QueriesFolderFacade
 import kr.co.jiniaslog.memo.usecase.IDeleteFoldersRecursively
 import kr.co.jiniaslog.memo.usecase.IMakeRelationShipFolderAndFolder
 import kr.co.jiniaslog.memo.usecase.impl.FolderUseCasesFacade
@@ -22,7 +22,7 @@ private val log = mu.KotlinLogging.logger {}
 @RequestMapping("/api/v1")
 class FolderController(
     private val folderUseCases: FolderUseCasesFacade,
-    private val folderQueries: FolderQueriesFacade,
+    private val folderQueries: QueriesFolderFacade,
 ) {
     @PostMapping("/folder")
     @CrossOrigin(origins = ["http://localhost:3000"])

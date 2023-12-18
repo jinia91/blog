@@ -1,15 +1,9 @@
 package kr.co.jiniaslog.memo.adapter.out.persistence.neo4j.folder
 
-import kr.co.jiniaslog.memo.adapter.out.persistence.neo4j.memo.MemoNeo4jEntity
 import kr.co.jiniaslog.memo.adapter.out.persistence.neo4j.memo.MemoNeo4jRepository
 import kr.co.jiniaslog.memo.domain.folder.Folder
 import kr.co.jiniaslog.memo.domain.folder.FolderId
-import kr.co.jiniaslog.memo.domain.folder.FolderName
 import kr.co.jiniaslog.memo.domain.folder.FolderRepository
-import kr.co.jiniaslog.memo.domain.memo.MemoId
-import kr.co.jiniaslog.memo.domain.memo.MemoTitle
-import kr.co.jiniaslog.memo.queries.FolderQueriesFacade
-import kr.co.jiniaslog.memo.queries.IGetFoldersAll
 import kr.co.jiniaslog.shared.core.annotation.PersistenceAdapter
 import org.springframework.transaction.annotation.Transactional
 import kotlin.jvm.optionals.getOrNull
@@ -18,7 +12,7 @@ import kotlin.jvm.optionals.getOrNull
 open class FolderRepositoryAdapter(
     private val folderNeo4jRepository: FolderNeo4jRepository,
     private val memoNeo4jRepository: MemoNeo4jRepository,
-) : FolderRepository, FolderQueriesFacade {
+) : FolderRepository {
     @Transactional(readOnly = true)
     override fun findById(id: FolderId): Folder? {
         return folderNeo4jRepository.findById(id.value).orElse(null)?.toDomain()
@@ -80,47 +74,5 @@ open class FolderRepositoryAdapter(
                 }
             }
         return pm.toDomain()
-    }
-
-    @Transactional(readOnly = true)
-    override fun handle(query: IGetFoldersAll.Query): IGetFoldersAll.Info {
-        val foldersWithDepth = folderNeo4jRepository.findAll()
-        val folderMap = foldersWithDepth.associate { it.id to it.toFolderInfo() }
-        val memos = memoNeo4jRepository.findAll().groupBy { it.parentFolder?.id }
-
-        foldersWithDepth.forEach { folder ->
-            val folderInfo = folderMap[folder.id]
-            folderInfo?.children = folderMap.values.filter { it.parent?.id == folderInfo?.id }
-            folderInfo?.memos = memos[folderInfo?.id?.value]?.map { it.toMemoInfo() } ?: emptyList()
-        }
-
-        return IGetFoldersAll.Info(
-            folderMap.values.filter { it.parent == null } +
-                IGetFoldersAll.FolderInfo(
-                    id = null,
-                    name = FolderName("Uncategorized"),
-                    parent = null,
-                    children = emptyList(),
-                    memos = memos[null]?.map { it.toMemoInfo() } ?: emptyList(),
-                ),
-        )
-    }
-
-    private fun FolderNeo4jEntity.toFolderInfo(): IGetFoldersAll.FolderInfo {
-        return IGetFoldersAll.FolderInfo(
-            id = FolderId(this.id),
-            name = FolderName(this.name),
-            parent = this.parent?.toFolderInfo(),
-            children = listOf(),
-            memos = listOf(),
-        )
-    }
-
-    private fun MemoNeo4jEntity.toMemoInfo(): IGetFoldersAll.SimpleMemoInfo {
-        return IGetFoldersAll.SimpleMemoInfo(
-            id = MemoId(this.id),
-            title = MemoTitle(this.title),
-            references = this.references.map { IGetFoldersAll.MemoReferenceInfo(MemoId(it.id), MemoTitle(it.title)) },
-        )
     }
 }

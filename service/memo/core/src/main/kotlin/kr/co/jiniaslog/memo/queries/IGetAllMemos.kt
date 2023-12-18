@@ -1,7 +1,6 @@
 package kr.co.jiniaslog.memo.queries
 
 import kr.co.jiniaslog.memo.domain.memo.MemoId
-import kr.co.jiniaslog.memo.domain.memo.MemoReference
 import kr.co.jiniaslog.memo.domain.memo.MemoTitle
 
 interface IGetAllMemos {
@@ -12,6 +11,11 @@ interface IGetAllMemos {
     data class Info(
         val memoId: MemoId,
         val title: MemoTitle,
-        val references: Set<MemoReference>,
+        val references: Set<MemoReferenceInfo>,
+    )
+
+    data class MemoReferenceInfo(
+        val rootId: MemoId,
+        val referenceId: MemoId,
     )
 }

@@ -17,7 +17,7 @@ interface IGetFoldersAll {
         val name: FolderName?,
         val parent: FolderInfo?,
         var children: List<FolderInfo>,
-        var memos: List<SimpleMemoInfo>,
+        var memos: List<MemoInfo>,
     )
 
     data class MemoReferenceInfo(
@@ -25,7 +25,7 @@ interface IGetFoldersAll {
         val title: MemoTitle,
     )
 
-    class SimpleMemoInfo(
+    class MemoInfo(
         val id: MemoId,
         val title: MemoTitle,
         val references: List<MemoReferenceInfo>,

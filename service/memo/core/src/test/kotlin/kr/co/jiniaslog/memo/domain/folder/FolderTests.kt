@@ -56,7 +56,7 @@ class FolderTests : CustomBehaviorSpec() {
             }
         }
 
-        Given("유효한 존재하고") {
+        Given("유효한 폴더가 하나 존재하고") {
             val authorId = AuthorId(1)
             val folder = Folder.init(authorId)
             When("폴더 이름을 변경하면") {
@@ -64,6 +64,33 @@ class FolderTests : CustomBehaviorSpec() {
                 folder.changeName(newFolderName)
                 Then("폴더 이름이 변경된다.") {
                     folder.name shouldBe newFolderName
+                }
+            }
+        }
+        /**
+         * from
+         */
+        Given("유효한 폴더 데이터가 전부 존재하고") {
+            val authorId = AuthorId(1)
+            val folderId = FolderId(1)
+            val folderName = FolderName("folderName")
+            val parentFolderId = FolderId(2)
+
+            When("폴더를 from으로 생성하면") {
+                val folder =
+                    Folder.from(
+                        id = folderId,
+                        name = folderName,
+                        authorId = authorId,
+                        parent = parentFolderId,
+                        createdAt = null,
+                        updatedAt = null,
+                    )
+                Then("폴더가 생성된다.") {
+                    folder.id shouldBe folderId
+                    folder.name shouldBe folderName
+                    folder.authorId shouldBe authorId
+                    folder.parent shouldBe parentFolderId
                 }
             }
         }

@@ -18,9 +18,7 @@ value class MemoId(val value: Long) : ValueObject {
     }
 
     override fun validate() {
-        if (value < 0) {
-            throw IllegalArgumentException("메모 ID는 0 이상이어야 합니다.")
-        }
+        require(value > 0) { "메모 ID는 0 초과여야합니다" }
     }
 }
 
@@ -40,8 +38,6 @@ value class AuthorId(val value: Long) : ValueObject {
     }
 
     override fun validate() {
-        if (value < 0) {
-            throw IllegalArgumentException("작성자 ID는 0 이상이어야 합니다.")
-        }
+        require(value > 0) { "작성자 ID는 0 초과여야 합니다." }
     }
 }

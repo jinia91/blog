@@ -6,7 +6,7 @@ import kr.co.jiniaslog.memo.domain.memo.MemoId
 import kr.co.jiniaslog.memo.queries.IGetAllMemos
 import kr.co.jiniaslog.memo.queries.IGetMemoById
 import kr.co.jiniaslog.memo.queries.IRecommendRelatedMemo
-import kr.co.jiniaslog.memo.queries.impl.MemoQueriesFacade
+import kr.co.jiniaslog.memo.queries.QueriesMemoFacade
 import kr.co.jiniaslog.memo.usecase.IDeleteMemo
 import kr.co.jiniaslog.memo.usecase.IInitMemo
 import kr.co.jiniaslog.memo.usecase.IMakeRelationShipFolderAndMemo
@@ -28,7 +28,7 @@ private val log = mu.KotlinLogging.logger { }
 @RequestMapping("/api/v1")
 class MemoController(
     private val memoUseCases: MemoUseCasesFacade,
-    private val memoQueries: MemoQueriesFacade,
+    private val memoQueries: QueriesMemoFacade,
 ) {
     @PostMapping("/memo")
     @CrossOrigin(origins = ["http://localhost:3000"])
