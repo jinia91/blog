@@ -10,7 +10,7 @@ import kr.co.jiniaslog.memo.queries.QueriesMemoFacade
 import kr.co.jiniaslog.memo.usecase.IDeleteMemo
 import kr.co.jiniaslog.memo.usecase.IInitMemo
 import kr.co.jiniaslog.memo.usecase.IMakeRelationShipFolderAndMemo
-import kr.co.jiniaslog.memo.usecase.impl.MemoUseCasesFacade
+import kr.co.jiniaslog.memo.usecase.UseCasesMemoFacade
 import org.springframework.web.bind.annotation.CrossOrigin
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
@@ -27,7 +27,7 @@ private val log = mu.KotlinLogging.logger { }
 @RestController
 @RequestMapping("/api/v1")
 class MemoController(
-    private val memoUseCases: MemoUseCasesFacade,
+    private val memoUseCases: UseCasesMemoFacade,
     private val memoQueries: QueriesMemoFacade,
 ) {
     @PostMapping("/memo")

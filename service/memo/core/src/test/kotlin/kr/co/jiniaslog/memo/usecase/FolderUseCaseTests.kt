@@ -7,14 +7,13 @@ import kr.co.jiniaslog.memo.domain.folder.FolderName
 import kr.co.jiniaslog.memo.domain.folder.FolderRepository
 import kr.co.jiniaslog.memo.domain.memo.AuthorId
 import kr.co.jiniaslog.memo.fakes.FakeFolderRepository
-import kr.co.jiniaslog.memo.usecase.impl.FolderUseCases
-import kr.co.jiniaslog.memo.usecase.impl.FolderUseCasesFacade
+import kr.co.jiniaslog.memo.usecase.impl.UseCasesFolderInteractor
 import kr.co.jiniaslog.shared.CustomBehaviorSpec
 
 class FolderUseCaseTests : CustomBehaviorSpec() {
     private var folderRepository: FolderRepository = FakeFolderRepository()
-    private val sut: FolderUseCasesFacade =
-        FolderUseCases(
+    private val sut: UseCasesFolderFacade =
+        UseCasesFolderInteractor(
             folderRepository = folderRepository,
         )
 

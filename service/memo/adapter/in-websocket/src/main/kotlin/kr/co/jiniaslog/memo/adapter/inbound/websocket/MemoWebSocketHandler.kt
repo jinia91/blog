@@ -1,7 +1,7 @@
 package kr.co.jiniaslog.memo.adapter.inbound.websocket
 
 import kr.co.jiniaslog.memo.usecase.IUpdateMemo
-import kr.co.jiniaslog.memo.usecase.impl.MemoUseCasesFacade
+import kr.co.jiniaslog.memo.usecase.UseCasesMemoFacade
 import org.springframework.messaging.handler.annotation.MessageMapping
 import org.springframework.messaging.handler.annotation.SendTo
 import org.springframework.stereotype.Controller
@@ -11,7 +11,7 @@ private val log = mu.KotlinLogging.logger { }
 
 @Controller
 class MemoWebSocketHandler(
-    private val memoUseCases: MemoUseCasesFacade,
+    private val memoUseCases: UseCasesMemoFacade,
 ) {
     @MessageMapping("/updateMemo")
     @SendTo(MEMO_PROTOCOL)

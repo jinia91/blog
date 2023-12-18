@@ -11,15 +11,14 @@ import kr.co.jiniaslog.memo.domain.memo.MemoRepository
 import kr.co.jiniaslog.memo.domain.memo.MemoTitle
 import kr.co.jiniaslog.memo.fakes.FakeFolderRepository
 import kr.co.jiniaslog.memo.fakes.FakeMemoRepository
-import kr.co.jiniaslog.memo.usecase.impl.MemoUseCases
-import kr.co.jiniaslog.memo.usecase.impl.MemoUseCasesFacade
+import kr.co.jiniaslog.memo.usecase.impl.UseCasesMemoInteractor
 import kr.co.jiniaslog.shared.CustomBehaviorSpec
 
 internal class MemoUseCaseTests : CustomBehaviorSpec() {
     private var memoRepository: MemoRepository = FakeMemoRepository()
     private var folderRepository: FolderRepository = FakeFolderRepository()
-    private val sut: MemoUseCasesFacade =
-        MemoUseCases(
+    private val sut: UseCasesMemoFacade =
+        UseCasesMemoInteractor(
             memoRepository = memoRepository,
             folderRepository = folderRepository,
         )

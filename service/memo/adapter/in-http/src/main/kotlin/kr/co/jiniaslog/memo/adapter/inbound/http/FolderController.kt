@@ -5,7 +5,7 @@ import kr.co.jiniaslog.memo.queries.IGetFoldersAll
 import kr.co.jiniaslog.memo.queries.QueriesFolderFacade
 import kr.co.jiniaslog.memo.usecase.IDeleteFoldersRecursively
 import kr.co.jiniaslog.memo.usecase.IMakeRelationShipFolderAndFolder
-import kr.co.jiniaslog.memo.usecase.impl.FolderUseCasesFacade
+import kr.co.jiniaslog.memo.usecase.UseCasesFolderFacade
 import org.springframework.web.bind.annotation.CrossOrigin
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
@@ -21,7 +21,7 @@ private val log = mu.KotlinLogging.logger {}
 @RestController
 @RequestMapping("/api/v1")
 class FolderController(
-    private val folderUseCases: FolderUseCasesFacade,
+    private val folderUseCases: UseCasesFolderFacade,
     private val folderQueries: QueriesFolderFacade,
 ) {
     @PostMapping("/folder")
