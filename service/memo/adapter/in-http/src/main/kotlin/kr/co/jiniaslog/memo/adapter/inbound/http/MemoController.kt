@@ -82,13 +82,13 @@ class MemoController(
     @CrossOrigin(origins = ["http://localhost:3000"])
     fun addParentFolder(
         @PathVariable id: Long,
-        @PathVariable folderId: Long?,
+        @PathVariable folderId: Long,
     ): AddParentFolderResponse {
         log.info { "addParentFolder request: $id, $folderId" }
         return memoUseCases.handle(
             IMakeRelationShipFolderAndMemo.Command(
                 memoId = MemoId(id),
-                folderId = folderId?.let { FolderId(folderId) },
+                folderId = folderId.takeIf { it != -1L }?.let { FolderId(it) },
             ),
         ).toResponse()
     }
