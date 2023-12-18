@@ -71,7 +71,7 @@ internal class MemoUseCases(
             }
         val memo = getMemo(command.memoId)
 
-        memo.setParentFolder(command.folderId)
+        memo.setParentFolder(folder?.id)
         memoRepository.save(memo)
         return IMakeRelationShipFolderAndMemo.Info(memo.id, command.folderId)
     }

@@ -1,4 +1,4 @@
-package kr.co.jiniaslog.fakes
+package kr.co.jiniaslog.memo.fakes
 
 import kr.co.jiniaslog.memo.domain.folder.Folder
 import kr.co.jiniaslog.memo.domain.folder.FolderId

@@ -2,14 +2,15 @@ package kr.co.jiniaslog.memo.usecase
 
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
-import kr.co.jiniaslog.fakes.FakeFolderRepository
-import kr.co.jiniaslog.fakes.FakeMemoRepository
+import kr.co.jiniaslog.memo.domain.folder.Folder
 import kr.co.jiniaslog.memo.domain.folder.FolderRepository
 import kr.co.jiniaslog.memo.domain.memo.AuthorId
 import kr.co.jiniaslog.memo.domain.memo.Memo
 import kr.co.jiniaslog.memo.domain.memo.MemoContent
 import kr.co.jiniaslog.memo.domain.memo.MemoRepository
 import kr.co.jiniaslog.memo.domain.memo.MemoTitle
+import kr.co.jiniaslog.memo.fakes.FakeFolderRepository
+import kr.co.jiniaslog.memo.fakes.FakeMemoRepository
 import kr.co.jiniaslog.memo.usecase.impl.MemoUseCases
 import kr.co.jiniaslog.memo.usecase.impl.MemoUseCasesFacade
 import kr.co.jiniaslog.shared.CustomBehaviorSpec
@@ -25,7 +26,7 @@ internal class MemoUseCaseTests : CustomBehaviorSpec() {
 
     init {
         /**
-         * 메모 초기화
+         * I Init Memo
          */
         Given("유효한 메모 초기화 요청이 있고") {
             val command =
@@ -58,7 +59,7 @@ internal class MemoUseCaseTests : CustomBehaviorSpec() {
         }
 
         /**
-         * 메모 업데이트
+         * I Update Memo
          */
         Given("유효한 메모가 주어지고") {
             val memo =
@@ -134,6 +135,58 @@ internal class MemoUseCaseTests : CustomBehaviorSpec() {
                     Then("메모의 참조가 삭제된다") {
                         val foundMemo = memoRepository.findById(memo.id)!!
                         foundMemo.references.size shouldBe 0
+                    }
+                }
+            }
+        }
+
+        /**
+         * I Delete Memo
+         */
+        Given("유효한 메모가 하나 주어지고") {
+            val memo =
+                Memo.init(
+                    authorId = AuthorId(1),
+                )
+            memoRepository.save(memo)
+            val command =
+                IDeleteMemo.Command(
+                    id = memo.id,
+                )
+            When("메모 삭제를 하면") {
+                sut.handle(command)
+                Then("메모가 삭제된다") {
+                    memoRepository.findById(memo.id) shouldBe null
+                }
+            }
+        }
+
+        /**
+         * I Make Relationship Folder And Memo
+         */
+        Given("유효한 커맨드가 주어지고") {
+            val memo =
+                Memo.init(
+                    authorId = AuthorId(1),
+                )
+            memoRepository.save(memo)
+            val folder =
+                folderRepository.save(
+                    Folder.init(
+                        authorId = AuthorId(1),
+                    ),
+                )
+            And("유효한 커맨드가 주어지면") {
+                val command =
+                    IMakeRelationShipFolderAndMemo.Command(
+                        memoId = memo.id,
+                        folderId = folder.id,
+                    )
+                When("메모와 폴더 관계를 설정할때") {
+                    sut.handle(command)
+                    Then("메모와 폴더가 관계 설정된다") {
+                        val foundMemo = memoRepository.findById(memo.id)!!
+                        foundMemo.parentFolderId shouldBe folder.id
                     }
                 }
             }

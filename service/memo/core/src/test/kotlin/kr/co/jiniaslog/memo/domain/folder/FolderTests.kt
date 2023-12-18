@@ -1,10 +1,8 @@
-package kr.co.jiniaslog.folder.domain
+package kr.co.jiniaslog.memo.domain.folder
 
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
-import kr.co.jiniaslog.memo.domain.folder.Folder
-import kr.co.jiniaslog.memo.domain.folder.FolderName
 import kr.co.jiniaslog.memo.domain.memo.AuthorId
 import kr.co.jiniaslog.shared.CustomBehaviorSpec
 

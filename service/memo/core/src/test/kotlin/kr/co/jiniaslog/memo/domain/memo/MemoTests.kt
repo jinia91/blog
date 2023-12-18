@@ -1,12 +1,7 @@
-package kr.co.jiniaslog.memo.domain
+package kr.co.jiniaslog.memo.domain.memo
 
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
-import kr.co.jiniaslog.memo.domain.memo.AuthorId
-import kr.co.jiniaslog.memo.domain.memo.Memo
-import kr.co.jiniaslog.memo.domain.memo.MemoContent
-import kr.co.jiniaslog.memo.domain.memo.MemoState
-import kr.co.jiniaslog.memo.domain.memo.MemoTitle
 import kr.co.jiniaslog.shared.CustomBehaviorSpec
 
 internal class MemoTests : CustomBehaviorSpec() {

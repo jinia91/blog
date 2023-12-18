@@ -1,27 +1,25 @@
-package kr.co.jiniaslog.memo.domain
+package kr.co.jiniaslog.memo.domain.folder
 
 import io.kotest.assertions.throwables.shouldThrow
-import kr.co.jiniaslog.memo.domain.memo.AuthorId
-import kr.co.jiniaslog.memo.domain.memo.MemoId
 import kr.co.jiniaslog.shared.CustomBehaviorSpec
 
-class MemoFragmentsTests : CustomBehaviorSpec() {
+class FolderFragmentsTests : CustomBehaviorSpec() {
     init {
-        given("MemoId") {
+        given("FolderId 생성시") {
             `when`("생성자에 음수를 넣으면") {
                 then("실패한다") {
                     shouldThrow<IllegalArgumentException> {
-                        MemoId(-1)
+                        FolderId(-1)
                     }
                 }
             }
         }
 
-        given("AuthorId") {
-            `when`("생성자에 음수를 넣으면") {
+        given("FolderName 생성시") {
+            `when`("생성자에 빈 문자열을 넣으면") {
                 then("실패한다") {
                     shouldThrow<IllegalArgumentException> {
-                        AuthorId(-1)
+                        FolderName("")
                     }
                 }
             }
