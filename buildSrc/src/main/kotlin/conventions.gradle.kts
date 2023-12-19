@@ -17,9 +17,6 @@ repositories {
     mavenCentral()
 }
 
-group = "kr.co.jiniaslog"
-version = "2.0.0"
-
 java {
     sourceCompatibility = JavaVersion.VERSION_17
     targetCompatibility = JavaVersion.VERSION_17
@@ -44,15 +41,12 @@ tasks.findByName("bootJar")?.let {
 tasks.named<Jar>("jar") {
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     enabled = true
+    archiveFileName.set("${project.parent?.parent?.name}-${project.parent?.name}-${project.name}.jar")
 }
 
 kotlinter {
     reporters = arrayOf("checkstyle", "plain")
 }
-
-val jar: Jar by tasks
-jar.enabled = true
-jar.archiveFileName.set("${project.parent?.parent?.name}-${project.parent?.name}-${project.name}.jar")
 
 dependencies {
     // core

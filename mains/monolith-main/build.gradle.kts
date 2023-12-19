@@ -5,23 +5,32 @@ plugins {
 // add service's modules
 var moduleBlocks = mutableListOf<Project>()
 
-val infra = listOf(
+val infra = mutableListOf(
     project(":infra:monolith-infra"),
 ).also {
     moduleBlocks.addAll(it)
 }
 
-val blog = listOf(
-    project(":service:blog:core"),
+val blog = mutableListOf(
+    project(":service:blog:blog-core"),
 ).also {
-//    moduleBlocks.addAll(it)
+    moduleBlocks.addAll(it)
 }
 
-val memo = listOf(
-    project(":service:memo:core"),
-    project(":service:memo:adapter:persistence"),
-    project(":service:memo:adapter:in-http"),
-    project(":service:memo:adapter:in-websocket"),
+
+val memo = mutableListOf(
+    project(":service:memo:adapter:memo-persistence"),
+    project(":service:memo:adapter:memo-in-http"),
+    project(":service:memo:adapter:memo-in-websocket"),
+    project(":service:memo:memo-core"),
+).also {
+    moduleBlocks.addAll(it)
+}
+
+val media = mutableListOf(
+    project(":service:media:media-core"),
+    project(":service:media:adapter:media-out-github"),
+    project(":service:media:adapter:media-in-http"),
 ).also {
     moduleBlocks.addAll(it)
 }
@@ -35,10 +44,6 @@ dependencies {
 tasks.register("testAll") {
     dependsOn(moduleBlocks.map { it.tasks.named("test") })
     dependsOn(tasks.test)
-}
-
-tasks.getByName("jar") {
-    enabled = false
 }
 
 tasks.bootJar {
