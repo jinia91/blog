@@ -38,6 +38,11 @@ include(
     "service:memo:adapter:in-batch",
     "service:memo:adapter:persistence",
 
+    //media
+    "service:media:core",
+    "service:media:adapter:in-http",
+    "service:media:adapter:out-github",
+
     "service:user:core",
     "service:comment",
     "service:media",
