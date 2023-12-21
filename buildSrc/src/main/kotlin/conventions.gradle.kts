@@ -73,7 +73,7 @@ tasks.jacocoTestReport {
         csv.required.set(false)
         html.required.set(true)
     }
-        finalizedBy("jacocoTestCoverageVerification")
+    finalizedBy("jacocoTestCoverageVerification")
 
     classDirectories.setFrom(
         fileTree(project.buildDir) {
