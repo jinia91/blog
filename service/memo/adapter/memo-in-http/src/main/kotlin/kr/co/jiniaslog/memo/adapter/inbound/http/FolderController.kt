@@ -14,17 +14,18 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 
 private val log = mu.KotlinLogging.logger {}
 
 @RestController
-@RequestMapping("/api/v1")
+@RequestMapping("/api/v1/folders")
 class FolderController(
     private val folderUseCases: UseCasesFolderFacade,
     private val folderQueries: QueriesFolderFacade,
 ) {
-    @PostMapping("/folder")
+    @PostMapping()
     @CrossOrigin(origins = ["http://localhost:3000"])
     fun initFolder(
         @RequestBody request: InitFolderRequest,
@@ -34,7 +35,7 @@ class FolderController(
         return InitFolderResponse(info.id.value, info.folderName.value)
     }
 
-    @PutMapping("/folder/{folderId}/name")
+    @PutMapping("/{folderId}/name")
     @CrossOrigin(origins = ["http://localhost:3000"])
     fun changeFolderName(
         @RequestBody request: ChangeFolderNameRequest,
@@ -44,7 +45,7 @@ class FolderController(
         return ChangeFolderNameResponse(info.folderId.value)
     }
 
-    @PutMapping("/folder/{folderId}/parent/{parentFolderId}")
+    @PutMapping("/{folderId}/parent/{parentFolderId}")
     @CrossOrigin(origins = ["http://localhost:3000"])
     fun makeRelationshipWithFolders(
         @PathVariable folderId: Long,
@@ -58,7 +59,7 @@ class FolderController(
         return MakeFolderRelationshipResponse(info.parentFolderId?.value, info.childFolderId.value)
     }
 
-    @DeleteMapping("/folder/{folderId}")
+    @DeleteMapping("/{folderId}")
     @CrossOrigin(origins = ["http://localhost:3000"])
     fun deleteFolder(
         @PathVariable folderId: Long,
@@ -68,12 +69,13 @@ class FolderController(
         return DeleteFolderResponse(info.folderId.value)
     }
 
-    @GetMapping("/folder")
+    @GetMapping()
     @CrossOrigin(origins = ["http://localhost:3000"])
-    fun getFoldersAll(): FolderAndMemoResponse {
-        log.info { "getFoldersAll" }
-        val info = folderQueries.handle(IGetFoldersAll.Query())
-        return info.toResponse()
+    fun getFoldersAll(
+        @RequestParam(required = false) query: String?,
+    ): FolderAndMemoResponse {
+        log.info { "getFoldersAll query: $query" }
+        return folderQueries.handle(IGetFoldersAll.Query(query)).toResponse()
     }
 }
 

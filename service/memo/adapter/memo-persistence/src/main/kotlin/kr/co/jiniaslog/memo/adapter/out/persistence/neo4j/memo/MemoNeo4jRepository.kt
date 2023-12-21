@@ -23,9 +23,30 @@ interface MemoNeo4jRepository : Neo4jRepository<MemoNeo4jEntity, Long> {
         LIMIT 6
     """,
     )
+    fun findByKeywordFullTextSearchingLimit6(
+        @Param("keyword") keyword: String,
+    ): List<MemoNeo4jEntity>
+
+    @Query(
+        """
+        CALL db.index.fulltext.queryNodes("memo_full_text_index", ${'$'}keyword)
+        YIELD node, score
+        OPTIONAL MATCH (node)-[:REFERENCES]->(other)
+        WITH node, score, count(other) AS referencesCount
+        ORDER BY referencesCount DESC, score DESC
+       RETURN 
+            node.id AS id, 
+            node.authorId AS authorId, 
+            node.title AS title, 
+            node.content AS content, 
+            node.state AS state, 
+            node.createdAt AS createdAt, 
+            node.updatedAt AS updatedAt
+    """,
+    )
     fun findByKeywordFullTextSearching(
         @Param("keyword") keyword: String,
-    ): List<MemoNeo4jEntity> // todo 참조도 찾아올지 확인필요
+    ): List<MemoNeo4jEntity>
 
     @Query("MATCH (parent:memo)-[r:REFERENCES]->(child:memo) WHERE child.id = ${'$'}memoId detach DELETE r")
     fun deleteParentFolderById(

@@ -14,7 +14,7 @@ open class MemoRepositoryAdapter(
 ) : MemoRepository {
     @Transactional(readOnly = true)
     override fun findByRelatedMemo(keyword: String): List<Memo> {
-        return memoNeo4jRepository.findByKeywordFullTextSearching(keyword).map { it.toDomain() }
+        return memoNeo4jRepository.findByKeywordFullTextSearchingLimit6(keyword).map { it.toDomain() }
     }
 
     @Transactional(readOnly = true)

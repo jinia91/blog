@@ -5,7 +5,7 @@ import kr.co.jiniaslog.shared.core.domain.AggregateRoot
 import kr.co.jiniaslog.shared.core.domain.IdUtils
 import java.time.LocalDateTime
 
-open class Folder(
+class Folder private constructor(
     id: FolderId,
     name: FolderName,
     authorId: AuthorId,

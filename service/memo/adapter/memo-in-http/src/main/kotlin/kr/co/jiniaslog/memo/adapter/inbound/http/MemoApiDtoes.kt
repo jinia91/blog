@@ -10,7 +10,15 @@ data class MemoResponse(
 
 fun IRecommendRelatedMemo.Info.toResponse(): MemoResponse {
     return MemoResponse(
-        memos = this.relatedMemoCandidates.map { IGetAllMemos.Info(memoId = it.first, title = it.second, references = emptySet()) },
+        memos =
+            this.relatedMemoCandidates.map {
+                IGetAllMemos.Info(
+                    memoId = it.first,
+                    title = it.second,
+                    content = it.third,
+                    references = emptySet(),
+                )
+            },
     )
 }
 

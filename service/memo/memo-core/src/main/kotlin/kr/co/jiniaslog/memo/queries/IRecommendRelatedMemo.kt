@@ -1,5 +1,6 @@
 package kr.co.jiniaslog.memo.queries
 
+import kr.co.jiniaslog.memo.domain.memo.MemoContent
 import kr.co.jiniaslog.memo.domain.memo.MemoId
 import kr.co.jiniaslog.memo.domain.memo.MemoTitle
 
@@ -12,6 +13,6 @@ interface IRecommendRelatedMemo {
     )
 
     data class Info(
-        val relatedMemoCandidates: List<Pair<MemoId, MemoTitle>>,
+        val relatedMemoCandidates: List<Triple<MemoId, MemoTitle, MemoContent>>,
     )
 }

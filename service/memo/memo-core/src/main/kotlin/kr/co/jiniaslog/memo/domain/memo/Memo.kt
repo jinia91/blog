@@ -40,9 +40,11 @@ class Memo private constructor(
         content: MemoContent? = null,
     ) {
         title?.let {
+            require(it.value.isNotEmpty()) { "title must not be empty" }
             this.title = it
         }
         content?.let {
+            require(it.value.isNotEmpty()) { "content must not be empty" }
             this.content = it
         }
     }

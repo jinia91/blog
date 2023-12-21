@@ -25,12 +25,12 @@ import org.springframework.web.bind.annotation.RestController
 private val log = mu.KotlinLogging.logger { }
 
 @RestController
-@RequestMapping("/api/v1")
+@RequestMapping("/api/v1/memos")
 class MemoController(
     private val memoUseCases: UseCasesMemoFacade,
     private val memoQueries: QueriesMemoFacade,
 ) {
-    @PostMapping("/memo")
+    @PostMapping
     @CrossOrigin(origins = ["http://localhost:3000"])
     fun initMemo(
         @RequestBody request: InitMemoRequest,
@@ -43,7 +43,7 @@ class MemoController(
         return InitMemoResponse(info.id.value)
     }
 
-    @GetMapping("/memo")
+    @GetMapping
     @CrossOrigin(origins = ["http://localhost:3000"])
     fun getMemos(
         @RequestParam keyword: String?,
@@ -59,7 +59,7 @@ class MemoController(
             .toResponse()
     }
 
-    @GetMapping("/memo/{id}")
+    @GetMapping("/{id}")
     @CrossOrigin(origins = ["http://localhost:3000"])
     fun getMemoById(
         @PathVariable id: Long,
@@ -69,7 +69,7 @@ class MemoController(
             .toResponse()
     }
 
-    @DeleteMapping("/memo/{id}")
+    @DeleteMapping("/{id}")
     @CrossOrigin(origins = ["http://localhost:3000"])
     fun deleteMemoById(
         @PathVariable id: Long,
@@ -78,7 +78,7 @@ class MemoController(
         return DeleteMemoByIdResponse()
     }
 
-    @PutMapping("/memo/{id}/folder/{folderId}")
+    @PutMapping("/{id}/folders/{folderId}")
     @CrossOrigin(origins = ["http://localhost:3000"])
     fun addParentFolder(
         @PathVariable id: Long,

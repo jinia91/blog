@@ -1,4 +1,4 @@
-package kr.co.jiniaslog.memo.adapter.out.persistence.neo4j
+package kr.co.jiniaslog.memo.adapter.out.persistence.neo4j.queries
 
 import kr.co.jiniaslog.memo.adapter.out.persistence.neo4j.folder.FolderNeo4jEntity
 import kr.co.jiniaslog.memo.adapter.out.persistence.neo4j.folder.FolderNeo4jRepository
@@ -40,18 +40,20 @@ internal open class QueriesMemoFolderImpl(
 
     override fun handle(query: IRecommendRelatedMemo.Query): IRecommendRelatedMemo.Info {
         val relatedMemoCandidates =
-            memoNeo4jRepository.findByKeywordFullTextSearching(query.query)
+            memoNeo4jRepository.findByKeywordFullTextSearchingLimit6(query.query)
                 .filterNot { it.id == query.thisId.value }
                 .take(5)
-                .map { (it.id to it.title) }
+                .map { Triple(it.id, it.title, it.content) }
 
         return IRecommendRelatedMemo.Info(
-            relatedMemoCandidates = relatedMemoCandidates.map { Pair(MemoId(it.first), MemoTitle(it.second)) },
+            relatedMemoCandidates = relatedMemoCandidates.map { Triple(MemoId(it.first), MemoTitle(it.second), MemoContent(it.third)) },
         )
     }
 
     override fun handle(query: IGetMemoById.Query): IGetMemoById.Info {
-        val memo = memoNeo4jRepository.findById(query.memoId.value).getOrNull() ?: throw IllegalArgumentException("memo not found")
+        val memo =
+            memoNeo4jRepository.findById(query.memoId.value).getOrNull()
+                ?: throw IllegalArgumentException("memo not found")
         return IGetMemoById.Info(
             memoId = MemoId(memo.id),
             title = MemoTitle(memo.title),
@@ -67,6 +69,13 @@ internal open class QueriesMemoFolderImpl(
     }
 
     override fun handle(query: IGetFoldersAll.Query): IGetFoldersAll.Info {
+        if (query.value.isNullOrBlank()) {
+            return findAll()
+        }
+        return findByKeyword(query)
+    }
+
+    private fun findAll(): IGetFoldersAll.Info {
         val foldersWithDepth = folderNeo4jRepository.findAll()
         val folderMap = foldersWithDepth.associate { it.id to it.toFolderInfo() }
         val memos = memoNeo4jRepository.findAll().groupBy { it.parentFolder?.id }
@@ -86,6 +95,21 @@ internal open class QueriesMemoFolderImpl(
                     children = emptyList(),
                     memos = memos[null]?.map { it.toMemoInfo() } ?: emptyList(),
                 ),
+        )
+    }
+
+    private fun findByKeyword(query: IGetFoldersAll.Query): IGetFoldersAll.Info {
+        val memos = memoNeo4jRepository.findByKeywordFullTextSearching(query.value!!)
+        return IGetFoldersAll.Info(
+            listOf(
+                IGetFoldersAll.FolderInfo(
+                    id = null,
+                    name = FolderName("검색 결과"),
+                    parent = null,
+                    children = emptyList(),
+                    memos = memos.map { it.toMemoInfo() },
+                ),
+            ),
         )
     }
 

@@ -8,7 +8,8 @@ import kr.co.jiniaslog.memo.domain.memo.MemoTitle
 interface IGetFoldersAll {
     fun handle(query: Query): Info
 
-    class Query()
+    @JvmInline
+    value class Query(val value: String?)
 
     data class Info(val folderInfos: List<FolderInfo>)
 
