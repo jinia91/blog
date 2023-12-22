@@ -19,6 +19,7 @@ include(
     "libs:rdb-kernel",
     "libs:http-kernel",
     "libs:messaging-kernel",
+    "libs:global-logging",
 
     // blog
     "service:blog:blog-core",

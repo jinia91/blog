@@ -34,4 +34,8 @@ class FolderNeo4jEntity(
             updatedAt = this.updatedAt,
         )
     }
+
+    override fun toString(): String {
+        return "FolderNeo4jEntity(id=$id, name='$name', authorId=$authorId, parent=$parent, createdAt=$createdAt, updatedAt=$updatedAt)"
+    }
 }

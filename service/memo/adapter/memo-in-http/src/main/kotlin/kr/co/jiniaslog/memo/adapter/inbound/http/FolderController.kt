@@ -51,7 +51,6 @@ class FolderController(
         @PathVariable folderId: Long,
         @PathVariable parentFolderId: Long?,
     ): MakeFolderRelationshipResponse {
-        log.info { "makeRelationshipWithFolders request: $folderId, $parentFolderId" }
         val info =
             folderUseCases.handle(
                 IMakeRelationShipFolderAndFolder.Command(parentFolderId?.let { FolderId(parentFolderId) }, FolderId(folderId)),
@@ -74,7 +73,6 @@ class FolderController(
     fun getFoldersAll(
         @RequestParam(required = false) query: String?,
     ): FolderAndMemoResponse {
-        log.info { "getFoldersAll query: $query" }
         return folderQueries.handle(IGetFoldersAll.Query(query)).toResponse()
     }
 }

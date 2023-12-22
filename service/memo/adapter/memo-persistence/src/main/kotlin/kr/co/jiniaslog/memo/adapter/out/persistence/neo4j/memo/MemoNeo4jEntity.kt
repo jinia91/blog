@@ -27,7 +27,7 @@ class MemoNeo4jEntity(
     @Property("content")
     var content: String,
     @Relationship(type = "references", direction = Relationship.Direction.OUTGOING)
-    val references: Set<MemoNeo4jEntity>,
+    var references: Set<MemoNeo4jEntity>,
     @Property("state")
     var state: MemoState,
     @Property("parentFolder")
@@ -48,5 +48,12 @@ class MemoNeo4jEntity(
             createdAt = this.createdAt,
             updatedAt = this.updatedAt,
         )
+    }
+
+    override fun toString(): String {
+        return """
+            MemoNeo4jEntity(id=$id, authorId=$authorId, title='$title', content='$content', 
+            references=$references, state=$state, parentFolder=$parentFolder, createdAt=$createdAt, updatedAt=$updatedAt)
+            """.trimIndent()
     }
 }

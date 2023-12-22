@@ -7,6 +7,7 @@ var moduleBlocks = mutableListOf<Project>()
 
 val infra = mutableListOf(
     project(":infra:monolith-infra"),
+    project(":libs:global-logging"),
 ).also {
     moduleBlocks.addAll(it)
 }

@@ -10,7 +10,7 @@ plugins {
 }
 
 allOpen {
-    annotation("kr.co.jiniaslog.shared.core.context.CustomComponent")
+    annotation("kr.co.jiniaslog.shared.core.annotation.CustomComponent")
 }
 
 repositories {

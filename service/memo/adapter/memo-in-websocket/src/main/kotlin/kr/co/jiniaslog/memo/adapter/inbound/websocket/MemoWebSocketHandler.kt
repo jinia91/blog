@@ -1,5 +1,6 @@
 package kr.co.jiniaslog.memo.adapter.inbound.websocket
 
+import jakarta.validation.Valid
 import kr.co.jiniaslog.memo.usecase.IUpdateMemo
 import kr.co.jiniaslog.memo.usecase.UseCasesMemoFacade
 import org.springframework.messaging.handler.annotation.MessageMapping
@@ -15,7 +16,9 @@ class MemoWebSocketHandler(
 ) {
     @MessageMapping("/updateMemo")
     @SendTo(MEMO_PROTOCOL)
-    fun handle(payload: UpdateMemoPayload): UpdateMemoResponse {
+    fun handle(
+        @Valid payload: UpdateMemoPayload,
+    ): UpdateMemoResponse {
         val command: IUpdateMemo.Command = payload.toCommand()
         return memoUseCases.handle(command)
             .toResponse()

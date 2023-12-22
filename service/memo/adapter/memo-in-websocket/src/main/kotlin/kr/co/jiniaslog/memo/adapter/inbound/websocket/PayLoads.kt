@@ -2,6 +2,7 @@ package kr.co.jiniaslog.memo.adapter.inbound.websocket
 
 import com.fasterxml.jackson.annotation.JsonSubTypes
 import com.fasterxml.jackson.annotation.JsonTypeInfo
+import jakarta.validation.constraints.NotEmpty
 import kr.co.jiniaslog.memo.domain.memo.MemoContent
 import kr.co.jiniaslog.memo.domain.memo.MemoId
 import kr.co.jiniaslog.memo.domain.memo.MemoTitle
@@ -51,7 +52,9 @@ data class CommitMemoResponse(
 data class UpdateMemoPayload(
     override val type: String = "UpdateMemo",
     val id: Long,
+    @field:NotEmpty
     val content: String,
+    @field:NotEmpty
     val title: String,
 ) : PayLoad() {
     fun toCommand(): IUpdateMemo.Command.UpdateForm {
