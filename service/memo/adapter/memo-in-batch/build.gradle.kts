@@ -6,6 +6,6 @@ plugins {
 group = "kr.co.jiniaslog.memo"
 
 dependencies {
-    implementation(project(":service:memo:memo-core"))
-    implementation(project(":libs:core-kernel"))
+    implementation(project(Modules.Service.Memo.Core.path))
+    implementation(project(Modules.Libs.CoreKernel.path))
 }

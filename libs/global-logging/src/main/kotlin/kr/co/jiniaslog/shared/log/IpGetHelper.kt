@@ -4,22 +4,19 @@ import jakarta.servlet.http.HttpServletRequest
 
 object IpGetHelper {
     fun getClientIP(request: HttpServletRequest): String? {
-        var ip = request.getHeader("X-Forwarded-For")
-        if (ip == null) {
-            ip = request.getHeader("Proxy-Client-IP")
+        val headers =
+            listOf(
+                "X-Forwarded-For",
+                "Proxy-Client-IP",
+                "WL-Proxy-Client-IP",
+                "HTTP_CLIENT_IP",
+                "HTTP_X_FORWARDED_FOR",
+            )
+
+        headers.forEach { header ->
+            request.getHeader(header)?.let { return it }
         }
-        if (ip == null) {
-            ip = request.getHeader("WL-Proxy-Client-IP")
-        }
-        if (ip == null) {
-            ip = request.getHeader("HTTP_CLIENT_IP")
-        }
-        if (ip == null) {
-            ip = request.getHeader("HTTP_X_FORWARDED_FOR")
-        }
-        if (ip == null) {
-            ip = request.remoteAddr
-        }
-        return ip
+
+        return request.remoteAddr
     }
 }

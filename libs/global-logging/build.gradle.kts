@@ -4,6 +4,6 @@ plugins {
 }
 
 dependencies {
-    api(project(":libs:core-kernel"))
+    api(project(Modules.Libs.CoreKernel.path))
     implementation("org.springframework.boot:spring-boot-starter-aop")
 }

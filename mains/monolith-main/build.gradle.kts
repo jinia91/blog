@@ -2,39 +2,38 @@ plugins {
     springBootConventions
 }
 
-// add service's modules
-var moduleBlocks = mutableListOf<Project>()
-
 val infra = mutableListOf(
-    project(":infra:monolith-infra"),
-    project(":libs:global-logging"),
-).also {
-    moduleBlocks.addAll(it)
-}
+    project(Modules.Infra.MONOLITH.path),
+)
+val libs = mutableListOf(
+    project(Modules.Libs.GlobalLogging.path),
+)
 
-val blog = mutableListOf(
-    project(":service:blog:blog-core"),
-).also {
-    moduleBlocks.addAll(it)
-}
+val blogService = mutableListOf(
+    project(Modules.Service.Blog.Core.path),
+)
 
+val memoService = mutableListOf(
+    project(Modules.Service.Memo.Core.path),
+    project(Modules.Service.Memo.Adaptors.InHttp.path),
+    project(Modules.Service.Memo.Adaptors.InWebsocket.path),
+    project(Modules.Service.Memo.Adaptors.Persistence.path),
+)
 
-val memo = mutableListOf(
-    project(":service:memo:adapter:memo-persistence"),
-    project(":service:memo:adapter:memo-in-http"),
-    project(":service:memo:adapter:memo-in-websocket"),
-    project(":service:memo:memo-core"),
-).also {
-    moduleBlocks.addAll(it)
-}
+val mediaService = mutableListOf(
+    project(Modules.Service.Media.Core.path),
+    project(Modules.Service.Media.Adaptors.InHttp.path),
+    project(Modules.Service.Media.Adaptors.OutGithub.path),
+)
 
-val media = mutableListOf(
-    project(":service:media:media-core"),
-    project(":service:media:adapter:media-out-github"),
-    project(":service:media:adapter:media-in-http"),
-).also {
-    moduleBlocks.addAll(it)
-}
+var moduleBlocks = mutableListOf<Project>()
+    .apply {
+        addAll(infra)
+        addAll(libs)
+        addAll(blogService)
+        addAll(memoService)
+        addAll(mediaService)
+    }
 
 dependencies {
     moduleBlocks.forEach {

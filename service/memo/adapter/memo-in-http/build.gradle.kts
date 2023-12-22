@@ -7,8 +7,8 @@ group = "kr.co.jiniaslog.memo"
 
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter-web")
-    implementation(project(":service:memo:memo-core"))
-    implementation(project(":libs:core-kernel"))
-    implementation(project(":libs:http-kernel"))
+    implementation(project(Modules.Service.Memo.Core.path))
+    implementation(project(Modules.Libs.CoreKernel.path))
+    implementation(project(Modules.Libs.HttpKernel.path))
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.3.0")
 }

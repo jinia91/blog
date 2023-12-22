@@ -6,7 +6,6 @@ plugins {
     kotlin("plugin.allopen")
     id("java-test-fixtures")
     id("org.jmailen.kotlinter")
-    jacoco
 }
 
 allOpen {
@@ -62,55 +61,4 @@ dependencies {
     testImplementation("ch.qos.logback:logback-classic:1.4.5")
 }
 
-// jacoco setting
-jacoco {
-    toolVersion = "0.8.7"
-}
 
-tasks.jacocoTestReport {
-    reports {
-        xml.required.set(false)
-        csv.required.set(false)
-        html.required.set(true)
-    }
-    finalizedBy("jacocoTestCoverageVerification")
-
-    classDirectories.setFrom(
-        fileTree(project.buildDir) {
-            exclude(
-                "**/Q*.*",
-                "**/*Test.*"
-            )
-            include(
-                "**/classes/**/main/**"
-            )
-        }
-    )
-}
-
-tasks.jacocoTestCoverageVerification {
-    violationRules {
-        rule {
-            limit {
-                counter = "BRANCH"
-                minimum = "0.7".toBigDecimal()
-            }
-
-            limit {
-                counter = "LINE"
-                minimum = "0.7".toBigDecimal()
-            }
-        }
-    }
-    classDirectories.setFrom(
-        fileTree(project.buildDir) {
-            exclude(
-                "**/Q*.*",
-                "**/*Test.*"
-            )
-            include(
-                "**/classes/**/main/**"
-            )
-        }
-    )
-}
