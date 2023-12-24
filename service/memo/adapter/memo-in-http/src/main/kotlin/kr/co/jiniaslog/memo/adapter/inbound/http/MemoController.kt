@@ -4,12 +4,15 @@ import kr.co.jiniaslog.memo.domain.folder.FolderId
 import kr.co.jiniaslog.memo.domain.memo.AuthorId
 import kr.co.jiniaslog.memo.domain.memo.MemoId
 import kr.co.jiniaslog.memo.queries.IGetAllMemos
+import kr.co.jiniaslog.memo.queries.IGetAllReferencedByMemo
+import kr.co.jiniaslog.memo.queries.IGetAllReferencesByMemo
 import kr.co.jiniaslog.memo.queries.IGetMemoById
 import kr.co.jiniaslog.memo.queries.IRecommendRelatedMemo
 import kr.co.jiniaslog.memo.queries.QueriesMemoFacade
 import kr.co.jiniaslog.memo.usecase.IDeleteMemo
 import kr.co.jiniaslog.memo.usecase.IInitMemo
 import kr.co.jiniaslog.memo.usecase.IMakeRelationShipFolderAndMemo
+import kr.co.jiniaslog.memo.usecase.IUpdateMemo
 import kr.co.jiniaslog.memo.usecase.UseCasesMemoFacade
 import org.springframework.web.bind.annotation.CrossOrigin
 import org.springframework.web.bind.annotation.DeleteMapping
@@ -87,6 +90,53 @@ class MemoController(
                 folderId = folderId.takeIf { it != -1L }?.let { FolderId(it) },
             ),
         ).toResponse()
+    }
+
+    @GetMapping("/{id}/references")
+    @CrossOrigin(origins = ["http://localhost:3000"])
+    fun getAllReferencesByMemo(
+        @PathVariable id: Long,
+    ): List<GetAllReferencesByMemoResponse> {
+        val reference = memoQueries.handle(IGetAllReferencesByMemo.Query(MemoId(id)))
+        return reference.map { it.toResponse() }
+    }
+
+    @GetMapping("/{id}/referenced")
+    @CrossOrigin(origins = ["http://localhost:3000"])
+    fun getAllReferencedByMemo(
+        @PathVariable id: Long,
+    ): List<GetAllReferencedByMemoResponse> {
+        val referenced = memoQueries.handle(IGetAllReferencedByMemo.Query(MemoId(id)))
+        return referenced.map { it.toResponse() }
+    }
+
+    @PutMapping("/{id}/references/{referenceId}")
+    @CrossOrigin(origins = ["http://localhost:3000"])
+    fun addReference(
+        @PathVariable id: Long,
+        @PathVariable referenceId: Long,
+    ): AddReferenceResponse {
+        return memoUseCases.handle(
+            IUpdateMemo.Command.AddReference(
+                memoId = MemoId(id),
+                referenceId = MemoId(referenceId),
+            ),
+        ).toResponse()
+    }
+
+    @DeleteMapping("/{id}/references/{referenceId}")
+    @CrossOrigin(origins = ["http://localhost:3000"])
+    fun deleteReference(
+        @PathVariable id: Long,
+        @PathVariable referenceId: Long,
+    ): DeleteReferenceResponse {
+        memoUseCases.handle(
+            IUpdateMemo.Command.RemoveReference(
+                memoId = MemoId(id),
+                referenceId = MemoId(referenceId),
+            ),
+        )
+        return DeleteReferenceResponse()
     }
 }
 

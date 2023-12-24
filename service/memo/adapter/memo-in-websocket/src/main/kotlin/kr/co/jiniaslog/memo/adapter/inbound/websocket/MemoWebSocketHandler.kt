@@ -24,19 +24,12 @@ class MemoWebSocketHandler(
             .toResponse()
     }
 
-    @MessageMapping("/addReference")
-    @SendTo(MEMO_PROTOCOL)
-    fun handle(payload: AddReferencePayload): UpdateMemoResponse {
-        val command: IUpdateMemo.Command.AddReference = payload.toCommand()
-        return memoUseCases.handle(command)
-            .toResponse()
-    }
-
-    @MessageMapping("/removeReference")
-    @SendTo(MEMO_PROTOCOL)
-    fun handle(payload: RemoveReferencePayload): UpdateMemoResponse {
-        val command: IUpdateMemo.Command.RemoveReference = payload.toCommand()
-        return memoUseCases.handle(command)
-            .toResponse()
+    @MessageMapping("/updateReferences")
+    @SendTo("$MEMO_PROTOCOL/updateReferences")
+    fun handle(
+        @Valid payload: UpdateReferencesPayload,
+    ): UpdateReferencesResponse {
+        val command: IUpdateMemo.Command = payload.toCommand()
+        return UpdateReferencesResponse.from(memoUseCases.handle(command).id.value)
     }
 }

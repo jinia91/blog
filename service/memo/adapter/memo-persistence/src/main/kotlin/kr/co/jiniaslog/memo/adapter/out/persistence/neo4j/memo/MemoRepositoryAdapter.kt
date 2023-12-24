@@ -6,6 +6,7 @@ import kr.co.jiniaslog.memo.domain.memo.MemoId
 import kr.co.jiniaslog.memo.domain.memo.MemoRepository
 import kr.co.jiniaslog.shared.core.annotation.PersistenceAdapter
 import org.springframework.transaction.annotation.Transactional
+import kotlin.jvm.optionals.getOrNull
 
 @PersistenceAdapter
 open class MemoRepositoryAdapter(
@@ -17,7 +18,6 @@ open class MemoRepositoryAdapter(
         return memoNeo4jRepository.findByKeywordFullTextSearchingLimit6(keyword).map { it.toDomain() }
     }
 
-    @Transactional(readOnly = true)
     override fun findById(id: MemoId): Memo? {
         return memoNeo4jRepository.findById(id.value).orElse(null)?.toDomain()
     }
@@ -34,29 +34,69 @@ open class MemoRepositoryAdapter(
 
     @Transactional
     override fun save(entity: Memo): Memo {
-        val reference =
-            entity.references.map {
-                memoNeo4jRepository.findById(it.referenceId.value).orElse(null)
-            }.toSet()
-
-        memoNeo4jRepository.deleteParentFolderById(entity.id.value)
-        val parentFolder =
-            entity.parentFolderId?.let {
-                folderNeo4jRepository.findById(it.value).orElse(null)
-            }
+        val pm = memoNeo4jRepository.findById(entity.id.value).getOrNull()
 
         val memoNeo4jEntity =
-            MemoNeo4jEntity(
-                id = entity.id.value,
-                authorId = entity.authorId.value,
-                title = entity.title.value,
-                content = entity.content.value,
-                state = entity.state,
-                references = reference,
-                parentFolder = parentFolder,
-                createdAt = entity.createdAt,
-                updatedAt = entity.updatedAt,
-            )
+            if (pm == null) {
+                val reference =
+                    entity.references.map {
+                        memoNeo4jRepository.findById(it.referenceId.value).orElse(null)
+                    }.toSet()
+
+                memoNeo4jRepository.deleteParentFolderById(entity.id.value)
+                val parentFolder =
+                    entity.parentFolderId?.let {
+                        folderNeo4jRepository.findById(it.value).orElse(null)
+                    }
+
+                MemoNeo4jEntity(
+                    id = entity.id.value,
+                    authorId = entity.authorId.value,
+                    title = entity.title.value,
+                    content = entity.content.value,
+                    state = entity.state,
+                    references = reference.toMutableSet(),
+                    parentFolder = parentFolder,
+                    createdAt = entity.createdAt,
+                    updatedAt = entity.updatedAt,
+                )
+            } else {
+                val origin: MemoNeo4jEntity = pm
+                val updateData: Memo = entity
+
+                // title
+                if (origin.title != updateData.title.value) {
+                    origin.title = updateData.title.value
+                }
+
+                // content
+                if (origin.content != updateData.content.value) {
+                    origin.content = updateData.content.value
+                }
+
+                // state
+                if (origin.state != updateData.state) {
+                    origin.state = updateData.state
+                }
+
+                // references
+                if (origin.references != updateData.references.map { it.referenceId.value }.toSet()) {
+                    origin.references =
+                        updateData.references.map {
+                            memoNeo4jRepository.findById(it.referenceId.value).orElse(null)
+                        }.toMutableSet()
+                }
+
+                // parentFolder
+                if (origin.parentFolder?.id != updateData.parentFolderId?.value) {
+                    origin.parentFolder =
+                        updateData.parentFolderId?.let {
+                            folderNeo4jRepository.findById(it.value).orElse(null)
+                        }
+                }
+
+                origin
+            }
 
         return memoNeo4jRepository.save(memoNeo4jEntity).toDomain()
     }

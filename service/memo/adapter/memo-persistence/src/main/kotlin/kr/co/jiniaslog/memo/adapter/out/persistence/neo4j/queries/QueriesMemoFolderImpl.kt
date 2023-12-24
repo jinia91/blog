@@ -10,6 +10,8 @@ import kr.co.jiniaslog.memo.domain.memo.MemoContent
 import kr.co.jiniaslog.memo.domain.memo.MemoId
 import kr.co.jiniaslog.memo.domain.memo.MemoTitle
 import kr.co.jiniaslog.memo.queries.IGetAllMemos
+import kr.co.jiniaslog.memo.queries.IGetAllReferencedByMemo
+import kr.co.jiniaslog.memo.queries.IGetAllReferencesByMemo
 import kr.co.jiniaslog.memo.queries.IGetFoldersAll
 import kr.co.jiniaslog.memo.queries.IGetMemoById
 import kr.co.jiniaslog.memo.queries.IRecommendRelatedMemo
@@ -65,6 +67,37 @@ internal open class QueriesMemoFolderImpl(
                         referenceId = MemoId(it.id),
                     )
                 }.toSet(),
+        )
+    }
+
+    // todo : n+1인지 쿼리 체크
+    override fun handle(query: IGetAllReferencesByMemo.Query): List<IGetAllReferencesByMemo.Info> {
+        val memo = memoNeo4jRepository.findById(query.memoId.value).getOrNull() ?: throw IllegalArgumentException("memo not found")
+        return listOf(
+            IGetAllReferencesByMemo.Info(
+                references =
+                    memo.references.map {
+                        IGetAllReferencesByMemo.ReferenceInfo(
+                            id = MemoId(it.id),
+                            title = MemoTitle(it.title),
+                        )
+                    }.toSet(),
+            ),
+        )
+    }
+
+    override fun handle(query: IGetAllReferencedByMemo.Query): List<IGetAllReferencedByMemo.Info> {
+        val result = memoNeo4jRepository.findReferencingMemos(query.memoId.value)
+        return listOf(
+            IGetAllReferencedByMemo.Info(
+                referenceds =
+                    result.map {
+                        IGetAllReferencedByMemo.ReferencedInfo(
+                            id = MemoId(it.id),
+                            title = MemoTitle(it.title),
+                        )
+                    }.toSet(),
+            ),
         )
     }
 

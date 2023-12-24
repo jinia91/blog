@@ -26,8 +26,8 @@ class MemoNeo4jEntity(
     var title: String,
     @Property("content")
     var content: String,
-    @Relationship(type = "references", direction = Relationship.Direction.OUTGOING)
-    var references: Set<MemoNeo4jEntity>,
+    @Relationship(type = "REFERENCE", direction = Relationship.Direction.OUTGOING)
+    var references: MutableSet<MemoNeo4jEntity>,
     @Property("state")
     var state: MemoState,
     @Property("parentFolder")

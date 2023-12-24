@@ -46,6 +46,13 @@ internal class UseCasesMemoInteractor(
             is IUpdateMemo.Command.UpdateForm -> {
                 memo.update(command.title, command.content)
             }
+
+            is IUpdateMemo.Command.UpdateReferences -> {
+                command.references.forEach {
+                    getMemo(it)
+                }
+                memo.updateReferences(command.references)
+            }
         }
 
         memoRepository.save(memo)

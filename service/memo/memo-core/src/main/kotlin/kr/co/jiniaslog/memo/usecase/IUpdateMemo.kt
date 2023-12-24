@@ -25,6 +25,11 @@ interface IUpdateMemo {
             override val memoId: MemoId,
             val referenceId: MemoId,
         ) : Command()
+
+        data class UpdateReferences(
+            override val memoId: MemoId,
+            val references: Set<MemoId>,
+        ) : Command()
     }
 
     data class Info(val id: MemoId)

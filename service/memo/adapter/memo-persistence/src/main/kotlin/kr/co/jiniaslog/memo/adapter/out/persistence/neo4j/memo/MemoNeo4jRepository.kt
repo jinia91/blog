@@ -9,7 +9,7 @@ interface MemoNeo4jRepository : Neo4jRepository<MemoNeo4jEntity, Long> {
         """
         CALL db.index.fulltext.queryNodes("memo_full_text_index", ${'$'}keyword)
         YIELD node, score
-        OPTIONAL MATCH (node)-[:REFERENCES]->(other)
+        OPTIONAL MATCH (node)-[:REFERENCE]->(other)
         WITH node, score, count(other) AS referencesCount
         ORDER BY referencesCount DESC, score DESC
        RETURN 
@@ -31,7 +31,7 @@ interface MemoNeo4jRepository : Neo4jRepository<MemoNeo4jEntity, Long> {
         """
         CALL db.index.fulltext.queryNodes("memo_full_text_index", ${'$'}keyword)
         YIELD node, score
-        OPTIONAL MATCH (node)-[:REFERENCES]->(other)
+        OPTIONAL MATCH (node)-[:REFERENCE]->(other)
         WITH node, score, count(other) AS referencesCount
         ORDER BY referencesCount DESC, score DESC
        RETURN 
@@ -48,8 +48,11 @@ interface MemoNeo4jRepository : Neo4jRepository<MemoNeo4jEntity, Long> {
         @Param("keyword") keyword: String,
     ): List<MemoNeo4jEntity>
 
-    @Query("MATCH (parent:memo)-[r:REFERENCES]->(child:memo) WHERE child.id = ${'$'}memoId detach DELETE r")
+    @Query("MATCH (parent:memo)-[r:REFERENCE]->(child:memo) WHERE child.id = ${'$'}memoId detach DELETE r")
     fun deleteParentFolderById(
         @Param("memoId") memoId: Long,
     )
+
+    @Query("MATCH (referencingMemo:memo)-[r:REFERENCE]->(m:memo) WHERE m.id = ${'$'}memoId RETURN referencingMemo")
+    fun findReferencingMemos(memoId: Long): List<MemoNeo4jEntity>
 }

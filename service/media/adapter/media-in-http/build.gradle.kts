@@ -5,8 +5,8 @@ plugins {
 
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter-web")
-    implementation(project(":service:media:media-core"))
-    implementation(project(":libs:core-kernel"))
-    implementation(project(":libs:http-kernel"))
+    implementation(project(Modules.Service.Media.Core.path))
+    implementation(project(Modules.Libs.CoreKernel.path))
+    implementation(project(Modules.Libs.HttpKernel.path))
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.3.0")
 }

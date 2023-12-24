@@ -3,7 +3,7 @@ plugins {
 }
 
 dependencies {
-    implementation(project(":libs:core-kernel"))
-    implementation(project(":service:message-nexus"))
-    testImplementation(testFixtures(project(":libs:core-kernel")))
+    implementation(project(Modules.Libs.CoreKernel.path))
+    implementation(project(Modules.Service.MessageNexus.path))
+    testImplementation(testFixtures(project(Modules.Libs.CoreKernel.path)))
 }

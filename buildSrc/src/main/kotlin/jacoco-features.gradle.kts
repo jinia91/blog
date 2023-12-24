@@ -20,7 +20,6 @@ tasks.test {
     finalizedBy("jacocoTestReport")
 }
 
-
 tasks.jacocoTestReport {
     reports {
         xml.required.set(false)

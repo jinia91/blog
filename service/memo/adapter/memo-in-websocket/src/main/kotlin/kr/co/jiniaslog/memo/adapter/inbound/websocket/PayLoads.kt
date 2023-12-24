@@ -6,7 +6,6 @@ import jakarta.validation.constraints.NotEmpty
 import kr.co.jiniaslog.memo.domain.memo.MemoContent
 import kr.co.jiniaslog.memo.domain.memo.MemoId
 import kr.co.jiniaslog.memo.domain.memo.MemoTitle
-import kr.co.jiniaslog.memo.queries.IRecommendRelatedMemo
 import kr.co.jiniaslog.memo.usecase.IUpdateMemo
 
 @JsonTypeInfo(
@@ -16,37 +15,10 @@ import kr.co.jiniaslog.memo.usecase.IUpdateMemo
 )
 @JsonSubTypes(
     JsonSubTypes.Type(value = UpdateMemoPayload::class, name = "UpdateMemo"),
-    JsonSubTypes.Type(value = AddReferencePayload::class, name = "AddReference"),
-    JsonSubTypes.Type(value = RemoveReferencePayload::class, name = "RemoveReference"),
+    JsonSubTypes.Type(value = UpdateReferencesPayload::class, name = "UpdateReferences"),
 )
 sealed class PayLoad {
     abstract val type: String
-}
-
-data class RecommendRelatedMemoResponse(
-    val type: String = "GetRecommendRelatedMemoInfo",
-    val relatedMemoCandidates: List<Pair<Long, String>>,
-)
-
-fun IRecommendRelatedMemo.Info.toResponse(): RecommendRelatedMemoResponse {
-    return RecommendRelatedMemoResponse(
-        relatedMemoCandidates =
-            relatedMemoCandidates.map {
-                Pair(it.first.value, it.second.value)
-            },
-    )
-}
-
-data class CommitMemoResponse(
-    val id: Long,
-) {
-    companion object {
-        fun from(id: Long): CommitMemoResponse {
-            return CommitMemoResponse(
-                id = id,
-            )
-        }
-    }
 }
 
 data class UpdateMemoPayload(
@@ -82,28 +54,27 @@ fun IUpdateMemo.Info.toResponse(): UpdateMemoResponse {
     return UpdateMemoResponse.from(id.value)
 }
 
-data class AddReferencePayload(
-    override val type: String = "AddReference",
+data class UpdateReferencesPayload(
+    override val type: String = "UpdateReferences",
     val id: Long,
-    val referenceId: Long,
+    val references: List<Long>,
 ) : PayLoad() {
-    fun toCommand(): IUpdateMemo.Command.AddReference {
-        return IUpdateMemo.Command.AddReference(
+    fun toCommand(): IUpdateMemo.Command {
+        return IUpdateMemo.Command.UpdateReferences(
             memoId = MemoId(id),
-            referenceId = MemoId(referenceId),
+            references = references.map { MemoId(it) }.toSet(),
         )
     }
 }
 
-data class RemoveReferencePayload(
-    override val type: String = "RemoveReference",
+data class UpdateReferencesResponse(
     val id: Long,
-    val referenceId: Long,
-) : PayLoad() {
-    fun toCommand(): IUpdateMemo.Command.RemoveReference {
-        return IUpdateMemo.Command.RemoveReference(
-            memoId = MemoId(id),
-            referenceId = MemoId(referenceId),
-        )
+) {
+    companion object {
+        fun from(id: Long): UpdateReferencesResponse {
+            return UpdateReferencesResponse(
+                id = id,
+            )
+        }
     }
 }

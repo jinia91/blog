@@ -74,6 +74,10 @@ class Memo private constructor(
         return "Memo(id=$id, authorId=$authorId, title=$title, content=$content, reference=$_references, memoState=$state)"
     }
 
+    fun updateReferences(references: Set<MemoId>) {
+        this._references = references.map { MemoReference(this.id, it) }.toMutableSet()
+    }
+
     companion object {
         fun init(
             title: MemoTitle = MemoTitle(""),
