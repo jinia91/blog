@@ -5,6 +5,7 @@ object Modules {
     object Service{
         object Memo {
             val Core = Module(":service:memo:memo-core")
+            val ReadOnly = Module(":service:memo:memo-queries")
             enum class Adaptors(val path: String) {
                 InHttp(":service:memo:adapter:memo-in-http"),
                 InWebsocket(":service:memo:adapter:memo-in-websocket"),

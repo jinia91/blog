@@ -30,6 +30,7 @@ include(
 
     // memo
     "service:memo:memo-core",
+    "service:memo:memo-queries",
     "service:memo:adapter:memo-in-http",
     "service:memo:adapter:memo-in-websocket",
     "service:memo:adapter:memo-in-message",
