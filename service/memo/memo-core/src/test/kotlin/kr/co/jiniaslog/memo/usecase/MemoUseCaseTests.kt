@@ -190,5 +190,35 @@ internal class MemoUseCaseTests : CustomBehaviorSpec() {
                 }
             }
         }
+
+        /**
+         * I Update References
+         */
+        Given("I Update References: 유효한 메모가 주어지고") {
+            val memo =
+                Memo.init(
+                    authorId = AuthorId(1),
+                )
+            memoRepository.save(memo)
+            val reference =
+                Memo.init(
+                    authorId = AuthorId(1),
+                )
+            memoRepository.save(reference)
+            memo.addReference(reference.id)
+            val command =
+                IUpdateMemo.Command.UpdateReferences(
+                    memoId = memo.id,
+                    references = setOf(reference.id),
+                )
+            When("메모의 참조를 업데이트하면") {
+                sut.handle(command)
+                Then("메모의 참조가 변경된다") {
+                    val foundMemo = memoRepository.findById(memo.id)!!
+                    foundMemo.references.size shouldBe 1
+                    foundMemo.references.first().referenceId shouldBe reference.id
+                }
+            }
+        }
     }
 }
