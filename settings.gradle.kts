@@ -1,14 +1,11 @@
 rootProject.name = "Jinia's Log"
 
-// Enable parallel execution for tasks
-gradle.startParameter.isParallelProjectExecutionEnabled = true
-
 include(
     /**
      * ################
      * ## Jinia's Log##
      * ################
-      */
+     */
 
     // framework 의존성을 가지고 순수하게 애플리케이션을 실행시키는 main module
     "mains:monolith-main",
@@ -22,15 +19,28 @@ include(
     "libs:rdb-kernel",
     "libs:http-kernel",
     "libs:messaging-kernel",
+    "libs:global-logging",
 
-    // 서비스
-    "service:blog:core",
-    "service:blog:adapter:out-rdb",
-    "service:blog:adapter:in-http",
-    "service:blog:adapter:in-message",
-    "service:blog:adapter:acl-user",
+    // blog
+    "service:blog:blog-core",
+    "service:blog:adapter:blog-out-rdb",
+    "service:blog:adapter:blog-in-http",
+    "service:blog:adapter:blog-in-message",
+    "service:blog:adapter:blog-acl-user",
 
-    "service:memo:core",
+    // memo
+    "service:memo:memo-core",
+    "service:memo:memo-queries",
+    "service:memo:adapter:memo-in-http",
+    "service:memo:adapter:memo-in-websocket",
+    "service:memo:adapter:memo-in-message",
+    "service:memo:adapter:memo-in-batch",
+    "service:memo:adapter:memo-persistence",
+
+    //media
+    "service:media:media-core",
+    "service:media:adapter:media-in-http",
+    "service:media:adapter:media-out-github",
 
     "service:user:core",
     "service:comment",
@@ -38,3 +48,4 @@ include(
     "service:seo",
     "service:message-nexus",
 )
+

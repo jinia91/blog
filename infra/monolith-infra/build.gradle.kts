@@ -4,7 +4,7 @@ plugins {
 }
 
 dependencies {
-    api(project(":libs:core-kernel"))
+    api(project(Modules.Libs.CoreKernel.path))
     implementation("org.springframework.boot:spring-boot-starter-aop")
-    implementation("org.springframework.integration:spring-integration-webflux")
+    implementation("org.springframework.boot:spring-boot-starter-integration")
 }

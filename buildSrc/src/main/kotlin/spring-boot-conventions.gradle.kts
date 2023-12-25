@@ -13,14 +13,11 @@ tasks.findByName("bootJar")?.let {
 tasks.named<Jar>("jar") {
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     enabled = true
+    archiveFileName.set("${project.parent?.parent?.name}-${project.parent?.name}-${project.name}.jar")
 }
 
-val jar: Jar by tasks
-jar.enabled = true
-jar.archiveFileName.set("${project.parent?.name}-${project.name}.jar")
-
 dependencies {
-    implementation("org.springframework.boot:spring-boot-starter")
+    implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-configuration-processor")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
 }
