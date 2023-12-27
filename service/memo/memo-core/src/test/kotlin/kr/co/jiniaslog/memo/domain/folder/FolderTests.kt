@@ -8,7 +8,10 @@ import kr.co.jiniaslog.shared.CustomBehaviorSpec
 
 class FolderTests : CustomBehaviorSpec() {
     init {
-        Given("유효한 폴더 생성 조건이 주어지면") {
+        /**
+         * init Folder
+         */
+        Given("유효한 폴더 생성 조건이 주어지고") {
             val authorId = AuthorId(1)
             When("폴더를 생성하면") {
                 val newFolder = Folder.init(authorId)
@@ -19,7 +22,7 @@ class FolderTests : CustomBehaviorSpec() {
                     newFolder.name shouldBe FolderName.UNTITLED
                 }
             }
-            And("특정 폴더 하위이면") {
+            And("특정 폴더 하위이고") {
                 val parentFolder = Folder.init(authorId)
                 When("폴더를 생성하면") {
                     val newFolder = Folder.init(authorId, parentFolder.id)
@@ -33,7 +36,10 @@ class FolderTests : CustomBehaviorSpec() {
             }
         }
 
-        Given("폴더가 존재하고") {
+        /**
+         * change parent
+         */
+        Given("폴더와 부모폴더가 존재하고") {
             val authorId = AuthorId(1)
             val parentFolder = Folder.init(authorId)
             And("하위 폴더가 존재하고") {
@@ -55,7 +61,25 @@ class FolderTests : CustomBehaviorSpec() {
                 }
             }
         }
+        Given("유효힌 폴더와 부모폴더가 존재하고") {
+            val authorId = AuthorId(1)
+            val parentFolder = Folder.init(authorId)
+            And("하위 폴더가 존재하고") {
+                val childFolder = Folder.init(authorId)
+                childFolder.changeParent(parentFolder)
+                When("부모를 변경하면") {
+                    val newParentFolder = Folder.init(authorId)
+                    childFolder.changeParent(newParentFolder)
+                    Then("부모가 변경된다.") {
+                        childFolder.parent shouldBe newParentFolder.id
+                    }
+                }
+            }
+        }
 
+        /**
+         * change name
+         */
         Given("유효한 폴더가 하나 존재하고") {
             val authorId = AuthorId(1)
             val folder = Folder.init(authorId)
@@ -67,6 +91,7 @@ class FolderTests : CustomBehaviorSpec() {
                 }
             }
         }
+
         /**
          * from
          */
