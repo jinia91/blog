@@ -9,7 +9,7 @@ object Modules {
             enum class Adaptors(val path: String) {
                 InHttp(":service:memo:adapter:memo-in-http"),
                 InWebsocket(":service:memo:adapter:memo-in-websocket"),
-                Persistence(":service:memo:adapter:memo-persistence")
+                Persistence(":service:memo:adapter:memo-out-persistence")
                 ;
             }
         }
@@ -35,11 +35,8 @@ object Modules {
         val MessageNexus = Module(":service:message-nexus")
     }
 
-    object Infra {
-        val MONOLITH = Module(":infra:monolith-infra")
-    }
-
     object Libs {
+        val SnowflakeIdGenerator = Module(":libs:snowflake-id-generator")
         val GlobalLogging = Module(":libs:global-logging")
         val CoreKernel = Module(":libs:core-kernel")
         val HttpKernel = Module(":libs:http-kernel")

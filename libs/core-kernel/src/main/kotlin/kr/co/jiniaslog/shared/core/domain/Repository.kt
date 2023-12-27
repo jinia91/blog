@@ -9,8 +9,3 @@ interface Repository<T : AggregateRoot<I>, I : ValueObject> {
 
     fun save(entity: T): T
 }
-
-enum class FetchMode {
-    ALL,
-    NONE,
-}

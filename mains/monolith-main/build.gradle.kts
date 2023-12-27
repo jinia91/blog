@@ -2,11 +2,9 @@ plugins {
     springBootConventions
 }
 
-val infra = mutableListOf(
-    project(Modules.Infra.MONOLITH.path),
-)
 val libs = mutableListOf(
     project(Modules.Libs.GlobalLogging.path),
+    project(Modules.Libs.SnowflakeIdGenerator.path),
 )
 
 val blogService = mutableListOf(
@@ -29,14 +27,13 @@ val mediaService = mutableListOf(
 
 var moduleBlocks = mutableListOf<Project>()
     .apply {
-        addAll(infra)
         addAll(libs)
         addAll(blogService)
         addAll(memoService)
         addAll(mediaService)
     }
 
-val integrationTest = mutableListOf(
+var integrationTest = mutableListOf(
     "org.testcontainers:testcontainers:1.19.3",
     "org.testcontainers:junit-jupiter:1.19.3",
     "org.testcontainers:neo4j:1.19.3",

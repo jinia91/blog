@@ -3,14 +3,14 @@ package kr.co.jiniaslog.memo.usecase
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import kr.co.jiniaslog.memo.domain.folder.Folder
-import kr.co.jiniaslog.memo.domain.folder.FolderRepository
 import kr.co.jiniaslog.memo.domain.memo.AuthorId
 import kr.co.jiniaslog.memo.domain.memo.Memo
 import kr.co.jiniaslog.memo.domain.memo.MemoContent
-import kr.co.jiniaslog.memo.domain.memo.MemoRepository
 import kr.co.jiniaslog.memo.domain.memo.MemoTitle
-import kr.co.jiniaslog.memo.fakes.FakeFolderRepository
-import kr.co.jiniaslog.memo.fakes.FakeMemoRepository
+import kr.co.jiniaslog.memo.outbound.FolderRepository
+import kr.co.jiniaslog.memo.outbound.MemoRepository
+import kr.co.jiniaslog.memo.outbound.fakes.FakeFolderRepository
+import kr.co.jiniaslog.memo.outbound.fakes.FakeMemoRepository
 import kr.co.jiniaslog.memo.usecase.impl.UseCasesMemoInteractor
 import kr.co.jiniaslog.shared.CustomBehaviorSpec
 

@@ -17,6 +17,7 @@ abstract class CustomBehaviorSpec : BehaviorSpec() {
         testCase: TestCase,
         result: TestResult,
     ) {
+        atomicSequence = AtomicLong(1)
         super.afterEach(testCase, result)
     }
 

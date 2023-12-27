@@ -2,7 +2,7 @@ package kr.co.jiniaslog.memo.usecase.impl
 
 import kr.co.jiniaslog.memo.domain.folder.Folder
 import kr.co.jiniaslog.memo.domain.folder.FolderId
-import kr.co.jiniaslog.memo.domain.folder.FolderRepository
+import kr.co.jiniaslog.memo.outbound.FolderRepository
 import kr.co.jiniaslog.memo.usecase.IChangeFolderName
 import kr.co.jiniaslog.memo.usecase.ICreateNewFolder
 import kr.co.jiniaslog.memo.usecase.IDeleteFoldersRecursively

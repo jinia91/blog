@@ -11,7 +11,6 @@ class Memo private constructor(
     content: MemoContent,
     title: MemoTitle,
     references: MutableSet<MemoReference>,
-    memoState: MemoState,
     parentFolderId: FolderId?,
 ) : AggregateRoot<MemoId>() {
     override val id: MemoId = id
@@ -28,9 +27,6 @@ class Memo private constructor(
 
     val references: Set<MemoReference>
         get() = _references.toSet()
-
-    var state: MemoState = memoState
-        private set
 
     var parentFolderId: FolderId? = parentFolderId
         private set
@@ -57,21 +53,12 @@ class Memo private constructor(
         this._references.remove(MemoReference(this.id, referenceId))
     }
 
-    fun commit(
-        title: MemoTitle,
-        content: MemoContent,
-    ) {
-        update(title, content)
-        MemoState.COMMITTED.validate(memo = this)
-        this.state = MemoState.COMMITTED
-    }
-
     fun setParentFolder(folderId: FolderId?) {
         this.parentFolderId = folderId
     }
 
     override fun toString(): String {
-        return "Memo(id=$id, authorId=$authorId, title=$title, content=$content, reference=$_references, memoState=$state)"
+        return "Memo(id=$id, authorId=$authorId, title=$title, content=$content, reference=$_references)"
     }
 
     fun updateReferences(references: Set<MemoId>) {
@@ -93,7 +80,6 @@ class Memo private constructor(
                 title = title,
                 references = references.map { MemoReference(id, it) }.toMutableSet(),
                 authorId = authorId,
-                memoState = MemoState.DRAFT,
                 parentFolderId = parentFolderId,
             )
         }
@@ -104,7 +90,6 @@ class Memo private constructor(
             title: MemoTitle,
             content: MemoContent,
             reference: MutableSet<MemoReference>,
-            state: MemoState,
             parentFolderId: FolderId?,
             createdAt: LocalDateTime?,
             updatedAt: LocalDateTime?,
@@ -115,13 +100,10 @@ class Memo private constructor(
                 content = content,
                 title = title,
                 references = reference,
-                memoState = state,
                 parentFolderId = parentFolderId,
             ).apply {
                 this.createdAt = createdAt
                 this.updatedAt = updatedAt
-            }.also {
-                it.state.validate(it)
             }
         }
     }

@@ -1,10 +1,10 @@
 package kr.co.jiniaslog.memo.usecase.impl
 
 import kr.co.jiniaslog.memo.domain.folder.FolderId
-import kr.co.jiniaslog.memo.domain.folder.FolderRepository
 import kr.co.jiniaslog.memo.domain.memo.Memo
 import kr.co.jiniaslog.memo.domain.memo.MemoId
-import kr.co.jiniaslog.memo.domain.memo.MemoRepository
+import kr.co.jiniaslog.memo.outbound.FolderRepository
+import kr.co.jiniaslog.memo.outbound.MemoRepository
 import kr.co.jiniaslog.memo.usecase.IDeleteMemo
 import kr.co.jiniaslog.memo.usecase.IInitMemo
 import kr.co.jiniaslog.memo.usecase.IMakeRelationShipFolderAndMemo

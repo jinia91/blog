@@ -4,7 +4,7 @@ import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import io.restassured.RestAssured
 import kr.co.jiniaslog.memo.domain.memo.MemoId
-import kr.co.jiniaslog.memo.domain.memo.MemoRepository
+import kr.co.jiniaslog.memo.outbound.MemoRepository
 import org.hamcrest.Matchers.notNullValue
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired

@@ -9,7 +9,7 @@ interface IRecommendRelatedMemo {
 
     data class Query(
         val query: String,
-        val thisId: MemoId,
+        val thisMemoId: MemoId,
     )
 
     data class Info(
