@@ -45,8 +45,6 @@ internal class UseCasesFolderInteractor(
     }
 
     private fun getFolder(id: FolderId) =
-        (
-            folderRepository.findById(id)
-                ?: throw IllegalArgumentException("FolderId : $id, folder not found")
-        )
+        folderRepository.findById(id)
+            ?: throw IllegalArgumentException("FolderId : $id, folder not found")
 }

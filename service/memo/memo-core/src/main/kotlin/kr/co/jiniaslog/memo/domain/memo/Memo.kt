@@ -67,18 +67,14 @@ class Memo private constructor(
 
     companion object {
         fun init(
-            title: MemoTitle = MemoTitle(""),
-            content: MemoContent = MemoContent(""),
             authorId: AuthorId,
-            parentFolderId: FolderId? = null,
-            references: Set<MemoId> = setOf(),
+            parentFolderId: FolderId?,
         ): Memo {
-            val id = MemoId(IdUtils.idGenerator.generate())
             return Memo(
-                id = id,
-                content = content,
-                title = title,
-                references = references.map { MemoReference(id, it) }.toMutableSet(),
+                id = MemoId(IdUtils.idGenerator.generate()),
+                content = MemoContent.EMPTY,
+                title = MemoTitle.UNTITLED,
+                references = mutableSetOf(),
                 authorId = authorId,
                 parentFolderId = parentFolderId,
             )

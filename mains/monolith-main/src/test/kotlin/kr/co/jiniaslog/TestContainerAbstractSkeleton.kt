@@ -1,4 +1,4 @@
-package kr.co.jiniaslog.integration
+package kr.co.jiniaslog
 
 import io.restassured.RestAssured
 import kr.co.jiniaslog.memo.Neo4jDbCleaner

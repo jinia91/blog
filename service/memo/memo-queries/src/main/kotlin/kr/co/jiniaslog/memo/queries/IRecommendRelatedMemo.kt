@@ -8,7 +8,7 @@ interface IRecommendRelatedMemo {
     fun handle(query: Query): Info
 
     data class Query(
-        val query: String,
+        val keyword: String,
         val thisMemoId: MemoId,
     )
 

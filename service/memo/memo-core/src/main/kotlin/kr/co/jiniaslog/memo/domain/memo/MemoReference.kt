@@ -10,5 +10,7 @@ data class MemoReference(
         validate()
     }
 
-    override fun validate() {}
+    override fun validate() {
+        require(rootId != referenceId) { "rootId and referenceId must be different" }
+    }
 }

@@ -11,27 +11,11 @@ internal class MemoTests : CustomBehaviorSpec() {
         Given("새로운 메모 작성시 작성자 id만 주어지고") {
             val authorId = AuthorId(1)
             When("메모 초기화를 하면") {
-                val sutMemo = Memo.init(authorId = authorId)
+                val sutMemo = Memo.init(authorId = authorId, parentFolderId = null)
                 Then("메모가 초기화된다") {
                     sutMemo.id shouldNotBe null
                     sutMemo.id.value shouldNotBe 0
                     sutMemo.authorId shouldBe authorId
-                }
-                Then("persist 되지 않은상태여야한다") {
-                    sutMemo.isPersisted shouldBe false
-                }
-            }
-        }
-        Given("새로운 메모 작성시 작성자 id와 제목이 주어지고") {
-            val authorId = AuthorId(1)
-            val title = MemoTitle("title")
-            When("메모 초기화를 하면") {
-                val sutMemo = Memo.init(title = title, authorId = authorId)
-                Then("메모가 초기화된다") {
-                    sutMemo.id shouldNotBe null
-                    sutMemo.id.value shouldNotBe 0
-                    sutMemo.authorId shouldBe authorId
-                    sutMemo.title shouldBe title
                 }
                 Then("persist 되지 않은상태여야한다") {
                     sutMemo.isPersisted shouldBe false
@@ -41,7 +25,7 @@ internal class MemoTests : CustomBehaviorSpec() {
 
         // context: 메모 업데이트
         Given("유효한 메모가 주어지고") {
-            val sutMemo = Memo.init(authorId = AuthorId(1))
+            val sutMemo = Memo.init(authorId = AuthorId(1), parentFolderId = null)
             And("업데이트할 제목이 주어지고") {
                 val title = MemoTitle("title")
                 When("메모 업데이트를 하면") {

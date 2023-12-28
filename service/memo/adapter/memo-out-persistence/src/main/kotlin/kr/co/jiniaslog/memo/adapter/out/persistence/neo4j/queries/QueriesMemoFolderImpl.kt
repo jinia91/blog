@@ -42,7 +42,7 @@ internal open class QueriesMemoFolderImpl(
 
     override fun handle(query: IRecommendRelatedMemo.Query): IRecommendRelatedMemo.Info {
         val relatedMemoCandidates =
-            memoNeo4jRepository.findByKeywordFullTextSearchingLimit6(query.query)
+            memoNeo4jRepository.findByKeywordFullTextSearchingLimit6(query.keyword)
                 .filterNot { it.id == query.thisMemoId.value }
                 .take(5)
                 .map { Triple(it.id, it.title, it.content) }

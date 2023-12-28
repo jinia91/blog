@@ -9,4 +9,8 @@ value class MemoContent(val value: String) : ValueObject {
     }
 
     override fun validate() {}
+
+    companion object {
+        val EMPTY: MemoContent = MemoContent("")
+    }
 }

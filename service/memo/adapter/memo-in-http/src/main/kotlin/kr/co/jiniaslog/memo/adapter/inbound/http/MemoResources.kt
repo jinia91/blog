@@ -39,7 +39,10 @@ class MemoResources(
     ): ResponseEntity<InitMemoResponse> {
         val info =
             memoUseCases.handle(
-                IInitMemo.Command(authorId = AuthorId(request.authorId)),
+                IInitMemo.Command(
+                    authorId = AuthorId(request.authorId),
+                    parentFolderId = request.parentFolderId?.let { FolderId(it) },
+                ),
             )
         return ResponseEntity
             .created(URI("/api/v1/memos/${info.id.value}"))
