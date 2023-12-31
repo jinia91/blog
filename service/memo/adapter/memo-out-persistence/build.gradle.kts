@@ -14,7 +14,7 @@ dependencies {
     testImplementation("org.testcontainers:neo4j:1.19.3")
     testImplementation("io.kotest.extensions:kotest-extensions-testcontainers:2.0.2")
     implementation(project(Modules.Service.Memo.Core.path))
+    testImplementation(project(":mains:monolith-main"))
     testImplementation(project(path = Modules.Service.Memo.Core.path, configuration = "testArtifact"))
     testImplementation(testFixtures(project(Modules.Libs.CoreKernel.path)))
-    testImplementation(project(":mains:monolith-main"))
 }

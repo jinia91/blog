@@ -2,6 +2,7 @@ package kr.co.jiniaslog.memo.domain.memo
 
 import io.kotest.assertions.throwables.shouldThrow
 import kr.co.jiniaslog.shared.CustomBehaviorSpec
+import kr.co.jiniaslog.shared.core.domain.ValueObject
 
 class MemoIdTests : CustomBehaviorSpec() {
     init {
@@ -26,7 +27,8 @@ class MemoIdTests : CustomBehaviorSpec() {
         given("양수를 가지고") {
             `when`("MemoId를 생성하면") {
                 then("성공한다") {
-                    MemoId(1)
+                    val id: ValueObject = MemoId(1)
+                    id.validate()
                 }
             }
         }

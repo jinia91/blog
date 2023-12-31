@@ -2,6 +2,9 @@
 data class Module(val path: String)
 
 object Modules {
+    object Mains {
+        val MonolithMain = Module(":mains:monolith-main")
+    }
     object Service{
         object Memo {
             val Core = Module(":service:memo:memo-core")

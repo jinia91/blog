@@ -16,4 +16,5 @@ dependencies {
     implementation("org.jmailen.gradle:kotlinter-gradle:4.1.0")
     implementation("org.springframework.boot:spring-boot-gradle-plugin:3.2.0")
     implementation("io.spring.gradle:dependency-management-plugin:1.1.4")
+    implementation("org.jetbrains.kotlinx:kover-gradle-plugin:0.7.5")
 }

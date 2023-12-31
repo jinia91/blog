@@ -49,6 +49,7 @@ internal class MemoTests : CustomBehaviorSpec() {
                 }
             }
         }
+
         // from
         Given("유효한 메모 데이터가 주어지고") {
             val id = MemoId(1)

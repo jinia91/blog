@@ -1,5 +1,6 @@
 package kr.co.jiniaslog.memo.usecase
 
+import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import kr.co.jiniaslog.memo.domain.memo.AuthorId
@@ -14,6 +15,7 @@ import kr.co.jiniaslog.memo.usecase.impl.UseCasesMemoInteractor
 import kr.co.jiniaslog.shared.core.domain.IdGenerator
 import kr.co.jiniaslog.shared.core.domain.IdUtils
 import org.junit.jupiter.api.Test
+import java.awt.SystemColor.info
 import java.util.concurrent.atomic.AtomicLong
 
 abstract class MemoAbstractUseCaseTest(
@@ -212,6 +214,30 @@ abstract class MemoAbstractUseCaseTest(
         val foundTarget = memoRepository.findById(info.id)
         foundTarget shouldNotBe null
         foundTarget!!.references.size shouldBe 0
+    }
+
+    @Test
+    fun `유효한 메모가 주어지고 자기자신을 참조하면 실패한다`() {
+        // given
+        val rootMemo =
+            memoRepository.save(
+                Memo.init(
+                    authorId = AuthorId(1),
+                    parentFolderId = null,
+                ),
+            )
+
+        val command =
+            IUpdateMemo.Command.AddReference(
+                memoId = rootMemo.id,
+                referenceId = rootMemo.id,
+            )
+
+        // when
+        // then
+        shouldThrow<IllegalArgumentException> {
+            sut.handle(command)
+        }
     }
 
     @Test
