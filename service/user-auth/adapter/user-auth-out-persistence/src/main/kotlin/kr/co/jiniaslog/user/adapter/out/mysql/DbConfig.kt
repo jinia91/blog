@@ -43,7 +43,7 @@ class UserDatasourceConfig {
         return builder
             .dataSource(userDatasource())
             .packages(UserDb.BASE_PACKAGE)
-            .properties(mapOf("hibernate.hbm2ddl.auto" to "update"))
+            .properties(mapOf("hibernate.hbm2ddl.auto" to "create-drop"))
             .build()
     }
 

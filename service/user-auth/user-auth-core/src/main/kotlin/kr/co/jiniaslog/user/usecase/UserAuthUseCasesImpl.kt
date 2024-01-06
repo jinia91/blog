@@ -37,6 +37,7 @@ class UserAuthUseCasesImpl(
             refreshToken = tokenGenerator.generateRefreshToken(user.id, user.role),
             nickName = user.nickName,
             email = user.email,
+            role = user.role,
         )
     }
 }

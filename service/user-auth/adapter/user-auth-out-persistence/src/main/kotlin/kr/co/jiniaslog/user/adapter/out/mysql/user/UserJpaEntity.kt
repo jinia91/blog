@@ -22,7 +22,7 @@ class UserJpaEntity(
     override val id: Long,
     @Column(name = "email", nullable = false, unique = true)
     var email: String,
-    @Column(name = "password", nullable = false)
+    @Column(name = "nickName", nullable = false)
     var nickName: String,
     @Column(name = "role", nullable = false)
     @Enumerated(EnumType.STRING)

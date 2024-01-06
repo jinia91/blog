@@ -6,6 +6,7 @@ import kr.co.jiniaslog.user.domain.auth.Provider
 import kr.co.jiniaslog.user.domain.auth.RefreshToken
 import kr.co.jiniaslog.user.domain.user.Email
 import kr.co.jiniaslog.user.domain.user.NickName
+import kr.co.jiniaslog.user.domain.user.Role
 
 interface ISignInOAuthUser {
     fun handle(command: Command): Info
@@ -20,5 +21,6 @@ interface ISignInOAuthUser {
         val refreshToken: RefreshToken,
         val nickName: NickName,
         val email: Email,
+        val role: Role,
     )
 }

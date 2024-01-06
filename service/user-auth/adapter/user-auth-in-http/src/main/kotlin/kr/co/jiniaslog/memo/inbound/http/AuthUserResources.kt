@@ -48,6 +48,7 @@ class AuthUserResources(
             refreshToken = info.refreshToken.value,
             nickName = info.nickName.value,
             email = info.email.value,
+            role = info.role.toString(),
         )
     }
 }

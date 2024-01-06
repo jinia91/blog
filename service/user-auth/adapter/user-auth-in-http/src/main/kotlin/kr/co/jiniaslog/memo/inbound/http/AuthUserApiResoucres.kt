@@ -13,4 +13,5 @@ data class LoginResponse(
     val refreshToken: String,
     val nickName: String,
     val email: String,
+    val role: String,
 )

@@ -1,7 +1,6 @@
 package kr.co.jiniaslog.user.infra
 
 import io.jsonwebtoken.Jwts
-import io.jsonwebtoken.SignatureAlgorithm
 import io.jsonwebtoken.security.Keys
 import kr.co.jiniaslog.user.domain.auth.AccessToken
 import kr.co.jiniaslog.user.domain.auth.RefreshToken
@@ -28,7 +27,7 @@ internal class JwtTokenGenerator(
     private val secretKey = Base64.getEncoder().encodeToString(secretKey.toByteArray())
     private val tokenValidDuration = tokenValidDuration.toMillis()
     private val refreshTokenValidDuration = refreshTokenValidDuration.toMillis()
-    private val key: Key = Keys.secretKeyFor(SignatureAlgorithm.HS256)
+    private val key: Key = Keys.hmacShaKeyFor(secretKey.toByteArray())
 
     override fun generateAccessToken(
         id: UserId,
