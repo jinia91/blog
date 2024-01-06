@@ -35,6 +35,17 @@ object Modules {
             }
         }
 
+        object AuthUser {
+            val Core = Module(":service:user-auth:user-auth-core")
+            val Infra = Module(":service:user-auth:user-auth-infra")
+            enum class Adaptors(val path: String) {
+                InHttp(":service:user-auth:adapter:user-auth-in-http"),
+                OutGoogle(":service:user-auth:adapter:user-auth-out-google"),
+                Persistence(":service:user-auth:adapter:user-auth-out-persistence")
+                ;
+            }
+        }
+
         val MessageNexus = Module(":service:message-nexus")
     }
 

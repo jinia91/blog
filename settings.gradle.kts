@@ -40,7 +40,13 @@ include(
     "service:media:adapter:media-in-http",
     "service:media:adapter:media-out-github",
 
-    "service:user:core",
+    //user-auth
+    "service:user-auth:user-auth-core",
+    "service:user-auth:user-auth-infra",
+    "service:user-auth:adapter:user-auth-in-http",
+    "service:user-auth:adapter:user-auth-out-google",
+    "service:user-auth:adapter:user-auth-out-persistence",
+
     "service:comment",
     "service:media",
     "service:seo",
