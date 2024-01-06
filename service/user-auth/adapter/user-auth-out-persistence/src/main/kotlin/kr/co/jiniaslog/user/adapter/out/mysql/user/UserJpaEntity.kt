@@ -7,6 +7,8 @@ import jakarta.persistence.Enumerated
 import jakarta.persistence.Id
 import jakarta.persistence.Table
 import kr.co.jiniaslog.user.adapter.out.mysql.AbstractPersistenceModel
+import kr.co.jiniaslog.user.domain.user.Email
+import kr.co.jiniaslog.user.domain.user.NickName
 import kr.co.jiniaslog.user.domain.user.Role
 import kr.co.jiniaslog.user.domain.user.User
 import kr.co.jiniaslog.user.domain.user.UserId
@@ -31,9 +33,9 @@ class UserJpaEntity(
     fun toDomain(): User {
         return User.from(
             id = UserId(this.id),
-            nickName = this.nickName,
+            nickName = NickName(this.nickName),
             role = this.role,
-            email = this.email,
+            email = Email(this.email),
             createdAt = this.createdAt,
             updatedAt = this.updatedAt,
         )

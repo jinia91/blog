@@ -5,6 +5,8 @@ import kr.co.jiniaslog.user.domain.auth.Provider
 import kr.co.jiniaslog.user.domain.auth.ProviderAdapter
 import kr.co.jiniaslog.user.domain.auth.ProviderUserInfo
 import kr.co.jiniaslog.user.domain.auth.Url
+import kr.co.jiniaslog.user.domain.user.Email
+import kr.co.jiniaslog.user.domain.user.NickName
 import mu.KotlinLogging
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.MediaType
@@ -37,8 +39,10 @@ internal class GoogleProviderAdapter(
     override fun getLoginUrl(): Url {
         return Url(
             """https://accounts.google.com/o/oauth2/v2/auth
-                |?client_id=$clientId&redirect_uri=${redirectUrl.value}
-                |&response_type=code&scope=email profile"""
+                |?client_id=$clientId
+                |&redirect_uri=${redirectUrl.value}
+                |&response_type=code
+                |&scope=email profile"""
                 .trimMargin(),
         )
     }
@@ -78,8 +82,10 @@ internal class GoogleProviderAdapter(
 
         requireNotNull(userInfo) { "구글 유저 정보가 없습니다" }
         return ProviderUserInfo(
-            nickName = userInfo.name ?: "UNKNOWN",
-            email = userInfo.email!!,
+            nickName =
+                userInfo.name?.let { NickName(userInfo.name) }
+                    ?: NickName("UNKNOWN"),
+            email = Email(userInfo.email!!),
         )
     }
 }

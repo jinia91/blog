@@ -1,6 +1,7 @@
 package kr.co.jiniaslog.user.adapter.out.mysql.user
 
 import kr.co.jiniaslog.shared.core.annotation.PersistenceAdapter
+import kr.co.jiniaslog.user.domain.user.Email
 import kr.co.jiniaslog.user.domain.user.User
 import kr.co.jiniaslog.user.domain.user.UserId
 import kr.co.jiniaslog.user.domain.user.UserRepository
@@ -9,8 +10,8 @@ import kr.co.jiniaslog.user.domain.user.UserRepository
 internal class UserRepositoryAdapter(
     private val userJpaRepository: UserJpaRepository,
 ) : UserRepository {
-    override fun findByEmail(email: String): User? {
-        return userJpaRepository.findByEmail(email)?.toDomain()
+    override fun findByEmail(email: Email): User? {
+        return userJpaRepository.findByEmail(email.value)?.toDomain()
     }
 
     override fun findById(id: UserId): User? {
@@ -30,13 +31,13 @@ internal class UserRepositoryAdapter(
 
         val userJpaEntity =
             pm?.apply {
-                email = entity.email
-                nickName = entity.nickName
+                email = entity.email.value
+                nickName = entity.nickName.value
                 role = entity.role
             } ?: UserJpaEntity(
                 id = entity.id.value,
-                email = entity.email,
-                nickName = entity.nickName,
+                email = entity.email.value,
+                nickName = entity.nickName.value,
                 role = entity.role,
                 createdAt = entity.createdAt,
                 updatedAt = entity.updatedAt,

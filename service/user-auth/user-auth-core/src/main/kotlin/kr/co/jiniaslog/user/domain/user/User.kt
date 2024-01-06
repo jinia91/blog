@@ -7,19 +7,19 @@ import java.time.LocalDateTime
 
 class User private constructor(
     id: UserId,
-    nickName: String,
+    nickName: NickName,
     role: Role,
-    email: String,
+    email: Email,
 ) : AggregateRoot<UserId>() {
     override val id: UserId = id
 
-    var nickName: String = nickName
+    var nickName: NickName = nickName
         private set
 
     var role = role
         private set
 
-    var email: String = email
+    var email: Email = email
         private set
 
     fun renewNickName(providerUserInfo: ProviderUserInfo) {
@@ -38,9 +38,9 @@ class User private constructor(
 
         fun from(
             id: UserId,
-            nickName: String,
+            nickName: NickName,
             role: Role,
-            email: String,
+            email: Email,
             createdAt: LocalDateTime?,
             updatedAt: LocalDateTime?,
         ): User {

@@ -46,8 +46,8 @@ class AuthUserResources(
         return LoginResponse(
             accessToken = info.accessToken.value,
             refreshToken = info.refreshToken.value,
-            nickName = info.nickName,
-            email = info.email,
+            nickName = info.nickName.value,
+            email = info.email.value,
         )
     }
 }
