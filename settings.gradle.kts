@@ -14,7 +14,7 @@ include(
     "libs:core-kernel",
     "libs:messaging-handler-generator",
     "libs:rdb-kernel",
-    "libs:http-kernel",
+    "libs:http-security-kernel",
     "libs:messaging-kernel",
     "libs:global-logging",
     "libs:snowflake-id-generator",
@@ -42,7 +42,6 @@ include(
 
     //user-auth
     "service:user-auth:user-auth-core",
-    "service:user-auth:user-auth-infra",
     "service:user-auth:adapter:user-auth-in-http",
     "service:user-auth:adapter:user-auth-out-google",
     "service:user-auth:adapter:user-auth-out-persistence",

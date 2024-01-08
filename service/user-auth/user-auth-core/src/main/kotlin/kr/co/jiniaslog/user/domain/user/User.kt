@@ -8,7 +8,7 @@ import java.time.LocalDateTime
 class User private constructor(
     id: UserId,
     nickName: NickName,
-    role: Role,
+    roles: Set<Role>,
     email: Email,
 ) : AggregateRoot<UserId>() {
     override val id: UserId = id
@@ -16,7 +16,7 @@ class User private constructor(
     var nickName: NickName = nickName
         private set
 
-    var role = role
+    var roles = roles
         private set
 
     var email: Email = email
@@ -31,7 +31,7 @@ class User private constructor(
             return User(
                 id = UserId(IdUtils.generate()),
                 nickName = providerUserInfo.nickName,
-                role = Role.USER,
+                roles = setOf(Role.USER),
                 email = providerUserInfo.email,
             )
         }
@@ -39,7 +39,7 @@ class User private constructor(
         fun from(
             id: UserId,
             nickName: NickName,
-            role: Role,
+            roles: Set<Role>,
             email: Email,
             createdAt: LocalDateTime?,
             updatedAt: LocalDateTime?,
@@ -47,7 +47,7 @@ class User private constructor(
             return User(
                 id = id,
                 nickName = nickName,
-                role = role,
+                roles = roles,
                 email = email,
             ).apply {
                 this.createdAt = createdAt

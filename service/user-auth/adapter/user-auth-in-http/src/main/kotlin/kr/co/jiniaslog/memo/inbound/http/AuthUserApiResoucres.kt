@@ -9,9 +9,10 @@ data class OAuthLoginRequest(
 )
 
 data class LoginResponse(
-    val accessToken: String,
-    val refreshToken: String,
     val nickName: String,
     val email: String,
-    val role: String,
+    val roles: Set<String>,
+    val picUrl: String?,
 )
+
+class EmptyResponse

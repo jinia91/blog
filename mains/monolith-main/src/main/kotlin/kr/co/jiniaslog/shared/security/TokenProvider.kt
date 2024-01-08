@@ -1,17 +1,19 @@
-package kr.co.jiniaslog.user.domain.auth
+package kr.co.jiniaslog.shared.security
 
+import kr.co.jiniaslog.user.domain.auth.AccessToken
+import kr.co.jiniaslog.user.domain.auth.RefreshToken
 import kr.co.jiniaslog.user.domain.user.Role
 import kr.co.jiniaslog.user.domain.user.UserId
 
-interface TokenGenerator {
+interface TokenProvider {
     fun generateAccessToken(
         id: UserId,
-        role: Set<Role>,
+        roles: Set<Role>,
     ): AccessToken
 
     fun generateRefreshToken(
         id: UserId,
-        role: Set<Role>,
+        roles: Set<Role>,
     ): RefreshToken
 
     fun validateToken(token: String): Boolean

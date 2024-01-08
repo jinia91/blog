@@ -59,7 +59,6 @@ fun IGetMemoById.Info.toResponse(): GetMemoByIdResponse {
 }
 
 data class InitMemoRequest(
-    val authorId: Long,
     val parentFolderId: Long?,
 )
 

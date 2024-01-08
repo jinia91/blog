@@ -53,6 +53,6 @@ object Modules {
         val SnowflakeIdGenerator = Module(":libs:snowflake-id-generator")
         val GlobalLogging = Module(":libs:global-logging")
         val CoreKernel = Module(":libs:core-kernel")
-        val HttpKernel = Module(":libs:http-kernel")
+        val HttpSecurityKernel = Module(":libs:http-security-kernel")
     }
 }

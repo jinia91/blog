@@ -2,8 +2,6 @@ package kr.co.jiniaslog.user.adapter.out.mysql.user
 
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
-import jakarta.persistence.EnumType
-import jakarta.persistence.Enumerated
 import jakarta.persistence.Id
 import jakarta.persistence.Table
 import kr.co.jiniaslog.user.adapter.out.mysql.AbstractPersistenceModel
@@ -24,9 +22,8 @@ class UserJpaEntity(
     var email: String,
     @Column(name = "nickName", nullable = false)
     var nickName: String,
-    @Column(name = "role", nullable = false)
-    @Enumerated(EnumType.STRING)
-    var role: Role,
+    @Column(name = "roles", nullable = false)
+    var roles: String,
     createdAt: LocalDateTime?,
     updatedAt: LocalDateTime?,
 ) : AbstractPersistenceModel(createdAt, updatedAt) {
@@ -34,7 +31,7 @@ class UserJpaEntity(
         return User.from(
             id = UserId(this.id),
             nickName = NickName(this.nickName),
-            role = this.role,
+            roles = this.roles.split(",").map { Role.valueOf(it.trim()) }.toSet(),
             email = Email(this.email),
             createdAt = this.createdAt,
             updatedAt = this.updatedAt,

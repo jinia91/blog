@@ -33,12 +33,12 @@ internal class UserRepositoryAdapter(
             pm?.apply {
                 email = entity.email.value
                 nickName = entity.nickName.value
-                role = entity.role
+                roles = entity.roles.joinToString(separator = ",") { it.name }
             } ?: UserJpaEntity(
                 id = entity.id.value,
                 email = entity.email.value,
                 nickName = entity.nickName.value,
-                role = entity.role,
+                roles = entity.roles.joinToString(separator = ",") { it.name },
                 createdAt = entity.createdAt,
                 updatedAt = entity.updatedAt,
             )

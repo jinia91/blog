@@ -1,10 +1,16 @@
 plugins {
     springBootConventions
 }
-
-val libs = mutableListOf(
+// cross-cutting concern for main boot, similar to infrastructure
+val shared = mutableListOf(
     project(Modules.Libs.GlobalLogging.path),
     project(Modules.Libs.SnowflakeIdGenerator.path),
+    project(Modules.Service.MessageNexus.path),
+)
+
+val libs = mutableListOf(
+    "org.springframework.boot:spring-boot-starter-security",
+    "io.jsonwebtoken:jjwt:0.12.3"
 )
 
 val blogService = mutableListOf(
@@ -27,7 +33,6 @@ val mediaService = mutableListOf(
 
 val authUserService = mutableListOf(
     project(Modules.Service.AuthUser.Core.path),
-    project(Modules.Service.AuthUser.Infra.path),
     project(Modules.Service.AuthUser.Adaptors.OutGoogle.path),
     project(Modules.Service.AuthUser.Adaptors.InHttp.path),
     project(Modules.Service.AuthUser.Adaptors.Persistence.path),
@@ -35,7 +40,7 @@ val authUserService = mutableListOf(
 
 var moduleBlocks = mutableListOf<Project>()
     .apply {
-        addAll(libs)
+        addAll(shared)
         addAll(blogService)
         addAll(memoService)
         addAll(mediaService)
@@ -52,6 +57,9 @@ var integrationTest = mutableListOf(
 
 dependencies {
     moduleBlocks.forEach {
+        implementation(it)
+    }
+    libs.forEach {
         implementation(it)
     }
     integrationTest.forEach {

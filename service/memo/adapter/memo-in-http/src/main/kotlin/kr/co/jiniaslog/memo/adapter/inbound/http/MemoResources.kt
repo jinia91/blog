@@ -14,6 +14,7 @@ import kr.co.jiniaslog.memo.usecase.IInitMemo
 import kr.co.jiniaslog.memo.usecase.IMakeRelationShipFolderAndMemo
 import kr.co.jiniaslog.memo.usecase.UseCasesMemoFacade
 import org.springframework.http.ResponseEntity
+import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -29,18 +30,21 @@ private val log = mu.KotlinLogging.logger { }
 
 @RestController
 @RequestMapping("/api/v1/memos")
+@PreAuthorize("hasRole('ADMIN')")
 class MemoResources(
     private val memoUseCases: UseCasesMemoFacade,
     private val memoQueries: QueriesMemoFacade,
 ) {
     @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
     fun initMemo(
+        @AuthUserId userId: Long,
         @RequestBody request: InitMemoRequest,
     ): ResponseEntity<InitMemoResponse> {
         val info =
             memoUseCases.handle(
                 IInitMemo.Command(
-                    authorId = AuthorId(request.authorId),
+                    authorId = AuthorId(userId),
                     parentFolderId = request.parentFolderId?.let { FolderId(it) },
                 ),
             )

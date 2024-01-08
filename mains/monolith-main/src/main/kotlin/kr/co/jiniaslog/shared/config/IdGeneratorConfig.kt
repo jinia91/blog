@@ -1,4 +1,4 @@
-package kr.co.jiniaslog.infra.config
+package kr.co.jiniaslog.shared.config
 
 import kr.co.jiniaslog.shared.core.domain.IdGenerator
 import kr.co.jiniaslog.shared.core.domain.IdUtils

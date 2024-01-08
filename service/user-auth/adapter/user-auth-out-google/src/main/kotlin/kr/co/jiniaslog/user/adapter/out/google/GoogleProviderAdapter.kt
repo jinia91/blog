@@ -62,9 +62,6 @@ internal class GoogleProviderAdapter(
                 .accept(MediaType.APPLICATION_JSON)
                 .retrieve()
                 .body(GoogleAccessTokenResponse::class.java)
-                .also {
-                    log.info("response: $it")
-                }
 
         requireNotNull(response) { "구글 토큰 응답이 없습니다" }
         val header = "Bearer ${response.accessToken}"
@@ -76,9 +73,6 @@ internal class GoogleProviderAdapter(
                 .accept(MediaType.APPLICATION_JSON)
                 .retrieve()
                 .body(GoogleUserInfo::class.java)
-                .also {
-                    log.info("response: $it")
-                }
 
         requireNotNull(userInfo) { "구글 유저 정보가 없습니다" }
         return ProviderUserInfo(
@@ -86,6 +80,7 @@ internal class GoogleProviderAdapter(
                 userInfo.name?.let { NickName(userInfo.name) }
                     ?: NickName("UNKNOWN"),
             email = Email(userInfo.email!!),
+            picture = userInfo.picture?.let { Url(userInfo.picture) },
         )
     }
 }
