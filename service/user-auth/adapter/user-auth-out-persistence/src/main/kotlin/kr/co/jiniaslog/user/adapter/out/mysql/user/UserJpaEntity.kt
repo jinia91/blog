@@ -4,7 +4,7 @@ import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.Id
 import jakarta.persistence.Table
-import kr.co.jiniaslog.user.adapter.out.mysql.AbstractPersistenceModel
+import kr.co.jiniaslog.shared.adapter.out.rdb.AbstractPersistenceModel
 import kr.co.jiniaslog.user.domain.user.Email
 import kr.co.jiniaslog.user.domain.user.NickName
 import kr.co.jiniaslog.user.domain.user.Role
@@ -26,7 +26,7 @@ class UserJpaEntity(
     var roles: String,
     createdAt: LocalDateTime?,
     updatedAt: LocalDateTime?,
-) : AbstractPersistenceModel(createdAt, updatedAt) {
+) : AbstractPersistenceModel<Long>(createdAt, updatedAt) {
     fun toDomain(): User {
         return User.from(
             id = UserId(this.id),

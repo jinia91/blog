@@ -7,7 +7,6 @@ import org.springframework.boot.jdbc.DataSourceBuilder
 import org.springframework.boot.orm.jpa.EntityManagerFactoryBuilder
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import org.springframework.data.jpa.repository.config.EnableJpaAuditing
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories
 import org.springframework.orm.jpa.JpaTransactionManager
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean
@@ -30,7 +29,6 @@ object UserDb {
     transactionManagerRef = UserDb.TRANSACTION_MANAGER,
     basePackages = [UserDb.BASE_PACKAGE],
 )
-@EnableJpaAuditing
 class UserDatasourceConfig {
     @Bean
     @ConfigurationProperties(prefix = UserDb.DATASOURCE_PREFIX)

@@ -1,4 +1,4 @@
-package kr.co.jiniaslog.shared.security
+package kr.co.jiniaslog.user.application.security
 
 import org.springframework.security.authentication.AuthenticationProvider
 import org.springframework.security.core.Authentication
@@ -27,9 +27,5 @@ class AuthProvider : AuthenticationProvider {
                 .map { s -> SimpleGrantedAuthority("ROLE_$s") }
                 .collect(Collectors.toSet())
         return ServiceAuthenticationToken(principal, null, authorities)
-    }
-
-    companion object {
-        private const val INTERNAL_REST_API_AUTH_KEY = "SERVER_KEY"
     }
 }

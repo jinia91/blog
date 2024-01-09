@@ -1,4 +1,4 @@
-package kr.co.jiniaslog.shared.security
+package kr.co.jiniaslog.user.application.security
 
 class UserPrincipal(
     val userId: Long,

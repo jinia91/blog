@@ -1,4 +1,4 @@
-package kr.co.jiniaslog.shared.security
+package kr.co.jiniaslog.user.application.security
 
 import io.jsonwebtoken.Claims
 import io.jsonwebtoken.Jws
@@ -16,14 +16,14 @@ import java.time.Duration
 import java.util.Date
 
 @Component
-internal class JwtTokenGenerator(
+class JwtTokenGenerator(
     @Value("\${jwt.secret-key}")
     secretKey: String,
     @Value("\${jwt.token-valid-duration}")
     tokenValidDuration: Duration,
     @Value("\${jwt.refresh-token-valid-duration}")
     refreshTokenValidDuration: Duration,
-) : TokenGenerator, TokenProvider {
+) : TokenGenerator {
     private val roleKey = "roles"
     private val tokenValidDuration = tokenValidDuration.toMillis()
     private val refreshTokenValidDuration = refreshTokenValidDuration.toMillis()

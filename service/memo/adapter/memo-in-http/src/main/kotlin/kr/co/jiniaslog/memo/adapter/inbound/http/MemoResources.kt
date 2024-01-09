@@ -38,13 +38,13 @@ class MemoResources(
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
     fun initMemo(
-        @AuthUserId userId: Long,
+        @AuthUserId userId: Long?,
         @RequestBody request: InitMemoRequest,
     ): ResponseEntity<InitMemoResponse> {
         val info =
             memoUseCases.handle(
                 IInitMemo.Command(
-                    authorId = AuthorId(userId),
+                    authorId = AuthorId(userId!!),
                     parentFolderId = request.parentFolderId?.let { FolderId(it) },
                 ),
             )

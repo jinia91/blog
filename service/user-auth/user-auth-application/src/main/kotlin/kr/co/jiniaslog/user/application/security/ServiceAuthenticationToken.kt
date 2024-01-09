@@ -1,4 +1,4 @@
-package kr.co.jiniaslog.shared.security
+package kr.co.jiniaslog.user.application.security
 
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.GrantedAuthority

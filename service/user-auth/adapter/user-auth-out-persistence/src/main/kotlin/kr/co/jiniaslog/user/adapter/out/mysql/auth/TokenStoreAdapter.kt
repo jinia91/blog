@@ -18,7 +18,7 @@ class TokenStoreAdapter(
     ) {
         val token = tokenRepository.findById(userId.value).getOrNull()
         if (token == null) {
-            tokenRepository.save(TokenJpaEntity(userId.value, accessToken.value, refreshToken.value))
+            tokenRepository.save(TokenJpaEntity(userId.value, accessToken.value, refreshToken.value, null, null))
         } else {
             token.accessToken = accessToken.value
             token.refreshToken = refreshToken.value

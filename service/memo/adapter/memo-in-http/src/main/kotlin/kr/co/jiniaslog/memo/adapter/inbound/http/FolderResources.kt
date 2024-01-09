@@ -32,10 +32,10 @@ class FolderResources(
     @PostMapping()
     @CrossOrigin(origins = ["http://localhost:3000"])
     fun initFolder(
-        @AuthUserId userId: Long,
+        @AuthUserId userId: Long?,
     ): InitFolderResponse {
         val info =
-            folderUseCases.handle(ICreateNewFolder.Command(AuthorId(userId)))
+            folderUseCases.handle(ICreateNewFolder.Command(AuthorId(userId!!)))
         return InitFolderResponse(info.id.value, info.folderName.value)
     }
 

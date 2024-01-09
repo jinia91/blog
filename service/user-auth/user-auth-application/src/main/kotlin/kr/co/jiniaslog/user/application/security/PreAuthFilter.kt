@@ -1,7 +1,6 @@
-package kr.co.jiniaslog.shared.security
+package kr.co.jiniaslog.user.application.security
 
 import jakarta.servlet.http.HttpServletRequest
-import org.springframework.core.annotation.Order
 import org.springframework.security.authentication.ProviderManager
 import org.springframework.security.core.Authentication
 import org.springframework.security.web.authentication.preauth.AbstractPreAuthenticatedProcessingFilter
@@ -9,9 +8,8 @@ import org.springframework.stereotype.Component
 import java.util.stream.Collectors
 
 @Component
-@Order(1)
 class PreAuthFilter(
-    private val jwtTokenProvider: TokenProvider,
+    private val jwtTokenProvider: JwtTokenGenerator,
     authenticationProvider: AuthProvider,
 ) : AbstractPreAuthenticatedProcessingFilter() {
     init {

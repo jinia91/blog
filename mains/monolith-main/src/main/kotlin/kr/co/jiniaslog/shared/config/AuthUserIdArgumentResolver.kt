@@ -1,8 +1,8 @@
-package kr.co.jiniaslog.shared.security
+package kr.co.jiniaslog.shared.config
 
 import kr.co.jiniaslog.memo.adapter.inbound.http.AuthUserId
+import kr.co.jiniaslog.user.application.security.UserPrincipal
 import org.springframework.core.MethodParameter
-import org.springframework.security.authentication.CredentialsExpiredException
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.web.bind.support.WebDataBinderFactory
 import org.springframework.web.context.request.NativeWebRequest
@@ -19,12 +19,12 @@ class AuthUserIdArgumentResolver : HandlerMethodArgumentResolver {
         mavContainer: ModelAndViewContainer?,
         webRequest: NativeWebRequest,
         binderFactory: WebDataBinderFactory?,
-    ): Any {
+    ): Any? {
         val authentication = SecurityContextHolder.getContext().authentication
         if (authentication != null && authentication.principal is UserPrincipal) {
             val userDetails = authentication.principal as UserPrincipal
             return userDetails.userId
         }
-        throw CredentialsExpiredException("로그인이 만료되었습니다.")
+        return null
     }
 }

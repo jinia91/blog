@@ -1,4 +1,4 @@
-package kr.co.jiniaslog.shared.security
+package kr.co.jiniaslog.user.application.security
 
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
@@ -47,7 +47,7 @@ class CustomAuthenticationEntryPoint : AuthenticationEntryPoint {
     ) {
         response.sendError(
             HttpServletResponse.SC_UNAUTHORIZED,
-            "Unauthorized: Authentication token was either missing or invalid.",
+            "Unauthorized: Authentication token was either expired or invalid.",
         )
     }
 }

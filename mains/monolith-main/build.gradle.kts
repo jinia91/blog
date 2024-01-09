@@ -9,8 +9,7 @@ val shared = mutableListOf(
 )
 
 val libs = mutableListOf(
-    "org.springframework.boot:spring-boot-starter-security",
-    "io.jsonwebtoken:jjwt:0.12.3"
+    "org.springframework.boot:spring-boot-starter-security"
 )
 
 val blogService = mutableListOf(
@@ -33,6 +32,7 @@ val mediaService = mutableListOf(
 
 val authUserService = mutableListOf(
     project(Modules.Service.AuthUser.Core.path),
+    project(Modules.Service.AuthUser.Application.path),
     project(Modules.Service.AuthUser.Adaptors.OutGoogle.path),
     project(Modules.Service.AuthUser.Adaptors.InHttp.path),
     project(Modules.Service.AuthUser.Adaptors.Persistence.path),

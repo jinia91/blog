@@ -1,6 +1,5 @@
 package kr.co.jiniaslog.shared.config
 
-import kr.co.jiniaslog.shared.security.AuthUserIdArgumentResolver
 import org.springframework.context.annotation.Configuration
 import org.springframework.web.method.support.HandlerMethodArgumentResolver
 import org.springframework.web.servlet.config.annotation.CorsRegistry
