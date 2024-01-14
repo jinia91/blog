@@ -6,7 +6,7 @@ group = "kr.co.jiniaslog.memo"
 
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter-web")
-    implementation(project(Modules.Service.AuthUser.Core.path))
+    implementation(project(Modules.Service.AuthUser.Application.path))
     implementation(project(Modules.Libs.CoreKernel.path))
     implementation ("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation( "com.fasterxml.jackson.core:jackson-databind")

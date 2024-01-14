@@ -3,9 +3,9 @@ package kr.co.jiniaslog.user.adapter.out.mysql
 import jakarta.persistence.EntityManager
 import jakarta.persistence.EntityManagerFactory
 import jakarta.persistence.Query
+import kr.co.jiniaslog.user.application.infra.AuthUserLockManager
+import kr.co.jiniaslog.user.application.usecase.IRefreshToken
 import kr.co.jiniaslog.user.domain.user.UserId
-import kr.co.jiniaslog.user.usecase.AuthUserLockUtils
-import kr.co.jiniaslog.user.usecase.IRefreshToken
 import mu.KotlinLogging
 import org.springframework.stereotype.Component
 import java.math.BigInteger
@@ -18,7 +18,7 @@ data class UserLevelLockTimeoutException(override val message: String) : Runtime
 @Component
 class UserLockManager(
     private val entityManagerFactory: EntityManagerFactory,
-) : AuthUserLockUtils {
+) : AuthUserLockManager {
     companion object {
         private const val HAS_LOCK_SQL = "SELECT IS_USED_LOCK(?)"
         private const val GET_LOCK_SQL = "SELECT GET_LOCK(?, ?)"

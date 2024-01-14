@@ -1,9 +1,9 @@
 package kr.co.jiniaslog.user.adapter.out.mysql.auth
 
 import kr.co.jiniaslog.shared.core.annotation.PersistenceAdapter
-import kr.co.jiniaslog.user.domain.auth.AccessToken
-import kr.co.jiniaslog.user.domain.auth.RefreshToken
-import kr.co.jiniaslog.user.domain.auth.TokenStore
+import kr.co.jiniaslog.user.application.infra.TokenStore
+import kr.co.jiniaslog.user.domain.auth.token.AccessToken
+import kr.co.jiniaslog.user.domain.auth.token.RefreshToken
 import kr.co.jiniaslog.user.domain.user.UserId
 import kotlin.jvm.optionals.getOrNull
 

@@ -2,7 +2,7 @@ package kr.co.jiniaslog.user.domain.user
 
 import kr.co.jiniaslog.shared.core.domain.AggregateRoot
 import kr.co.jiniaslog.shared.core.domain.IdUtils
-import kr.co.jiniaslog.user.domain.auth.ProviderUserInfo
+import kr.co.jiniaslog.user.domain.auth.provider.ProviderUserInfo
 import java.time.LocalDateTime
 
 class User private constructor(
@@ -22,17 +22,18 @@ class User private constructor(
     var email: Email = email
         private set
 
-    fun renewNickName(providerUserInfo: ProviderUserInfo) {
-        this.nickName = providerUserInfo.nickName
+    fun refreshWith(userInfo: ProviderUserInfo) {
+        takeIf { this.nickName != userInfo.nickName }
+            .let { this.nickName = userInfo.nickName }
     }
 
     companion object {
-        fun newOne(providerUserInfo: ProviderUserInfo): User {
+        fun newOne(userInfo: ProviderUserInfo): User {
             return User(
                 id = UserId(IdUtils.generate()),
-                nickName = providerUserInfo.nickName,
+                nickName = userInfo.nickName,
                 roles = setOf(Role.USER),
-                email = providerUserInfo.email,
+                email = userInfo.email,
             )
         }
 

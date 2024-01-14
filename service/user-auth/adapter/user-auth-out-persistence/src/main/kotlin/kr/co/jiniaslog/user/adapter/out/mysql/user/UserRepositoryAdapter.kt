@@ -1,10 +1,10 @@
 package kr.co.jiniaslog.user.adapter.out.mysql.user
 
 import kr.co.jiniaslog.shared.core.annotation.PersistenceAdapter
+import kr.co.jiniaslog.user.application.infra.UserRepository
 import kr.co.jiniaslog.user.domain.user.Email
 import kr.co.jiniaslog.user.domain.user.User
 import kr.co.jiniaslog.user.domain.user.UserId
-import kr.co.jiniaslog.user.domain.user.UserRepository
 
 @PersistenceAdapter
 internal class UserRepositoryAdapter(

@@ -1,7 +1,7 @@
 package kr.co.jiniaslog.memo.domain.memo
 
 import io.kotest.assertions.throwables.shouldThrow
-import kr.co.jiniaslog.shared.core.domain.ValueObject
+import kr.co.jiniaslog.shared.core.domain.vo.ValueObject
 import org.junit.jupiter.api.Test
 
 class MemoTitleTests {

@@ -1,12 +1,12 @@
 package kr.co.jiniaslog.memo.inbound.http
 
-import kr.co.jiniaslog.user.domain.auth.AuthorizationCode
-import kr.co.jiniaslog.user.domain.auth.Provider
-import kr.co.jiniaslog.user.domain.auth.RefreshToken
-import kr.co.jiniaslog.user.usecase.IGetOAuthRedirectionUrl
-import kr.co.jiniaslog.user.usecase.IRefreshToken
-import kr.co.jiniaslog.user.usecase.ISignInOAuthUser
-import kr.co.jiniaslog.user.usecase.UserAuthUseCasesFacade
+import kr.co.jiniaslog.user.application.usecase.IGetOAuthRedirectionUrl
+import kr.co.jiniaslog.user.application.usecase.IRefreshToken
+import kr.co.jiniaslog.user.application.usecase.ISignInOAuthUser
+import kr.co.jiniaslog.user.application.usecase.UseCasesUserAuthFacade
+import kr.co.jiniaslog.user.domain.auth.provider.Provider
+import kr.co.jiniaslog.user.domain.auth.token.AuthorizationCode
+import kr.co.jiniaslog.user.domain.auth.token.RefreshToken
 import org.springframework.http.HttpHeaders.SET_COOKIE
 import org.springframework.http.ResponseCookie
 import org.springframework.http.ResponseEntity
@@ -17,12 +17,11 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
-import java.awt.SystemColor.info
 
 @RestController
 @RequestMapping("api/v1/auth")
 class AuthUserResources(
-    private val usecases: UserAuthUseCasesFacade,
+    private val usecases: UseCasesUserAuthFacade,
 ) {
     @GetMapping("/{provider}/url")
     fun getRedirectUrl(

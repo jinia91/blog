@@ -1,6 +1,9 @@
 package kr.co.jiniaslog.user.application.security
 
 import jakarta.servlet.http.HttpServletRequest
+import kr.co.jiniaslog.user.domain.auth.token.AccessToken
+import kr.co.jiniaslog.user.domain.auth.token.AuthToken
+import kr.co.jiniaslog.user.domain.auth.token.TokenManger
 import org.springframework.security.authentication.ProviderManager
 import org.springframework.security.core.Authentication
 import org.springframework.security.web.authentication.preauth.AbstractPreAuthenticatedProcessingFilter
@@ -9,7 +12,7 @@ import java.util.stream.Collectors
 
 @Component
 class PreAuthFilter(
-    private val jwtTokenProvider: JwtTokenGenerator,
+    private val jwtTokenManager: TokenManger,
     authenticationProvider: AuthProvider,
 ) : AbstractPreAuthenticatedProcessingFilter() {
     init {
@@ -17,34 +20,34 @@ class PreAuthFilter(
     }
 
     override fun getPreAuthenticatedPrincipal(httpServletRequest: HttpServletRequest): Any? {
-        val token = resolveToken(httpServletRequest)
+        val token = resolveAccessToken(httpServletRequest)
         if (!isValidTokenFormat(token)) {
             return null
         }
 
-        if (!jwtTokenProvider.validateToken(token!!)) {
+        if (!jwtTokenManager.validateToken(token!!)) {
             return null
         }
 
-        val userId = jwtTokenProvider.getUserId(token).value
+        val userId = jwtTokenManager.getUserId(token).value
         val rolesSet: Set<String> =
-            jwtTokenProvider.getRole(token).stream()
+            jwtTokenManager.getRole(token).stream()
                 .map { it.name }
                 .collect(Collectors.toSet())
         return UserPrincipal(userId, rolesSet)
     }
 
-    private fun resolveToken(req: HttpServletRequest): String? {
+    private fun resolveAccessToken(req: HttpServletRequest): AccessToken? {
         val token =
             try {
                 req.cookies.find { it.name == "jiniaslog_access" }
             } catch (e: NullPointerException) {
                 null
             }
-        return token?.value
+        return token?.value?.let { AccessToken(it) }
     }
 
-    private fun isValidTokenFormat(token: String?): Boolean {
+    private fun isValidTokenFormat(token: AuthToken?): Boolean {
         return token != null
     }
 

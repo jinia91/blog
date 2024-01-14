@@ -1,6 +1,6 @@
 package kr.co.jiniaslog.user.adapter.out.mysql
 
-import kr.co.jiniaslog.user.infra.UserAuthTransactionHandler
+import kr.co.jiniaslog.user.application.infra.UserAuthTransactionHandler
 import org.springframework.stereotype.Component
 import org.springframework.transaction.annotation.Isolation
 import org.springframework.transaction.annotation.Transactional

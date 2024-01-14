@@ -1,5 +1,6 @@
 package kr.co.jiniaslog.shared.core.domain
 
+import kr.co.jiniaslog.shared.core.domain.vo.ValueObject
 import java.time.LocalDateTime
 
 abstract class DomainEntity<out T : ValueObject>(

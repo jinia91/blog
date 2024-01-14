@@ -2,7 +2,7 @@ package kr.co.jiniaslog.memo.domain.memo
 
 import io.kotest.assertions.throwables.shouldThrow
 import kr.co.jiniaslog.shared.CustomBehaviorSpec
-import kr.co.jiniaslog.shared.core.domain.ValueObject
+import kr.co.jiniaslog.shared.core.domain.vo.ValueObject
 
 class MemoIdTests : CustomBehaviorSpec() {
     init {

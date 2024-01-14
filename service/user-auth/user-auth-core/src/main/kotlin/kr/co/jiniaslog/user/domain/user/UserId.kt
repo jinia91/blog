@@ -1,6 +1,6 @@
 package kr.co.jiniaslog.user.domain.user
 
-import kr.co.jiniaslog.shared.core.domain.ValueObject
+import kr.co.jiniaslog.shared.core.domain.vo.ValueObject
 
 @JvmInline
 value class UserId(val value: Long) : ValueObject {

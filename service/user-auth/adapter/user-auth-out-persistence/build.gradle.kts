@@ -6,7 +6,7 @@ plugins {
 group = "kr.co.jiniaslog.blog"
 
 dependencies {
-    implementation(project(Modules.Service.AuthUser.Core.path))
+    implementation(project(Modules.Service.AuthUser.Application.path))
     implementation(project(Modules.Libs.CoreKernel.path))
     implementation(project(Modules.Libs.JpaKernel.path))
     api("org.springframework.boot:spring-boot-starter-data-jpa")

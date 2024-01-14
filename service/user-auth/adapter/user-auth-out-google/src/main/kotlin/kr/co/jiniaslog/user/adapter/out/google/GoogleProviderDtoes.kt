@@ -2,7 +2,7 @@ package kr.co.jiniaslog.user.adapter.out.google
 
 import com.fasterxml.jackson.databind.PropertyNamingStrategies
 import com.fasterxml.jackson.databind.annotation.JsonNaming
-import kr.co.jiniaslog.user.domain.auth.Url
+import kr.co.jiniaslog.shared.core.domain.vo.Url
 
 data class GoogleAccessTokenRequest(
     val code: String,

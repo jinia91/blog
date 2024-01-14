@@ -1,6 +1,6 @@
 package kr.co.jiniaslog.memo.domain.memo
 
-import kr.co.jiniaslog.shared.core.domain.ValueObject
+import kr.co.jiniaslog.shared.core.domain.vo.ValueObject
 
 data class MemoReference(
     val rootId: MemoId,
