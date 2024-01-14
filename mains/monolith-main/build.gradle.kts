@@ -51,6 +51,7 @@ var integrationTest = mutableListOf(
     "org.testcontainers:testcontainers:1.19.3",
     "org.testcontainers:junit-jupiter:1.19.3",
     "org.testcontainers:neo4j:1.19.3",
+    "org.testcontainers:mysql:1.19.3",
     "io.kotest.extensions:kotest-extensions-testcontainers:2.0.2",
     "io.rest-assured:rest-assured:5.4.0",
 )
@@ -66,6 +67,7 @@ dependencies {
         testImplementation(it)
     }
     testImplementation(testFixtures(project(Modules.Service.Memo.Adaptors.Persistence.path)))
+    testImplementation(project(path = Modules.Service.Memo.Core.path, configuration = "testArtifact"))
 }
 
 tasks.register("testAll") {

@@ -1,12 +1,7 @@
 package kr.co.jiniaslog.memo
 
 import kr.co.jiniaslog.App
-import kr.co.jiniaslog.memo.outbound.FolderRepository
-import kr.co.jiniaslog.memo.outbound.MemoRepository
-import kr.co.jiniaslog.memo.usecase.AbstractFolderUseCaseTests
-import kr.co.jiniaslog.memo.usecase.MemoAbstractUseCaseTest
 import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.Nested
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.ActiveProfiles
@@ -27,26 +22,6 @@ class Neo4jTestContainer {
     fun tearDown() {
         neo4jDbCleaner.tearDown()
     }
-
-    @Nested
-    inner class MemoUseCaseNeo4jTest
-        @Autowired
-        constructor(
-            memoRepository: MemoRepository,
-            folderRepository: FolderRepository,
-        ) : MemoAbstractUseCaseTest(
-                memoRepository = memoRepository,
-                folderRepository = folderRepository,
-            )
-
-    @Nested
-    inner class FolderUseCaseNeo4jTest
-        @Autowired
-        constructor(
-            folderRepository: FolderRepository,
-        ) : AbstractFolderUseCaseTests(
-                folderRepository = folderRepository,
-            )
 
     companion object {
         @Container
