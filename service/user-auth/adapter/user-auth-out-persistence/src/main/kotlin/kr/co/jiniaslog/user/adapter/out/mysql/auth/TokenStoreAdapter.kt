@@ -18,17 +18,22 @@ class TokenStoreAdapter(
     ) {
         val token = tokenRepository.findById(userId.value).getOrNull()
         if (token == null) {
-            tokenRepository.save(TokenJpaEntity(userId.value, accessToken.value, refreshToken.value, null, null))
+            tokenRepository.save(TokenJpaEntity(userId.value, accessToken.value, refreshToken.value, refreshToken.value, null, null))
         } else {
             token.accessToken = accessToken.value
-            token.refreshToken = refreshToken.value
+            token.oldRefreshToken = token.newRefreshToken
+            token.newRefreshToken = refreshToken.value
             tokenRepository.save(token)
         }
     }
 
-    override fun findByToken(userId: UserId): Pair<AccessToken, RefreshToken>? {
+    override fun findByAuthTokens(userId: UserId): Triple<AccessToken, RefreshToken, RefreshToken>? {
         return tokenRepository.findById(userId.value).getOrNull()?.let {
-            Pair(AccessToken(it.accessToken), RefreshToken(it.refreshToken))
+            Triple(
+                AccessToken(it.accessToken),
+                RefreshToken(it.oldRefreshToken),
+                RefreshToken(it.newRefreshToken),
+            )
         }
     }
 }

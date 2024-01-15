@@ -14,8 +14,10 @@ class TokenJpaEntity(
     val userId: Long,
     @Column(name = "access_token")
     var accessToken: String,
-    @Column(name = "refresh_token")
-    var refreshToken: String,
+    @Column(name = "old_refresh_token")
+    var oldRefreshToken: String,
+    @Column(name = "new_refresh_token")
+    var newRefreshToken: String,
     createdAt: LocalDateTime?,
     updatedAt: LocalDateTime?,
 ) : AbstractPersistenceModel<Long>(createdAt, updatedAt) {

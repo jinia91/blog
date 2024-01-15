@@ -11,5 +11,5 @@ interface TokenStore {
         refreshToken: RefreshToken,
     )
 
-    fun findByToken(userId: UserId): Pair<AccessToken, RefreshToken>?
+    fun findByAuthTokens(userId: UserId): Triple<AccessToken, RefreshToken, RefreshToken>?
 }

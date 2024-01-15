@@ -2,7 +2,7 @@ package kr.co.jiniaslog
 
 import io.restassured.RestAssured
 import kr.co.jiniaslog.memo.Neo4jDbCleaner
-import kr.co.jiniaslog.utils.DbCleaner
+import kr.co.jiniaslog.utils.RdbCleaner
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.springframework.beans.factory.annotation.Autowired
@@ -27,7 +27,7 @@ abstract class TestContainerAbstractSkeleton {
     protected lateinit var neo4jDbCleaner: Neo4jDbCleaner
 
     @Autowired
-    protected lateinit var rdbDbCleaner: DbCleaner
+    protected lateinit var rdbCleaner: RdbCleaner
 
     @BeforeEach
     fun setUp() {
@@ -37,7 +37,7 @@ abstract class TestContainerAbstractSkeleton {
     @AfterEach
     fun tearDown() {
         neo4jDbCleaner.tearDown()
-        rdbDbCleaner.tearDownAll()
+        rdbCleaner.tearDownAll()
     }
 
     companion object {

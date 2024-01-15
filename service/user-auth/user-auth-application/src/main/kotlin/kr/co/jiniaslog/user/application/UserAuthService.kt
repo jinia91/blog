@@ -11,6 +11,7 @@ import kr.co.jiniaslog.user.application.usecase.IRefreshToken
 import kr.co.jiniaslog.user.application.usecase.ISignInOAuthUser
 import kr.co.jiniaslog.user.application.usecase.UseCasesUserAuthFacade
 import kr.co.jiniaslog.user.domain.auth.provider.ProviderUserInfo
+import kr.co.jiniaslog.user.domain.auth.token.AccessToken
 import kr.co.jiniaslog.user.domain.auth.token.RefreshToken
 import kr.co.jiniaslog.user.domain.auth.token.TokenManger
 import kr.co.jiniaslog.user.domain.user.User
@@ -56,45 +57,43 @@ class UserAuthService(
             return info
         }
 
-    private fun getOrCreateUser(providerUserInfo: ProviderUserInfo): User {
-        val user =
-            userRepository.findByEmail(providerUserInfo.email)?.let {
-                it.refreshWith(providerUserInfo)
-                userRepository.save(it)
-            } ?: let {
-                val newUser = User.newOne(providerUserInfo)
-                userRepository.save(newUser)
-            }
-        return user
-    }
+    private fun getOrCreateUser(providerUserInfo: ProviderUserInfo): User =
+        userRepository.findByEmail(providerUserInfo.email)?.let {
+            it.refreshWith(providerUserInfo)
+            userRepository.save(it)
+        } ?: let {
+            val newUser = User.newOne(providerUserInfo)
+            userRepository.save(newUser)
+        }
 
     override fun handle(command: IRefreshToken.Command): IRefreshToken.Info =
         with(command) {
+            require(tokenManger.validateToken(refreshToken)) { "invalid refresh token" }
             val userId = tokenManger.getUserId(refreshToken)
 
             if (idempotencyUtils.hasLock(userId)) {
                 return idempotencyUtils.lock(userId) {
-                    handleAlreadyHasLock(refreshToken)
+                    getNewAuthTokensAlreadyHasLock(refreshToken)
                 }
             }
             return idempotencyUtils.lock(userId) {
-                handleWithoutLock(refreshToken)
+                generateNewAuthTokensWithoutLock(refreshToken)
             }
         }
 
-    private fun handleAlreadyHasLock(refreshToken: RefreshToken): IRefreshToken.Info {
-        require(tokenManger.validateToken(refreshToken)) { "invalid refresh token" }
+    private fun getNewAuthTokensAlreadyHasLock(refreshToken: RefreshToken): IRefreshToken.Info {
         val userId = tokenManger.getUserId(refreshToken)
-        val token = tokenStore.findByToken(userId)!!
+        val tokens = tokenStore.findByAuthTokens(userId)!!
         return IRefreshToken.Info(
-            accessToken = token.first,
-            refreshToken = token.second,
+            accessToken = tokens.first,
+            refreshToken = tokens.third,
         )
     }
 
-    private fun handleWithoutLock(refreshToken: RefreshToken): IRefreshToken.Info {
-        require(tokenManger.validateToken(refreshToken)) { "invalid refresh token" }
+    private fun generateNewAuthTokensWithoutLock(refreshToken: RefreshToken): IRefreshToken.Info {
         val userId = tokenManger.getUserId(refreshToken)
+        val foundAuthTokens = tokenStore.findByAuthTokens(userId)
+        validateRefreshToken(foundAuthTokens, refreshToken)
         val roles = tokenManger.getRole(refreshToken)
         val newAccessToken = tokenManger.generateAccessToken(userId, roles)
         val newRefreshToken = tokenManger.generateRefreshToken(userId, roles)
@@ -105,5 +104,16 @@ class UserAuthService(
             accessToken = newAccessToken,
             refreshToken = newRefreshToken,
         )
+    }
+
+    private fun validateRefreshToken(
+        foundAuthTokens: Triple<AccessToken, RefreshToken, RefreshToken>?,
+        refreshToken: RefreshToken,
+    ) {
+        requireNotNull(foundAuthTokens) { "invalid refresh token" }
+        require(
+            foundAuthTokens.third == refreshToken ||
+                foundAuthTokens.second == refreshToken,
+        ) { "invalid refresh token" }
     }
 }

@@ -7,7 +7,7 @@ import java.sql.Connection
 import javax.sql.DataSource
 
 @Component
-class DbCleaner(private val dataSources: List<DataSource>) {
+class RdbCleaner(private val dataSources: List<DataSource>) {
     fun tearDownAll() {
         dataSources.forEach { dataSource ->
             clean(dataSource)

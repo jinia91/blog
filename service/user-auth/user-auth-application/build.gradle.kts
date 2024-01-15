@@ -9,4 +9,5 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-security")
     api(project(Modules.Service.AuthUser.Core.path))
     implementation(project(Modules.Libs.CoreKernel.path))
+    testImplementation(testFixtures(project(Modules.Libs.CoreKernel.path)))
 }
