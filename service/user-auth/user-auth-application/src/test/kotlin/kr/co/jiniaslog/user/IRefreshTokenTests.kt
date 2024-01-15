@@ -1,6 +1,7 @@
 package kr.co.jiniaslog.user
 
 import io.kotest.assertions.throwables.shouldThrow
+import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import kr.co.jiniaslog.shared.SimpleUnitTestContext
 import kr.co.jiniaslog.user.application.usecase.IRefreshToken
@@ -14,6 +15,7 @@ import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
+import java.util.concurrent.CompletableFuture
 
 @SpringBootTest
 class IRefreshTokenTests : SimpleUnitTestContext() {
@@ -111,5 +113,42 @@ class IRefreshTokenTests : SimpleUnitTestContext() {
         // 갱신 체크
         info.accessToken.value shouldNotBe accessToken.value
         info.refreshToken.value shouldNotBe tempRefreshToken.value
+    }
+
+    @Test
+    fun `동일 유저아이디에 대한 동시성 요청시, 후속 요청은 단순 조회만 한다`() {
+        // given
+        val userId = UserId(1L)
+        val accessToken = tokenManger.generateAccessToken(userId, setOf(Role.USER))
+        val refreshToken = tokenManger.generateRefreshToken(userId, setOf(Role.USER))
+        tokenStore.save(userId, accessToken, refreshToken)
+
+        // 시간 기반 토큰이므로 지연 필요
+        Thread.sleep(1000)
+
+        val command =
+            IRefreshToken.Command(
+                refreshToken = refreshToken,
+            )
+
+        // when
+        val task1 =
+            CompletableFuture.supplyAsync {
+                sut.handle(command)
+            }
+        val task2 =
+            CompletableFuture.supplyAsync {
+                sut.handle(command)
+            }
+
+        // then
+        val result: IRefreshToken.Info = task1.get()
+        val result2: IRefreshToken.Info = task2.get()
+
+        result.accessToken.value shouldNotBe accessToken.value
+        result.refreshToken.value shouldNotBe refreshToken.value
+
+        result.accessToken.value shouldBe result2.accessToken.value
+        result.refreshToken.value shouldBe result2.refreshToken.value
     }
 }
