@@ -72,7 +72,7 @@ class UserAuthService(
             val userId = tokenManger.getUserId(refreshToken)
 
             if (idempotencyUtils.hasLock(userId)) {
-                return idempotencyUtils.lock(userId) {
+                return idempotencyUtils.lock(userId, 10) {
                     getNewAuthTokensAlreadyHasLock(refreshToken)
                 }
             }

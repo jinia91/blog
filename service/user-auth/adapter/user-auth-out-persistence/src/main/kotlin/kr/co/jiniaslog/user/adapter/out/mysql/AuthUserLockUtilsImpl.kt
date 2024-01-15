@@ -85,8 +85,9 @@ class UserLockManager(
     override fun lock(
         userId: UserId,
         block: () -> IRefreshToken.Info,
+        timeOutSeconds: Int,
     ): IRefreshToken.Info {
-        return executeWithLock(userId.toString(), 10) {
+        return executeWithLock(userId.toString(), timeOutSeconds) {
             block()
         }
     }

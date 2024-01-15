@@ -25,4 +25,8 @@ class TokenFakeStore : TokenStore {
     override fun findByAuthTokens(userId: UserId): Triple<AccessToken, RefreshToken, RefreshToken>? {
         return tokens[userId]
     }
+
+    fun tearDown() {
+        tokens.clear()
+    }
 }

@@ -4,28 +4,33 @@ import kr.co.jiniaslog.shared.core.annotation.CustomComponent
 import kr.co.jiniaslog.user.application.infra.AuthUserLockManager
 import kr.co.jiniaslog.user.application.usecase.IRefreshToken
 import kr.co.jiniaslog.user.domain.user.UserId
+import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.TimeUnit
+import java.util.concurrent.locks.ReentrantLock
 
 @CustomComponent
 class FakeAuthUserLockManager : AuthUserLockManager {
-    private val lock = mutableMapOf<UserId, Boolean>()
+    private val locks = ConcurrentHashMap<UserId, ReentrantLock>()
 
     override fun lock(
         userId: UserId,
+        timeOutSeconds: Int,
         block: () -> IRefreshToken.Info,
     ): IRefreshToken.Info {
-        if (lock[userId] == true) {
-            throw IllegalStateException("lock")
+        val lock = locks.computeIfAbsent(userId) { ReentrantLock() }
+        val isLocked = lock.tryLock(timeOutSeconds.toLong(), TimeUnit.SECONDS)
+        if (!isLocked) {
+            throw RuntimeException("Unable to acquire lock within $timeOutSeconds seconds for user $userId")
         }
 
-        lock[userId] = true
         try {
             return block()
         } finally {
-            lock[userId] = false
+            lock.unlock()
         }
     }
 
     override fun hasLock(userId: UserId): Boolean {
-        return lock[userId] == true
+        return locks[userId]?.isLocked ?: false
     }
 }

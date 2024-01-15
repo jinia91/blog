@@ -3,13 +3,14 @@ package kr.co.jiniaslog.user
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.shouldNotBe
 import kr.co.jiniaslog.shared.SimpleUnitTestContext
-import kr.co.jiniaslog.user.application.infra.TokenStore
 import kr.co.jiniaslog.user.application.usecase.IRefreshToken
 import kr.co.jiniaslog.user.domain.auth.token.AccessToken
 import kr.co.jiniaslog.user.domain.auth.token.RefreshToken
 import kr.co.jiniaslog.user.domain.auth.token.TokenManger
 import kr.co.jiniaslog.user.domain.user.Role
 import kr.co.jiniaslog.user.domain.user.UserId
+import kr.co.jiniaslog.user.fakes.TokenFakeStore
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
@@ -23,7 +24,12 @@ class IRefreshTokenTests : SimpleUnitTestContext() {
     lateinit var tokenManger: TokenManger
 
     @Autowired
-    lateinit var tokenStore: TokenStore
+    lateinit var tokenStore: TokenFakeStore
+
+    @AfterEach
+    fun tearDownAll() {
+        tokenStore.tearDown()
+    }
 
     @Test
     fun `포멧이 유효하지 않은 리프레시 토큰으로 갱신 요청을 하면 실패한다`() {
@@ -81,18 +87,18 @@ class IRefreshTokenTests : SimpleUnitTestContext() {
     }
 
     @Test
-    fun `저장된 리프레시 토큰이 존재하고, old 리프레시 토큰으로 갱신 요청을 하면 성공한다`() {
+    fun `저장된 리프레시 토큰이 존재하고, temp 리프레시 토큰으로 갱신 요청을 하면 성공한다`() {
         // given context
         val userId = UserId(1L)
         val accessToken = AccessToken("eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwicm9sZXMiOlsiVVNFUiJdLCJpYXQiOjE3MDUyODg1OTcsImV4cCI6MTcwNTI5MjE5N30.qQbc1d3DpX19LRUB-nrLLsvcbTu0YyrJ-7vMQzJTVtU")
-        val oldRefreshToken = RefreshToken("eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwicm9sZXMiOlsiVVNFUiJdLCJpYXQiOjE3MDUyODg2OTgsImV4cCI6MTcwNTg5MzQ5OH0.fJ4SdCMmqW4ScTTcFTWl1hTbnyCQtnm3bloVqiodn_E")
-        tokenStore.save(userId, accessToken, oldRefreshToken)
+        val tempRefreshToken = RefreshToken("eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwicm9sZXMiOlsiVVNFUiJdLCJpYXQiOjE3MDUyODg2OTgsImV4cCI6MTcwNTg5MzQ5OH0.fJ4SdCMmqW4ScTTcFTWl1hTbnyCQtnm3bloVqiodn_E")
+        tokenStore.save(userId, accessToken, tempRefreshToken)
         val newRefreshToken = tokenManger.generateRefreshToken(userId, setOf(Role.USER))
         tokenStore.save(userId, accessToken, newRefreshToken)
 
         val command =
             IRefreshToken.Command(
-                refreshToken = oldRefreshToken,
+                refreshToken = tempRefreshToken,
             )
 
         // when
@@ -104,6 +110,6 @@ class IRefreshTokenTests : SimpleUnitTestContext() {
 
         // 갱신 체크
         info.accessToken.value shouldNotBe accessToken.value
-        info.refreshToken.value shouldNotBe oldRefreshToken.value
+        info.refreshToken.value shouldNotBe tempRefreshToken.value
     }
 }
