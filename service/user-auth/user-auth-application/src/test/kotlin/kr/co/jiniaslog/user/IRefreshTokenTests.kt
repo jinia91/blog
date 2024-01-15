@@ -79,4 +79,31 @@ class IRefreshTokenTests : SimpleUnitTestContext() {
         info.accessToken.value shouldNotBe accessToken.value
         info.refreshToken.value shouldNotBe refreshToken.value
     }
+
+    @Test
+    fun `저장된 리프레시 토큰이 존재하고, old 리프레시 토큰으로 갱신 요청을 하면 성공한다`() {
+        // given context
+        val userId = UserId(1L)
+        val accessToken = AccessToken("eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwicm9sZXMiOlsiVVNFUiJdLCJpYXQiOjE3MDUyODg1OTcsImV4cCI6MTcwNTI5MjE5N30.qQbc1d3DpX19LRUB-nrLLsvcbTu0YyrJ-7vMQzJTVtU")
+        val oldRefreshToken = RefreshToken("eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwicm9sZXMiOlsiVVNFUiJdLCJpYXQiOjE3MDUyODg2OTgsImV4cCI6MTcwNTg5MzQ5OH0.fJ4SdCMmqW4ScTTcFTWl1hTbnyCQtnm3bloVqiodn_E")
+        tokenStore.save(userId, accessToken, oldRefreshToken)
+        val newRefreshToken = tokenManger.generateRefreshToken(userId, setOf(Role.USER))
+        tokenStore.save(userId, accessToken, newRefreshToken)
+
+        val command =
+            IRefreshToken.Command(
+                refreshToken = oldRefreshToken,
+            )
+
+        // when
+        val info = sut.handle(command)
+
+        // then
+        info.accessToken shouldNotBe null
+        info.refreshToken shouldNotBe null
+
+        // 갱신 체크
+        info.accessToken.value shouldNotBe accessToken.value
+        info.refreshToken.value shouldNotBe oldRefreshToken.value
+    }
 }

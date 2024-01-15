@@ -45,7 +45,8 @@ object Modules {
             enum class Adaptors(val path: String) {
                 InHttp(":service:user-auth:adapter:user-auth-in-http"),
                 OutGoogle(":service:user-auth:adapter:user-auth-out-google"),
-                Persistence(":service:user-auth:adapter:user-auth-out-persistence")
+                Persistence(":service:user-auth:adapter:user-auth-out-persistence"),
+                Cache(":service:user-auth:adapter:user-auth-out-cache")
                 ;
             }
         }

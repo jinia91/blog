@@ -107,7 +107,7 @@ class UserAuthService(
     }
 
     private fun validateRefreshToken(
-        foundAuthTokens: Triple<AccessToken, RefreshToken, RefreshToken>?,
+        foundAuthTokens: Triple<AccessToken, RefreshToken?, RefreshToken>?,
         refreshToken: RefreshToken,
     ) {
         requireNotNull(foundAuthTokens) { "invalid refresh token" }

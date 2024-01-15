@@ -45,6 +45,7 @@ include(
     "service:user-auth:adapter:user-auth-in-http",
     "service:user-auth:adapter:user-auth-out-google",
     "service:user-auth:adapter:user-auth-out-persistence",
+    "service:user-auth:adapter:user-auth-out-cache",
 
     "service:comment",
     "service:media",
