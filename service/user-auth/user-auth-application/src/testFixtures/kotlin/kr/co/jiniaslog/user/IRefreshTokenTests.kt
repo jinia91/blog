@@ -5,7 +5,6 @@ import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import kr.co.jiniaslog.user.application.infra.TokenStore
 import kr.co.jiniaslog.user.application.usecase.IRefreshToken
-import kr.co.jiniaslog.user.domain.auth.token.AccessToken
 import kr.co.jiniaslog.user.domain.auth.token.RefreshToken
 import kr.co.jiniaslog.user.domain.auth.token.TokenManger
 import kr.co.jiniaslog.user.domain.user.Role
@@ -58,9 +57,10 @@ abstract class IRefreshTokenTests {
     fun `저장된 리프레시 토큰이 존재하고, 해당 리프레시 토큰으로 갱신 요청을 하면 성공한다`() {
         // given context
         val userId = UserId(1L)
-        val accessToken = AccessToken("eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwicm9sZXMiOlsiVVNFUiJdLCJpYXQiOjE3MDUyODg1OTcsImV4cCI6MTcwNTI5MjE5N30.qQbc1d3DpX19LRUB-nrLLsvcbTu0YyrJ-7vMQzJTVtU")
-        val refreshToken = RefreshToken("eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwicm9sZXMiOlsiVVNFUiJdLCJpYXQiOjE3MDUyODg2OTgsImV4cCI6MTcwNTg5MzQ5OH0.fJ4SdCMmqW4ScTTcFTWl1hTbnyCQtnm3bloVqiodn_E")
+        val accessToken = tokenManger.generateAccessToken(userId, setOf(Role.USER))
+        val refreshToken = tokenManger.generateRefreshToken(userId, setOf(Role.USER))
         tokenStore.save(userId, accessToken, refreshToken)
+
 
         val command =
             IRefreshToken.Command(
@@ -86,8 +86,8 @@ abstract class IRefreshTokenTests {
     fun `저장된 리프레시 토큰이 존재하고, temp 리프레시 토큰으로 갱신 요청을 하면 성공한다`() {
         // given context
         val userId = UserId(1L)
-        val accessToken = AccessToken("eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwicm9sZXMiOlsiVVNFUiJdLCJpYXQiOjE3MDUyODg1OTcsImV4cCI6MTcwNTI5MjE5N30.qQbc1d3DpX19LRUB-nrLLsvcbTu0YyrJ-7vMQzJTVtU")
-        val tempRefreshToken = RefreshToken("eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwicm9sZXMiOlsiVVNFUiJdLCJpYXQiOjE3MDUyODg2OTgsImV4cCI6MTcwNTg5MzQ5OH0.fJ4SdCMmqW4ScTTcFTWl1hTbnyCQtnm3bloVqiodn_E")
+        val accessToken = tokenManger.generateAccessToken(userId, setOf(Role.USER))
+        val tempRefreshToken = tokenManger.generateRefreshToken(userId, setOf(Role.USER))
         tokenStore.save(userId, accessToken, tempRefreshToken)
         val newRefreshToken = tokenManger.generateRefreshToken(userId, setOf(Role.USER))
         tokenStore.save(userId, accessToken, newRefreshToken)
@@ -119,9 +119,6 @@ abstract class IRefreshTokenTests {
         val accessToken = tokenManger.generateAccessToken(userId, setOf(Role.USER))
         val refreshToken = tokenManger.generateRefreshToken(userId, setOf(Role.USER))
         tokenStore.save(userId, accessToken, refreshToken)
-
-        // 시간 기반 토큰이므로 지연 필요
-        Thread.sleep(1000)
 
         val command =
             IRefreshToken.Command(

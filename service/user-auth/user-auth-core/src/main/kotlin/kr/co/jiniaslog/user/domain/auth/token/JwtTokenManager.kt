@@ -9,6 +9,7 @@ import kr.co.jiniaslog.user.domain.user.UserId
 import java.security.Key
 import java.time.Duration
 import java.util.Date
+import kotlin.random.Random
 
 class JwtTokenManager(
     secretKey: String,
@@ -81,6 +82,7 @@ class JwtTokenManager(
             .claims()
             .subject(id.value.toString())
             .add(roleKey, roles)
+            .id(Random.nextLong().toString())
             .issuedAt(now)
             .expiration(Date(now.time + tokenValidDuration))
             .and()
