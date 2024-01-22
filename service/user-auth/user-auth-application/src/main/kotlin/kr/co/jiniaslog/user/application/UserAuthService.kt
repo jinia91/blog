@@ -80,7 +80,6 @@ class UserAuthService(
             validateRefreshToken(storedAuthToken, refreshToken)
 
             transactionHandler.runInRepeatableReadTransaction {
-
             }
             val isRecentlyIssued = storedAuthToken.second == refreshToken
             if (isRecentlyIssued) {
@@ -107,7 +106,10 @@ class UserAuthService(
             )
         }
 
-    private fun reTryGetAuthTokensInCache(refreshToken: RefreshToken, userId: UserId): IRefreshToken.Info {
+    private fun reTryGetAuthTokensInCache(
+        refreshToken: RefreshToken,
+        userId: UserId,
+    ): IRefreshToken.Info {
         val tokens = tokenStore.findByUserId(userId)
         validateRefreshToken(tokens, refreshToken)
 
@@ -115,10 +117,12 @@ class UserAuthService(
             accessToken = tokens.first,
             refreshToken = tokens.third,
         )
-
     }
 
-    private fun generateNewAuthTokens(refreshToken: RefreshToken, userId: UserId): IRefreshToken.Info {
+    private fun generateNewAuthTokens(
+        refreshToken: RefreshToken,
+        userId: UserId,
+    ): IRefreshToken.Info {
         val foundAuthTokens = tokenStore.findByUserId(userId)
         validateRefreshToken(foundAuthTokens, refreshToken)
         val roles = tokenManger.getRole(refreshToken)
@@ -132,7 +136,6 @@ class UserAuthService(
             refreshToken = newRefreshToken,
         )
     }
-
 
     @OptIn(ExperimentalContracts::class)
     private fun validateRefreshToken(

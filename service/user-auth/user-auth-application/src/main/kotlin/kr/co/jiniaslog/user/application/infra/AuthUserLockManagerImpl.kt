@@ -1,12 +1,11 @@
 package kr.co.jiniaslog.user.application.infra
 
-import kr.co.jiniaslog.user.application.infra.AuthUserLockManager
 import kr.co.jiniaslog.user.application.usecase.IRefreshToken
 import kr.co.jiniaslog.user.domain.user.UserId
+import org.springframework.stereotype.Component
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.locks.ReentrantLock
-import org.springframework.stereotype.Component
 
 @Component
 class AuthUserLockManagerImpl : AuthUserLockManager {

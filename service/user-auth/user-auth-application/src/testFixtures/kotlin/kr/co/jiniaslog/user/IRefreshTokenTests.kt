@@ -9,11 +9,11 @@ import kr.co.jiniaslog.user.domain.auth.token.RefreshToken
 import kr.co.jiniaslog.user.domain.auth.token.TokenManger
 import kr.co.jiniaslog.user.domain.user.Role
 import kr.co.jiniaslog.user.domain.user.UserId
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.Executors
-import org.junit.jupiter.api.Disabled
 
 abstract class IRefreshTokenTests {
     @Autowired
@@ -78,14 +78,13 @@ abstract class IRefreshTokenTests {
         info.refreshToken shouldNotBe null
 
         // 갱신 체크
-        info.accessToken.value shouldBe  accessToken.value
-        info.refreshToken.value shouldBe  newRefreshToken.value
-        info.refreshToken.value shouldNotBe  tempRefreshToken.value
+        info.accessToken.value shouldBe accessToken.value
+        info.refreshToken.value shouldBe newRefreshToken.value
+        info.refreshToken.value shouldNotBe tempRefreshToken.value
 
         // tearDown
         tokenStore.delete(userId)
     }
-
 
     @Test
     @Disabled("테스트 시간이 오래걸려서 로컬에서만 확인")
@@ -134,12 +133,14 @@ abstract class IRefreshTokenTests {
             )
 
         // when
-        val task1 = CompletableFuture.supplyAsync({
-            sut.handle(command)
-        }, executorService)
-        val task2 = CompletableFuture.supplyAsync({
-            sut.handle(command)
-        }, executorService)
+        val task1 =
+            CompletableFuture.supplyAsync({
+                sut.handle(command)
+            }, executorService)
+        val task2 =
+            CompletableFuture.supplyAsync({
+                sut.handle(command)
+            }, executorService)
 
         // then
         val result: IRefreshToken.Info = task1.get()
