@@ -79,10 +79,9 @@ class UserAuthService(
             val storedAuthToken = tokenStore.findByUserId(userId)
             validateRefreshToken(storedAuthToken, refreshToken)
 
-            transactionHandler.runInRepeatableReadTransaction {
-            }
             val isRecentlyIssued = storedAuthToken.second == refreshToken
             if (isRecentlyIssued) {
+                log.info { "recently issued refresh token. userId: $userId" }
                 return IRefreshToken.Info(
                     accessToken = storedAuthToken.first,
                     refreshToken = storedAuthToken.third,
@@ -92,7 +91,10 @@ class UserAuthService(
             return idempotencyLockManager.lock(
                 userId = userId,
                 timeOutSeconds = 10,
-                block = { generateNewAuthTokens(refreshToken, userId) },
+                block = {
+                    generateNewAuthTokens(refreshToken, userId)
+                        .also { log.info { "refreshed auth tokens. userId: $userId" } }
+                },
                 forIdempotencyFallback = {
                     log.warn {
                         """

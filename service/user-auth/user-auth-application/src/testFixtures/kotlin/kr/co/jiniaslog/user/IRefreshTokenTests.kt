@@ -125,6 +125,8 @@ abstract class IRefreshTokenTests {
         val refreshToken = tokenManger.generateRefreshToken(userId, setOf(Role.USER))
         tokenStore.save(userId, accessToken, refreshToken)
 
+        Thread.sleep(6000)
+
         val executorService = Executors.newFixedThreadPool(2)
 
         val command =
