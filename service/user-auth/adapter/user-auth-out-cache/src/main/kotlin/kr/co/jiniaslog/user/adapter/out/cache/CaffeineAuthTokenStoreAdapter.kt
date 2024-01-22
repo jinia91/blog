@@ -29,7 +29,7 @@ internal class CaffeineAuthTokenStoreAdapter : TokenStore {
         cache.put(key, Pair(accessToken, refreshToken))
     }
 
-    override fun findByAuthTokens(userId: UserId): Triple<AccessToken, RefreshToken?, RefreshToken>? {
+    override fun findByUserId(userId: UserId): Triple<AccessToken, RefreshToken?, RefreshToken>? {
         val key = userId.value.toString()
         val authTokens = cache.getIfPresent(key)
         val tempToken = tempCache.getIfPresent(key)

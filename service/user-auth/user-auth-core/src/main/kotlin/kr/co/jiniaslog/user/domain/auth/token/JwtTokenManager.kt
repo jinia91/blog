@@ -50,7 +50,7 @@ class JwtTokenManager(
 
     private fun getCurrentDate() = Date()
 
-    override fun getUserId(token: AuthToken): UserId {
+    override fun extractUserId(token: AuthToken): UserId {
         val claims =
             Jwts.parser()
                 .setSigningKey(key)

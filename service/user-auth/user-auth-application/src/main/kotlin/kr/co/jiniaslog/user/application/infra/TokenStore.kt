@@ -11,7 +11,13 @@ interface TokenStore {
         refreshToken: RefreshToken,
     )
 
-    fun findByAuthTokens(userId: UserId): Triple<AccessToken, RefreshToken?, RefreshToken>?
+    /**
+     * Find by user id
+     *
+     * @param userId
+     * @return Triple<엑세스 토큰, 이전 리프레시토큰?, 신규 리프레시 토큰> or null
+     */
+    fun findByUserId(userId: UserId): Triple<AccessToken, RefreshToken?, RefreshToken>?
 
     fun delete(userId: UserId)
 }

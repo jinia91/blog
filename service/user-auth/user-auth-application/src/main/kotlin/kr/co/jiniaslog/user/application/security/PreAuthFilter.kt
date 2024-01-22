@@ -29,7 +29,7 @@ class PreAuthFilter(
             return null
         }
 
-        val userId = jwtTokenManager.getUserId(token).value
+        val userId = jwtTokenManager.extractUserId(token).value
         val rolesSet: Set<String> =
             jwtTokenManager.getRole(token).stream()
                 .map { it.name }

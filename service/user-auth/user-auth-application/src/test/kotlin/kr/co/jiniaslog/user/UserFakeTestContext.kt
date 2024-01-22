@@ -6,7 +6,6 @@ import kr.co.jiniaslog.shared.core.domain.IdUtils
 import kr.co.jiniaslog.user.application.infra.ProviderAdapter
 import kr.co.jiniaslog.user.application.infra.TokenStore
 import kr.co.jiniaslog.user.application.infra.UserAuthTransactionHandler
-import kr.co.jiniaslog.user.fakes.FakeAuthUserLockManager
 import kr.co.jiniaslog.user.fakes.FakeGoogleProviderAdapter
 import kr.co.jiniaslog.user.fakes.TestTransactionHandler
 import kr.co.jiniaslog.user.fakes.TokenFakeStore
@@ -29,11 +28,6 @@ import java.util.concurrent.atomic.AtomicLong
 class UserFakeTestContext {
     @Configuration
     class Config {
-        @Bean
-        fun authUserLockManager(): FakeAuthUserLockManager {
-            return FakeAuthUserLockManager()
-        }
-
         @Bean
         fun googleProviderAdapter(): ProviderAdapter {
             return FakeGoogleProviderAdapter()

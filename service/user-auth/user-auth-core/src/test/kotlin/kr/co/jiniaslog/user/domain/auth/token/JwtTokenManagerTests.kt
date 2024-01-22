@@ -58,7 +58,7 @@ class JwtTokenManagerTests {
             val accessToken = sut.generateAccessToken(userId, roles)
 
             // when
-            val extractedUserId = sut.getUserId(accessToken)
+            val extractedUserId = sut.extractUserId(accessToken)
 
             // then
             extractedUserId shouldBe userId

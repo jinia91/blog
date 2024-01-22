@@ -6,9 +6,8 @@ import kr.co.jiniaslog.user.domain.user.UserId
 interface AuthUserLockManager {
     fun lock(
         userId: UserId,
-        timeOutSeconds: Int = 10,
+        timeOutSeconds: Int = 0,
         block: () -> IRefreshToken.Info,
+        forIdempotencyFallback: () -> IRefreshToken.Info,
     ): IRefreshToken.Info
-
-    fun hasLock(userId: UserId): Boolean
 }

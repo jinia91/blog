@@ -15,6 +15,12 @@ import kr.co.jiniaslog.user.domain.auth.token.AccessToken
 import kr.co.jiniaslog.user.domain.auth.token.RefreshToken
 import kr.co.jiniaslog.user.domain.auth.token.TokenManger
 import kr.co.jiniaslog.user.domain.user.User
+import kr.co.jiniaslog.user.domain.user.UserId
+import mu.KotlinLogging
+import kotlin.contracts.ExperimentalContracts
+import kotlin.contracts.contract
+
+private val log = KotlinLogging.logger {}
 
 @UseCaseInteractor
 class UserAuthService(
@@ -23,7 +29,7 @@ class UserAuthService(
     private val providerResolver: ProviderResolver,
     private val tokenManger: TokenManger,
     private val transactionHandler: UserAuthTransactionHandler,
-    private val idempotencyUtils: AuthUserLockManager,
+    private val idempotencyLockManager: AuthUserLockManager,
 ) : UseCasesUserAuthFacade {
     override fun handle(command: IGetOAuthRedirectionUrl.Command): IGetOAuthRedirectionUrl.Info =
         with(command) {
@@ -69,30 +75,51 @@ class UserAuthService(
     override fun handle(command: IRefreshToken.Command): IRefreshToken.Info =
         with(command) {
             require(tokenManger.validateToken(refreshToken)) { "invalid refresh token" }
-            val userId = tokenManger.getUserId(refreshToken)
+            val userId = tokenManger.extractUserId(refreshToken)
+            val storedAuthToken = tokenStore.findByUserId(userId)
+            validateRefreshToken(storedAuthToken, refreshToken)
 
-            if (idempotencyUtils.hasLock(userId)) {
-                return idempotencyUtils.lock(userId, 10) {
-                    getNewAuthTokensAlreadyHasLock(refreshToken)
-                }
+            transactionHandler.runInRepeatableReadTransaction {
+
             }
-            return idempotencyUtils.lock(userId) {
-                generateNewAuthTokensWithoutLock(refreshToken)
+            val isRecentlyIssued = storedAuthToken.second == refreshToken
+            if (isRecentlyIssued) {
+                return IRefreshToken.Info(
+                    accessToken = storedAuthToken.first,
+                    refreshToken = storedAuthToken.third,
+                )
             }
+
+            return idempotencyLockManager.lock(
+                userId = userId,
+                timeOutSeconds = 10,
+                block = { generateNewAuthTokens(refreshToken, userId) },
+                forIdempotencyFallback = {
+                    log.warn {
+                        """
+                            |already has lock. userId: $userId
+                            |refreshToken: $refreshToken
+                            |should suspect duplicate request!
+                        """.trimMargin()
+                    }
+                    reTryGetAuthTokensInCache(refreshToken, userId)
+                },
+            )
         }
 
-    private fun getNewAuthTokensAlreadyHasLock(refreshToken: RefreshToken): IRefreshToken.Info {
-        val userId = tokenManger.getUserId(refreshToken)
-        val tokens = tokenStore.findByAuthTokens(userId)!!
+    private fun reTryGetAuthTokensInCache(refreshToken: RefreshToken, userId: UserId): IRefreshToken.Info {
+        val tokens = tokenStore.findByUserId(userId)
+        validateRefreshToken(tokens, refreshToken)
+
         return IRefreshToken.Info(
             accessToken = tokens.first,
             refreshToken = tokens.third,
         )
+
     }
 
-    private fun generateNewAuthTokensWithoutLock(refreshToken: RefreshToken): IRefreshToken.Info {
-        val userId = tokenManger.getUserId(refreshToken)
-        val foundAuthTokens = tokenStore.findByAuthTokens(userId)
+    private fun generateNewAuthTokens(refreshToken: RefreshToken, userId: UserId): IRefreshToken.Info {
+        val foundAuthTokens = tokenStore.findByUserId(userId)
         validateRefreshToken(foundAuthTokens, refreshToken)
         val roles = tokenManger.getRole(refreshToken)
         val newAccessToken = tokenManger.generateAccessToken(userId, roles)
@@ -106,11 +133,14 @@ class UserAuthService(
         )
     }
 
+
+    @OptIn(ExperimentalContracts::class)
     private fun validateRefreshToken(
         foundAuthTokens: Triple<AccessToken, RefreshToken?, RefreshToken>?,
         refreshToken: RefreshToken,
     ) {
-        requireNotNull(foundAuthTokens) { "invalid refresh token" }
+        contract { returns() implies (foundAuthTokens != null) }
+        requireNotNull(foundAuthTokens) { "refresh token should be managed in store" }
         require(
             foundAuthTokens.third == refreshToken ||
                 foundAuthTokens.second == refreshToken,

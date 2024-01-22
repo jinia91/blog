@@ -20,7 +20,7 @@ class TokenFakeStore : TokenStore {
         }
     }
 
-    override fun findByAuthTokens(userId: UserId): Triple<AccessToken, RefreshToken, RefreshToken>? {
+    override fun findByUserId(userId: UserId): Triple<AccessToken, RefreshToken, RefreshToken>? {
         return tokens[userId]
     }
 

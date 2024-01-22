@@ -16,7 +16,7 @@ interface TokenManger {
 
     fun validateToken(token: AuthToken): Boolean
 
-    fun getUserId(token: AuthToken): UserId
+    fun extractUserId(token: AuthToken): UserId
 
     fun getRole(token: AuthToken): Set<Role>
 }
