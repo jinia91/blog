@@ -40,4 +40,10 @@ internal class CaffeineAuthTokenStoreAdapter : TokenStore {
             null
         }
     }
+
+    override fun delete(userId: UserId) {
+        val key = userId.value.toString()
+        cache.invalidate(key)
+        tempCache.invalidate(key)
+    }
 }

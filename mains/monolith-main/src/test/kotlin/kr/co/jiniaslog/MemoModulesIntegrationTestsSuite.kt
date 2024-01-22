@@ -7,9 +7,9 @@ import kr.co.jiniaslog.memo.usecase.MemoAbstractUseCaseTest
 import org.junit.jupiter.api.Nested
 import org.springframework.beans.factory.annotation.Autowired
 
-class MemoModulesIntegrationTests : TestContainerAbstractSkeleton() {
+abstract class MemoModulesIntegrationTestsSuite : TestContainerAbstractSkeleton() {
     @Nested
-    inner class FolderUseCaseNeo4jTest
+    inner class `폴더 유스케이스 통합 테스트`
         @Autowired
         constructor(
             folderRepository: FolderRepository,
@@ -18,7 +18,7 @@ class MemoModulesIntegrationTests : TestContainerAbstractSkeleton() {
             )
 
     @Nested
-    inner class MemoUseCaseNeo4jTest
+    inner class `메모 유즈케이스 통합 테스트`
         @Autowired
         constructor(
             memoRepository: MemoRepository,

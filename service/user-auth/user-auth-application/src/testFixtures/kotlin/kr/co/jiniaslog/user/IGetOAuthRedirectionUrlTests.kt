@@ -2,15 +2,12 @@ package kr.co.jiniaslog.user
 
 import io.kotest.matchers.shouldNotBe
 import io.kotest.matchers.string.shouldContain
-import kr.co.jiniaslog.shared.SimpleUnitTestContext
 import kr.co.jiniaslog.user.application.usecase.IGetOAuthRedirectionUrl
 import kr.co.jiniaslog.user.domain.auth.provider.Provider
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.context.SpringBootTest
 
-@SpringBootTest
-class IGetOAuthRedirectionUrlTests : SimpleUnitTestContext() {
+abstract class IGetOAuthRedirectionUrlTests {
     @Autowired
     lateinit var sut: IGetOAuthRedirectionUrl
 

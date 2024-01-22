@@ -1,6 +1,11 @@
 plugins {
     springBootConventions
 }
+/**
+ * ###################################
+ * ## Monolith Bootstrap Dependency ##
+ * ###################################
+ */
 // cross-cutting concern for main boot, similar to infrastructure
 val shared = mutableListOf(
     project(Modules.Libs.GlobalLogging.path),
@@ -55,6 +60,7 @@ var integrationTest = mutableListOf(
     "org.testcontainers:mysql:1.19.3",
     "io.kotest.extensions:kotest-extensions-testcontainers:2.0.2",
     "io.rest-assured:rest-assured:5.4.0",
+    "org.springframework.cloud:spring-cloud-contract-wiremock:4.1.0"
 )
 
 dependencies {
@@ -69,13 +75,15 @@ dependencies {
     }
     testImplementation(testFixtures(project(Modules.Service.Memo.Adaptors.Persistence.path)))
     testImplementation(project(path = Modules.Service.Memo.Core.path, configuration = "testArtifact"))
+    testImplementation(testFixtures(project(Modules.Service.AuthUser.Application.path)))
 }
 
-tasks.register("testAll") {
-    dependsOn(moduleBlocks.map { it.tasks.named("test") })
-    dependsOn(tasks.test)
-}
-
-tasks.bootJar {
-    enabled = true
+tasks {
+    register("testAll") {
+        dependsOn(moduleBlocks.map { it.tasks.named("test") })
+        dependsOn(test)
+    }
+    bootJar {
+        enabled = true
+    }
 }

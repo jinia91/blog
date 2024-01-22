@@ -1,12 +1,10 @@
 package kr.co.jiniaslog.user.fakes
 
-import kr.co.jiniaslog.shared.core.annotation.CustomComponent
 import kr.co.jiniaslog.user.application.infra.UserRepository
 import kr.co.jiniaslog.user.domain.user.Email
 import kr.co.jiniaslog.user.domain.user.User
 import kr.co.jiniaslog.user.domain.user.UserId
 
-@CustomComponent
 class UserFakeRepository : UserRepository {
     private val users = mutableMapOf<UserId, User>()
 
@@ -29,5 +27,9 @@ class UserFakeRepository : UserRepository {
     override fun save(entity: User): User {
         users[entity.id] = entity
         return entity
+    }
+
+    fun tearDown() {
+        users.clear()
     }
 }

@@ -3,7 +3,7 @@ plugins {
     `kotlin-jpa`
 }
 
-group = "kr.co.jiniaslog.blog"
+group = "kr.co.jiniaslog.user"
 
 dependencies {
     implementation(project(Modules.Service.AuthUser.Application.path))

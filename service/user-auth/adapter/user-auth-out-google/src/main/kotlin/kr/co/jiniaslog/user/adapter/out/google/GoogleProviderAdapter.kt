@@ -9,14 +9,20 @@ import kr.co.jiniaslog.user.domain.user.Email
 import kr.co.jiniaslog.user.domain.user.NickName
 import mu.KotlinLogging
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.http.HttpEntity
+import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType
 import org.springframework.stereotype.Component
 import org.springframework.web.client.RestClient
+import org.springframework.web.client.RestTemplate
+import org.springframework.web.util.UriComponentsBuilder
+import kotlin.contracts.ExperimentalContracts
+import kotlin.contracts.contract
 
 private val log = KotlinLogging.logger { }
 
 @Component
-internal class GoogleProviderAdapter(
+ class GoogleProviderAdapter(
     @Value("\${oauth.google.redirect-url}")
     redirectUrl: String,
     @Value("\${oauth.google.token-url}")
@@ -48,6 +54,18 @@ internal class GoogleProviderAdapter(
     }
 
     override fun getUserInfo(code: AuthorizationCode): ProviderUserInfo {
+        val response = requestAccessToken(code)
+        val userInfo = requestUserInfo(response)
+
+        return ProviderUserInfo(
+            nickName = userInfo.name?.let { NickName(userInfo.name) } ?: NickName.UNKNOWN,
+            email = Email(userInfo.email!!),
+            picture = userInfo.picture?.let { Url(userInfo.picture) },
+            provider = Provider.GOOGLE,
+        )
+    }
+
+    private fun requestAccessToken(code: AuthorizationCode): GoogleAccessTokenResponse {
         val request =
             GoogleAccessTokenRequest(
                 code = code.value,
@@ -55,6 +73,7 @@ internal class GoogleProviderAdapter(
                 clientSecret = clientSecret,
                 redirectUri = redirectUrl,
             )
+        log.info { "request: $request" }
         val response =
             client.post()
                 .uri(tokenUrl.value)
@@ -64,6 +83,10 @@ internal class GoogleProviderAdapter(
                 .body(GoogleAccessTokenResponse::class.java)
 
         requireNotNull(response) { "구글 토큰 응답이 없습니다" }
+        return response
+    }
+
+    private fun requestUserInfo(response: GoogleAccessTokenResponse): GoogleUserInfo {
         val header = "Bearer ${response.accessToken}"
 
         val userInfo =
@@ -76,12 +99,6 @@ internal class GoogleProviderAdapter(
 
         requireNotNull(userInfo) { "구글 유저 정보가 없습니다" }
         requireNotNull(userInfo.email) { "구글 이메일이 없습니다" }
-
-        return ProviderUserInfo(
-            nickName = userInfo.name?.let { NickName(userInfo.name) } ?: NickName.UNKNOWN,
-            email = Email(userInfo.email),
-            picture = userInfo.picture?.let { Url(userInfo.picture) },
-            provider = Provider.GOOGLE,
-        )
+        return userInfo
     }
 }

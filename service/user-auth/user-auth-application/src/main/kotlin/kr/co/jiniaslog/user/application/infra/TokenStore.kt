@@ -12,4 +12,6 @@ interface TokenStore {
     )
 
     fun findByAuthTokens(userId: UserId): Triple<AccessToken, RefreshToken?, RefreshToken>?
+
+    fun delete(userId: UserId)
 }

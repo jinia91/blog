@@ -3,7 +3,7 @@ plugins {
     springBootConventions
 }
 
-group = "kr.co.jiniaslog.memo"
+group = "kr.co.jiniaslog.user"
 
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter-web")

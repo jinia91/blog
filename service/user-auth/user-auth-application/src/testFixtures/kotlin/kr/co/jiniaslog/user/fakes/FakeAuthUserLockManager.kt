@@ -1,6 +1,5 @@
 package kr.co.jiniaslog.user.fakes
 
-import kr.co.jiniaslog.shared.core.annotation.CustomComponent
 import kr.co.jiniaslog.user.application.infra.AuthUserLockManager
 import kr.co.jiniaslog.user.application.usecase.IRefreshToken
 import kr.co.jiniaslog.user.domain.user.UserId
@@ -8,7 +7,6 @@ import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.locks.ReentrantLock
 
-@CustomComponent
 class FakeAuthUserLockManager : AuthUserLockManager {
     private val locks = ConcurrentHashMap<UserId, ReentrantLock>()
 

@@ -3,22 +3,18 @@ package kr.co.jiniaslog.user
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
-import kr.co.jiniaslog.shared.SimpleUnitTestContext
+import kr.co.jiniaslog.user.application.infra.TokenStore
 import kr.co.jiniaslog.user.application.usecase.IRefreshToken
 import kr.co.jiniaslog.user.domain.auth.token.AccessToken
 import kr.co.jiniaslog.user.domain.auth.token.RefreshToken
 import kr.co.jiniaslog.user.domain.auth.token.TokenManger
 import kr.co.jiniaslog.user.domain.user.Role
 import kr.co.jiniaslog.user.domain.user.UserId
-import kr.co.jiniaslog.user.fakes.TokenFakeStore
-import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.context.SpringBootTest
 import java.util.concurrent.CompletableFuture
 
-@SpringBootTest
-class IRefreshTokenTests : SimpleUnitTestContext() {
+abstract class IRefreshTokenTests {
     @Autowired
     lateinit var sut: IRefreshToken
 
@@ -26,12 +22,7 @@ class IRefreshTokenTests : SimpleUnitTestContext() {
     lateinit var tokenManger: TokenManger
 
     @Autowired
-    lateinit var tokenStore: TokenFakeStore
-
-    @AfterEach
-    fun tearDownAll() {
-        tokenStore.tearDown()
-    }
+    lateinit var tokenStore: TokenStore
 
     @Test
     fun `포멧이 유효하지 않은 리프레시 토큰으로 갱신 요청을 하면 실패한다`() {
@@ -86,6 +77,9 @@ class IRefreshTokenTests : SimpleUnitTestContext() {
         // 갱신 체크
         info.accessToken.value shouldNotBe accessToken.value
         info.refreshToken.value shouldNotBe refreshToken.value
+
+        // tearDown
+        tokenStore.delete(userId)
     }
 
     @Test
@@ -113,6 +107,9 @@ class IRefreshTokenTests : SimpleUnitTestContext() {
         // 갱신 체크
         info.accessToken.value shouldNotBe accessToken.value
         info.refreshToken.value shouldNotBe tempRefreshToken.value
+
+        // tearDown
+        tokenStore.delete(userId)
     }
 
     @Test
@@ -150,5 +147,8 @@ class IRefreshTokenTests : SimpleUnitTestContext() {
 
         result.accessToken.value shouldBe result2.accessToken.value
         result.refreshToken.value shouldBe result2.refreshToken.value
+
+        // tearDown
+        tokenStore.delete(userId)
     }
 }

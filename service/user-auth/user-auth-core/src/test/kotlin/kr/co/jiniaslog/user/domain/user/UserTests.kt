@@ -3,8 +3,6 @@ package kr.co.jiniaslog.user.domain.user
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import kr.co.jiniaslog.shared.SimpleUnitTestContext
-import kr.co.jiniaslog.user.domain.auth.provider.Provider
-import kr.co.jiniaslog.user.domain.auth.provider.ProviderUserInfo
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 
@@ -19,14 +17,7 @@ class UserTests : SimpleUnitTestContext() {
 
             // when
             val sut =
-                User.newOne(
-                    ProviderUserInfo(
-                        nickName = nickName,
-                        email = email,
-                        picture = null,
-                        provider = Provider.GOOGLE,
-                    ),
-                )
+                User.newOne(nickName, email)
 
             // then
             sut shouldNotBe null
@@ -44,27 +35,14 @@ class UserTests : SimpleUnitTestContext() {
             val email = Email("jinia91@gmail.com")
 
             val sut =
-                User.newOne(
-                    ProviderUserInfo(
-                        nickName = nickName,
-                        email = email,
-                        picture = null,
-                        provider = Provider.GOOGLE,
-                    ),
-                )
+                User.newOne(nickName, email)
 
+            val newOne = NickName("12345678902")
             // when
-            sut.refreshWith(
-                ProviderUserInfo(
-                    nickName = NickName("12345678902"),
-                    email = email,
-                    picture = null,
-                    provider = Provider.GOOGLE,
-                ),
-            )
+            sut.refreshWith(newOne)
 
             // then
-            sut.nickName shouldBe NickName("12345678902")
+            sut.nickName shouldBe newOne
         }
     }
 }
