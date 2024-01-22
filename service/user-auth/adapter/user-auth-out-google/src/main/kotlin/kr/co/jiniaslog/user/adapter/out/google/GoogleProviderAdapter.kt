@@ -9,20 +9,14 @@ import kr.co.jiniaslog.user.domain.user.Email
 import kr.co.jiniaslog.user.domain.user.NickName
 import mu.KotlinLogging
 import org.springframework.beans.factory.annotation.Value
-import org.springframework.http.HttpEntity
-import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType
 import org.springframework.stereotype.Component
 import org.springframework.web.client.RestClient
-import org.springframework.web.client.RestTemplate
-import org.springframework.web.util.UriComponentsBuilder
-import kotlin.contracts.ExperimentalContracts
-import kotlin.contracts.contract
 
 private val log = KotlinLogging.logger { }
 
 @Component
- class GoogleProviderAdapter(
+class GoogleProviderAdapter(
     @Value("\${oauth.google.redirect-url}")
     redirectUrl: String,
     @Value("\${oauth.google.token-url}")

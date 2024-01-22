@@ -8,8 +8,7 @@ import kr.co.jiniaslog.user.ISignInOAuthUserTests
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Nested
 
-abstract class UserUseCasesIntegrationTestsSuite: TestContainerAbstractSkeleton() {
-
+abstract class UserUseCasesIntegrationTestsSuite : TestContainerAbstractSkeleton() {
     @Nested
     inner class IGetOAuthRedirectionUrlWithIntegrationTests : IGetOAuthRedirectionUrlTests()
 
@@ -25,48 +24,49 @@ abstract class UserUseCasesIntegrationTestsSuite: TestContainerAbstractSkeleton(
         @JvmStatic
         @BeforeAll
         fun setupWireMock() {
-            googleOauthStub = WireMockServer(7779).apply {
-                stubFor(
-                    WireMock.post(WireMock.urlEqualTo("/oauth2/token"))
-                        .willReturn(
-                            WireMock.aResponse()
-                                .withStatus(200)
-                                .withHeader("Content-Type", "application/json")
-                                .withHeader("Content-Length", "200")
-                                .withBody(
-                                    """
-                                    {
-                                      "access_token": "accessToken_66037446f5e2",
-                                      "expires_in": 100,
-                                      "scope": "scope_70804e9d3fbe",
-                                      "token_type": "tokenType_5f944efd296c",
-                                      "id_token": "idToken_287fdd94b903"
-                                    }
-                                    """.trimIndent(),
-                                ),
-                        ),
-                )
+            googleOauthStub =
+                WireMockServer(7779).apply {
+                    stubFor(
+                        WireMock.post(WireMock.urlEqualTo("/oauth2/token"))
+                            .willReturn(
+                                WireMock.aResponse()
+                                    .withStatus(200)
+                                    .withHeader("Content-Type", "application/json")
+                                    .withHeader("Content-Length", "200")
+                                    .withBody(
+                                        """
+                                        {
+                                          "access_token": "accessToken_66037446f5e2",
+                                          "expires_in": 100,
+                                          "scope": "scope_70804e9d3fbe",
+                                          "token_type": "tokenType_5f944efd296c",
+                                          "id_token": "idToken_287fdd94b903"
+                                        }
+                                        """.trimIndent(),
+                                    ),
+                            ),
+                    )
 
-                stubFor(
-                    WireMock.get(WireMock.urlEqualTo("/oauth2/v3/userinfo"))
-                        .willReturn(
-                            WireMock.aResponse()
-                                .withStatus(200)
-                                .withHeader("Content-Type", "application/json")
-                                .withBody(
-                                    """
-                                    {
-                                      "email": "testUser@google.com",
-                                      "name": "testUser",
-                                      "picture": "picture_c5fb4b173dc6"
-                                    }                            
-                                    """.trimIndent(),
-                                ),
-                        ),
-                )
+                    stubFor(
+                        WireMock.get(WireMock.urlEqualTo("/oauth2/v3/userinfo"))
+                            .willReturn(
+                                WireMock.aResponse()
+                                    .withStatus(200)
+                                    .withHeader("Content-Type", "application/json")
+                                    .withBody(
+                                        """
+                                        {
+                                          "email": "testUser@google.com",
+                                          "name": "testUser",
+                                          "picture": "picture_c5fb4b173dc6"
+                                        }                            
+                                        """.trimIndent(),
+                                    ),
+                            ),
+                    )
 
-                start()
-            }
+                    start()
+                }
         }
     }
 }
