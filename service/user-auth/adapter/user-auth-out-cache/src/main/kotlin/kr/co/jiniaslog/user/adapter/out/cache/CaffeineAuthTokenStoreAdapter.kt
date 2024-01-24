@@ -14,7 +14,7 @@ internal class CaffeineAuthTokenStoreAdapter : TokenStore {
     private val cache: Cache<String, Pair<AccessToken, RefreshToken>> = Caffeine.newBuilder().build()
     private val tempCache: Cache<String, RefreshToken> =
         Caffeine.newBuilder()
-            .expireAfterWrite(5, TimeUnit.SECONDS)
+            .expireAfterWrite(3, TimeUnit.SECONDS)
             .build()
 
     override fun save(

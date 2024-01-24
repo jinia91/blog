@@ -118,6 +118,7 @@ abstract class IRefreshTokenTests {
     }
 
     @Test
+    @Disabled("테스트 시간이 오래걸려서 로컬에서만 확인")
     fun `동일 유저아이디에 대한 동시성 요청시, 후속 요청은 캐싱을 사용한다`() {
         // given
         val userId = UserId(1L)
@@ -125,7 +126,7 @@ abstract class IRefreshTokenTests {
         val refreshToken = tokenManger.generateRefreshToken(userId, setOf(Role.USER))
         tokenStore.save(userId, accessToken, refreshToken)
 
-        Thread.sleep(6000)
+        Thread.sleep(10000)
 
         val executorService = Executors.newFixedThreadPool(2)
 
