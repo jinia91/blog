@@ -1,12 +1,14 @@
 package kr.co.jiniaslog.user.fakes
 
+import java.time.LocalDateTime
+import kr.co.jiniaslog.user.application.infra.AuthTokenInfo
 import kr.co.jiniaslog.user.application.infra.TokenStore
 import kr.co.jiniaslog.user.domain.auth.token.AccessToken
 import kr.co.jiniaslog.user.domain.auth.token.RefreshToken
 import kr.co.jiniaslog.user.domain.user.UserId
 
 class TokenFakeStore : TokenStore {
-    private val tokens = mutableMapOf<UserId, Triple<AccessToken, RefreshToken, RefreshToken>>()
+    private val tokens = mutableMapOf<UserId, Pair<AuthTokenInfo, LocalDateTime>>()
 
     override fun save(
         userId: UserId,
@@ -14,14 +16,28 @@ class TokenFakeStore : TokenStore {
         refreshToken: RefreshToken,
     ) {
         if (tokens.containsKey(userId)) {
-            tokens[userId] = Triple(accessToken, tokens[userId]!!.third, refreshToken)
+            tokens[userId] = AuthTokenInfo(
+                accessToken = accessToken,
+                oldRefreshToken = tokens[userId]?.first?.newRefreshToken,
+                newRefreshToken = refreshToken,
+            ) to LocalDateTime.now()
         } else {
-            tokens[userId] = Triple(accessToken, refreshToken, refreshToken)
+            tokens[userId] = AuthTokenInfo(
+                accessToken = accessToken,
+                oldRefreshToken = null,
+                newRefreshToken = refreshToken,
+            ) to LocalDateTime.now()
         }
     }
 
-    override fun findByUserId(userId: UserId): Triple<AccessToken, RefreshToken, RefreshToken>? {
-        return tokens[userId]
+    override fun findByUserId(userId: UserId): AuthTokenInfo? {
+        return tokens[userId]?.let {
+            if(LocalDateTime.now() < it.second.plusSeconds(5)) {
+                it.first
+            } else {
+                it.first.copy(oldRefreshToken = null)
+            }
+        }
     }
 
     override fun delete(userId: UserId) {

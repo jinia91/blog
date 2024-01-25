@@ -10,13 +10,13 @@ import org.junit.jupiter.api.Nested
 
 abstract class UserUseCasesIntegrationTestsSuite : TestContainerAbstractSkeleton() {
     @Nested
-    inner class IGetOAuthRedirectionUrlWithIntegrationTests : IGetOAuthRedirectionUrlTests()
+    inner class `인증을 위한 리디렉션 url 조회 테스트` : IGetOAuthRedirectionUrlTests()
 
     @Nested
-    inner class IRefreshTokenWithIntegrationTests : IRefreshTokenTests()
+    inner class `리프레시 토큰을 이용한 토큰 재발급 테스트` : IRefreshTokenTests()
 
     @Nested
-    inner class IGetUserWithIntegrationTests : ISignInOAuthUserTests()
+    inner class `유저 인증 테스트` : ISignInOAuthUserTests()
 
     companion object {
         private lateinit var googleOauthStub: WireMockServer

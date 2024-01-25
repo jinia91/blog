@@ -1,6 +1,7 @@
 package kr.co.jiniaslog.user.application
 
 import kr.co.jiniaslog.shared.core.annotation.UseCaseInteractor
+import kr.co.jiniaslog.user.application.infra.AuthTokenInfo
 import kr.co.jiniaslog.user.application.infra.AuthUserLockManager
 import kr.co.jiniaslog.user.application.infra.ProviderResolver
 import kr.co.jiniaslog.user.application.infra.TokenStore
@@ -79,12 +80,12 @@ class UserAuthService(
             val storedAuthToken = tokenStore.findByUserId(userId)
             validateRefreshToken(storedAuthToken, refreshToken)
 
-            val isRecentlyIssued = storedAuthToken.second == refreshToken
+            val isRecentlyIssued = storedAuthToken.oldRefreshToken == refreshToken
             if (isRecentlyIssued) {
                 log.info { "recently issued refresh token. userId: $userId" }
                 return IRefreshToken.Info(
-                    accessToken = storedAuthToken.first,
-                    refreshToken = storedAuthToken.third,
+                    accessToken = storedAuthToken.accessToken,
+                    refreshToken = storedAuthToken.newRefreshToken,
                 )
             }
 
@@ -116,8 +117,8 @@ class UserAuthService(
         validateRefreshToken(tokens, refreshToken)
 
         return IRefreshToken.Info(
-            accessToken = tokens.first,
-            refreshToken = tokens.third,
+            accessToken = tokens.accessToken,
+            refreshToken = tokens.newRefreshToken,
         )
     }
 
@@ -141,14 +142,14 @@ class UserAuthService(
 
     @OptIn(ExperimentalContracts::class)
     private fun validateRefreshToken(
-        foundAuthTokens: Triple<AccessToken, RefreshToken?, RefreshToken>?,
+        foundAuthTokens: AuthTokenInfo?,
         refreshToken: RefreshToken,
     ) {
         contract { returns() implies (foundAuthTokens != null) }
         requireNotNull(foundAuthTokens) { "refresh token should be managed in store" }
         require(
-            foundAuthTokens.third == refreshToken ||
-                foundAuthTokens.second == refreshToken,
+            foundAuthTokens.newRefreshToken == refreshToken ||
+                foundAuthTokens.oldRefreshToken == refreshToken,
         ) { "invalid refresh token" }
     }
 }

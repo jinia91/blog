@@ -8,6 +8,7 @@ import kr.co.jiniaslog.user.domain.auth.token.AccessToken
 import kr.co.jiniaslog.user.domain.auth.token.RefreshToken
 import kr.co.jiniaslog.user.domain.user.UserId
 import java.util.concurrent.TimeUnit
+import kr.co.jiniaslog.user.application.infra.AuthTokenInfo
 
 @PersistenceAdapter
 internal class CaffeineAuthTokenStoreAdapter : TokenStore {
@@ -29,13 +30,13 @@ internal class CaffeineAuthTokenStoreAdapter : TokenStore {
         cache.put(key, Pair(accessToken, refreshToken))
     }
 
-    override fun findByUserId(userId: UserId): Triple<AccessToken, RefreshToken?, RefreshToken>? {
+    override fun findByUserId(userId: UserId): AuthTokenInfo? {
         val key = userId.value.toString()
         val authTokens = cache.getIfPresent(key)
         val tempToken = tempCache.getIfPresent(key)
 
         return if (authTokens != null) {
-            Triple(authTokens.first, tempToken, authTokens.second)
+            AuthTokenInfo(authTokens.first, tempToken, authTokens.second)
         } else {
             null
         }

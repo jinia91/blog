@@ -17,7 +17,13 @@ interface TokenStore {
      * @param userId
      * @return Triple<엑세스 토큰, 이전 리프레시토큰?, 신규 리프레시 토큰> or null
      */
-    fun findByUserId(userId: UserId): Triple<AccessToken, RefreshToken?, RefreshToken>?
+    fun findByUserId(userId: UserId): AuthTokenInfo?
 
     fun delete(userId: UserId)
 }
+
+data class AuthTokenInfo(
+    val accessToken: AccessToken,
+    val oldRefreshToken: RefreshToken?,
+    val newRefreshToken: RefreshToken,
+)

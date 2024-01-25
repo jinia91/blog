@@ -1,6 +1,7 @@
 package kr.co.jiniaslog
 
 import io.restassured.RestAssured
+import java.util.stream.Stream
 import kr.co.jiniaslog.memo.Neo4jDbCleaner
 import kr.co.jiniaslog.utils.RdbCleaner
 import org.junit.jupiter.api.AfterEach
@@ -53,6 +54,7 @@ abstract class TestContainerAbstractSkeleton {
             MySQLContainer("mysql:8.0")
                 .withCommand(RDB_CHARSET, RDB_COLLATION)
                 .withDatabaseName("user")
+
 
         @DynamicPropertySource
         @JvmStatic
