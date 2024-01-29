@@ -46,7 +46,7 @@ class LogTracer {
                 traceIdHolder.set(TraceId.create(clientIP))
                 logBuffer.set(mutableListOf())
             } catch (e: Exception) {
-                traceIdHolder.set(TraceId.create("websocket"))
+                traceIdHolder.set(TraceId.create("not found ip"))
                 logBuffer.set(mutableListOf())
             }
         } else {

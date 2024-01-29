@@ -1,11 +1,14 @@
 package kr.co.jiniaslog.memo.adapter.inbound.http
 
 import kr.co.jiniaslog.memo.domain.folder.FolderId
+import kr.co.jiniaslog.memo.domain.memo.AuthorId
 import kr.co.jiniaslog.memo.queries.IGetFoldersAll
 import kr.co.jiniaslog.memo.queries.QueriesFolderFacade
+import kr.co.jiniaslog.memo.usecase.ICreateNewFolder
 import kr.co.jiniaslog.memo.usecase.IDeleteFoldersRecursively
 import kr.co.jiniaslog.memo.usecase.IMakeRelationShipFolderAndFolder
 import kr.co.jiniaslog.memo.usecase.UseCasesFolderFacade
+import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.CrossOrigin
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
@@ -21,6 +24,7 @@ private val log = mu.KotlinLogging.logger {}
 
 @RestController
 @RequestMapping("/api/v1/folders")
+@PreAuthorize("hasRole('ADMIN')")
 class FolderResources(
     private val folderUseCases: UseCasesFolderFacade,
     private val folderQueries: QueriesFolderFacade,
@@ -28,10 +32,10 @@ class FolderResources(
     @PostMapping()
     @CrossOrigin(origins = ["http://localhost:3000"])
     fun initFolder(
-        @RequestBody request: InitFolderRequest,
+        @AuthUserId userId: Long?,
     ): InitFolderResponse {
         val info =
-            folderUseCases.handle(request.toCommand())
+            folderUseCases.handle(ICreateNewFolder.Command(AuthorId(userId!!)))
         return InitFolderResponse(info.id.value, info.folderName.value)
     }
 
@@ -53,7 +57,10 @@ class FolderResources(
     ): MakeFolderRelationshipResponse {
         val info =
             folderUseCases.handle(
-                IMakeRelationShipFolderAndFolder.Command(parentFolderId?.let { FolderId(parentFolderId) }, FolderId(folderId)),
+                IMakeRelationShipFolderAndFolder.Command(
+                    parentFolderId?.let { FolderId(parentFolderId) },
+                    FolderId(folderId),
+                ),
             )
         return MakeFolderRelationshipResponse(info.parentFolderId?.value, info.childFolderId.value)
     }

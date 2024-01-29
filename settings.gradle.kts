@@ -10,16 +10,13 @@ include(
     // framework 의존성을 가지고 순수하게 애플리케이션을 실행시키는 main module
     "mains:monolith-main",
 
-    // framework의 실제 필요한 infra 모듈
-    "infra:monolith-infra",
-
     // 서비스 공용 라이브러리
     "libs:core-kernel",
     "libs:messaging-handler-generator",
     "libs:rdb-kernel",
-    "libs:http-kernel",
     "libs:messaging-kernel",
     "libs:global-logging",
+    "libs:snowflake-id-generator",
 
     // blog
     "service:blog:blog-core",
@@ -35,14 +32,21 @@ include(
     "service:memo:adapter:memo-in-websocket",
     "service:memo:adapter:memo-in-message",
     "service:memo:adapter:memo-in-batch",
-    "service:memo:adapter:memo-persistence",
+    "service:memo:adapter:memo-out-persistence",
 
     //media
     "service:media:media-core",
     "service:media:adapter:media-in-http",
     "service:media:adapter:media-out-github",
 
-    "service:user:core",
+    //user-auth
+    "service:user-auth:user-auth-core",
+    "service:user-auth:user-auth-application",
+    "service:user-auth:adapter:user-auth-in-http",
+    "service:user-auth:adapter:user-auth-out-google",
+    "service:user-auth:adapter:user-auth-out-persistence",
+    "service:user-auth:adapter:user-auth-out-cache",
+
     "service:comment",
     "service:media",
     "service:seo",

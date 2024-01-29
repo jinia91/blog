@@ -1,5 +1,7 @@
 package kr.co.jiniaslog.shared.core.domain
 
+import kr.co.jiniaslog.shared.core.domain.vo.ValueObject
+
 interface Repository<T : AggregateRoot<I>, I : ValueObject> {
     fun findById(id: I): T?
 
@@ -8,9 +10,4 @@ interface Repository<T : AggregateRoot<I>, I : ValueObject> {
     fun deleteById(id: I)
 
     fun save(entity: T): T
-}
-
-enum class FetchMode {
-    ALL,
-    NONE,
 }

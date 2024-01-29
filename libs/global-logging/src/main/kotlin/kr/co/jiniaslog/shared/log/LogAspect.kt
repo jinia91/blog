@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component
 @Component
 class LogAspect(private val logTracer: LogTracer) {
     // controller
-    @Around("execution(* kr.co.jiniaslog..*Controller.*(..))")
+    @Around("execution(* kr.co.jiniaslog..*Resources.*(..))")
     fun controllerLog(joinPoint: ProceedingJoinPoint): Any? {
         return doLog(joinPoint)
     }

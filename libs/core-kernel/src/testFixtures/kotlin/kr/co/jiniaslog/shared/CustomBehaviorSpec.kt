@@ -9,14 +9,13 @@ import kr.co.jiniaslog.shared.core.domain.IdUtils
 import java.util.concurrent.atomic.AtomicLong
 
 abstract class CustomBehaviorSpec : BehaviorSpec() {
-    protected val testTransactionHandler = TestTransactionHandler()
-
     override fun isolationMode() = IsolationMode.InstancePerTest
 
     override suspend fun afterEach(
         testCase: TestCase,
         result: TestResult,
     ) {
+        atomicSequence = AtomicLong(1)
         super.afterEach(testCase, result)
     }
 

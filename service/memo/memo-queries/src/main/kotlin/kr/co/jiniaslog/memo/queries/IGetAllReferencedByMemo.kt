@@ -4,7 +4,7 @@ import kr.co.jiniaslog.memo.domain.memo.MemoId
 import kr.co.jiniaslog.memo.domain.memo.MemoTitle
 
 interface IGetAllReferencedByMemo {
-    fun handle(query: Query): List<Info>
+    fun handle(query: Query): Info
 
     data class Query(
         val memoId: MemoId,

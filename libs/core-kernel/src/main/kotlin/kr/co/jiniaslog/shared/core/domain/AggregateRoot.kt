@@ -1,5 +1,7 @@
 package kr.co.jiniaslog.shared.core.domain
 
+import kr.co.jiniaslog.shared.core.domain.vo.ValueObject
+
 private val log = mu.KotlinLogging.logger {}
 
 abstract class AggregateRoot<out T : ValueObject> : DomainEntity<T>() {

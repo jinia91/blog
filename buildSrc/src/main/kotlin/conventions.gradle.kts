@@ -1,5 +1,4 @@
 import org.gradle.kotlin.dsl.kotlin
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     kotlin("jvm")
@@ -21,30 +20,43 @@ java {
     targetCompatibility = JavaVersion.VERSION_17
 }
 
-tasks.withType<KotlinCompile> {
-    kotlinOptions {
-        freeCompilerArgs = listOf("-Xjsr305=strict")
-        jvmTarget = "17"
-    }
-}
-
-tasks.withType<Test> {
-    useJUnitPlatform()
-}
-
-
-tasks.findByName("bootJar")?.let {
-    it.enabled = false
-}
-
-tasks.named<Jar>("jar") {
-    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-    enabled = true
-    archiveFileName.set("${project.parent?.parent?.name}-${project.parent?.name}-${project.name}.jar")
-}
-
 kotlinter {
     reporters = arrayOf("checkstyle", "plain")
+}
+
+tasks {
+    compileKotlin {
+        kotlinOptions {
+            freeCompilerArgs = listOf("-Xjsr305=strict")
+            jvmTarget = "17"
+        }
+    }
+
+    lintKotlinMain {
+        dependsOn("formatKotlinMain")
+    }
+
+    lintKotlinTest {
+        dependsOn("formatKotlinTest")
+    }
+
+    lintKotlinTestFixtures {
+        dependsOn("formatKotlinTestFixtures")
+    }
+
+    test {
+        useJUnitPlatform()
+    }
+
+    findByName("bootJar")?.let {
+        it.enabled = false
+    }
+
+    jar {
+        duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+        enabled = true
+        archiveFileName.set("${project.parent?.parent?.name}-${project.parent?.name}-${project.name}.jar")
+    }
 }
 
 dependencies {
@@ -54,6 +66,7 @@ dependencies {
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.16.0")
 
     // test dependencies
+    testImplementation("org.junit.jupiter:junit-jupiter-params:5.10.1")
     testImplementation("io.kotest:kotest-runner-junit5:5.8.0")
     testImplementation("io.kotest:kotest-assertions-core:5.8.0")
     testImplementation("io.mockk:mockk:1.13.8")

@@ -1,8 +1,8 @@
 package kr.co.jiniaslog.media.out.github
 
 import kr.co.jiniaslog.media.domain.ImageFile
-import kr.co.jiniaslog.media.domain.ImageUploadStrategy
 import kr.co.jiniaslog.media.domain.ImageUrl
+import kr.co.jiniaslog.media.outbound.ImageUploadStrategy
 import org.kohsuke.github.GitHubBuilder
 import org.springframework.stereotype.Component
 

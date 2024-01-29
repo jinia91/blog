@@ -2,7 +2,7 @@ package kr.co.jiniaslog.media.usecase.impl
 
 import kr.co.jiniaslog.media.domain.ImageFile
 import kr.co.jiniaslog.media.domain.ImageId
-import kr.co.jiniaslog.media.domain.ImageUploadStrategy
+import kr.co.jiniaslog.media.outbound.ImageUploadStrategy
 import kr.co.jiniaslog.media.usecase.IUploadImage
 import kr.co.jiniaslog.media.usecase.UseCasesImageFacade
 import kr.co.jiniaslog.shared.core.annotation.UseCaseInteractor

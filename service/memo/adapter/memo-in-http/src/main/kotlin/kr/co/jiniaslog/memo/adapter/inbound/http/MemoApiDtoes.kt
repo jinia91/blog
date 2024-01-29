@@ -5,7 +5,7 @@ import kr.co.jiniaslog.memo.queries.IGetAllReferencedByMemo
 import kr.co.jiniaslog.memo.queries.IGetAllReferencesByMemo
 import kr.co.jiniaslog.memo.queries.IGetMemoById
 import kr.co.jiniaslog.memo.queries.IRecommendRelatedMemo
-import kr.co.jiniaslog.memo.usecase.IUpdateMemo
+import kr.co.jiniaslog.memo.usecase.IMakeRelationShipFolderAndMemo
 
 data class MemoResponse(
     val memos: List<IGetAllMemos.Info>,
@@ -59,7 +59,7 @@ fun IGetMemoById.Info.toResponse(): GetMemoByIdResponse {
 }
 
 data class InitMemoRequest(
-    val authorId: Long,
+    val parentFolderId: Long?,
 )
 
 data class InitMemoResponse(
@@ -108,12 +108,9 @@ fun IGetAllReferencedByMemo.Info.toResponse(): GetAllReferencedByMemoResponse {
     )
 }
 
-data class AddReferenceResponse(
-    val memoId: Long,
-)
-
-fun IUpdateMemo.Info.toResponse(): AddReferenceResponse {
-    return AddReferenceResponse(
-        memoId = this.id.value,
+fun IMakeRelationShipFolderAndMemo.Info.toResponse(): AddParentFolderResponse {
+    return AddParentFolderResponse(
+        memoId = this.memoId.value,
+        folderId = this.folderId?.value,
     )
 }
