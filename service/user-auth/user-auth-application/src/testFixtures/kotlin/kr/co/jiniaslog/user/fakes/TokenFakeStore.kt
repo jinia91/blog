@@ -1,11 +1,11 @@
 package kr.co.jiniaslog.user.fakes
 
-import java.time.LocalDateTime
 import kr.co.jiniaslog.user.application.infra.AuthTokenInfo
 import kr.co.jiniaslog.user.application.infra.TokenStore
 import kr.co.jiniaslog.user.domain.auth.token.AccessToken
 import kr.co.jiniaslog.user.domain.auth.token.RefreshToken
 import kr.co.jiniaslog.user.domain.user.UserId
+import java.time.LocalDateTime
 
 class TokenFakeStore : TokenStore {
     private val tokens = mutableMapOf<UserId, Pair<AuthTokenInfo, LocalDateTime>>()
@@ -32,7 +32,7 @@ class TokenFakeStore : TokenStore {
 
     override fun findByUserId(userId: UserId): AuthTokenInfo? {
         return tokens[userId]?.let {
-            if(LocalDateTime.now() < it.second.plusSeconds(5)) {
+            if (LocalDateTime.now() < it.second.plusSeconds(5)) {
                 it.first
             } else {
                 it.first.copy(oldRefreshToken = null)

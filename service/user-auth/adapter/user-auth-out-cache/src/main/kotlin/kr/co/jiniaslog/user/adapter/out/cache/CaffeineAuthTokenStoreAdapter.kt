@@ -3,12 +3,12 @@ package kr.co.jiniaslog.user.adapter.out.cache
 import com.github.benmanes.caffeine.cache.Cache
 import com.github.benmanes.caffeine.cache.Caffeine
 import kr.co.jiniaslog.shared.core.annotation.PersistenceAdapter
+import kr.co.jiniaslog.user.application.infra.AuthTokenInfo
 import kr.co.jiniaslog.user.application.infra.TokenStore
 import kr.co.jiniaslog.user.domain.auth.token.AccessToken
 import kr.co.jiniaslog.user.domain.auth.token.RefreshToken
 import kr.co.jiniaslog.user.domain.user.UserId
 import java.util.concurrent.TimeUnit
-import kr.co.jiniaslog.user.application.infra.AuthTokenInfo
 
 @PersistenceAdapter
 internal class CaffeineAuthTokenStoreAdapter : TokenStore {
