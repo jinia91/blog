@@ -7,10 +7,10 @@ interface ICreateNewTag {
     fun handle(command: Command): Info
 
     data class Command(
-        val name: TagName
+        val name: TagName,
     )
 
     data class Info(
-        val id: TagId
+        val id: TagId,
     )
 }

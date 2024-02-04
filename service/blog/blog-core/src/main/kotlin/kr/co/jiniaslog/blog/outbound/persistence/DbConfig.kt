@@ -7,13 +7,13 @@ import org.springframework.boot.jdbc.DataSourceBuilder
 import org.springframework.boot.orm.jpa.EntityManagerFactoryBuilder
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.context.annotation.Primary
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories
 import org.springframework.orm.jpa.JpaTransactionManager
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean
 import org.springframework.transaction.PlatformTransactionManager
 import org.springframework.transaction.annotation.EnableTransactionManagement
 import javax.sql.DataSource
-import org.springframework.context.annotation.Primary
 
 object BlogDb {
     const val BASE_PACKAGE = "kr.co.jiniaslog.blog"
@@ -43,7 +43,7 @@ class BlogDatasourceConfig {
     @Primary
     fun blogEntityManagerFactory(
         @Qualifier(BlogDb.DATASOURCE) dataSource: DataSource,
-        builder: EntityManagerFactoryBuilder
+        builder: EntityManagerFactoryBuilder,
     ): LocalContainerEntityManagerFactoryBean {
         return builder
             .dataSource(dataSource)

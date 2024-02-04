@@ -12,6 +12,6 @@ interface IChangeCategoryTitle {
     )
 
     data class Info(
-        val id: CategoryId
+        val id: CategoryId,
     )
 }

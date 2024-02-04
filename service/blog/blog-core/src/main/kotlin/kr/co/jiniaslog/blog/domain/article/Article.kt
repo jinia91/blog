@@ -17,13 +17,13 @@ import kr.co.jiniaslog.shared.core.domain.IdUtils
 class Article private constructor(
     id: ArticleId,
     memoRefId: MemoId,
-    authorId : UserId,
+    authorId: UserId,
     articleContents: ArticleContents,
     tags: MutableSet<Tagging>,
     categoryId: CategoryId,
     hit: Int,
     likes: List<UserLike>,
-) : AggregateRoot<ArticleId>(){
+) : AggregateRoot<ArticleId>() {
     @Id
     @Column(name = "article_id")
     override val id: ArticleId = id
@@ -40,7 +40,7 @@ class Article private constructor(
     @AttributeOverrides(
         AttributeOverride(name = "title", column = Column(name = "title")),
         AttributeOverride(name = "contents", column = Column(name = "contents")),
-        AttributeOverride(name = "thumbnailUrl", column = Column(name = "thumbnail_url"))
+        AttributeOverride(name = "thumbnailUrl", column = Column(name = "thumbnail_url")),
     )
     var articleContents: ArticleContents = articleContents
 
@@ -74,5 +74,4 @@ class Article private constructor(
             )
         }
     }
-
 }

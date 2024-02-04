@@ -11,7 +11,7 @@ interface ArticleJpaRepository : JpaRepository<Article, ArticleId>
 
 @org.springframework.stereotype.Repository
 class ArticleRepositoryAdapter(
-    private val articleJpaRepository: ArticleJpaRepository
+    private val articleJpaRepository: ArticleJpaRepository,
 ) : ArticleRepository {
     override fun save(article: Article): Article {
         return articleJpaRepository.save(article)
@@ -29,4 +29,3 @@ class ArticleRepositoryAdapter(
         articleJpaRepository.deleteById(id)
     }
 }
-

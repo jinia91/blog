@@ -12,6 +12,6 @@ interface ILikeArticle {
     )
 
     data class Info(
-        val id: ArticleId
+        val id: ArticleId,
     )
 }

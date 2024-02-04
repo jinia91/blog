@@ -8,17 +8,17 @@ import kr.co.jiniaslog.blog.domain.tag.TagId
 import kr.co.jiniaslog.blog.domain.user.UserId
 
 interface IPostNewArticle {
-    fun handle(command : Command) : Info
+    fun handle(command: Command): Info
 
     data class Command(
-        val memoRefId : MemoId,
-        val authorId : UserId,
+        val memoRefId: MemoId,
+        val authorId: UserId,
         val categoryId: CategoryId,
         val articleContents: ArticleContents,
-        val tags : List<TagId>,
+        val tags: List<TagId>,
     )
 
     data class Info(
-        val id : ArticleId
+        val id: ArticleId,
     )
 }

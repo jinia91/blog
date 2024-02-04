@@ -40,7 +40,7 @@ class UserDatasourceConfig {
     @Bean
     fun userEntityManagerFactory(
         @Qualifier(UserDb.DATASOURCE) dataSource: DataSource,
-        builder: EntityManagerFactoryBuilder
+        builder: EntityManagerFactoryBuilder,
     ): LocalContainerEntityManagerFactoryBean {
         return builder
             .dataSource(dataSource)

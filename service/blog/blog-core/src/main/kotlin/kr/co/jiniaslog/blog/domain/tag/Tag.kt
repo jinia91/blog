@@ -7,13 +7,13 @@ import kr.co.jiniaslog.shared.core.domain.AggregateRoot
 
 @Entity
 class Tag private constructor(
-    id : TagId,
-    name : TagName
+    id: TagId,
+    name: TagName,
 ) : AggregateRoot<TagId>() {
     @Id
     @Column(name = "tag_id")
     override val id: TagId = id
 
     @Column(name = "tag_name")
-    val tagName : TagName = name
+    val tagName: TagName = name
 }

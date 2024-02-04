@@ -39,8 +39,11 @@ class Category private constructor(
         this.categoryTitle = categoryTitle
     }
 
-    fun changeHierarchy(parent: Category, sortingPoint: Int) {
-        require(sortingPoint > 0) { "sortingPoint must be positive"}
+    fun changeHierarchy(
+        parent: Category,
+        sortingPoint: Int,
+    ) {
+        require(sortingPoint > 0) { "sortingPoint must be positive" }
         require(parent.id != this.id) { "parent must be different from self" }
         require(parent.parent == null) { "parent must be root" }
         this.parent = parent

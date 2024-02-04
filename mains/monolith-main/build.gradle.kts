@@ -74,6 +74,7 @@ dependencies {
         testImplementation(it)
     }
     testImplementation(testFixtures(project(Modules.Service.Memo.Adaptors.Persistence.path)))
+    testImplementation(project(path = Modules.Service.Memo.Core.path, configuration = "testArtifact"))
     testImplementation(testFixtures(project(Modules.Service.AuthUser.Application.path)))
 }
 

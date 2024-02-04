@@ -9,10 +9,10 @@ interface ICreateNewCategory {
     data class Command(
         val title: CategoryTitle,
         val parentId: CategoryId?,
-        val sortingPoint : Int
+        val sortingPoint: Int,
     )
 
     data class Info(
-        val id: CategoryId
+        val id: CategoryId,
     )
 }
