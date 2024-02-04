@@ -2,6 +2,8 @@ package kr.co.jiniaslog
 
 import kr.co.jiniaslog.memo.outbound.FolderRepository
 import kr.co.jiniaslog.memo.outbound.MemoRepository
+import kr.co.jiniaslog.memo.usecase.AbstractFolderUseCaseTests
+import kr.co.jiniaslog.memo.usecase.MemoAbstractUseCaseTest
 import org.junit.jupiter.api.Nested
 import org.springframework.beans.factory.annotation.Autowired
 
