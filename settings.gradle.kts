@@ -48,7 +48,6 @@ include(
     "service:user-auth:adapter:user-auth-out-cache",
 
     "service:comment",
-    "service:media",
     "service:seo",
     "service:message-nexus",
 )

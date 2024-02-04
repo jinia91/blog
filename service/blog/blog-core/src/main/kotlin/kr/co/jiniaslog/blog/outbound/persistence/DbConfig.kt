@@ -1,4 +1,4 @@
-package kr.co.jiniaslog.user.adapter.out.mysql
+package kr.co.jiniaslog.blog.outbound.persistence
 
 import jakarta.persistence.EntityManagerFactory
 import org.springframework.beans.factory.annotation.Qualifier
@@ -13,49 +13,53 @@ import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean
 import org.springframework.transaction.PlatformTransactionManager
 import org.springframework.transaction.annotation.EnableTransactionManagement
 import javax.sql.DataSource
+import org.springframework.context.annotation.Primary
 
-object UserDb {
-    const val BASE_PACKAGE = "kr.co.jiniaslog.user.adapter.out.mysql"
-    const val DATASOURCE_PREFIX = "spring.datasource.user"
-    const val ENTITY_MANAGER_FACTORY = "userEntityManagerFactory"
-    const val DATASOURCE = "userDatasource"
-    const val PERSISTENT_UNIT = "userEntityManager"
-    const val TRANSACTION_MANAGER = "userTransactionManager"
+object BlogDb {
+    const val BASE_PACKAGE = "kr.co.jiniaslog.blog"
+    const val DATASOURCE_PREFIX = "spring.datasource.blog"
+    const val ENTITY_MANAGER_FACTORY = "blogEntityManagerFactory"
+    const val DATASOURCE = "blogDatasource"
+    const val PERSISTENT_UNIT = "blogEntityManager"
+    const val TRANSACTION_MANAGER = "blogTransactionManager"
 }
 
 @Configuration
 @EnableTransactionManagement
 @EnableJpaRepositories(
-    entityManagerFactoryRef = UserDb.ENTITY_MANAGER_FACTORY,
-    transactionManagerRef = UserDb.TRANSACTION_MANAGER,
-    basePackages = [UserDb.BASE_PACKAGE],
+    entityManagerFactoryRef = BlogDb.ENTITY_MANAGER_FACTORY,
+    transactionManagerRef = BlogDb.TRANSACTION_MANAGER,
+    basePackages = [BlogDb.BASE_PACKAGE],
 )
-class UserDatasourceConfig {
+class BlogDatasourceConfig {
     @Bean
-    @ConfigurationProperties(prefix = UserDb.DATASOURCE_PREFIX)
-    fun userDatasource(): DataSource {
+    @Primary
+    @ConfigurationProperties(prefix = BlogDb.DATASOURCE_PREFIX)
+    fun blogDatasource(): DataSource {
         return DataSourceBuilder.create().build()
     }
 
     @Bean
-    fun userEntityManagerFactory(
-        @Qualifier(UserDb.DATASOURCE) dataSource: DataSource,
+    @Primary
+    fun blogEntityManagerFactory(
+        @Qualifier(BlogDb.DATASOURCE) dataSource: DataSource,
         builder: EntityManagerFactoryBuilder
     ): LocalContainerEntityManagerFactoryBean {
         return builder
             .dataSource(dataSource)
-            .packages(UserDb.BASE_PACKAGE)
+            .packages(BlogDb.BASE_PACKAGE)
             .properties(mapOf("hibernate.hbm2ddl.auto" to "create-drop"))
             .build()
     }
 
     @Bean
-    fun userTransactionManager(
-        @Qualifier(UserDb.ENTITY_MANAGER_FACTORY) entityManagerFactory: EntityManagerFactory,
+    @Primary
+    fun blogTransactionManager(
+        @Qualifier(BlogDb.ENTITY_MANAGER_FACTORY) entityManagerFactory: EntityManagerFactory,
     ): PlatformTransactionManager {
         val transactionManager = JpaTransactionManager()
         transactionManager.entityManagerFactory = entityManagerFactory
-        transactionManager.persistenceUnitName = UserDb.PERSISTENT_UNIT
+        transactionManager.persistenceUnitName = BlogDb.PERSISTENT_UNIT
 
         return transactionManager
     }
