@@ -20,11 +20,12 @@ data class ArticlePostRequest(
             memoRefId = MemoId(memoRefId),
             authorId = UserId(userId),
             categoryId = CategoryId(categoryId),
-            articleContents = ArticleContents(
-                title = title,
-                contents = contents,
-                thumbnailUrl = thumbnailUrl,
-            ),
+            articleContents =
+                ArticleContents(
+                    title = title,
+                    contents = contents,
+                    thumbnailUrl = thumbnailUrl,
+                ),
             tags = tags.map { TagId(it) },
         )
     }

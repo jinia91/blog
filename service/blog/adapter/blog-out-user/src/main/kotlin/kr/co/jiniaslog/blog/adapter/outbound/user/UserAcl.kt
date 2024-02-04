@@ -7,7 +7,7 @@ import kr.co.jiniaslog.user.adapter.inbound.acl.UserAclInboundAdapter
 
 @CustomComponent
 class UserAcl(
-    private val userQueries: UserAclInboundAdapter
+    private val userQueries: UserAclInboundAdapter,
 ) : UserService {
     override fun isExistUser(id: UserId): Boolean {
         return userQueries.isExistUser(id.value)

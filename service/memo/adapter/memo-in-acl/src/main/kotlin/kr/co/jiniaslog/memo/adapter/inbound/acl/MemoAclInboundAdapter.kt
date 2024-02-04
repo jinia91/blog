@@ -7,10 +7,11 @@ import org.springframework.stereotype.Controller
 
 @Controller
 class MemoAclInboundAdapter(
-    private val memoQueries: QueriesMemoFacade
+    private val memoQueries: QueriesMemoFacade,
 ) {
     fun isExistMemo(id: Long): Boolean {
         return memoQueries.handle(
-            ICheckMemoExisted.Query(MemoId(id)))
+            ICheckMemoExisted.Query(MemoId(id)),
+        )
     }
 }

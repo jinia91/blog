@@ -7,7 +7,7 @@ import kr.co.jiniaslog.shared.core.annotation.CustomComponent
 
 @CustomComponent
 class MemoAcl(
-    private val memoQueries: MemoAclInboundAdapter
+    private val memoQueries: MemoAclInboundAdapter,
 ) : MemoService {
     override fun isExistMemo(id: MemoId): Boolean {
         return memoQueries.isExistMemo(id.value)

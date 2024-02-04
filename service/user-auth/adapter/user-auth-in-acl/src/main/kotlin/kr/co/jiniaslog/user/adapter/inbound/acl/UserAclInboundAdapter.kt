@@ -7,7 +7,7 @@ import org.springframework.stereotype.Controller
 
 @Controller
 class UserAclInboundAdapter(
-    private val userQueries: UseCasesUserAuthFacade
+    private val userQueries: UseCasesUserAuthFacade,
 ) {
     fun isExistUser(id: Long): Boolean {
         return userQueries.handle(ICheckUserExisted.Command(UserId(id)))
