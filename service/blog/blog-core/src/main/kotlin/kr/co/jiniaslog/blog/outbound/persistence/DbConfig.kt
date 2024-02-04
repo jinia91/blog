@@ -53,7 +53,6 @@ class BlogDatasourceConfig {
     }
 
     @Bean
-    @Primary
     fun blogTransactionManager(
         @Qualifier(BlogDb.ENTITY_MANAGER_FACTORY) entityManagerFactory: EntityManagerFactory,
     ): PlatformTransactionManager {
