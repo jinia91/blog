@@ -10,9 +10,8 @@ services:
       - internal-network
     environment:
       MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
-      MYSQL_USER: "user"
-      MYSQL_PASSWORD: "password"
-      MYSQL_DATABASE: "blog_core"
+    volumes:
+      - ./sql/init.sql:/docker-entrypoint-initdb.d/init.sql
     healthcheck:
       test: "mysqladmin ping --silent"
       interval: 1s
