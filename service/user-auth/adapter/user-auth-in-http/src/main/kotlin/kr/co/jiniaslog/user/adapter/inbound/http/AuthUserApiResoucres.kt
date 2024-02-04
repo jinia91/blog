@@ -1,4 +1,4 @@
-package kr.co.jiniaslog.memo.inbound.http
+package kr.co.jiniaslog.user.adapter.inbound.http
 
 data class RedirectUrlResponse(
     val url: String,

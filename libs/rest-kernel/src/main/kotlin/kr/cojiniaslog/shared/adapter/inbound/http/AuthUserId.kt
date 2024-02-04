@@ -1,4 +1,4 @@
-package kr.co.jiniaslog.memo.adapter.inbound.http
+package kr.cojiniaslog.shared.adapter.inbound.http
 
 /**
  * Auth user id

@@ -13,8 +13,8 @@ interface ArticleJpaRepository : JpaRepository<Article, ArticleId>
 class ArticleRepositoryAdapter(
     private val articleJpaRepository: ArticleJpaRepository,
 ) : ArticleRepository {
-    override fun save(article: Article): Article {
-        return articleJpaRepository.save(article)
+    override fun save(entity: Article): Article {
+        return articleJpaRepository.save(entity)
     }
 
     override fun findById(id: ArticleId): Article? {

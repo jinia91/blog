@@ -1,4 +1,4 @@
-package kr.co.jiniaslog.memo.inbound.http
+package kr.co.jiniaslog.user.adapter.inbound.http
 
 import kr.co.jiniaslog.user.application.usecase.IGetOAuthRedirectionUrl
 import kr.co.jiniaslog.user.application.usecase.IRefreshToken
