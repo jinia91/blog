@@ -25,7 +25,7 @@ class ArticleResources(
         val info = articleFacade.handle(request.toCommand(userId))
 
         return ResponseEntity
-            .created(URI("/api/v1/articles/${info.id.value}"))
-            .body(ArticlePostResponse(info.id.value))
+            .created(URI("/api/v1/articles/${info.articleId.value}"))
+            .body(ArticlePostResponse(info.articleId.value))
     }
 }

@@ -3,26 +3,35 @@ package kr.co.jiniaslog.blog.domain.article
 import jakarta.persistence.AttributeOverride
 import jakarta.persistence.AttributeOverrides
 import jakarta.persistence.Column
+import jakarta.persistence.Convert
+import jakarta.persistence.Converter
 import jakarta.persistence.ElementCollection
+import jakarta.persistence.Embedded
 import jakarta.persistence.Entity
 import jakarta.persistence.Id
+import jakarta.persistence.PrePersist
+import jakarta.persistence.PreUpdate
+import jakarta.validation.constraints.Negative
+import jakarta.validation.constraints.Positive
+import jakarta.validation.constraints.PositiveOrZero
 import kr.co.jiniaslog.blog.domain.category.CategoryId
 import kr.co.jiniaslog.blog.domain.memo.MemoId
 import kr.co.jiniaslog.blog.domain.tag.TagId
 import kr.co.jiniaslog.blog.domain.user.UserId
+import kr.co.jiniaslog.blog.outbound.persistence.MemoIdConverter
 import kr.co.jiniaslog.shared.core.domain.AggregateRoot
 import kr.co.jiniaslog.shared.core.domain.IdUtils
 
 @Entity
 class Article private constructor(
     id: ArticleId,
-    memoRefId: MemoId,
+    memoRefId: MemoId?,
     authorId: UserId,
     articleContents: ArticleContents,
     tags: MutableSet<Tagging>,
     categoryId: CategoryId,
     hit: Int,
-    likes: List<UserLike>,
+    likes: MutableSet<UserLike>,
 ) : AggregateRoot<ArticleId>() {
     @Id
     @Column(name = "article_id")
@@ -31,11 +40,14 @@ class Article private constructor(
     @Column(name = "author_id")
     val authorId: UserId = authorId
 
-    @Column(name = "memo_ref_id")
-    val memoRefId: MemoId = memoRefId
+    @Column(name = "memo_ref_id", nullable = true)
+    @Convert(converter = MemoIdConverter::class)
+    var memoRefId: MemoId? = memoRefId
+        private set
 
     @Column(name = "category_id")
     var category: CategoryId = categoryId
+        private set
 
     @AttributeOverrides(
         AttributeOverride(name = "title", column = Column(name = "title")),
@@ -43,20 +55,34 @@ class Article private constructor(
         AttributeOverride(name = "thumbnailUrl", column = Column(name = "thumbnail_url")),
     )
     var articleContents: ArticleContents = articleContents
+        private set
+
+    @Column(name = "hit")
+    var hit: Int = hit
+        private set
 
     @ElementCollection
     var tags: MutableSet<Tagging> = tags
         private set
 
-    var hit: Int = hit
+    @ElementCollection
+    var likes: MutableSet<UserLike> = likes
         private set
 
-    @ElementCollection
-    var likes: List<UserLike> = likes
+    @PrePersist
+    @PreUpdate
+    fun validate() {
+        id.validate()
+        authorId.validate()
+        memoRefId?.validate()
+        category.validate()
+        articleContents.validate()
+        require(hit >= 0) { "hit must be positive" }
+    }
 
     companion object {
         fun newOne(
-            memoRefId: MemoId,
+            memoRefId: MemoId?,
             authorId: UserId,
             categoryId: CategoryId,
             articleContents: ArticleContents,
@@ -70,7 +96,7 @@ class Article private constructor(
                 tags = tags.map { Tagging(it) }.toMutableSet(),
                 categoryId = categoryId,
                 hit = 0,
-                likes = emptyList(),
+                likes = emptySet<UserLike>().toMutableSet(),
             )
         }
     }

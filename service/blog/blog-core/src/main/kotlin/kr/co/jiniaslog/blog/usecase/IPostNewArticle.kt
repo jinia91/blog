@@ -11,7 +11,7 @@ interface IPostNewArticle {
     fun handle(command: Command): Info
 
     data class Command(
-        val memoRefId: MemoId,
+        val memoRefId: MemoId? = null,
         val authorId: UserId,
         val categoryId: CategoryId,
         val articleContents: ArticleContents,
@@ -19,6 +19,6 @@ interface IPostNewArticle {
     )
 
     data class Info(
-        val id: ArticleId,
+        val articleId: ArticleId,
     )
 }

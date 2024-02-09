@@ -29,7 +29,8 @@ class UseCaseInteractor(
     }
 
     private fun IPostNewArticle.Command.validate() {
-        require(memoService.isExistMemo(this.memoRefId)) { "memo not found" }
+        memoRefId?.let { require(memoService.isExistMemo(this.memoRefId)) { "memo not found" } }
         require(userService.isExistUser(this.authorId)) { "user not found" }
+        // todo category validation
     }
 }

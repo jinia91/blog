@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository
 
 interface ArticleRepository : Repository<Article, ArticleId>
 
-interface ArticleJpaRepository : JpaRepository<Article, ArticleId>
+interface ArticleJpaRepository : JpaRepository<Article, Long>
 
 @org.springframework.stereotype.Repository
 class ArticleRepositoryAdapter(
@@ -18,7 +18,7 @@ class ArticleRepositoryAdapter(
     }
 
     override fun findById(id: ArticleId): Article? {
-        return articleJpaRepository.findById(id).orElse(null)
+        return articleJpaRepository.findById(id.value).orElse(null)
     }
 
     override fun findAll(): List<Article> {
@@ -26,6 +26,6 @@ class ArticleRepositoryAdapter(
     }
 
     override fun deleteById(id: ArticleId) {
-        articleJpaRepository.deleteById(id)
+        articleJpaRepository.deleteById(id.value)
     }
 }
