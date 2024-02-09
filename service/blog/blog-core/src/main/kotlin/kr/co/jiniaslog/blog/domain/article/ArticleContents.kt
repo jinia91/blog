@@ -3,9 +3,7 @@ package kr.co.jiniaslog.blog.domain.article
 import jakarta.persistence.Embeddable
 import jakarta.persistence.PrePersist
 import jakarta.persistence.PreUpdate
-import jakarta.validation.constraints.NotEmpty
 import kr.co.jiniaslog.shared.core.domain.vo.ValueObject
-import org.hibernate.validator.constraints.Length
 
 @Embeddable
 data class ArticleContents(

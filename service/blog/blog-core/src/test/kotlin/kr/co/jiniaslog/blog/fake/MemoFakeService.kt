@@ -10,7 +10,7 @@ class MemoFakeService : MemoService {
         return memoRepository.containsKey(id)
     }
 
-    fun addDummy(id: MemoId) : MemoId {
+    fun addDummy(id: MemoId): MemoId {
         memoRepository[id] = DummyMemo(id)
         return id
     }

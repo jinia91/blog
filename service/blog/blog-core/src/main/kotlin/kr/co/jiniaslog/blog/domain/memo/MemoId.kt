@@ -1,8 +1,7 @@
 package kr.co.jiniaslog.blog.domain.memo
 
-import jakarta.persistence.PrePersist
-import jakarta.persistence.PreUpdate
 import kr.co.jiniaslog.shared.core.domain.vo.ValueObject
+
 /*
 
 kotlin value class compile 버그(?)로 프리미티브 타입을 감싼 value class 는

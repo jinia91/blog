@@ -1,7 +1,6 @@
 package kr.co.jiniaslog
 
 import io.kotest.matchers.shouldNotBe
-import java.awt.SystemColor.info
 import kr.co.jiniaslog.blog.domain.article.ArticleContents
 import kr.co.jiniaslog.blog.domain.category.CategoryId
 import kr.co.jiniaslog.blog.domain.memo.MemoId
@@ -18,6 +17,7 @@ import kr.co.jiniaslog.user.domain.user.User
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.testcontainers.shaded.org.bouncycastle.asn1.x500.style.RFC4519Style.title
+import java.awt.SystemColor.info
 
 abstract class BlogUseCasesIntegrationTestsSuite {
     @Autowired
@@ -32,27 +32,29 @@ abstract class BlogUseCasesIntegrationTestsSuite {
     @Autowired
     private lateinit var memoRepository: MemoRepository
 
-
     @Test
     fun `참조할 메모 없이 유효한 데이터로 게시글 생성 요청을 하면 게시글이 생성된다`() {
         // given
-        val user = userRepository.save(
-            User.newOne(
-                NickName("jinia"),
-                Email("jinia@google.com"),
-            ),
-        )
+        val user =
+            userRepository.save(
+                User.newOne(
+                    NickName("jinia"),
+                    Email("jinia@google.com"),
+                ),
+            )
 
-        val command = IPostNewArticle.Command(
-            authorId = UserId(user.id.value),
-            categoryId = CategoryId(1L),
-            articleContents = ArticleContents(
-                title = "title",
-                contents = "body",
-                thumbnailUrl = "thumbnailUrl",
-            ),
-            tags = emptyList(),
-        )
+        val command =
+            IPostNewArticle.Command(
+                authorId = UserId(user.id.value),
+                categoryId = CategoryId(1L),
+                articleContents =
+                    ArticleContents(
+                        title = "title",
+                        contents = "body",
+                        thumbnailUrl = "thumbnailUrl",
+                    ),
+                tags = emptyList(),
+            )
 
         // when
         val info = sut.handle(command)
@@ -69,31 +71,35 @@ abstract class BlogUseCasesIntegrationTestsSuite {
     @Test
     fun `참조할 메모가 있고 유효한 데이터로 게시글 생성 요청을 하면 게시글이 생성된다`() {
         // given
-        val user = userRepository.save(
-            User.newOne(
-                NickName("jinia"),
-                Email("jinia@google.com"),
-            ),
-        )
+        val user =
+            userRepository.save(
+                User.newOne(
+                    NickName("jinia"),
+                    Email("jinia@google.com"),
+                ),
+            )
 
-        val memo = memoRepository.save(
-            Memo.init(
-                authorId = AuthorId(user.id.value),
-                parentFolderId = null
-            ),
-        )
+        val memo =
+            memoRepository.save(
+                Memo.init(
+                    authorId = AuthorId(user.id.value),
+                    parentFolderId = null,
+                ),
+            )
 
-        val command = IPostNewArticle.Command(
-            memoRefId = MemoId(memo.id.value),
-            authorId = UserId(user.id.value),
-            categoryId = CategoryId(1L),
-            articleContents = ArticleContents(
-                title = "title",
-                contents = "body",
-                thumbnailUrl = "thumbnailUrl",
-            ),
-            tags = emptyList(),
-        )
+        val command =
+            IPostNewArticle.Command(
+                memoRefId = MemoId(memo.id.value),
+                authorId = UserId(user.id.value),
+                categoryId = CategoryId(1L),
+                articleContents =
+                    ArticleContents(
+                        title = "title",
+                        contents = "body",
+                        thumbnailUrl = "thumbnailUrl",
+                    ),
+                tags = emptyList(),
+            )
 
         // when
         val info = sut.handle(command)

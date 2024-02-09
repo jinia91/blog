@@ -10,7 +10,7 @@ class UserFakeService : UserService {
         return users.containsKey(id)
     }
 
-    fun addDummy(id: UserId) : UserId {
+    fun addDummy(id: UserId): UserId {
         users[id] = DummyUser(id)
         return id
     }
