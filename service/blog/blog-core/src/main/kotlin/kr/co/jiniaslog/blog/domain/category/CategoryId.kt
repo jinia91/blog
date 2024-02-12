@@ -6,11 +6,11 @@ import kr.co.jiniaslog.shared.core.domain.vo.ValueObject
 
 @JvmInline
 value class CategoryId(
-    val id: Long,
+    val value: Long,
 ) : ValueObject {
     @PrePersist
     @PreUpdate
     override fun validate() {
-        require(id > 0) { "id must be positive" }
+        require(value > 0) { "id must be positive" }
     }
 }

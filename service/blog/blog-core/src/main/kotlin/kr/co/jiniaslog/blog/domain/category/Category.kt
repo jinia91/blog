@@ -9,10 +9,10 @@ import jakarta.persistence.OneToMany
 import kr.co.jiniaslog.shared.core.domain.AggregateRoot
 
 @Entity
-class Category private constructor(
+class Category(
     categoryId: CategoryId,
     categoryTitle: CategoryTitle,
-    parent: Category?,
+    depth: Int,
     sortingPoint: Int,
 ) : AggregateRoot<CategoryId>() {
     @Id
@@ -25,11 +25,14 @@ class Category private constructor(
 
     @ManyToOne
     @JoinColumn(name = "parent_id")
-    var parent: Category? = parent
+    var parent: Category? = null
         private set
 
     @OneToMany(mappedBy = "parent")
-    var child: List<Category> = ArrayList<Category>()
+    var children: MutableList<Category> = mutableListOf()
+        private set
+
+    var depth: Int = depth
         private set
 
     var sortingPoint: Int = sortingPoint
@@ -39,14 +42,26 @@ class Category private constructor(
         this.categoryTitle = categoryTitle
     }
 
-    fun changeHierarchy(
-        parent: Category,
+    fun edit(
+        categoryTitle: CategoryTitle,
+        depth: Int,
         sortingPoint: Int,
     ) {
-        require(sortingPoint > 0) { "sortingPoint must be positive" }
+        require(sortingPoint >= 0) { "sortingPoint must be positive" }
+        require(depth >= 0) { "dept must be positive" }
+        this.categoryTitle = categoryTitle
+        this.sortingPoint = sortingPoint
+        this.depth = depth
+    }
+
+    fun setParent(parent: Category) {
         require(parent.id != this.id) { "parent must be different from self" }
         require(parent.parent == null) { "parent must be root" }
         this.parent = parent
-        this.sortingPoint = sortingPoint
+        parent.addChild(this)
+    }
+
+    private fun addChild(child : Category) {
+        this.children.add(child)
     }
 }

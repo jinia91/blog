@@ -1,4 +1,6 @@
 package kr.co.jiniaslog.blog.usecase
 
 interface UseCasesArticleFacade :
-    IPostNewArticle
+    IPostNewArticle,
+    IEditArticle,
+    IDeleteArticle

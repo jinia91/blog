@@ -8,7 +8,6 @@ interface IDeleteArticle {
 
     data class Command(
         val articleId: ArticleId,
-        val userId: UserId,
     )
 
     class Info()

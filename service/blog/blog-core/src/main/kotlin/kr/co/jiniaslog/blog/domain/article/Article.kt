@@ -75,6 +75,18 @@ class Article private constructor(
         require(hit >= 0) { "hit must be positive" }
     }
 
+    fun edit(
+        memoRefId: MemoId?,
+        categoryId: CategoryId,
+        articleContents: ArticleContents,
+        tags: List<TagId>,
+    ) {
+        this.memoRefId = memoRefId
+        this.category = categoryId
+        this.articleContents = articleContents
+        this.tags = tags.map { Tagging(it) }.toMutableSet()
+    }
+
     companion object {
         fun newOne(
             memoRefId: MemoId?,
