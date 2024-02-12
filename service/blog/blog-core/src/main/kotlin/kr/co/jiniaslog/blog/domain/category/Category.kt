@@ -6,6 +6,8 @@ import jakarta.persistence.Id
 import jakarta.persistence.JoinColumn
 import jakarta.persistence.ManyToOne
 import jakarta.persistence.OneToMany
+import jakarta.persistence.PrePersist
+import jakarta.persistence.PreUpdate
 import kr.co.jiniaslog.shared.core.domain.AggregateRoot
 
 @Entity
@@ -38,10 +40,6 @@ class Category(
     var sortingPoint: Int = sortingPoint
         private set
 
-    fun changeTitle(categoryTitle: CategoryTitle) {
-        this.categoryTitle = categoryTitle
-    }
-
     fun edit(
         categoryTitle: CategoryTitle,
         depth: Int,
@@ -63,5 +61,13 @@ class Category(
 
     private fun addChild(child: Category) {
         this.children.add(child)
+    }
+    @PreUpdate
+    @PrePersist
+    fun validate() {
+        id.validate()
+        categoryTitle.validate()
+        require(depth >= 0) { "dept must be positive" }
+        require(sortingPoint >= 0) { "sortingPoint must be positive" }
     }
 }

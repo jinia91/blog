@@ -5,7 +5,10 @@ import kr.co.jiniaslog.blog.domain.category.CategoryId
 import kr.co.jiniaslog.shared.core.domain.Repository
 import org.springframework.data.jpa.repository.JpaRepository
 
-interface CategoryRepository : Repository<Category, CategoryId>
+interface CategoryRepository : Repository<Category, CategoryId> {
+    fun deleteAll(toBeDelete: List<Category>)
+    fun saveAll(toBeUpsert: List<Category>)
+}
 
 interface CategoryJpaRepository : JpaRepository<Category, Long>
 
@@ -15,6 +18,14 @@ class CategoryRepositoryAdapter(
 ) : CategoryRepository {
     override fun save(entity: Category): Category {
         return categoryJpaRepository.save(entity)
+    }
+
+    override fun deleteAll(toBeDelete: List<Category>) {
+        categoryJpaRepository.deleteAll(toBeDelete)
+    }
+
+    override fun saveAll(toBeUpsert: List<Category>) {
+        categoryJpaRepository.saveAll(toBeUpsert)
     }
 
     override fun findById(id: CategoryId): Category? {

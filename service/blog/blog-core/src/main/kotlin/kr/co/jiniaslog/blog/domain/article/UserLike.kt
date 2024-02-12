@@ -10,7 +10,5 @@ import kr.co.jiniaslog.shared.core.domain.vo.ValueObject
 data class UserLike(
     val userId: UserId,
 ) : ValueObject {
-    @PrePersist
-    @PreUpdate
     override fun validate() {}
 }

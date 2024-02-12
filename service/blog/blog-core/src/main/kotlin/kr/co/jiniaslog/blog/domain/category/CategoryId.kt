@@ -8,8 +8,6 @@ import kr.co.jiniaslog.shared.core.domain.vo.ValueObject
 value class CategoryId(
     val value: Long,
 ) : ValueObject {
-    @PrePersist
-    @PreUpdate
     override fun validate() {
         require(value > 0) { "id must be positive" }
     }

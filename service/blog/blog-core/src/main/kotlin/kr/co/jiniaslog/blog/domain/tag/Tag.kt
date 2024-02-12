@@ -3,6 +3,8 @@ package kr.co.jiniaslog.blog.domain.tag
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.Id
+import jakarta.persistence.PrePersist
+import jakarta.persistence.PreUpdate
 import kr.co.jiniaslog.shared.core.domain.AggregateRoot
 
 @Entity
@@ -16,4 +18,11 @@ class Tag private constructor(
 
     @Column(name = "tag_name")
     val tagName: TagName = name
+
+    @PreUpdate
+    @PrePersist
+    fun validate() {
+        id.validate()
+        tagName.validate()
+    }
 }

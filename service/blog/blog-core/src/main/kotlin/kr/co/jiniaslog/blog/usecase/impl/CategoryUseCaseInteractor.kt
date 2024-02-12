@@ -24,8 +24,8 @@ class CategoryUseCaseInteractor(
             )
 
         transactionHandler.runInRepeatableReadTransaction {
-//            categoryRepository.deleteAll(syncedResult.toBeDelete)
-//            categoryRepository.saveAll(syncedResult.toBeUpsert)
+            categoryRepository.deleteAll(syncedResult.toBeDelete)
+            categoryRepository.saveAll(syncedResult.toBeUpsert)
         }
 
         return IChangeCategories.Info()

@@ -27,13 +27,13 @@ class CategorySyncer {
     private fun List<SimpleCategoryVo>.flattenAndSorted(): List<SimpleCategoryVo> {
         val result = mutableListOf<SimpleCategoryVo>()
 
-        fun flattenAndSort(category: SimpleCategoryVo) {
+        fun flattenAndSortRecursively(category: SimpleCategoryVo) {
             result.add(category)
-            category.children.sortedBy { it.sortingPoint }.forEach { flattenAndSort(it) }
+            category.children.sortedBy { it.sortingPoint }.forEach { flattenAndSortRecursively(it) }
         }
 
         this.sortedBy { it.sortingPoint }
-            .forEach { flattenAndSort(it) }
+            .forEach { flattenAndSortRecursively(it) }
 
         return result
     }
