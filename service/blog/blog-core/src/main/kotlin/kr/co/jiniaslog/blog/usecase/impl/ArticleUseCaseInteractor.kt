@@ -71,6 +71,4 @@ class ArticleUseCaseInteractor(
         }
         return IDeleteArticle.Info()
     }
-
 }
-

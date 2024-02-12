@@ -61,7 +61,7 @@ class Category(
         parent.addChild(this)
     }
 
-    private fun addChild(child : Category) {
+    private fun addChild(child: Category) {
         this.children.add(child)
     }
 }

@@ -1,18 +1,22 @@
 package kr.co.jiniaslog.blog.domain.category
 
-import java.util.LinkedList
-import java.util.Queue
 import kr.co.jiniaslog.shared.core.annotation.DomainService
 import kr.co.jiniaslog.shared.core.domain.IdUtils
+import java.util.LinkedList
+import java.util.Queue
 
 @DomainService
 class CategorySyncer {
-    fun syncCategories(asIs: List<Category>, toBe: List<SimpleCategoryVo>): SyncResult {
+    fun syncCategories(
+        asIs: List<Category>,
+        toBe: List<SimpleCategoryVo>,
+    ): SyncResult {
         val sortedToBe = toBe.flattenAndSorted()
 
         val asIsMap = asIs.associateBy { it.id }
-        val toBeMap = sortedToBe
-            .associateBy { it.categoryId ?: CategoryId(IdUtils.generate()) }
+        val toBeMap =
+            sortedToBe
+                .associateBy { it.categoryId ?: CategoryId(IdUtils.generate()) }
 
         val toBeDelete = getToBeDeleted(toBeMap, asIsMap)
         val toBeUpsert: List<Category> = getToBeUpsert(toBeMap, asIsMap)
@@ -50,13 +54,18 @@ class CategorySyncer {
         toBeMap: Map<CategoryId, SimpleCategoryVo>,
         asIsMap: Map<CategoryId, Category>,
     ): List<Category> {
-        val queue = toBeMap.map { (categoryId, categoryVo) ->
-            categoryId to categoryVo
-        }.toCollection(LinkedList())
+        val queue =
+            toBeMap.map { (categoryId, categoryVo) ->
+                categoryId to categoryVo
+            }.toCollection(LinkedList())
 
         val result = mutableListOf<Category>()
         getToBeUpsertRecursively(
-            queue, asIsMap, 0, null, result,
+            queue,
+            asIsMap,
+            0,
+            null,
+            result,
         )
         return result
     }
@@ -89,14 +98,15 @@ class CategorySyncer {
         categoryVO: SimpleCategoryVo,
         parent: Category?,
         depth: Int,
-    ) : Category {
-        val category = asIsMap[categoryId]?.apply {
-            this.edit(
-                categoryTitle = categoryVO.categoryName,
-                depth = depth,
-                sortingPoint = categoryVO.sortingPoint,
-            )
-        } ?: categoryVO.toEntity(categoryId)
+    ): Category {
+        val category =
+            asIsMap[categoryId]?.apply {
+                this.edit(
+                    categoryTitle = categoryVO.categoryName,
+                    depth = depth,
+                    sortingPoint = categoryVO.sortingPoint,
+                )
+            } ?: categoryVO.toEntity(categoryId)
 
         parent?.let {
             category.setParent(parent)
@@ -105,12 +115,13 @@ class CategorySyncer {
         return category
     }
 
-    private fun SimpleCategoryVo.toEntity(categoryId: CategoryId) = Category(
-        categoryId = categoryId,
-        categoryTitle = this.categoryName,
-        depth = this.depth,
-        sortingPoint = this.sortingPoint,
-    )
+    private fun SimpleCategoryVo.toEntity(categoryId: CategoryId) =
+        Category(
+            categoryId = categoryId,
+            categoryTitle = this.categoryName,
+            depth = this.depth,
+            sortingPoint = this.sortingPoint,
+        )
 }
 
 data class SyncResult(

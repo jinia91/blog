@@ -11,16 +11,17 @@ import kr.co.jiniaslog.shared.core.annotation.UseCaseInteractor
 class CategoryUseCaseInteractor(
     private val categoryRepository: CategoryRepository,
     private val categorySyncer: CategorySyncer,
-    private val transactionHandler: BlogTransactionHandler
+    private val transactionHandler: BlogTransactionHandler,
 ) : UseCasesCategoryFacade {
     override fun handle(command: IChangeCategories.Command): IChangeCategories.Info {
         val data = command.requestedFlattenedCategoryData
         val asIsCategories = categoryRepository.findAll()
 
-        val syncedResult= categorySyncer.syncCategories(
-            asIs = asIsCategories,
-            toBe = data
-        )
+        val syncedResult =
+            categorySyncer.syncCategories(
+                asIs = asIsCategories,
+                toBe = data,
+            )
 
         transactionHandler.runInRepeatableReadTransaction {
 //            categoryRepository.deleteAll(syncedResult.toBeDelete)

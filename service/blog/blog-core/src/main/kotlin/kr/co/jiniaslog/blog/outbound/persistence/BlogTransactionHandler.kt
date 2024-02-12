@@ -10,7 +10,7 @@ interface BlogTransactionHandler {
 
 @Component
 class BlogTransactionHandlerImpl : BlogTransactionHandler {
-    @Transactional("blogTransactionManager" ,isolation = Isolation.REPEATABLE_READ)
+    @Transactional("blogTransactionManager", isolation = Isolation.REPEATABLE_READ)
     override fun <T> runInRepeatableReadTransaction(block: () -> T): T {
         return block()
     }
