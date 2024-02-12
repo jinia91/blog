@@ -62,6 +62,7 @@ class Category(
     private fun addChild(child: Category) {
         this.children.add(child)
     }
+
     @PreUpdate
     @PrePersist
     fun validate() {

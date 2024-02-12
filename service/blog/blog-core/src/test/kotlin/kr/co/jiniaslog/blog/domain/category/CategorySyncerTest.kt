@@ -357,8 +357,7 @@ class CategorySyncerTest : SimpleUnitTestContext() {
     }
 
     @Test
-    fun `기존 카테고리`(){
-
+    fun `기존 카테고리`() {
     }
 
     private fun Category.toVo(): SimpleCategoryVo =

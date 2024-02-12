@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository
 
 interface CategoryRepository : Repository<Category, CategoryId> {
     fun deleteAll(toBeDelete: List<Category>)
+
     fun saveAll(toBeUpsert: List<Category>)
 }
 

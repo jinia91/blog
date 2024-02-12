@@ -1,7 +1,5 @@
 package kr.co.jiniaslog.blog.domain.article
 
-import jakarta.persistence.PrePersist
-import jakarta.persistence.PreUpdate
 import kr.co.jiniaslog.shared.core.domain.vo.ValueObject
 
 @JvmInline
