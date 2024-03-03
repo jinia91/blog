@@ -48,14 +48,15 @@ abstract class BlogUseCasesIntegrationTestsSuite {
                 ),
             )
 
-        val category = categoryRepository.save(
-            Category(
-                categoryId = CategoryId(IdUtils.generate()),
-                categoryTitle = CategoryTitle("sub - category"),
-                depth = 1,
-                sortingPoint = 0,
+        val category =
+            categoryRepository.save(
+                Category(
+                    categoryId = CategoryId(IdUtils.generate()),
+                    categoryTitle = CategoryTitle("sub - category"),
+                    depth = 1,
+                    sortingPoint = 0,
+                ),
             )
-        )
 
         val command =
             IPostNewArticle.Command(
@@ -101,14 +102,15 @@ abstract class BlogUseCasesIntegrationTestsSuite {
                 ),
             )
 
-        val category = categoryRepository.save(
-            Category(
-                categoryId = CategoryId(IdUtils.generate()),
-                categoryTitle = CategoryTitle("sub - category"),
-                depth = 1,
-                sortingPoint = 0,
+        val category =
+            categoryRepository.save(
+                Category(
+                    categoryId = CategoryId(IdUtils.generate()),
+                    categoryTitle = CategoryTitle("sub - category"),
+                    depth = 1,
+                    sortingPoint = 0,
+                ),
             )
-        )
 
         val command =
             IPostNewArticle.Command(

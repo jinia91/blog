@@ -7,10 +7,10 @@ import kr.co.jiniaslog.blog.outbound.UserService
 import kr.co.jiniaslog.blog.outbound.persistence.ArticleRepository
 import kr.co.jiniaslog.blog.outbound.persistence.BlogTransactionHandler
 import kr.co.jiniaslog.blog.outbound.persistence.CategoryRepository
+import kr.co.jiniaslog.blog.usecase.ArticleCudFacade
 import kr.co.jiniaslog.blog.usecase.IDeleteArticle
 import kr.co.jiniaslog.blog.usecase.IEditArticle
 import kr.co.jiniaslog.blog.usecase.IPostNewArticle
-import kr.co.jiniaslog.blog.usecase.ArticleCudFacade
 import kr.co.jiniaslog.shared.core.annotation.UseCaseInteractor
 
 @UseCaseInteractor
@@ -81,6 +81,8 @@ class ArticleCudCudUseCaseInteractor(
         return IDeleteArticle.Info()
     }
 
-    private fun getArticleBy(articleId: ArticleId) = (articleRepository.findById(articleId)
-        ?: throw IllegalArgumentException("article not found"))
+    private fun getArticleBy(articleId: ArticleId) = (
+        articleRepository.findById(articleId)
+            ?: throw IllegalArgumentException("article not found")
+    )
 }

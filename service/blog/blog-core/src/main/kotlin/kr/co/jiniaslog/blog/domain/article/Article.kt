@@ -3,19 +3,15 @@ package kr.co.jiniaslog.blog.domain.article
 import jakarta.persistence.AttributeOverride
 import jakarta.persistence.AttributeOverrides
 import jakarta.persistence.Column
-import jakarta.persistence.Convert
 import jakarta.persistence.ElementCollection
-import jakarta.persistence.Embedded
 import jakarta.persistence.EmbeddedId
 import jakarta.persistence.Entity
-import jakarta.persistence.Id
 import jakarta.persistence.PrePersist
 import jakarta.persistence.PreUpdate
 import kr.co.jiniaslog.blog.domain.category.CategoryId
 import kr.co.jiniaslog.blog.domain.memo.MemoId
 import kr.co.jiniaslog.blog.domain.tag.TagId
 import kr.co.jiniaslog.blog.domain.user.UserId
-import kr.co.jiniaslog.blog.outbound.persistence.MemoIdConverter
 import kr.co.jiniaslog.shared.core.domain.AggregateRoot
 import kr.co.jiniaslog.shared.core.domain.IdUtils
 
@@ -30,7 +26,6 @@ class Article private constructor(
     hit: Int,
     likes: MutableSet<UserLike>,
 ) : AggregateRoot<ArticleId>() {
-
     @EmbeddedId
     @AttributeOverride(
         column = Column(name = "article_id"),

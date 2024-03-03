@@ -3,7 +3,7 @@ package kr.co.jiniaslog.blog.usecase
 import kr.co.jiniaslog.blog.domain.tag.TagId
 import kr.co.jiniaslog.blog.domain.tag.TagName
 
-interface TagUseCasesFacade:
+interface TagUseCasesFacade :
     ICreateNewTag
 
 interface ICreateNewTag {
