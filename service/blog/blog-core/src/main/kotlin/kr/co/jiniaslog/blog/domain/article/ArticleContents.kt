@@ -3,6 +3,7 @@ package kr.co.jiniaslog.blog.domain.article
 import jakarta.persistence.Embeddable
 import jakarta.persistence.PrePersist
 import jakarta.persistence.PreUpdate
+import java.io.Serializable
 import kr.co.jiniaslog.shared.core.domain.vo.ValueObject
 
 @Embeddable
@@ -10,7 +11,7 @@ data class ArticleContents(
     val title: String,
     val contents: String,
     val thumbnailUrl: String,
-) : ValueObject {
+) : ValueObject, Serializable {
     @PrePersist
     @PreUpdate
     override fun validate() {

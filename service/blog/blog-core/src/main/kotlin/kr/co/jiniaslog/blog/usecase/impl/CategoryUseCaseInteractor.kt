@@ -14,13 +14,13 @@ class CategoryUseCaseInteractor(
     private val transactionHandler: BlogTransactionHandler,
 ) : UseCasesCategoryFacade {
     override fun handle(command: IChangeCategories.Command): IChangeCategories.Info {
-        val data = command.requestedFlattenedCategoryData
         val asIsCategories = categoryRepository.findAll()
+        val toBeCategoriesData = command.requestedFlattenedCategoryData
 
         val syncedResult =
             categorySyncer.syncCategories(
                 asIs = asIsCategories,
-                toBe = data,
+                toBe = toBeCategoriesData,
             )
 
         transactionHandler.runInRepeatableReadTransaction {

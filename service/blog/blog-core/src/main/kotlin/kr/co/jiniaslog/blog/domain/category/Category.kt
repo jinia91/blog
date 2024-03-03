@@ -1,6 +1,8 @@
 package kr.co.jiniaslog.blog.domain.category
 
+import jakarta.persistence.AttributeOverride
 import jakarta.persistence.Column
+import jakarta.persistence.EmbeddedId
 import jakarta.persistence.Entity
 import jakarta.persistence.Id
 import jakarta.persistence.JoinColumn
@@ -17,11 +19,17 @@ class Category(
     depth: Int,
     sortingPoint: Int,
 ) : AggregateRoot<CategoryId>() {
-    @Id
-    @Column(name = "category_id")
+    @EmbeddedId
+    @AttributeOverride(
+        column = Column(name = "category_id"),
+        name = "value",
+    )
     override val id: CategoryId = categoryId
 
-    @Column(name = "category_title")
+    @AttributeOverride(
+        column = Column(name = "category_title"),
+        name = "value",
+    )
     var categoryTitle: CategoryTitle = categoryTitle
         private set
 
@@ -66,8 +74,6 @@ class Category(
     @PreUpdate
     @PrePersist
     fun validate() {
-        id.validate()
-        categoryTitle.validate()
         require(depth >= 0) { "dept must be positive" }
         require(sortingPoint >= 0) { "sortingPoint must be positive" }
     }

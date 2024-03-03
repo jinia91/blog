@@ -1,9 +1,16 @@
 package kr.co.jiniaslog.blog.domain.article
 
+import jakarta.persistence.Embeddable
+import jakarta.persistence.PrePersist
+import jakarta.persistence.PreUpdate
+import java.io.Serializable
 import kr.co.jiniaslog.shared.core.domain.vo.ValueObject
 
-@JvmInline
-value class ArticleId(val value: Long) : ValueObject {
+@Embeddable
+data class ArticleId(val value: Long) : ValueObject, Serializable {
+
+    @PrePersist
+    @PreUpdate
     override fun validate() {
         require(value > 0) { "id must be positive" }
     }

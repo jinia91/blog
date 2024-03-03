@@ -3,6 +3,7 @@ package kr.co.jiniaslog
 import io.restassured.RestAssured
 import kr.co.jiniaslog.memo.Neo4jDbCleaner
 import kr.co.jiniaslog.utils.RdbCleaner
+import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.springframework.beans.factory.annotation.Autowired

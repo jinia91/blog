@@ -5,6 +5,8 @@ import jakarta.persistence.AttributeOverrides
 import jakarta.persistence.Column
 import jakarta.persistence.Convert
 import jakarta.persistence.ElementCollection
+import jakarta.persistence.Embedded
+import jakarta.persistence.EmbeddedId
 import jakarta.persistence.Entity
 import jakarta.persistence.Id
 import jakarta.persistence.PrePersist
@@ -28,19 +30,28 @@ class Article private constructor(
     hit: Int,
     likes: MutableSet<UserLike>,
 ) : AggregateRoot<ArticleId>() {
-    @Id
-    @Column(name = "article_id")
+
+    @EmbeddedId
+    @AttributeOverride(
+        column = Column(name = "article_id"),
+        name = "value",
+    )
     override val id: ArticleId = id
 
-    @Column(name = "author_id")
+    @AttributeOverride(
+        column = Column(name = "author_id"),
+        name = "value",
+    )
     val authorId: UserId = authorId
 
-    @Column(name = "memo_ref_id", nullable = true)
-    @Convert(converter = MemoIdConverter::class)
+    @AttributeOverride(
+        column = Column(name = "memo_ref_id", nullable = true),
+        name = "value",
+    )
     var memoRefId: MemoId? = memoRefId
         private set
 
-    @Column(name = "category_id")
+    @AttributeOverride(column = Column(name = "category_id"), name = "value")
     var category: CategoryId = categoryId
         private set
 
@@ -67,11 +78,6 @@ class Article private constructor(
     @PrePersist
     @PreUpdate
     fun validate() {
-        id.validate()
-        authorId.validate()
-        memoRefId?.validate()
-        category.validate()
-        articleContents.validate()
         require(hit >= 0) { "hit must be positive" }
     }
 

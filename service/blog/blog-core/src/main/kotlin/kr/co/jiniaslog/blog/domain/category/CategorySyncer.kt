@@ -61,11 +61,11 @@ class CategorySyncer {
 
         val result = mutableListOf<Category>()
         getToBeUpsertRecursively(
-            queue,
-            asIsMap,
-            0,
-            null,
-            result,
+            queue = queue,
+            asIsMap = asIsMap,
+            depth = 0,
+            parent = null,
+            result = result,
         )
         return result
     }

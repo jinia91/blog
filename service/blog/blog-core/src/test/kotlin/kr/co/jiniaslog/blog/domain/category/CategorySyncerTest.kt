@@ -356,10 +356,6 @@ class CategorySyncerTest : SimpleUnitTestContext() {
         result.toBeUpsert.first { it.id == parent2.id }.categoryTitle.value shouldBe "수정"
     }
 
-    @Test
-    fun `기존 카테고리`() {
-    }
-
     private fun Category.toVo(): SimpleCategoryVo =
         SimpleCategoryVo(
             this.id,
