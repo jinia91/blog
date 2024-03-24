@@ -11,7 +11,7 @@ interface CategoryRepository : Repository<Category, CategoryId> {
     fun saveAll(toBeUpsert: List<Category>)
 }
 
-interface CategoryJpaRepository : JpaRepository<Category, Long>
+interface CategoryJpaRepository : JpaRepository<Category, CategoryId>
 
 @org.springframework.stereotype.Repository
 class CategoryRepositoryAdapter(
@@ -30,7 +30,7 @@ class CategoryRepositoryAdapter(
     }
 
     override fun findById(id: CategoryId): Category? {
-        return categoryJpaRepository.findById(id.value).orElse(null)
+        return categoryJpaRepository.findById(id).orElse(null)
     }
 
     override fun findAll(): List<Category> {
@@ -38,6 +38,6 @@ class CategoryRepositoryAdapter(
     }
 
     override fun deleteById(id: CategoryId) {
-        categoryJpaRepository.deleteById(id.value)
+        categoryJpaRepository.deleteById(id)
     }
 }
