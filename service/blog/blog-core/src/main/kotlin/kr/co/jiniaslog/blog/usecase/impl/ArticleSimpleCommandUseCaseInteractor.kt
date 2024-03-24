@@ -7,20 +7,20 @@ import kr.co.jiniaslog.blog.outbound.UserService
 import kr.co.jiniaslog.blog.outbound.persistence.ArticleRepository
 import kr.co.jiniaslog.blog.outbound.persistence.BlogTransactionHandler
 import kr.co.jiniaslog.blog.outbound.persistence.CategoryRepository
-import kr.co.jiniaslog.blog.usecase.ArticleCudFacade
+import kr.co.jiniaslog.blog.usecase.ArticleSimpleCommandsFacade
 import kr.co.jiniaslog.blog.usecase.IDeleteArticle
 import kr.co.jiniaslog.blog.usecase.IEditArticle
 import kr.co.jiniaslog.blog.usecase.IPostNewArticle
 import kr.co.jiniaslog.shared.core.annotation.UseCaseInteractor
 
 @UseCaseInteractor
-class ArticleCudCudUseCaseInteractor(
+class ArticleSimpleCommandUseCaseInteractor(
     private val memoService: MemoService,
     private val userService: UserService,
     private val articleRepository: ArticleRepository,
     private val categoryRepository: CategoryRepository,
     private val transactionHandler: BlogTransactionHandler,
-) : ArticleCudFacade {
+) : ArticleSimpleCommandsFacade {
     override fun handle(command: IPostNewArticle.Command): IPostNewArticle.Info {
         command.validate()
         val article = command.toArticle()
@@ -32,6 +32,12 @@ class ArticleCudCudUseCaseInteractor(
         return IPostNewArticle.Info(article.id)
     }
 
+    private fun IPostNewArticle.Command.validate() {
+        memoRefId?.let { require(memoService.isExistMemo(this.memoRefId)) { "memo not found" } }
+        require(userService.isExistUser(this.authorId)) { "user not found" }
+        requireNotNull(categoryRepository.findById(this.categoryId)) { "category not found" }
+    }
+
     private fun IPostNewArticle.Command.toArticle(): Article {
         return Article.newOne(
             memoRefId = this.memoRefId,
@@ -40,12 +46,6 @@ class ArticleCudCudUseCaseInteractor(
             articleContents = this.articleContents,
             tags = this.tags,
         )
-    }
-
-    private fun IPostNewArticle.Command.validate() {
-        memoRefId?.let { require(memoService.isExistMemo(this.memoRefId)) { "memo not found" } }
-        require(userService.isExistUser(this.authorId)) { "user not found" }
-        requireNotNull(categoryRepository.findById(this.categoryId)) { "category not found" }
     }
 
     override fun handle(command: IEditArticle.Command): IEditArticle.Info {

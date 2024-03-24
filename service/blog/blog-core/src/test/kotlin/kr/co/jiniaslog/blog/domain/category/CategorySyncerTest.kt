@@ -58,7 +58,7 @@ class CategorySyncerTest : SimpleUnitTestContext() {
         val parent1Vo = parent1.toVo()
         var parent2Vo = parent2.toVo()
         val newChild3Parent2 =
-            SimpleCategoryVo(
+            CategoryDataHolder(
                 categoryId = null,
                 categoryName = CategoryTitle("child3"),
                 sortingPoint = 0,
@@ -138,7 +138,7 @@ class CategorySyncerTest : SimpleUnitTestContext() {
         val parent1Vo = parent1.toVo()
         var parent2Vo = parent2.toVo()
         val newChild3Parent2 =
-            SimpleCategoryVo(
+            CategoryDataHolder(
                 categoryId = null,
                 categoryName = CategoryTitle("child3"),
                 sortingPoint = 0,
@@ -149,7 +149,7 @@ class CategorySyncerTest : SimpleUnitTestContext() {
                 children = parent2Vo.children + listOf(newChild3Parent2),
             )
         val parent3Vo =
-            SimpleCategoryVo(
+            CategoryDataHolder(
                 categoryId = null,
                 categoryName = CategoryTitle("child3"),
                 sortingPoint = 2,
@@ -226,7 +226,7 @@ class CategorySyncerTest : SimpleUnitTestContext() {
         val parent1Vo = parent1.toVo()
         var parent2Vo = parent2.toVo()
         val newChild3Parent2 =
-            SimpleCategoryVo(
+            CategoryDataHolder(
                 categoryId = null,
                 categoryName = CategoryTitle("child3"),
                 sortingPoint = 0,
@@ -238,7 +238,7 @@ class CategorySyncerTest : SimpleUnitTestContext() {
                 categoryName = CategoryTitle("수정"),
             )
         val parent3Vo =
-            SimpleCategoryVo(
+            CategoryDataHolder(
                 categoryId = null,
                 categoryName = CategoryTitle("child3-ㄷ"),
                 sortingPoint = 2,
@@ -316,7 +316,7 @@ class CategorySyncerTest : SimpleUnitTestContext() {
         val parent1Vo = parent1.toVo()
         var parent2Vo = parent2.toVo()
         val newChild3Parent2 =
-            SimpleCategoryVo(
+            CategoryDataHolder(
                 categoryId = null,
                 categoryName = CategoryTitle("child3"),
                 sortingPoint = 0,
@@ -328,7 +328,7 @@ class CategorySyncerTest : SimpleUnitTestContext() {
                 categoryName = CategoryTitle("수정"),
             )
         val parent3Vo =
-            SimpleCategoryVo(
+            CategoryDataHolder(
                 categoryId = null,
                 categoryName = CategoryTitle("child3-ㄷ"),
                 sortingPoint = 2,
@@ -356,8 +356,8 @@ class CategorySyncerTest : SimpleUnitTestContext() {
         result.toBeUpsert.first { it.id == parent2.id }.categoryTitle.value shouldBe "수정"
     }
 
-    private fun Category.toVo(): SimpleCategoryVo =
-        SimpleCategoryVo(
+    private fun Category.toVo(): CategoryDataHolder =
+        CategoryDataHolder(
             this.id,
             this.categoryTitle,
             children.map { it.toVo() },

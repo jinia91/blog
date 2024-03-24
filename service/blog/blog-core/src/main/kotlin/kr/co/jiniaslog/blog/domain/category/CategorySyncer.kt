@@ -9,7 +9,7 @@ import java.util.Queue
 class CategorySyncer {
     fun syncCategories(
         asIs: List<Category>,
-        toBe: List<SimpleCategoryVo>,
+        toBe: List<CategoryDataHolder>,
     ): SyncResult {
         val sortedToBe = toBe.flattenAndSorted()
 
@@ -24,10 +24,10 @@ class CategorySyncer {
         return SyncResult(toBeDelete, toBeUpsert)
     }
 
-    private fun List<SimpleCategoryVo>.flattenAndSorted(): List<SimpleCategoryVo> {
-        val result = mutableListOf<SimpleCategoryVo>()
+    private fun List<CategoryDataHolder>.flattenAndSorted(): List<CategoryDataHolder> {
+        val result = mutableListOf<CategoryDataHolder>()
 
-        fun flattenAndSortRecursively(category: SimpleCategoryVo) {
+        fun flattenAndSortRecursively(category: CategoryDataHolder) {
             result.add(category)
             category.children.sortedBy { it.sortingPoint }.forEach { flattenAndSortRecursively(it) }
         }
@@ -39,7 +39,7 @@ class CategorySyncer {
     }
 
     private fun getToBeDeleted(
-        toBeMap: Map<CategoryId, SimpleCategoryVo>,
+        toBeMap: Map<CategoryId, CategoryDataHolder>,
         asIsMap: Map<CategoryId, Category>,
     ): List<Category> {
         val toBeIds = toBeMap.keys
@@ -51,7 +51,7 @@ class CategorySyncer {
     }
 
     private fun getToBeUpsert(
-        toBeMap: Map<CategoryId, SimpleCategoryVo>,
+        toBeMap: Map<CategoryId, CategoryDataHolder>,
         asIsMap: Map<CategoryId, Category>,
     ): List<Category> {
         val queue =
@@ -71,7 +71,7 @@ class CategorySyncer {
     }
 
     private fun getToBeUpsertRecursively(
-        queue: Queue<Pair<CategoryId, SimpleCategoryVo>>,
+        queue: Queue<Pair<CategoryId, CategoryDataHolder>>,
         asIsMap: Map<CategoryId, Category>,
         depth: Int,
         parent: Category?,
@@ -95,7 +95,7 @@ class CategorySyncer {
     private fun upsert(
         asIsMap: Map<CategoryId, Category>,
         categoryId: CategoryId,
-        categoryVO: SimpleCategoryVo,
+        categoryVO: CategoryDataHolder,
         parent: Category?,
         depth: Int,
     ): Category {
@@ -115,7 +115,7 @@ class CategorySyncer {
         return category
     }
 
-    private fun SimpleCategoryVo.toEntity(categoryId: CategoryId) =
+    private fun CategoryDataHolder.toEntity(categoryId: CategoryId) =
         Category(
             categoryId = categoryId,
             categoryTitle = this.categoryName,

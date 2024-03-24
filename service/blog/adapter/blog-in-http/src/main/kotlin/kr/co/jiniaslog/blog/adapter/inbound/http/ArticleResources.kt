@@ -1,7 +1,7 @@
 package kr.co.jiniaslog.blog.adapter.inbound.http
 
 import kr.co.jiniaslog.blog.domain.article.ArticleId
-import kr.co.jiniaslog.blog.usecase.ArticleCudFacade
+import kr.co.jiniaslog.blog.usecase.ArticleSimpleCommandsFacade
 import kr.co.jiniaslog.blog.usecase.IDeleteArticle
 import kr.cojiniaslog.shared.adapter.inbound.http.AuthUserId
 import org.springframework.http.ResponseEntity
@@ -17,7 +17,7 @@ import java.net.URI
 @RestController
 @RequestMapping("/api/v1/articles")
 class ArticleResources(
-    private val articleFacade: ArticleCudFacade,
+    private val articleFacade: ArticleSimpleCommandsFacade,
 ) {
     @PostMapping("/")
     @PreAuthorize("hasRole('ADMIN')")

@@ -15,6 +15,21 @@ import kr.co.jiniaslog.blog.domain.user.UserId
 import kr.co.jiniaslog.shared.core.domain.AggregateRoot
 import kr.co.jiniaslog.shared.core.domain.IdUtils
 
+/**
+ * 블로그 게시글
+ *
+ * 블로그의 메인 비즈니스 로직을 담당하는 Aggregate Root 로 설계되었다.
+ *
+ * JPA 엔티티로도 사용되므로 프로퍼티가 장황해질 것을 고려, 기본생성자는 private으로 막고 별도 프로퍼티 선언을 하였다.
+ *
+ * @param id 게시글 식별자
+ * @param memoRefId 원본이 되는 메모 식별자
+ * @param authorId 작성자 식별자
+ * @param articleContents 게시글 상세 내용 VO
+ * @param tags 게시글에 달린 태그 목록
+ * @param categoryId 게시글이 속한 카테고리 식별자
+ * @param hit 조회수
+ */
 @Entity
 class Article private constructor(
     id: ArticleId,
@@ -24,7 +39,6 @@ class Article private constructor(
     tags: MutableSet<Tagging>,
     categoryId: CategoryId,
     hit: Int,
-    likes: MutableSet<UserLike>,
 ) : AggregateRoot<ArticleId>() {
     @EmbeddedId
     @AttributeOverride(
@@ -66,10 +80,6 @@ class Article private constructor(
     var tags: MutableSet<Tagging> = tags
         private set
 
-    @ElementCollection
-    var likes: MutableSet<UserLike> = likes
-        private set
-
     @PrePersist
     @PreUpdate
     fun validate() {
@@ -104,7 +114,6 @@ class Article private constructor(
                 tags = tags.map { Tagging(it) }.toMutableSet(),
                 categoryId = categoryId,
                 hit = 0,
-                likes = emptySet<UserLike>().toMutableSet(),
             )
         }
     }

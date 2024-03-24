@@ -7,13 +7,11 @@ import kr.co.jiniaslog.blog.domain.memo.MemoId
 import kr.co.jiniaslog.blog.domain.tag.TagId
 import kr.co.jiniaslog.blog.domain.user.UserId
 
-interface ArticleCudFacade :
+interface ArticleSimpleCommandsFacade :
     IPostNewArticle,
     IEditArticle,
     IDeleteArticle
 
-interface ArticleFacade :
-    IVoteArticle
 
 interface IPostNewArticle {
     fun handle(command: Command): Info
@@ -55,18 +53,4 @@ interface IDeleteArticle {
     )
 
     class Info()
-}
-
-interface IVoteArticle {
-    fun handle(command: Command): Info
-
-    data class Command(
-        val articleId: ArticleId,
-        val userId: UserId,
-        val isLike: Boolean,
-    )
-
-    data class Info(
-        val id: ArticleId,
-    )
 }
