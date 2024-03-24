@@ -13,6 +13,8 @@ interface TagRepository : Repository<Tag, TagId> {
     fun isExist(name: TagName): Boolean
 
     fun findNotUsedTags(): List<Tag>
+
+    fun deleteAll(list: List<Tag>)
 }
 
 interface TagJpaRepository : JpaRepository<Tag, TagId> {
@@ -37,6 +39,10 @@ class TagRepositoryAdapter(
             .leftJoin(tag.tagging, tagging)
             .where(tagging.tagId.isNull)
             .fetch()
+    }
+
+    override fun deleteAll(list: List<Tag>) {
+        tagJpaRepository.deleteAll(list)
     }
 
     override fun findById(id: TagId): Tag? {

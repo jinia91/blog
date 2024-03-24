@@ -4,6 +4,7 @@ import kr.co.jiniaslog.blog.domain.tag.Tag
 import kr.co.jiniaslog.blog.outbound.persistence.BlogTransactionHandler
 import kr.co.jiniaslog.blog.outbound.persistence.TagRepository
 import kr.co.jiniaslog.blog.usecase.ICreateNewTag
+import kr.co.jiniaslog.blog.usecase.IDeleteNotUsedTags
 import kr.co.jiniaslog.blog.usecase.TagUseCasesFacade
 import kr.co.jiniaslog.shared.core.annotation.UseCaseInteractor
 
@@ -23,4 +24,13 @@ class TagUseCaseInteractor(
 
             ICreateNewTag.Info(newTag.id)
         }
+
+    override fun handle(command: IDeleteNotUsedTags.Command): IDeleteNotUsedTags.Info {
+        val notUsedTags = tagRepository.findNotUsedTags()
+        transactionHandler.runInRepeatableReadTransaction {
+            tagRepository.deleteAll(notUsedTags)
+        }
+
+        return IDeleteNotUsedTags.Info(notUsedTags.map { it.tagName })
+    }
 }

@@ -9,7 +9,8 @@ import kr.co.jiniaslog.blog.domain.tag.TagName
  * 기존 태그에 대한 업데이트는 존재하지 않는다.
  */
 interface TagUseCasesFacade :
-    ICreateNewTag
+    ICreateNewTag,
+    IDeleteNotUsedTags
 
 /**
  * 새로운 태그를 생성한다.
