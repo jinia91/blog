@@ -12,7 +12,6 @@ interface ArticleSimpleCommandsFacade :
     IEditArticle,
     IDeleteArticle
 
-
 interface IPostNewArticle {
     fun handle(command: Command): Info
 
