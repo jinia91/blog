@@ -5,6 +5,16 @@ import kr.co.jiniaslog.shared.core.domain.IdUtils
 import java.util.LinkedList
 import java.util.Queue
 
+/**
+ * 카테고리 동기화를 위한 도메인 서비스
+ *
+ * 카테고리 변경에 대한 요청 데이터 자료구조가 어떻게 되있든 상관없이 평탄화와 정렬하여 현재 상태와 비교하여
+ *
+ * - 삭제할 카테고리 목록
+ * - 추가 및 수정할 카테고리 목록
+ * 을 분리하여 반환한다.
+ *
+ */
 @DomainService
 class CategorySyncer {
     fun syncCategories(
