@@ -15,7 +15,7 @@ val shared = mutableListOf(
 )
 
 val libs = mutableListOf(
-    "org.springframework.boot:spring-boot-starter-security"
+    "org.springframework.boot:spring-boot-starter-security",
 )
 
 val blogService = mutableListOf(
@@ -64,7 +64,7 @@ var integrationTest = mutableListOf(
     "org.testcontainers:mysql:1.19.3",
     "io.kotest.extensions:kotest-extensions-testcontainers:2.0.2",
     "io.rest-assured:rest-assured:5.4.0",
-    "org.springframework.cloud:spring-cloud-contract-wiremock:4.1.0"
+    "org.springframework.cloud:spring-cloud-contract-wiremock:4.1.0",
 )
 
 dependencies {

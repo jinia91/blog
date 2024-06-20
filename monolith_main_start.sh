@@ -4,7 +4,6 @@ set +e
 export HOST_IP=$(ipconfig getifaddr en0)
 echo "프로젝트 클린 및 빌드 중..."
 cur_dir=$(cd $(dirname -- "$0") && pwd)
-cd ..
 set -e
 ./gradlew clean build
 set +e
