@@ -21,7 +21,7 @@ class User private constructor(
     var email: Email = email
         private set
 
-    fun refreshWith(nickName: NickName) {
+    fun updateIfNickNameChanged(nickName: NickName) {
         takeIf { this.nickName != nickName }
             .let { this.nickName = nickName }
     }
