@@ -66,7 +66,7 @@ class UserAuthService(
 
     private fun getOrCreateUser(providerUserInfo: ProviderUserInfo): User =
         userRepository.findByEmail(providerUserInfo.email)?.let {
-            it.refreshWith(providerUserInfo.nickName)
+            it.updateIfNickNameChanged(providerUserInfo.nickName)
             userRepository.save(it)
         } ?: let {
             val newUser = User.newOne(providerUserInfo.nickName, providerUserInfo.email)

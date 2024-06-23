@@ -5,8 +5,7 @@ plugins {
 group = "kr.co.jiniaslog.blog"
 
 dependencies {
-    implementation(project(":service:blog:blog-core"))
-    implementation(project(":libs:core-kernel"))
-    implementation(project(":libs:messaging-kernel"))
-    implementation(project(":service:message-nexus"))
+    implementation(project(Modules.Service.Blog.Domain.path))
+    implementation(project(Modules.Libs.CoreKernel.path))
+    implementation(project(Modules.Service.MessageNexus.path))
 }

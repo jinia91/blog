@@ -19,28 +19,28 @@ val libs = mutableListOf(
 )
 
 val blogService = mutableListOf(
-    project(Modules.Service.Blog.Core.path),
+    project(Modules.Service.Blog.Domain.path),
     project(Modules.Service.Blog.Adaptors.InHttp.path),
     project(Modules.Service.Blog.Adaptors.OutUser.path),
     project(Modules.Service.Blog.Adaptors.OutMemo.path),
 )
 
 val memoService = mutableListOf(
-    project(Modules.Service.Memo.Core.path),
-    project(Modules.Service.Memo.ReadOnly.path),
+    project(Modules.Service.Memo.Domain.path),
+    project(Modules.Service.Memo.Application.path),
     project(Modules.Service.Memo.Adaptors.InHttp.path),
     project(Modules.Service.Memo.Adaptors.InWebsocket.path),
     project(Modules.Service.Memo.Adaptors.Persistence.path),
 )
 
 val mediaService = mutableListOf(
-    project(Modules.Service.Media.Core.path),
+    project(Modules.Service.Media.Domain.path),
     project(Modules.Service.Media.Adaptors.InHttp.path),
     project(Modules.Service.Media.Adaptors.OutGithub.path),
 )
 
 val authUserService = mutableListOf(
-    project(Modules.Service.AuthUser.Core.path),
+    project(Modules.Service.AuthUser.Domain.path),
     project(Modules.Service.AuthUser.Application.path),
     project(Modules.Service.AuthUser.Adaptors.OutGoogle.path),
     project(Modules.Service.AuthUser.Adaptors.InHttp.path),
@@ -58,11 +58,10 @@ var moduleBlocks = mutableListOf<Project>()
     }
 
 var integrationTest = mutableListOf(
-    "org.testcontainers:testcontainers:1.19.3",
-    "org.testcontainers:junit-jupiter:1.19.3",
-    "org.testcontainers:neo4j:1.19.3",
-    "org.testcontainers:mysql:1.19.3",
-    "io.kotest.extensions:kotest-extensions-testcontainers:2.0.2",
+    "org.testcontainers:testcontainers:1.19.8",
+    "org.testcontainers:junit-jupiter:1.19.8",
+    "org.testcontainers:neo4j:1.19.8",
+    "org.testcontainers:mysql:1.19.8",
     "io.rest-assured:rest-assured:5.4.0",
     "org.springframework.cloud:spring-cloud-contract-wiremock:4.1.0",
 )
@@ -78,7 +77,7 @@ dependencies {
         testImplementation(it)
     }
     testImplementation(testFixtures(project(Modules.Service.Memo.Adaptors.Persistence.path)))
-    testImplementation(project(path = Modules.Service.Memo.Core.path, configuration = "testArtifact"))
+    testImplementation(project(path = Modules.Service.Memo.Domain.path, configuration = "testArtifact"))
     testImplementation(testFixtures(project(Modules.Service.AuthUser.Application.path)))
 }
 

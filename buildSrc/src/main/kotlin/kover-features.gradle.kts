@@ -1,4 +1,5 @@
-import kotlinx.kover.gradle.plugin.dsl.AggregationType
+import kotlinx.kover.gradle.plugin.dsl.GroupingEntityType
+import kotlinx.kover.gradle.plugin.dsl.MetricType
 import org.gradle.kotlin.dsl.kotlin
 
 plugins {
@@ -6,28 +7,27 @@ plugins {
     id("org.jetbrains.kotlinx.kover")
 }
 
+tasks.getByName("koverVerify").dependsOn("koverHtmlReport", "koverXmlReport")
+
 koverReport {
-    verify {
-        rule {
-            isEnabled = true
-            bound {
-                minValue = 1
-                maxValue = 99
-                metric = kotlinx.kover.gradle.plugin.dsl.MetricType.LINE
-                aggregation = AggregationType.COVERED_PERCENTAGE
-            }
-            minBound(2)
-            maxBound(98)
+    defaults {
+        xml {
+            title.set("${project.name} test coverage")
         }
-        defaults {
-            html {
-                title = "My report title"
-                charset = "UTF-8"
-                onCheck = true
-                setReportDir(layout.buildDirectory.dir("$buildDir/reports/kover/html-result"))
+    }
+    verify {
+        rule(name = "Branch coverage") {
+            entity = GroupingEntityType.APPLICATION
+            isEnabled = true
+
+            bound {
+                metric = MetricType.INSTRUCTION
+                minValue = 80
             }
-            verify {
-                onCheck = true
+
+            bound {
+                metric = MetricType.BRANCH
+                minValue = 80
             }
         }
     }
