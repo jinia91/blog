@@ -1,6 +1,6 @@
 version: "3"
 services:
-  db_mysql_1:
+  jinia_rdb:
     ports:
       - "3307:3306"
     image: mysql:8.0.34
@@ -23,16 +23,39 @@ services:
       - "7778:7778"
 
     environment:
-      JAVA_TOOL_OPTIONS: -Dcom.sun.management.jmxremote=true -Dcom.sun.management.jmxremote.port=7778 -Dcom.sun.management.jmxremote.rmi.port=7778 -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Djava.rmi.server.hostname=${HOST_IP:-$DEFAULT_IP} -Xms1G -Xmx1G
+      JAVA_TOOL_OPTIONS: -Dcom.sun.management.jmxremote=true -Dcom.sun.management.jmxremote.port=7778 -Dcom.sun.management.jmxremote.rmi.port=7778 -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Djava.rmi.server.hostname=${HOST_IP:-$DEFAULT_IP} -Xms2G -Xmx2G
       SPRING_APPLICATION_JSON: '{
-      }'
+  "spring": {
+    "datasource": {
+      "user": {
+        "jdbc-url": "jdbc:mysql://jinia_rdb/jiniaslog_user?allowPublicKeyRetrieval=true&useSSL=false",
+        "username": "root",
+        "password": "",
+        "driver-class-name": "com.mysql.cj.jdbc.Driver"
+      },
+      "blog": {
+        "jdbc-url": "jdbc:mysql://jinia_rdb/jiniaslog_blog?allowPublicKeyRetrieval=true&useSSL=false",
+        "username": "root",
+        "password": "",
+        "driver-class-name": "com.mysql.cj.jdbc.Driver"
+      }
+    },
+    "neo4j": {
+      "uri": "bolt://host.docker.internal:7687",
+      "authentication": {
+        "username": "neo4j",
+        "password": "password"
+      }
+    }
+  }
+}'
     container_name: jinias_log_monolith_main
     build:
       dockerfile: Dockerfile
     extra_hosts:
       - "host.docker.internal:host-gateway"
     depends_on:
-      db_mysql_1:
+      jinia_rdb:
         condition: service_healthy
     restart: always
     networks:
@@ -41,6 +64,19 @@ services:
       resources:
         limits:
           cpus: "1"
+
+  jinia_neo4j:
+    image: neo4j:5.5
+    ports:
+      - "7687:7687"
+    environment:
+      NEO4J_AUTH: neo4j/password
+    networks:
+      - internal-network
+    healthcheck:
+      test: ["CMD", "neo4j", "ping"]
+      interval: 5s
+      retries: 5
 
 networks:
   internal-network:

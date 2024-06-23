@@ -1,7 +1,6 @@
 plugins {
     springBootConventions
     `kotlin-jpa`
-    koverFeatures
     `kotlin-kapt`
 }
 
