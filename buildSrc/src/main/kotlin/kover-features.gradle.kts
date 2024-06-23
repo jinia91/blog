@@ -1,10 +1,5 @@
 import kotlinx.kover.gradle.plugin.dsl.AggregationType
-import kotlinx.kover.gradle.plugin.dsl.GroupingEntityType
-import org.gradle.kotlin.dsl.configure
-import org.gradle.kotlin.dsl.invoke
-import org.gradle.kotlin.dsl.jacoco
 import org.gradle.kotlin.dsl.kotlin
-import org.gradle.testing.jacoco.plugins.JacocoTaskExtension
 
 plugins {
     kotlin("jvm")
