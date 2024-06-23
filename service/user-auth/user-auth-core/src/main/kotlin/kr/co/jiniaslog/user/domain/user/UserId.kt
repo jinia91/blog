@@ -9,6 +9,6 @@ value class UserId(val value: Long) : ValueObject {
     }
 
     override fun validate() {
-        require(value > 0) { "UserId must be greater than 0" }
+        require(value > 0) { "유저 id는 0보다 커야 합니다." }
     }
 }

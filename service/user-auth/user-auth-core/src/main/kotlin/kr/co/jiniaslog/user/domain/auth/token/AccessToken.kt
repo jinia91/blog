@@ -7,6 +7,6 @@ value class AccessToken(override val value: String) : AuthToken {
     }
 
     override fun validate() {
-        require(value.isNotBlank()) { "AccessToken must not be blank" }
+        require(value.isNotBlank()) { "액세스 토큰은 빈 값이 될 수 없습니다." }
     }
 }

@@ -5,14 +5,14 @@ import org.springframework.stereotype.Component
 
 @Component
 class ProviderResolver(
-    private val providerAdapters: List<ProviderAdapter>,
+    private val providerClients: List<ProviderClient>,
 ) {
     fun isSupported(provider: Provider): Boolean {
-        return providerAdapters.any { it.provider == provider }
+        return providerClients.any { it.provider == provider }
     }
 
-    fun resolve(provider: Provider): ProviderAdapter {
+    fun resolve(provider: Provider): ProviderClient {
         require(isSupported(provider)) { "not supported provider. provider: $provider" }
-        return providerAdapters.find { it.provider == provider }!!
+        return providerClients.find { it.provider == provider }!!
     }
 }

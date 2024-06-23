@@ -3,10 +3,10 @@ package kr.co.jiniaslog.user
 import kr.co.jiniaslog.shared.core.annotation.CustomComponent
 import kr.co.jiniaslog.shared.core.domain.IdGenerator
 import kr.co.jiniaslog.shared.core.domain.IdUtils
-import kr.co.jiniaslog.user.application.infra.ProviderAdapter
+import kr.co.jiniaslog.user.application.infra.ProviderClient
 import kr.co.jiniaslog.user.application.infra.TokenStore
 import kr.co.jiniaslog.user.application.infra.UserAuthTransactionHandler
-import kr.co.jiniaslog.user.fakes.FakeGoogleProviderAdapter
+import kr.co.jiniaslog.user.fakes.FakeGoogleProviderClient
 import kr.co.jiniaslog.user.fakes.TestTransactionHandler
 import kr.co.jiniaslog.user.fakes.TokenFakeStore
 import kr.co.jiniaslog.user.fakes.UserFakeRepository
@@ -29,8 +29,8 @@ class UserFakeTestContext {
     @Configuration
     class Config {
         @Bean
-        fun googleProviderAdapter(): ProviderAdapter {
-            return FakeGoogleProviderAdapter()
+        fun googleProviderAdapter(): ProviderClient {
+            return FakeGoogleProviderClient()
         }
 
         @Bean

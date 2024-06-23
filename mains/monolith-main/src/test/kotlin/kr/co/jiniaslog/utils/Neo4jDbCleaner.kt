@@ -1,4 +1,4 @@
-package kr.co.jiniaslog.memo
+package kr.co.jiniaslog.utils
 
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.neo4j.core.Neo4jClient

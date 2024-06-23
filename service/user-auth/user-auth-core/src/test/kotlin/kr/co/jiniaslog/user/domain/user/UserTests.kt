@@ -39,7 +39,7 @@ class UserTests : SimpleUnitTestContext() {
 
             val newOne = NickName("12345678902")
             // when
-            sut.refreshWith(newOne)
+            sut.updateIfNickNameChanged(newOne)
 
             // then
             sut.nickName shouldBe newOne

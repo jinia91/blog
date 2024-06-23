@@ -1,5 +1,6 @@
 plugins {
     conventions
+    koverFeatures
 }
 
 group = "kr.co.jiniaslog.user"

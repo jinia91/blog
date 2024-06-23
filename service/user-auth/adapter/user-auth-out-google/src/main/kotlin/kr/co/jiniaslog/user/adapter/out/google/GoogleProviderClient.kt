@@ -1,7 +1,7 @@
 package kr.co.jiniaslog.user.adapter.out.google
 
 import kr.co.jiniaslog.shared.core.domain.vo.Url
-import kr.co.jiniaslog.user.application.infra.ProviderAdapter
+import kr.co.jiniaslog.user.application.infra.ProviderClient
 import kr.co.jiniaslog.user.domain.auth.provider.Provider
 import kr.co.jiniaslog.user.domain.auth.provider.ProviderUserInfo
 import kr.co.jiniaslog.user.domain.auth.token.AuthorizationCode
@@ -16,7 +16,7 @@ import org.springframework.web.client.RestClient
 private val log = KotlinLogging.logger { }
 
 @Component
-class GoogleProviderAdapter(
+class GoogleProviderClient(
     @Value("\${oauth.google.redirect-url}")
     redirectUrl: String,
     @Value("\${oauth.google.token-url}")
@@ -27,7 +27,7 @@ class GoogleProviderAdapter(
     clientSecret: String,
     @Value("\${oauth.google.client-id}")
     clientId: String,
-) : ProviderAdapter {
+) : ProviderClient {
     override val provider: Provider = Provider.GOOGLE
     private val redirectUrl: Url = Url(redirectUrl)
     private val client: RestClient = RestClient.create()
