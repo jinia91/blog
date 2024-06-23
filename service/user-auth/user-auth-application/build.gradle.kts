@@ -7,7 +7,7 @@ group = "kr.co.jiniaslog.user"
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-security")
-    api(project(Modules.Service.AuthUser.Core.path))
+    api(project(Modules.Service.AuthUser.Domain.path))
     implementation(project(Modules.Libs.CoreKernel.path))
 
     testImplementation(testFixtures(project(Modules.Libs.CoreKernel.path)))

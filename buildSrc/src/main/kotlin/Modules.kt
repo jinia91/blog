@@ -7,8 +7,8 @@ object Modules {
 
     object Service {
         object Memo {
-            val Core = Module(":service:memo:memo-core")
-            val ReadOnly = Module(":service:memo:memo-queries")
+            val Domain = Module(":service:memo:memo-domain")
+            val Application = Module(":service:memo:memo-application")
 
             enum class Adaptors(val path: String) {
                 InAcl(":service:memo:adapter:memo-in-acl"),
@@ -20,7 +20,7 @@ object Modules {
         }
 
         object Media {
-            val Core = Module(":service:media:media-core")
+            val Domain = Module(":service:media:media-domain")
 
             enum class Adaptors(val path: String) {
                 InHttp(":service:media:adapter:media-in-http"),
@@ -30,7 +30,7 @@ object Modules {
         }
 
         object Blog {
-            val Core = Module(":service:blog:blog-core")
+            val Domain = Module(":service:blog:blog-domain")
 
             enum class Adaptors(val path: String) {
                 InHttp(":service:blog:adapter:blog-in-http"),
@@ -41,7 +41,7 @@ object Modules {
         }
 
         object AuthUser {
-            val Core = Module(":service:user-auth:user-auth-core")
+            val Domain = Module(":service:user-auth:user-auth-domain")
             val Application = Module(":service:user-auth:user-auth-application")
 
             enum class Adaptors(val path: String) {

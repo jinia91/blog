@@ -20,7 +20,7 @@ include(
     "libs:snowflake-id-generator",
 
     // blog
-    "service:blog:blog-core",
+    "service:blog:blog-domain",
     "service:blog:adapter:blog-out-rdb",
     "service:blog:adapter:blog-in-http",
     "service:blog:adapter:blog-in-message",
@@ -28,8 +28,8 @@ include(
     "service:blog:adapter:blog-out-memo",
 
     // memo
-    "service:memo:memo-core",
-    "service:memo:memo-queries",
+    "service:memo:memo-domain",
+    "service:memo:memo-application",
     "service:memo:adapter:memo-in-http",
     "service:memo:adapter:memo-in-acl",
     "service:memo:adapter:memo-in-websocket",
@@ -38,12 +38,12 @@ include(
     "service:memo:adapter:memo-out-persistence",
 
     //media
-    "service:media:media-core",
+    "service:media:media-domain",
     "service:media:adapter:media-in-http",
     "service:media:adapter:media-out-github",
 
     //user-auth
-    "service:user-auth:user-auth-core",
+    "service:user-auth:user-auth-domain",
     "service:user-auth:user-auth-application",
     "service:user-auth:adapter:user-auth-in-http",
     "service:user-auth:adapter:user-auth-in-acl",
