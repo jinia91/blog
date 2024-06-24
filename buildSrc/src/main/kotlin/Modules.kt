@@ -15,7 +15,6 @@ object Modules {
                 InHttp(":service:memo:adapter:memo-in-http"),
                 InWebsocket(":service:memo:adapter:memo-in-websocket"),
                 Persistence(":service:memo:adapter:memo-out-persistence")
-                ;
             }
         }
 
@@ -25,7 +24,6 @@ object Modules {
             enum class Adaptors(val path: String) {
                 InHttp(":service:media:adapter:media-in-http"),
                 OutGithub(":service:media:adapter:media-out-github")
-                ;
             }
         }
 
@@ -36,7 +34,6 @@ object Modules {
                 InHttp(":service:blog:adapter:blog-in-http"),
                 OutUser(":service:blog:adapter:blog-out-user"),
                 OutMemo(":service:blog:adapter:blog-out-memo")
-                ;
             }
         }
 
@@ -50,7 +47,6 @@ object Modules {
                 OutGoogle(":service:user-auth:adapter:user-auth-out-google"),
                 Persistence(":service:user-auth:adapter:user-auth-out-persistence"),
                 Cache(":service:user-auth:adapter:user-auth-out-cache")
-                ;
             }
         }
 

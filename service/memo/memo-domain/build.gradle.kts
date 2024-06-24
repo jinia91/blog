@@ -23,7 +23,6 @@ tasks.register<Jar>("testJar") {
     from(sourceSets["test"].output)
 }
 
-
 artifacts {
     add("testArtifact", tasks.named<Jar>("testJar").get())
 }

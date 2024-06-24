@@ -19,18 +19,25 @@ err() {
   printf "[%-10s ERROR] $1\n" "$BASE_NAME"
 }
 
-info "gradlew lintKotlin 시작..."
+info "gradlew detekt 시작..."
 
 if [ ! -f "$PROJECT_DIR/gradlew" ]; then
     err "프로젝트 루트에서 gradlew 를 찾을 수 없습니다."
     exit 1
 fi
 
-"$PROJECT_DIR/gradlew" lintKotlin || {
-    warn "gradlew lintKotlin 실패, formatKotlin 을 실행합니다."
-    warn "formatKotlin 이 적용된 파일에 대해 다시 commit 이 필요합니다."
-    "$PROJECT_DIR/gradlew" formatKotlin
-    exit 1
-}
+OUTPUT="/tmp/detekt-$(date +%s)"
+./gradlew detekt > "$OUTPUT"
+EXIT_CODE=$?
+if [ $EXIT_CODE -ne 0 ]; then
+  cat "$OUTPUT"
+  rm "$OUTPUT"
+  echo "***********************************************"
+  echo "                 detekt failed                 "
+  echo " Please fix the above issues before committing "
+  echo "***********************************************"
+  exit $EXIT_CODE
+fi
+rm "$OUTPUT"
 
-info "gradlew lintKotlin 성공!"
+info "gradlew detekt 성공!"

@@ -38,12 +38,7 @@ class PreAuthFilter(
     }
 
     private fun resolveAccessToken(req: HttpServletRequest): AccessToken? {
-        val token =
-            try {
-                req.cookies.find { it.name == "jiniaslog_access" }
-            } catch (e: NullPointerException) {
-                null
-            }
+        val token = req.cookies.find { it.name == "jiniaslog_access" }
         return token?.value?.let { AccessToken(it) }
     }
 

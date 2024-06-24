@@ -23,11 +23,11 @@ data class ArticlePostRequest(
             authorId = UserId(userId),
             categoryId = CategoryId(categoryId),
             articleContents =
-                ArticleContents(
-                    title = title,
-                    contents = contents,
-                    thumbnailUrl = thumbnailUrl,
-                ),
+            ArticleContents(
+                title = title,
+                contents = contents,
+                thumbnailUrl = thumbnailUrl,
+            ),
             tags = tags.map { TagId(it) },
         )
     }
@@ -51,11 +51,11 @@ data class ArticleUpdateRequest(
             categoryId = CategoryId(categoryId),
             memoRefId = MemoId(refMemoId),
             articleContents =
-                ArticleContents(
-                    title = title,
-                    contents = contents,
-                    thumbnailUrl = thumbnailUrl,
-                ),
+            ArticleContents(
+                title = title,
+                contents = contents,
+                thumbnailUrl = thumbnailUrl,
+            ),
             tags = tags.map { TagId(it) },
         )
     }

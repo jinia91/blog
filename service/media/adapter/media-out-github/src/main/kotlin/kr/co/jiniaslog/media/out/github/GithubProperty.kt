@@ -5,9 +5,9 @@ import org.springframework.boot.context.properties.bind.ConstructorBinding
 
 @ConfigurationProperties(prefix = "api.github")
 class GithubProperty
-    @ConstructorBinding
-    constructor(
-        val gitToken: String,
-        val gitRepo: String,
-        val rootUrl: String,
-    )
+@ConstructorBinding
+constructor(
+    val gitToken: String,
+    val gitRepo: String,
+    val rootUrl: String,
+)

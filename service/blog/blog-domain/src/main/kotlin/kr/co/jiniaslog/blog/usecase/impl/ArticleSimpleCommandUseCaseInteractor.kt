@@ -84,5 +84,5 @@ class ArticleSimpleCommandUseCaseInteractor(
     private fun getArticleBy(articleId: ArticleId) = (
         articleRepository.findById(articleId)
             ?: throw IllegalArgumentException("article not found")
-    )
+        )
 }

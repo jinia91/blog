@@ -37,12 +37,12 @@ include(
     "service:memo:adapter:memo-in-batch",
     "service:memo:adapter:memo-out-persistence",
 
-    //media
+    // media
     "service:media:media-domain",
     "service:media:adapter:media-in-http",
     "service:media:adapter:media-out-github",
 
-    //user-auth
+    // user-auth
     "service:user-auth:user-auth-domain",
     "service:user-auth:user-auth-application",
     "service:user-auth:adapter:user-auth-in-http",
@@ -55,4 +55,3 @@ include(
     "service:seo",
     "service:message-nexus",
 )
-

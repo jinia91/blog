@@ -22,7 +22,9 @@ class LogTracer {
         val traceId = traceIdHolder.get()
         val startTimeMs = System.currentTimeMillis()
         if (traceId.isFirstLevel) {
-            addToLogBuffer("------------------------------" + traceId.id + "'s transaction start------------------------------")
+            addToLogBuffer(
+                "------------------------------" + traceId.id + "'s transaction start------------------------------"
+            )
         }
         addToLogBuffer(
             "[${traceId.id}] ${
@@ -74,7 +76,10 @@ class LogTracer {
         val traceId: TraceId = traceStatus.traceId
         if (ex == null) {
             addToLogBuffer(
-                "[${traceId.id}] ${addSpace(COMPLETE_PREFIX, traceId.level)}${traceStatus.message} time = ${resultTimeMs}ms",
+                "[${traceId.id}] ${addSpace(
+                    COMPLETE_PREFIX,
+                    traceId.level
+                )}${traceStatus.message} time = ${resultTimeMs}ms",
             )
         } else {
             addToLogBuffer(
@@ -88,7 +93,7 @@ class LogTracer {
         }
         if (traceStatus.traceId.isFirstLevel) {
             addToLogBuffer(
-                "-------------------------------" + traceId.id + "'s transaction end/" + resultTimeMs + "ms-------------------------",
+                "---------------------" + traceId.id + "'s transaction end/" + resultTimeMs + "ms------------------------",
             )
         }
         releaseAndFlushIfNeeded()

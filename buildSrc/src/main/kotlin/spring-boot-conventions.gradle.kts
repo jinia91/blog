@@ -5,7 +5,6 @@ plugins {
     kotlin("plugin.spring")
 }
 
-
 tasks.findByName("bootJar")?.let {
     it.enabled = false
 }

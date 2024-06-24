@@ -81,7 +81,7 @@ class SnowFlake53StrategyIdGeneratorImpl(serverId: Int, serverIdBitSize: Int) : 
             timestamp - BASE_TIMESTAMP shl TIMESTAMP_SHIFT
                 or (serverId shl serverIdShift).toLong()
                 or serialNumber.toLong()
-        )
+            )
     }
 
     private fun waitNextTimestamp(lastTimestamp: Long): Long {

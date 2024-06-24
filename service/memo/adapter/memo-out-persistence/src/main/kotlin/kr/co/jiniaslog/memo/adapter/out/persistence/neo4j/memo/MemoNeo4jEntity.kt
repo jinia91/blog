@@ -50,6 +50,6 @@ internal class MemoNeo4jEntity(
         return """
             MemoNeo4jEntity(id=$id, authorId=$authorId, title='$title', content='$content', 
             references=$references, parentFolder=$parentFolder, createdAt=$createdAt, updatedAt=$updatedAt)
-            """.trimIndent()
+        """.trimIndent()
     }
 }

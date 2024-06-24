@@ -8,7 +8,3 @@ dependencies {
     implementation(project(":libs:messaging-handler-generator"))
     ksp(project(":libs:messaging-handler-generator"))
 }
-
-tasks.withType<org.jmailen.gradle.kotlinter.tasks.ConfigurableKtLintTask>().configureEach {
-    exclude { it.file.path.contains("build/generated") }
-}
