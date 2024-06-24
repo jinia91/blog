@@ -7,7 +7,7 @@ plugins {
     id("org.jetbrains.kotlinx.kover")
 }
 
-tasks.getByName("koverVerify").dependsOn("koverHtmlReport", "koverXmlReport")
+tasks.getByName("koverVerify").dependsOn("koverHtmlReport")
 
 koverReport {
     defaults {

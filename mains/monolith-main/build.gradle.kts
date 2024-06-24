@@ -71,8 +71,14 @@ dependencies {
     moduleBlocks.forEach {
         implementation(it)
     }
+    moduleBlocks.forEach {
+        kover(it)
+    }
     libs.forEach {
         implementation(it)
+    }
+    libs.forEach {
+        kover(it)
     }
     integrationTest.forEach {
         testImplementation(it)

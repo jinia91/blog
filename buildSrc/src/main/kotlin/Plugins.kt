@@ -7,8 +7,5 @@ val PluginDependenciesSpec.conventions: PluginDependencySpec
 val PluginDependenciesSpec.springBootConventions: PluginDependencySpec
     get() = id("spring-boot-conventions")
 
-val PluginDependenciesSpec.jacocoFeatures: PluginDependencySpec
-    get() = id("jacoco-features")
-
-val PluginDependenciesSpec.koverFeatures: PluginDependencySpec
+val PluginDependenciesSpec.koverReport: PluginDependencySpec
     get() = id("kover-features")

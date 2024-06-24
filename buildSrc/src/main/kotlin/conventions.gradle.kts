@@ -4,6 +4,7 @@ plugins {
     kotlin("jvm")
     kotlin("plugin.allopen")
     id("java-test-fixtures")
+    id("org.jetbrains.kotlinx.kover")
 }
 
 allOpen {
