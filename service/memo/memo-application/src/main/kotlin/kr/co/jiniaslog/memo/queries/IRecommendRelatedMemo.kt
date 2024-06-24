@@ -19,8 +19,7 @@ interface IRecommendRelatedMemo {
             .replace("\"", "\\\"") // 따옴표
             .replace("'", "\\'") // 작은따옴표
     }
+    data class Info(
+        val relatedMemoCandidates: List<Triple<MemoId, MemoTitle, MemoContent>>,
+    )
 }
-
-data class Info(
-    val relatedMemoCandidates: List<Triple<MemoId, MemoTitle, MemoContent>>,
-)

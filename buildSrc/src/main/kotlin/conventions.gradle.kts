@@ -4,7 +4,6 @@ plugins {
     kotlin("jvm")
     kotlin("plugin.allopen")
     id("java-test-fixtures")
-    id("org.jmailen.kotlinter")
 }
 
 allOpen {
@@ -20,28 +19,12 @@ java {
     targetCompatibility = JavaVersion.VERSION_17
 }
 
-kotlinter {
-    reporters = arrayOf("checkstyle", "plain")
-}
-
 tasks {
     compileKotlin {
         kotlinOptions {
             freeCompilerArgs = listOf("-Xjsr305=strict")
             jvmTarget = "17"
         }
-    }
-
-    lintKotlinMain {
-        dependsOn("formatKotlinMain")
-    }
-
-    lintKotlinTest {
-        dependsOn("formatKotlinTest")
-    }
-
-    lintKotlinTestFixtures {
-        dependsOn("formatKotlinTestFixtures")
     }
 
     test {
