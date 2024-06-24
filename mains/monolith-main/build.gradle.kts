@@ -1,13 +1,12 @@
 plugins {
     springBootConventions
+    koverReport
 }
 
 /**
- * ###################################
- * ## Monolith Bootstrap Dependency ##
- * ###################################
+ *  Monolith Bootstrap Dependency
  */
-// cross-cutting concern for main boot, similar to infrastructure
+// cross-cutting concern for main boot
 val shared = mutableListOf(
     project(Modules.Libs.GlobalLogging.path),
     project(Modules.Libs.SnowflakeIdGenerator.path),
@@ -58,7 +57,7 @@ var moduleBlocks = mutableListOf<Project>()
         addAll(authUserService)
     }
 
-var integrationTest = mutableListOf(
+var integrationTestLib = mutableListOf(
     "org.testcontainers:testcontainers:1.19.8",
     "org.testcontainers:junit-jupiter:1.19.8",
     "org.testcontainers:neo4j:1.19.8",
@@ -70,11 +69,13 @@ var integrationTest = mutableListOf(
 dependencies {
     moduleBlocks.forEach {
         implementation(it)
+        kover(it)
     }
     libs.forEach {
         implementation(it)
+        kover(it)
     }
-    integrationTest.forEach {
+    integrationTestLib.forEach {
         testImplementation(it)
     }
     testImplementation(testFixtures(project(Modules.Service.Memo.Adaptors.Persistence.path)))
@@ -89,5 +90,28 @@ tasks {
     }
     bootJar {
         enabled = true
+    }
+}
+
+koverReport {
+    verify {
+        filters {
+            excludes {
+                classes(
+                    "kr.co.jiniaslog.App",
+                    "kr.co.jiniaslog.AppKt",
+                    "*.Q*", // 어노테이션, 패키지 필터가 적용이 안되서 q 파일 임시로 제외
+                )
+            }
+        }
+    }
+    filters {
+        excludes {
+            classes(
+                "kr.co.jiniaslog.App",
+                "kr.co.jiniaslog.AppKt",
+                "*.Q*",
+            )
+        }
     }
 }

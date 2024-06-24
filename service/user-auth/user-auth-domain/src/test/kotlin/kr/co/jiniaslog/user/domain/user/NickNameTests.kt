@@ -1,6 +1,7 @@
 package kr.co.jiniaslog.user.domain.user
 
 import io.kotest.assertions.throwables.shouldThrow
+import io.kotest.matchers.shouldBe
 import org.junit.jupiter.api.Test
 
 class NickNameTests {
@@ -24,6 +25,7 @@ class NickNameTests {
         val sut = NickName(nickName)
 
         // then
+        sut.value shouldBe nickName
         assert(true)
     }
 }

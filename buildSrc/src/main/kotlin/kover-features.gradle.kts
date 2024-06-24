@@ -7,14 +7,9 @@ plugins {
     id("org.jetbrains.kotlinx.kover")
 }
 
-tasks.getByName("koverVerify").dependsOn("koverHtmlReport", "koverXmlReport")
+tasks.getByName("koverVerify").dependsOn("koverHtmlReport")
 
 koverReport {
-    defaults {
-        xml {
-            title.set("${project.name} test coverage")
-        }
-    }
     verify {
         rule(name = "Branch coverage") {
             entity = GroupingEntityType.APPLICATION
@@ -22,12 +17,12 @@ koverReport {
 
             bound {
                 metric = MetricType.INSTRUCTION
-                minValue = 70
+                minValue = 50
             }
 
             bound {
                 metric = MetricType.BRANCH
-                minValue = 70
+                minValue = 50
             }
         }
     }

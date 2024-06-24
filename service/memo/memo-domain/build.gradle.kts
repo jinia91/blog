@@ -1,6 +1,6 @@
 plugins {
     conventions
-    koverFeatures
+    koverReport
 }
 
 group = "kr.co.jiniaslog.memo"
