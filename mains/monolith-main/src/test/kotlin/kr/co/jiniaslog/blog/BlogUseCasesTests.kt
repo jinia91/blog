@@ -64,11 +64,11 @@ class BlogUseCasesTests : TestContainerAbstractSkeleton() {
                 authorId = UserId(user.id.value),
                 categoryId = category.id,
                 articleContents =
-                    ArticleContents(
-                        title = "title",
-                        contents = "body",
-                        thumbnailUrl = "thumbnailUrl",
-                    ),
+                ArticleContents(
+                    title = "title",
+                    contents = "body",
+                    thumbnailUrl = "thumbnailUrl",
+                ),
                 tags = emptyList(),
             )
 
@@ -119,11 +119,11 @@ class BlogUseCasesTests : TestContainerAbstractSkeleton() {
                 authorId = UserId(user.id.value),
                 categoryId = category.id,
                 articleContents =
-                    ArticleContents(
-                        title = "title",
-                        contents = "body",
-                        thumbnailUrl = "thumbnailUrl",
-                    ),
+                ArticleContents(
+                    title = "title",
+                    contents = "body",
+                    thumbnailUrl = "thumbnailUrl",
+                ),
                 tags = emptyList(),
             )
 

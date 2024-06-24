@@ -14,14 +14,14 @@ data class MemoResponse(
 fun IRecommendRelatedMemo.Info.toResponse(): MemoResponse {
     return MemoResponse(
         memos =
-            this.relatedMemoCandidates.map {
-                IGetAllMemos.Info(
-                    memoId = it.first,
-                    title = it.second,
-                    content = it.third,
-                    references = emptySet(),
-                )
-            },
+        this.relatedMemoCandidates.map {
+            IGetAllMemos.Info(
+                memoId = it.first,
+                title = it.second,
+                content = it.third,
+                references = emptySet(),
+            )
+        },
     )
 }
 
@@ -49,12 +49,12 @@ fun IGetMemoById.Info.toResponse(): GetMemoByIdResponse {
         title = this.title.value,
         content = this.content.value,
         references =
-            this.references.map {
-                GetMemoByIdResponse.Reference(
-                    rootId = it.rootId.value,
-                    referenceId = it.referenceId.value,
-                )
-            }.toSet(),
+        this.references.map {
+            GetMemoByIdResponse.Reference(
+                rootId = it.rootId.value,
+                referenceId = it.referenceId.value,
+            )
+        }.toSet(),
     )
 }
 
@@ -78,12 +78,12 @@ data class GetAllReferencesByMemoResponse(
 fun IGetAllReferencesByMemo.Info.toResponse(): GetAllReferencesByMemoResponse {
     return GetAllReferencesByMemoResponse(
         references =
-            this.references.map {
-                GetAllReferencesByMemoResponse.Reference(
-                    id = it.id.value,
-                    title = it.title.value,
-                )
-            }.toList(),
+        this.references.map {
+            GetAllReferencesByMemoResponse.Reference(
+                id = it.id.value,
+                title = it.title.value,
+            )
+        }.toList(),
     )
 }
 
@@ -99,12 +99,12 @@ data class GetAllReferencedByMemoResponse(
 fun IGetAllReferencedByMemo.Info.toResponse(): GetAllReferencedByMemoResponse {
     return GetAllReferencedByMemoResponse(
         referenceds =
-            this.referenceds.map {
-                GetAllReferencedByMemoResponse.Referenced(
-                    id = it.id.value,
-                    title = it.title.value,
-                )
-            }.toList(),
+        this.referenceds.map {
+            GetAllReferencedByMemoResponse.Referenced(
+                id = it.id.value,
+                title = it.title.value,
+            )
+        }.toList(),
     )
 }
 

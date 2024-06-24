@@ -35,8 +35,13 @@ internal open class QueriesMemoFolderImpl(
                 memoId = MemoId(it.id),
                 title = MemoTitle(it.title),
                 references =
-                    it.references.map { IGetAllMemos.MemoReferenceInfo(rootId = MemoId(id), referenceId = MemoId(it.id)) }
-                        .toSet(),
+                it.references.map {
+                    IGetAllMemos.MemoReferenceInfo(
+                        rootId = MemoId(id),
+                        referenceId = MemoId(it.id)
+                    )
+                }
+                    .toSet(),
             )
         }
     }
@@ -50,13 +55,13 @@ internal open class QueriesMemoFolderImpl(
 
         return IRecommendRelatedMemo.Info(
             relatedMemoCandidates =
-                relatedMemoCandidates.map {
-                    Triple(
-                        MemoId(it.first),
-                        MemoTitle(it.second),
-                        MemoContent(it.third),
-                    )
-                },
+            relatedMemoCandidates.map {
+                Triple(
+                    MemoId(it.first),
+                    MemoTitle(it.second),
+                    MemoContent(it.third),
+                )
+            },
         )
     }
 
@@ -69,12 +74,12 @@ internal open class QueriesMemoFolderImpl(
             title = MemoTitle(memo.title),
             content = MemoContent(memo.content),
             references =
-                memo.references.map {
-                    IGetMemoById.Info.ReferenceInfo(
-                        rootId = MemoId(it.id),
-                        referenceId = MemoId(it.id),
-                    )
-                }.toSet(),
+            memo.references.map {
+                IGetMemoById.Info.ReferenceInfo(
+                    rootId = MemoId(it.id),
+                    referenceId = MemoId(it.id),
+                )
+            }.toSet(),
         )
     }
 
@@ -85,12 +90,12 @@ internal open class QueriesMemoFolderImpl(
                 ?: throw IllegalArgumentException("memo not found")
         return IGetAllReferencesByMemo.Info(
             references =
-                memo.references.map {
-                    IGetAllReferencesByMemo.ReferenceInfo(
-                        id = MemoId(it.id),
-                        title = MemoTitle(it.title),
-                    )
-                }.toSet(),
+            memo.references.map {
+                IGetAllReferencesByMemo.ReferenceInfo(
+                    id = MemoId(it.id),
+                    title = MemoTitle(it.title),
+                )
+            }.toSet(),
         )
     }
 
@@ -98,12 +103,12 @@ internal open class QueriesMemoFolderImpl(
         val result = memoNeo4jRepository.findReferencingMemos(query.memoId.value)
         return IGetAllReferencedByMemo.Info(
             referenceds =
-                result.map {
-                    IGetAllReferencedByMemo.ReferencedInfo(
-                        id = MemoId(it.id),
-                        title = MemoTitle(it.title),
-                    )
-                }.toSet(),
+            result.map {
+                IGetAllReferencedByMemo.ReferencedInfo(
+                    id = MemoId(it.id),
+                    title = MemoTitle(it.title),
+                )
+            }.toSet(),
         )
     }
 

@@ -1,6 +1,7 @@
 plugins {
     springBootConventions
 }
+
 /**
  * ###################################
  * ## Monolith Bootstrap Dependency ##
