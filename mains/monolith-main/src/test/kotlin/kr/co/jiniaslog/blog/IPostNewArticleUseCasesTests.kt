@@ -22,7 +22,7 @@ import kr.co.jiniaslog.user.domain.user.User
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 
-class BlogUseCasesTests : TestContainerAbstractSkeleton() {
+class IPostNewArticleUseCasesTests : TestContainerAbstractSkeleton() {
     @Autowired
     private lateinit var sut: IPostNewArticle
 
