@@ -13,7 +13,7 @@ import kr.co.jiniaslog.user.domain.user.UserId
 import java.time.LocalDateTime
 
 @Entity
-@Table(name = "user")
+@Table(name = "users")
 class UserJpaEntity(
     @Id
     @Column(name = "id", nullable = false, unique = true)

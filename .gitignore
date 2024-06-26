@@ -47,5 +47,5 @@ src/main/resources/application-dev.yml
 /src/logback.xml
 **/application.yml
 
-### memo index ###
-/memo/index/
+### h2 db ###
+/h2/

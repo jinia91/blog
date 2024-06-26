@@ -75,6 +75,7 @@ dependencies {
         implementation(it)
         kover(it)
     }
+    implementation("com.h2database:h2:2.2.224")
     integrationTestLib.forEach {
         testImplementation(it)
     }
