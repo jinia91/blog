@@ -1,6 +1,6 @@
 package kr.co.jiniaslog.media.inbound.http
 
-import kr.co.jiniaslog.media.usecase.UseCasesImageFacade
+import kr.co.jiniaslog.media.usecase.ImageUseCasesFacade
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.CrossOrigin
 import org.springframework.web.bind.annotation.ModelAttribute
@@ -11,8 +11,8 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 @RequestMapping("/api/v1/media")
 @PreAuthorize("hasRole('ADMIN')")
-class MediaController(
-    private val useCaseImage: UseCasesImageFacade,
+class ImageController(
+    private val imageUseCases: ImageUseCasesFacade,
 ) {
     @PostMapping("/image")
     @CrossOrigin(origins = ["http://localhost:3000"])
@@ -20,7 +20,7 @@ class MediaController(
         @ModelAttribute request: ImgUploadRequest,
     ): ImgUploadResponse {
         val command = request.toCommand()
-        val info = useCaseImage.uploadImage(command)
+        val info = imageUseCases.uploadImage(command)
         return ImgUploadResponse(info.url.value)
     }
 }

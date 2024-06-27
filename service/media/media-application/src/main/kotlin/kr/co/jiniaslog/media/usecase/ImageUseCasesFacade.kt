@@ -1,4 +1,4 @@
 package kr.co.jiniaslog.media.usecase
 
-interface UseCasesImageFacade :
+interface ImageUseCasesFacade :
     IUploadImage
