@@ -1,8 +1,8 @@
 package kr.co.jiniaslog
 
 import io.restassured.RestAssured
+import kr.co.jiniaslog.utils.H2RdbCleaner
 import kr.co.jiniaslog.utils.Neo4jDbCleaner
-import kr.co.jiniaslog.utils.RdbCleaner
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -12,7 +12,6 @@ import org.springframework.boot.test.web.server.LocalServerPort
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.DynamicPropertyRegistry
 import org.springframework.test.context.DynamicPropertySource
-import org.testcontainers.containers.MySQLContainer
 import org.testcontainers.containers.Neo4jContainer
 import org.testcontainers.junit.jupiter.Testcontainers
 
@@ -39,7 +38,7 @@ abstract class TestContainerAbstractSkeleton {
     protected lateinit var neo4jDbCleaner: Neo4jDbCleaner
 
     @Autowired
-    protected lateinit var rdbCleaner: RdbCleaner
+    protected lateinit var h2RdbCleaner: H2RdbCleaner
 
     @BeforeEach
     fun setUp() {
@@ -48,8 +47,8 @@ abstract class TestContainerAbstractSkeleton {
 
     @AfterEach
     fun tearDown() {
-        neo4jDbCleaner.tearDown()
-        rdbCleaner.tearDownAll()
+        neo4jDbCleaner.tearDownAll()
+        h2RdbCleaner.tearDownAll()
     }
 
     @Test
@@ -57,33 +56,13 @@ abstract class TestContainerAbstractSkeleton {
     }
 
     companion object {
-        private const val RDB_INIT_SQL = "SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci"
-        private const val RDB_CHARSET = "--character-set-server=utf8mb4"
-        private const val RDB_COLLATION = "--collation-server=utf8mb4_unicode_ci"
-
         @JvmStatic
-        val neo4j =
+        val neo4j: Neo4jContainer<*> =
             Neo4jContainer("neo4j:5")
-                .withReuse(true)
-
-        @JvmStatic
-        val userDb: MySQLContainer<*> =
-            MySQLContainer("mysql:8.0")
-                .withCommand(RDB_CHARSET, RDB_COLLATION)
-                .withDatabaseName("user")
-                .withReuse(true)
-
-        @JvmStatic
-        val blogDb: MySQLContainer<*> =
-            MySQLContainer("mysql:8.0")
-                .withCommand(RDB_CHARSET, RDB_COLLATION)
-                .withDatabaseName("blog")
                 .withReuse(true)
 
         init {
             neo4j.start()
-            userDb.start()
-            blogDb.start()
         }
 
         @DynamicPropertySource
@@ -93,20 +72,6 @@ abstract class TestContainerAbstractSkeleton {
             registry.add("spring.neo4j.uri") { neo4j.boltUrl }
             registry.add("spring.neo4j.authentication.username") { "neo4j" }
             registry.add("spring.neo4j.authentication.password") { "password" }
-
-            // user db
-            registry.add("spring.datasource.user.jdbc-url") { userDb.jdbcUrl }
-            registry.add("spring.datasource.user.username") { userDb.username }
-            registry.add("spring.datasource.user.password") { userDb.password }
-            registry.add("spring.datasource.user.driver-class-name") { userDb.driverClassName }
-            registry.add("spring.datasource.user.connection-init-sql") { RDB_INIT_SQL }
-
-            // blog db
-            registry.add("spring.datasource.blog.jdbc-url") { blogDb.jdbcUrl }
-            registry.add("spring.datasource.blog.username") { blogDb.username }
-            registry.add("spring.datasource.blog.password") { blogDb.password }
-            registry.add("spring.datasource.blog.driver-class-name") { blogDb.driverClassName }
-            registry.add("spring.datasource.blog.connection-init-sql") { RDB_INIT_SQL }
         }
     }
 }

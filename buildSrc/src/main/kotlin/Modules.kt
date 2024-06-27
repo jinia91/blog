@@ -14,7 +14,7 @@ object Modules {
                 InAcl(":service:memo:adapter:memo-in-acl"),
                 InHttp(":service:memo:adapter:memo-in-http"),
                 InWebsocket(":service:memo:adapter:memo-in-websocket"),
-                Persistence(":service:memo:adapter:memo-out-persistence")
+                OutNeo4j(":service:memo:adapter:memo-out-neo4j"),
             }
         }
 
@@ -45,8 +45,8 @@ object Modules {
                 InAcl(":service:user-auth:adapter:user-auth-in-acl"),
                 InHttp(":service:user-auth:adapter:user-auth-in-http"),
                 OutGoogle(":service:user-auth:adapter:user-auth-out-google"),
-                Persistence(":service:user-auth:adapter:user-auth-out-persistence"),
-                Cache(":service:user-auth:adapter:user-auth-out-cache")
+                OutH2(":service:user-auth:adapter:user-auth-out-h2"),
+                OutCache(":service:user-auth:adapter:user-auth-out-cache")
             }
         }
 
@@ -58,6 +58,6 @@ object Modules {
         val SnowflakeIdGenerator = Module(":libs:snowflake-id-generator")
         val GlobalLogging = Module(":libs:global-logging")
         val CoreKernel = Module(":libs:core-kernel")
-        val JpaKernel = Module(":libs:rdb-kernel")
+        val RdbKernel = Module(":libs:rdb-kernel")
     }
 }

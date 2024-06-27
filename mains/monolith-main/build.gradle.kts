@@ -30,7 +30,7 @@ val memoService = mutableListOf(
     project(Modules.Service.Memo.Application.path),
     project(Modules.Service.Memo.Adaptors.InHttp.path),
     project(Modules.Service.Memo.Adaptors.InWebsocket.path),
-    project(Modules.Service.Memo.Adaptors.Persistence.path),
+    project(Modules.Service.Memo.Adaptors.OutNeo4j.path),
 )
 
 val mediaService = mutableListOf(
@@ -44,8 +44,8 @@ val authUserService = mutableListOf(
     project(Modules.Service.AuthUser.Application.path),
     project(Modules.Service.AuthUser.Adaptors.OutGoogle.path),
     project(Modules.Service.AuthUser.Adaptors.InHttp.path),
-    project(Modules.Service.AuthUser.Adaptors.Cache.path),
-    project(Modules.Service.AuthUser.Adaptors.Persistence.path),
+    project(Modules.Service.AuthUser.Adaptors.OutCache.path),
+    project(Modules.Service.AuthUser.Adaptors.OutH2.path),
 )
 
 var moduleBlocks = mutableListOf<Project>()
@@ -61,7 +61,6 @@ var integrationTestLib = mutableListOf(
     "org.testcontainers:testcontainers:1.19.8",
     "org.testcontainers:junit-jupiter:1.19.8",
     "org.testcontainers:neo4j:1.19.8",
-    "org.testcontainers:mysql:1.19.8",
     "io.rest-assured:rest-assured:5.4.0",
     "org.springframework.cloud:spring-cloud-contract-wiremock:4.1.0",
 )
@@ -75,10 +74,11 @@ dependencies {
         implementation(it)
         kover(it)
     }
+    implementation("com.h2database:h2:2.2.224")
     integrationTestLib.forEach {
         testImplementation(it)
     }
-    testImplementation(testFixtures(project(Modules.Service.Memo.Adaptors.Persistence.path)))
+    testImplementation(testFixtures(project(Modules.Service.Memo.Adaptors.OutNeo4j.path)))
     testImplementation(project(path = Modules.Service.Memo.Domain.path, configuration = "testArtifact"))
     testImplementation(testFixtures(project(Modules.Service.AuthUser.Application.path)))
 }

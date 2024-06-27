@@ -1,22 +1,5 @@
 version: "3"
 services:
-  jinia_rdb:
-    ports:
-      - "3307:3306"
-    image: mysql:8.0.34
-    restart: always
-    networks:
-      - internal-network
-    environment:
-      MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
-      MYSQL_DATABASE: jiniaslog_blog
-    volumes:
-      - ./sql/initdb.d:/docker-entrypoint-initdb.d
-    healthcheck:
-      test: "mysqladmin ping --silent"
-      interval: 1s
-      retries: 120
-
   monolith-main:
     ports:
       - "7777:7777"
@@ -26,20 +9,6 @@ services:
       JAVA_TOOL_OPTIONS: -Dcom.sun.management.jmxremote=true -Dcom.sun.management.jmxremote.port=7778 -Dcom.sun.management.jmxremote.rmi.port=7778 -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Djava.rmi.server.hostname=${HOST_IP:-$DEFAULT_IP} -Xms2G -Xmx2G
       SPRING_APPLICATION_JSON: '{
   "spring": {
-    "datasource": {
-      "user": {
-        "jdbc-url": "jdbc:mysql://jinia_rdb/jiniaslog_user?allowPublicKeyRetrieval=true&useSSL=false",
-        "username": "root",
-        "password": "",
-        "driver-class-name": "com.mysql.cj.jdbc.Driver"
-      },
-      "blog": {
-        "jdbc-url": "jdbc:mysql://jinia_rdb/jiniaslog_blog?allowPublicKeyRetrieval=true&useSSL=false",
-        "username": "root",
-        "password": "",
-        "driver-class-name": "com.mysql.cj.jdbc.Driver"
-      }
-    },
     "neo4j": {
       "uri": "bolt://host.docker.internal:7687",
       "authentication": {

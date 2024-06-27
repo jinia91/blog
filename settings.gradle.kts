@@ -35,7 +35,7 @@ include(
     "service:memo:adapter:memo-in-websocket",
     "service:memo:adapter:memo-in-message",
     "service:memo:adapter:memo-in-batch",
-    "service:memo:adapter:memo-out-persistence",
+    "service:memo:adapter:memo-out-neo4j",
 
     // media
     "service:media:media-domain",
@@ -48,7 +48,7 @@ include(
     "service:user-auth:adapter:user-auth-in-http",
     "service:user-auth:adapter:user-auth-in-acl",
     "service:user-auth:adapter:user-auth-out-google",
-    "service:user-auth:adapter:user-auth-out-persistence",
+    "service:user-auth:adapter:user-auth-out-h2",
     "service:user-auth:adapter:user-auth-out-cache",
 
     "service:comment",

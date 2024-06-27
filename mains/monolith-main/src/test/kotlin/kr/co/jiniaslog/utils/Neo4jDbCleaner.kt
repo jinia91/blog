@@ -1,15 +1,12 @@
 package kr.co.jiniaslog.utils
 
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.neo4j.core.Neo4jClient
 import org.springframework.stereotype.Component
 
 @Component
-class Neo4jDbCleaner {
-    @Autowired
-    private lateinit var neo4jClient: Neo4jClient
+class Neo4jDbCleaner(private val neo4jClient: Neo4jClient) : DbCleaner {
 
-    fun tearDown() {
+    override fun tearDownAll() {
         neo4jClient.query("MATCH (n) DETACH DELETE n").run()
     }
 }
