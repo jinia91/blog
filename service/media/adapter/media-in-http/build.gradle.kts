@@ -4,6 +4,8 @@ plugins {
 }
 
 dependencies {
+    implementation("org.springframework.boot:spring-boot-starter-web")
+    implementation("org.springframework.boot:spring-boot-starter-security")
     implementation(project(Modules.Service.Media.Domain.path))
     implementation(project(Modules.Service.Media.Application.path))
     implementation(project(Modules.Libs.CoreKernel.path))
