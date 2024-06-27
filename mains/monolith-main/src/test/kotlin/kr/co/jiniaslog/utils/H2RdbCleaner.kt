@@ -7,8 +7,8 @@ import java.sql.Connection
 import javax.sql.DataSource
 
 @Component
-class RdbCleaner(private val dataSources: List<DataSource>) {
-    fun tearDownAll() {
+class H2RdbCleaner(private val dataSources: List<DataSource>) : DbCleaner {
+    override fun tearDownAll() {
         dataSources.forEach { dataSource ->
             clean(dataSource)
         }
@@ -19,24 +19,28 @@ class RdbCleaner(private val dataSources: List<DataSource>) {
         var connection: Connection? = null
         try {
             connection = DataSourceUtils.getConnection(jdbcTemplate.dataSource!!)
-            val schema: String = connection.catalog
 
             val tableNames: List<String> =
                 jdbcTemplate.query(
-                    "SELECT table_name FROM information_schema.tables WHERE table_schema = ?",
-                    arrayOf(schema),
+                    QUERY_TABLE_NAMES,
+                    arrayOf(H2_SCHEMA),
                 ) { resultSet, _ ->
-                    resultSet.getString("table_name")
+                    resultSet.getString(TABLE_NAME)
                 }
-            jdbcTemplate.execute("SET FOREIGN_KEY_CHECKS=0;")
             tableNames.forEach { tableName ->
-                jdbcTemplate.execute("TRUNCATE TABLE $tableName")
+                jdbcTemplate.execute(String.format(DELETE_ALL_TABLES, tableName))
             }
-            jdbcTemplate.execute("SET FOREIGN_KEY_CHECKS=1;")
         } finally {
             if (connection != null) {
                 DataSourceUtils.releaseConnection(connection, jdbcTemplate.dataSource!!)
             }
         }
+    }
+
+    companion object {
+        private const val QUERY_TABLE_NAMES = "SELECT table_name FROM information_schema.tables WHERE table_schema = ?"
+        private const val H2_SCHEMA = "PUBLIC"
+        private const val TABLE_NAME = "table_name"
+        private const val DELETE_ALL_TABLES = "DELETE FROM %s"
     }
 }
