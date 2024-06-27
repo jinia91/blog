@@ -29,7 +29,10 @@ import org.testcontainers.junit.jupiter.Testcontainers
  */
 @Testcontainers
 @ActiveProfiles("test")
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, classes = [App::class])
+@SpringBootTest(
+    webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
+    classes = [TestContextConfig::class],
+)
 abstract class TestContainerAbstractSkeleton {
     @LocalServerPort
     protected var port: Int = 0

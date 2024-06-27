@@ -1,4 +1,4 @@
-package kr.co.jiniaslog.media.out.github
+package kr.co.jiniaslog.media.outbound.github
 
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.boot.context.properties.bind.ConstructorBinding

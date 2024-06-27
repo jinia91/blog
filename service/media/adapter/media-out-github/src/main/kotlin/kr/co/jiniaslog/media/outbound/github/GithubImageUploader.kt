@@ -1,4 +1,4 @@
-package kr.co.jiniaslog.media.out.github
+package kr.co.jiniaslog.media.outbound.github
 
 import kr.co.jiniaslog.media.domain.ImageFile
 import kr.co.jiniaslog.media.domain.ImageUrl
@@ -7,14 +7,14 @@ import org.kohsuke.github.GitHubBuilder
 import org.springframework.stereotype.Component
 
 @Component
-class GithubImageUploader(
+internal class GithubImageUploader(
     private val githubProperty: GithubProperty,
 ) : ImageUploader {
     override fun uploadImage(imageFile: ImageFile): ImageUrl {
         val gitHub = GitHubBuilder().withOAuthToken(githubProperty.gitToken).build()
         gitHub.getRepository(githubProperty.gitRepo)
             .createContent()
-            .path("${REPOSITORY_IMAGE_PATH}${imageFile.id.value}")
+            .path("$REPOSITORY_IMAGE_PATH${imageFile.id.value}")
             .content(imageFile.rawImage.value)
             .message(COMMIT_MESSAGE)
             .branch(BRANCH)

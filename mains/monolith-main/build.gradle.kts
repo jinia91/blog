@@ -35,6 +35,7 @@ val memoService = mutableListOf(
 
 val mediaService = mutableListOf(
     project(Modules.Service.Media.Domain.path),
+    project(Modules.Service.Media.Application.path),
     project(Modules.Service.Media.Adaptors.InHttp.path),
     project(Modules.Service.Media.Adaptors.OutGithub.path),
 )
