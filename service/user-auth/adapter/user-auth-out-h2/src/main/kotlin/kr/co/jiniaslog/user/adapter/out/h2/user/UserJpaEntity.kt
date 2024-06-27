@@ -1,4 +1,4 @@
-package kr.co.jiniaslog.user.adapter.out.mysql.user
+package kr.co.jiniaslog.user.adapter.out.h2.user
 
 import jakarta.persistence.Column
 import jakarta.persistence.Entity

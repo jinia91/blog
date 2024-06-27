@@ -44,8 +44,8 @@ val authUserService = mutableListOf(
     project(Modules.Service.AuthUser.Application.path),
     project(Modules.Service.AuthUser.Adaptors.OutGoogle.path),
     project(Modules.Service.AuthUser.Adaptors.InHttp.path),
-    project(Modules.Service.AuthUser.Adaptors.Cache.path),
-    project(Modules.Service.AuthUser.Adaptors.Persistence.path),
+    project(Modules.Service.AuthUser.Adaptors.OutCache.path),
+    project(Modules.Service.AuthUser.Adaptors.OutH2.path),
 )
 
 var moduleBlocks = mutableListOf<Project>()

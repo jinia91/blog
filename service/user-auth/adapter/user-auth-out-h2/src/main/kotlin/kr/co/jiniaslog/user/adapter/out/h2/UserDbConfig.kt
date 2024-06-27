@@ -1,4 +1,4 @@
-package kr.co.jiniaslog.user.adapter.out.mysql
+package kr.co.jiniaslog.user.adapter.out.h2
 
 import jakarta.persistence.EntityManagerFactory
 import org.springframework.beans.factory.annotation.Qualifier
@@ -15,7 +15,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement
 import javax.sql.DataSource
 
 object UserDb {
-    const val BASE_PACKAGE = "kr.co.jiniaslog.user.adapter.out.mysql"
+    const val BASE_PACKAGE = "kr.co.jiniaslog.user.adapter.out.h2"
     const val DATASOURCE_PREFIX = "spring.datasource.user"
     const val ENTITY_MANAGER_FACTORY = "userEntityManagerFactory"
     const val DATASOURCE = "userDatasource"

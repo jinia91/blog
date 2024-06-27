@@ -1,4 +1,4 @@
-package kr.co.jiniaslog.user.adapter.out.mysql.user
+package kr.co.jiniaslog.user.adapter.out.h2.user
 
 import kr.co.jiniaslog.shared.core.annotation.PersistenceAdapter
 import kr.co.jiniaslog.user.application.infra.UserRepository

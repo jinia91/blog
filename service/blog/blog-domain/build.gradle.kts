@@ -9,7 +9,7 @@ group = "kr.co.jiniaslog.blog"
 dependencies {
     implementation(project(Modules.Libs.CoreKernel.path))
     implementation(project(Modules.Service.MessageNexus.path))
-    implementation(project(Modules.Libs.JpaKernel.path))
+    implementation(project(Modules.Libs.RdbKernel.path))
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.springframework.boot:spring-boot-starter")
 
