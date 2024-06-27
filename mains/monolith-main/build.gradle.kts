@@ -79,7 +79,6 @@ dependencies {
         testImplementation(it)
     }
     testImplementation(testFixtures(project(Modules.Service.Memo.Adaptors.OutNeo4j.path)))
-    testImplementation(project(path = Modules.Service.Memo.Domain.path, configuration = "testArtifact"))
     testImplementation(testFixtures(project(Modules.Service.AuthUser.Application.path)))
 }
 
