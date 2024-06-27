@@ -35,7 +35,7 @@ include(
     "service:memo:adapter:memo-in-websocket",
     "service:memo:adapter:memo-in-message",
     "service:memo:adapter:memo-in-batch",
-    "service:memo:adapter:memo-out-persistence",
+    "service:memo:adapter:memo-out-neo4j",
 
     // media
     "service:media:media-domain",

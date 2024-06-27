@@ -1,6 +1,7 @@
 package kr.co.jiniaslog.blog.outbound.persistence
 
 import jakarta.persistence.EntityManagerFactory
+import kr.co.jiniaslog.shared.adapter.out.rdb.JpaAutoDdlProperty
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.boot.jdbc.DataSourceBuilder
@@ -31,7 +32,7 @@ object BlogDb {
     transactionManagerRef = BlogDb.TRANSACTION_MANAGER,
     basePackages = [BlogDb.BASE_PACKAGE],
 )
-class BlogDatasourceConfig {
+class BlogDatasourceConfig(private val jpaDdlAutoProperty: JpaAutoDdlProperty) {
     @Bean
     @Primary
     @ConfigurationProperties(prefix = BlogDb.DATASOURCE_PREFIX)
@@ -48,7 +49,7 @@ class BlogDatasourceConfig {
         return builder
             .dataSource(dataSource)
             .packages(BlogDb.BASE_PACKAGE)
-            .properties(mapOf("hibernate.hbm2ddl.auto" to "create-drop"))
+            .properties(mapOf(jpaDdlAutoProperty.key to jpaDdlAutoProperty.ddlAuto))
             .build()
     }
 

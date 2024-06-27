@@ -1,6 +1,7 @@
 package kr.co.jiniaslog.user.adapter.out.h2
 
 import jakarta.persistence.EntityManagerFactory
+import kr.co.jiniaslog.shared.adapter.out.rdb.JpaAutoDdlProperty
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.boot.jdbc.DataSourceBuilder
@@ -30,7 +31,7 @@ object UserDb {
     transactionManagerRef = UserDb.TRANSACTION_MANAGER,
     basePackages = [UserDb.BASE_PACKAGE],
 )
-class UserDatasourceConfig {
+class UserDatasourceConfig(private val jpaDdlAutoProperty: JpaAutoDdlProperty) {
     @Bean
     @ConfigurationProperties(prefix = UserDb.DATASOURCE_PREFIX)
     fun userDatasource(): DataSource {
@@ -45,7 +46,7 @@ class UserDatasourceConfig {
         return builder
             .dataSource(dataSource)
             .packages(UserDb.BASE_PACKAGE)
-            .properties(mapOf("hibernate.hbm2ddl.auto" to "create-drop"))
+            .properties(mapOf(jpaDdlAutoProperty.key to jpaDdlAutoProperty.ddlAuto))
             .build()
     }
 

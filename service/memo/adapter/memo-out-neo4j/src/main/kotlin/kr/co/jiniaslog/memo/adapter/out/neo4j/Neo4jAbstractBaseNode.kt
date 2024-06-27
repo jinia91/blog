@@ -1,4 +1,4 @@
-package kr.co.jiniaslog.memo.adapter.out.persistence.neo4j
+package kr.co.jiniaslog.memo.adapter.out.neo4j
 
 import org.springframework.data.annotation.CreatedDate
 import org.springframework.data.annotation.LastModifiedDate

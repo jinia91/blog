@@ -57,7 +57,7 @@ abstract class TestContainerAbstractSkeleton {
 
     companion object {
         @JvmStatic
-        val neo4j =
+        val neo4j: Neo4jContainer<*> =
             Neo4jContainer("neo4j:5")
                 .withReuse(true)
 

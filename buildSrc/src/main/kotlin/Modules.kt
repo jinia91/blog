@@ -14,7 +14,7 @@ object Modules {
                 InAcl(":service:memo:adapter:memo-in-acl"),
                 InHttp(":service:memo:adapter:memo-in-http"),
                 InWebsocket(":service:memo:adapter:memo-in-websocket"),
-                Persistence(":service:memo:adapter:memo-out-persistence")
+                OutNeo4j(":service:memo:adapter:memo-out-neo4j"),
             }
         }
 

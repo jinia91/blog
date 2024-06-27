@@ -30,7 +30,7 @@ val memoService = mutableListOf(
     project(Modules.Service.Memo.Application.path),
     project(Modules.Service.Memo.Adaptors.InHttp.path),
     project(Modules.Service.Memo.Adaptors.InWebsocket.path),
-    project(Modules.Service.Memo.Adaptors.Persistence.path),
+    project(Modules.Service.Memo.Adaptors.OutNeo4j.path),
 )
 
 val mediaService = mutableListOf(
@@ -78,7 +78,7 @@ dependencies {
     integrationTestLib.forEach {
         testImplementation(it)
     }
-    testImplementation(testFixtures(project(Modules.Service.Memo.Adaptors.Persistence.path)))
+    testImplementation(testFixtures(project(Modules.Service.Memo.Adaptors.OutNeo4j.path)))
     testImplementation(project(path = Modules.Service.Memo.Domain.path, configuration = "testArtifact"))
     testImplementation(testFixtures(project(Modules.Service.AuthUser.Application.path)))
 }

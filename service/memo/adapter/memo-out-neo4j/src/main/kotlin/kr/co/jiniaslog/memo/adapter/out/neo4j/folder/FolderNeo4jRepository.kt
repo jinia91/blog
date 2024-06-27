@@ -1,4 +1,4 @@
-package kr.co.jiniaslog.memo.adapter.out.persistence.neo4j.folder
+package kr.co.jiniaslog.memo.adapter.out.neo4j.folder
 
 import org.springframework.data.neo4j.repository.Neo4jRepository
 import org.springframework.data.neo4j.repository.query.Query

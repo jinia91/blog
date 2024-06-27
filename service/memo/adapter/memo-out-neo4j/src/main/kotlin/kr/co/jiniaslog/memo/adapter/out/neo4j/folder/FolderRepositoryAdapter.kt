@@ -1,6 +1,6 @@
-package kr.co.jiniaslog.memo.adapter.out.persistence.neo4j.folder
+package kr.co.jiniaslog.memo.adapter.out.neo4j.folder
 
-import kr.co.jiniaslog.memo.adapter.out.persistence.neo4j.memo.MemoNeo4jRepository
+import kr.co.jiniaslog.memo.adapter.out.neo4j.memo.MemoNeo4jRepository
 import kr.co.jiniaslog.memo.domain.folder.Folder
 import kr.co.jiniaslog.memo.domain.folder.FolderId
 import kr.co.jiniaslog.memo.outbound.FolderRepository

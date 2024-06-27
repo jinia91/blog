@@ -1,7 +1,7 @@
-package kr.co.jiniaslog.memo.adapter.out.persistence.neo4j.memo
+package kr.co.jiniaslog.memo.adapter.out.neo4j.memo
 
-import kr.co.jiniaslog.memo.adapter.out.persistence.neo4j.Neo4jAbstractBaseNode
-import kr.co.jiniaslog.memo.adapter.out.persistence.neo4j.folder.FolderNeo4jEntity
+import kr.co.jiniaslog.memo.adapter.out.neo4j.Neo4jAbstractBaseNode
+import kr.co.jiniaslog.memo.adapter.out.neo4j.folder.FolderNeo4jEntity
 import kr.co.jiniaslog.memo.domain.folder.FolderId
 import kr.co.jiniaslog.memo.domain.memo.AuthorId
 import kr.co.jiniaslog.memo.domain.memo.Memo

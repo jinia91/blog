@@ -1,9 +1,9 @@
-package kr.co.jiniaslog.memo.adapter.out.persistence.neo4j.queries
+package kr.co.jiniaslog.memo.adapter.out.neo4j.queries
 
-import kr.co.jiniaslog.memo.adapter.out.persistence.neo4j.folder.FolderNeo4jEntity
-import kr.co.jiniaslog.memo.adapter.out.persistence.neo4j.folder.FolderNeo4jRepository
-import kr.co.jiniaslog.memo.adapter.out.persistence.neo4j.memo.MemoNeo4jEntity
-import kr.co.jiniaslog.memo.adapter.out.persistence.neo4j.memo.MemoNeo4jRepository
+import kr.co.jiniaslog.memo.adapter.out.neo4j.folder.FolderNeo4jEntity
+import kr.co.jiniaslog.memo.adapter.out.neo4j.folder.FolderNeo4jRepository
+import kr.co.jiniaslog.memo.adapter.out.neo4j.memo.MemoNeo4jEntity
+import kr.co.jiniaslog.memo.adapter.out.neo4j.memo.MemoNeo4jRepository
 import kr.co.jiniaslog.memo.domain.folder.FolderId
 import kr.co.jiniaslog.memo.domain.folder.FolderName
 import kr.co.jiniaslog.memo.domain.memo.MemoContent

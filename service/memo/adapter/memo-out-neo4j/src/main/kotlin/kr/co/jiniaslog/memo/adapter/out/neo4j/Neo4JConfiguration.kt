@@ -1,4 +1,4 @@
-package kr.co.jiniaslog.memo.adapter.out.persistence.neo4j
+package kr.co.jiniaslog.memo.adapter.out.neo4j
 
 import org.neo4j.cypherdsl.core.renderer.Configuration
 import org.neo4j.cypherdsl.core.renderer.Dialect
@@ -14,7 +14,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement
 @org.springframework.context.annotation.Configuration
 @EnableTransactionManagement
 @EnableNeo4jAuditing
-@EnableNeo4jRepositories(basePackages = ["kr.co.jiniaslog.memo.adapter.out.persistence.neo4j"])
+@EnableNeo4jRepositories(basePackages = ["kr.co.jiniaslog.memo.adapter.out.neo4j"])
 class Neo4JConfiguration {
     @Bean
     fun cypherDslConfiguration(): Configuration {
