@@ -17,7 +17,8 @@ class MediaController(
     fun uploadImage(
         @ModelAttribute request: ImgUploadRequest,
     ): ImgUploadResponse {
-        val info = useCaseImage.uploadImage(request.toCommand())
-        return ImgUploadResponse(url = info.url.value)
+        val command = request.toCommand()
+        val info = useCaseImage.uploadImage(command)
+        return ImgUploadResponse(info.url.value)
     }
 }

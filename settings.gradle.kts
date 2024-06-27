@@ -39,6 +39,7 @@ include(
 
     // media
     "service:media:media-domain",
+    "service:media:media-application",
     "service:media:adapter:media-in-http",
     "service:media:adapter:media-out-github",
 
