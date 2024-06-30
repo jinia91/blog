@@ -1,4 +1,4 @@
-package kr.co.jiniaslog.memo
+package kr.co.jiniaslog.memo.usecase
 
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.shouldBe
@@ -10,11 +10,6 @@ import kr.co.jiniaslog.memo.domain.memo.MemoContent
 import kr.co.jiniaslog.memo.domain.memo.MemoTitle
 import kr.co.jiniaslog.memo.outbound.FolderRepository
 import kr.co.jiniaslog.memo.outbound.MemoRepository
-import kr.co.jiniaslog.memo.usecase.IDeleteMemo
-import kr.co.jiniaslog.memo.usecase.IInitMemo
-import kr.co.jiniaslog.memo.usecase.IMakeRelationShipFolderAndMemo
-import kr.co.jiniaslog.memo.usecase.IUpdateMemo
-import kr.co.jiniaslog.memo.usecase.UseCasesMemoFacade
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 

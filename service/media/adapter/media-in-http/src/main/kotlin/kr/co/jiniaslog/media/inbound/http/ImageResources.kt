@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 @RequestMapping("/api/v1/media/image")
 @PreAuthorize("hasRole('ADMIN')")
-class ImageController(
+class ImageResources(
     private val imageUseCases: ImageUseCasesFacade,
 ) {
     @PostMapping()

@@ -2,8 +2,8 @@ package kr.co.jiniaslog.memo.adapter.inbound.http
 
 import kr.co.jiniaslog.memo.domain.folder.FolderId
 import kr.co.jiniaslog.memo.domain.memo.AuthorId
-import kr.co.jiniaslog.memo.queries.IGetFoldersAll
-import kr.co.jiniaslog.memo.queries.QueriesFolderFacade
+import kr.co.jiniaslog.memo.queries.FolderQueriesFacade
+import kr.co.jiniaslog.memo.queries.IGetFoldersAllInHierirchy
 import kr.co.jiniaslog.memo.usecase.ICreateNewFolder
 import kr.co.jiniaslog.memo.usecase.IDeleteFoldersRecursively
 import kr.co.jiniaslog.memo.usecase.IMakeRelationShipFolderAndFolder
@@ -28,7 +28,7 @@ private val log = mu.KotlinLogging.logger {}
 @PreAuthorize("hasRole('ADMIN')")
 class FolderResources(
     private val folderUseCases: UseCasesFolderFacade,
-    private val folderQueries: QueriesFolderFacade,
+    private val folderQueries: FolderQueriesFacade,
 ) {
     @PostMapping()
     @CrossOrigin(origins = ["http://localhost:3000"])
@@ -78,18 +78,18 @@ class FolderResources(
 
     @GetMapping()
     @CrossOrigin(origins = ["http://localhost:3000"])
-    fun getFoldersAll(
+    fun getFoldersAndMemoAll(
         @RequestParam(required = false) query: String?,
     ): FolderAndMemoResponse {
-        return folderQueries.handle(IGetFoldersAll.Query(query)).toResponse()
+        return folderQueries.handle(IGetFoldersAllInHierirchy.Query(query)).toResponse()
     }
 }
 
 data class FolderAndMemoResponse(
-    val folderInfos: List<IGetFoldersAll.FolderInfo>,
+    val folderInfos: List<IGetFoldersAllInHierirchy.FolderInfo>,
 )
 
-fun IGetFoldersAll.Info.toResponse(): FolderAndMemoResponse {
+fun IGetFoldersAllInHierirchy.Info.toResponse(): FolderAndMemoResponse {
     return FolderAndMemoResponse(
         folderInfos = this.folderInfos,
     )
