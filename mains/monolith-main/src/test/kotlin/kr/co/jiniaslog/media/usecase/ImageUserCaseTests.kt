@@ -8,9 +8,7 @@ import kr.co.jiniaslog.media.domain.RawImage
 import kr.co.jiniaslog.media.outbound.ImageUploader
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.test.annotation.DirtiesContext
 
-@DirtiesContext
 class ImageUserCaseTests : TestContainerAbstractSkeleton() {
     @Autowired
     private lateinit var sut: ImageUseCasesFacade
