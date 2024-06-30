@@ -38,7 +38,7 @@ class PreAuthFilter(
     }
 
     private fun resolveAccessToken(req: HttpServletRequest): AccessToken? {
-        val token = req.cookies.find { it.name == "jiniaslog_access" }
+        val token = req.cookies?.find { it.name == ACCESS_TOKEN_HEADER }
         return token?.value?.let { AccessToken(it) }
     }
 
@@ -55,5 +55,9 @@ class PreAuthFilter(
         currentAuthentication: Authentication?,
     ): Boolean {
         return super.principalChanged(request, currentAuthentication)
+    }
+
+    companion object {
+        const val ACCESS_TOKEN_HEADER = "jiniaslog_access"
     }
 }

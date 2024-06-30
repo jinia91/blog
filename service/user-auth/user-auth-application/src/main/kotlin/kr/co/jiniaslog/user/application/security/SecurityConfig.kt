@@ -27,7 +27,10 @@ class SecurityConfig(
         return http
             .addFilter(preAuthFilter)
             .csrf { it.disable() }
-            .authorizeHttpRequests { it.anyRequest().permitAll() }
+            .authorizeHttpRequests {
+                it.requestMatchers("/api/v1/media").authenticated()
+                it.anyRequest().permitAll()
+            }
             .headers { it.frameOptions(Customizer { it.disable() }) }
             .formLogin { it.disable() }
             .httpBasic { it.disable() }
@@ -49,7 +52,7 @@ class CustomAuthenticationEntryPoint : AuthenticationEntryPoint {
     ) {
         response.sendError(
             HttpServletResponse.SC_UNAUTHORIZED,
-            "Unauthorized: Authentication token was either expired or invalid.",
+            "인증되지 않았습니다: 인증 토큰이 없거나 유효하지 않습니다",
         )
     }
 }
@@ -61,6 +64,6 @@ class CustomAccessDeniedHandler : AccessDeniedHandler {
         response: HttpServletResponse,
         accessDeniedException: org.springframework.security.access.AccessDeniedException?,
     ) {
-        response.sendError(HttpServletResponse.SC_FORBIDDEN, "Forbidden: Access is denied")
+        response.sendError(HttpServletResponse.SC_FORBIDDEN, "접근 권한이 없습니다")
     }
 }

@@ -1,6 +1,8 @@
 package kr.co.jiniaslog
 
+import io.mockk.mockk
 import io.restassured.RestAssured
+import kr.co.jiniaslog.media.outbound.ImageUploader
 import kr.co.jiniaslog.utils.H2RdbCleaner
 import kr.co.jiniaslog.utils.Neo4jDbCleaner
 import org.junit.jupiter.api.AfterEach
@@ -8,12 +10,24 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.boot.test.web.server.LocalServerPort
+import org.springframework.context.annotation.Bean
+import org.springframework.context.annotation.Primary
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.DynamicPropertyRegistry
 import org.springframework.test.context.DynamicPropertySource
 import org.testcontainers.containers.Neo4jContainer
 import org.testcontainers.junit.jupiter.Testcontainers
+
+@TestConfiguration
+class ContextWithTestContainerConfig {
+    @Bean
+    @Primary
+    fun imageUploader(): ImageUploader {
+        return mockk()
+    }
+}
 
 /**
  * 통합 테스트 공용 세팅을 위한 최상위 부모 조상 클래스
@@ -29,7 +43,10 @@ import org.testcontainers.junit.jupiter.Testcontainers
  */
 @Testcontainers
 @ActiveProfiles("test")
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, classes = [App::class])
+@SpringBootTest(
+    webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
+    classes = [ContextWithTestContainerConfig::class],
+)
 abstract class TestContainerAbstractSkeleton {
     @LocalServerPort
     protected var port: Int = 0

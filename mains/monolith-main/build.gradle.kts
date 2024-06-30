@@ -10,6 +10,7 @@ plugins {
 val shared = mutableListOf(
     project(Modules.Libs.GlobalLogging.path),
     project(Modules.Libs.SnowflakeIdGenerator.path),
+    project(Modules.Libs.RdbKernel.path),
     project(Modules.Libs.RestKernel.path),
     project(Modules.Service.MessageNexus.path),
 )
@@ -35,6 +36,7 @@ val memoService = mutableListOf(
 
 val mediaService = mutableListOf(
     project(Modules.Service.Media.Domain.path),
+    project(Modules.Service.Media.Application.path),
     project(Modules.Service.Media.Adaptors.InHttp.path),
     project(Modules.Service.Media.Adaptors.OutGithub.path),
 )
@@ -61,8 +63,9 @@ var integrationTestLib = mutableListOf(
     "org.testcontainers:testcontainers:1.19.8",
     "org.testcontainers:junit-jupiter:1.19.8",
     "org.testcontainers:neo4j:1.19.8",
-    "io.rest-assured:rest-assured:5.4.0",
+    "io.rest-assured:spring-mock-mvc:5.4.0",
     "org.springframework.cloud:spring-cloud-contract-wiremock:4.1.0",
+    "com.ninja-squad:springmockk:4.0.2"
 )
 
 dependencies {
@@ -79,7 +82,6 @@ dependencies {
         testImplementation(it)
     }
     testImplementation(testFixtures(project(Modules.Service.Memo.Adaptors.OutNeo4j.path)))
-    testImplementation(project(path = Modules.Service.Memo.Domain.path, configuration = "testArtifact"))
     testImplementation(testFixtures(project(Modules.Service.AuthUser.Application.path)))
 }
 

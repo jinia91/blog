@@ -5,16 +5,20 @@ import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.context.properties.ConfigurationPropertiesScan
 import org.springframework.boot.runApplication
 import org.springframework.context.annotation.ComponentScan
+import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.FilterType
+
+@SpringBootApplication
+class App
 
 @ComponentScan(
     includeFilters = [
         ComponentScan.Filter(type = FilterType.ANNOTATION, value = [CustomComponent::class]),
     ],
 )
-@SpringBootApplication
+@Configuration
 @ConfigurationPropertiesScan
-class App
+class ComponentScanConfig
 
 fun main(args: Array<String>) {
     runApplication<App>(*args)

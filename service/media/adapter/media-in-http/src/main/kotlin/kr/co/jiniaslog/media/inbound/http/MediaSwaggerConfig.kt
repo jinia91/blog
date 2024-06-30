@@ -9,8 +9,13 @@ class MediaSwaggerConfig {
     @Bean
     fun mediaApi(): GroupedOpenApi {
         return GroupedOpenApi.builder()
-            .group("MediaResource")
-            .packagesToScan("kr.co.jiniaslog.media.inbound.http")
+            .group(MEDIA_API)
+            .packagesToScan(MEDIA_API_DTO_PATH)
             .build()
+    }
+
+    companion object {
+        const val MEDIA_API = "MediaResource"
+        const val MEDIA_API_DTO_PATH = "kr.co.jiniaslog.media.inbound.http"
     }
 }

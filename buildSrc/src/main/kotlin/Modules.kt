@@ -20,6 +20,7 @@ object Modules {
 
         object Media {
             val Domain = Module(":service:media:media-domain")
+            val Application = Module(":service:media:media-application")
 
             enum class Adaptors(val path: String) {
                 InHttp(":service:media:adapter:media-in-http"),
