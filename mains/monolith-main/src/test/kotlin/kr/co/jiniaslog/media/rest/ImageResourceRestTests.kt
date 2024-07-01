@@ -60,7 +60,7 @@ class ImageResourceRestTests : RestTestAbstractSkeleton() {
     }
 
     @Test
-    fun `권한이 있고 인증된 사용자가 이미지를 업로드하면 200을 반환한다`() {
+    fun `권한이 있고 인증된 사용자가 이미지를 업로드하면 201을 반환한다`() {
         // given
         every { imageService.uploadImage(any()) } returns IUploadImage.Info(ImageUrl("http://test.com/sample.jpg"))
 
@@ -72,7 +72,7 @@ class ImageResourceRestTests : RestTestAbstractSkeleton() {
             .post("/api/v1/media/image")
             // then
             .then()
-            .statusCode(200)
+            .statusCode(201)
     }
 
     @Test

@@ -36,7 +36,7 @@ class MemoResources(
     private val memoQueries: QueriesMemoFacade,
 ) {
     @PostMapping
-    fun initMemo(
+    fun createEmptyMemo(
         @AuthUserId userId: Long?,
         @RequestBody request: InitMemoRequest,
     ): ResponseEntity<InitMemoResponse> {
@@ -63,16 +63,16 @@ class MemoResources(
             .build()
     }
 
-    @PutMapping("/{id}/parent/{folderId}")
+    @PutMapping("/{id}/parent")
     fun addParentFolder(
         @PathVariable id: Long,
-        @PathVariable folderId: Long,
+        @RequestBody request: AddParentFolderRequest,
     ): ResponseEntity<AddParentFolderResponse> {
         val response =
             memoUseCases.handle(
                 IMakeRelationShipFolderAndMemo.Command(
                     memoId = MemoId(id),
-                    folderId = folderId.takeIf { it != -1L }?.let { FolderId(it) },
+                    folderId = request.folderId?.let { FolderId(it) },
                 ),
             ).toResponse()
         return ResponseEntity
