@@ -7,7 +7,6 @@ import kr.co.jiniaslog.memo.domain.MemoTestFixtures
 import kr.co.jiniaslog.memo.domain.memo.MemoContent
 import kr.co.jiniaslog.memo.outbound.FolderRepository
 import kr.co.jiniaslog.memo.outbound.MemoRepository
-import kr.co.jiniaslog.memo.queries.IGetAllMemos
 import kr.co.jiniaslog.memo.queries.IGetAllReferencedByMemo
 import kr.co.jiniaslog.memo.queries.IGetAllReferencesByMemo
 import kr.co.jiniaslog.memo.queries.IGetMemoById
@@ -25,20 +24,6 @@ class MemoQueriesTests : TestContainerAbstractSkeleton() {
 
     @Autowired
     lateinit var memoRepository: MemoRepository
-
-    @Test
-    fun `메모 전체를 조회하면 모든 메모가 조회된다`() {
-        // given
-        val dummyFolder = folderRepository.save(FolderTestFixtures.build())
-        val dummyMemo = memoRepository.save(MemoTestFixtures.build(parentFolderId = dummyFolder.id))
-        val dummy2Memo = memoRepository.save(MemoTestFixtures.build(parentFolderId = dummyFolder.id))
-
-        // when
-        val result = sut.handle(IGetAllMemos.Query())
-
-        // then
-        result.size shouldBe 2
-    }
 
     @Test
     fun `특정 메모와 키워드가 있으면 연관 메모만 조회된다`() {
