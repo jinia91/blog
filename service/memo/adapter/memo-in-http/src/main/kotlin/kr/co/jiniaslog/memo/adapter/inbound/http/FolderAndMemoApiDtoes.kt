@@ -1,7 +1,10 @@
+@file:JvmName("FolderResourcesKt")
+
 package kr.co.jiniaslog.memo.adapter.inbound.http
 
 import kr.co.jiniaslog.memo.domain.folder.FolderId
 import kr.co.jiniaslog.memo.domain.folder.FolderName
+import kr.co.jiniaslog.memo.queries.IGetFoldersAllInHierirchy
 import kr.co.jiniaslog.memo.usecase.IChangeFolderName
 import kr.co.jiniaslog.memo.usecase.IMakeRelationShipFolderAndFolder
 
@@ -51,3 +54,13 @@ data class MakeFolderRelationshipResponse(
 data class DeleteFolderResponse(
     val folderId: Long,
 )
+
+data class FolderAndMemoResponse(
+    val folderInfos: List<IGetFoldersAllInHierirchy.FolderInfo>,
+)
+
+fun IGetFoldersAllInHierirchy.Info.toResponse(): FolderAndMemoResponse {
+    return FolderAndMemoResponse(
+        folderInfos = this.folderInfos,
+    )
+}

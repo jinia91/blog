@@ -1,6 +1,6 @@
 package kr.co.jiniaslog.memo.queries
 
-interface QueriesMemoFacade :
+interface MemoQueriesFacade :
     IGetAllMemos,
     IRecommendRelatedMemo,
     IGetMemoById,

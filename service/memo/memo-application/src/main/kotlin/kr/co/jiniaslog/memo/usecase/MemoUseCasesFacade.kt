@@ -1,6 +1,6 @@
 package kr.co.jiniaslog.memo.usecase
 
-interface UseCasesMemoFacade :
+interface MemoUseCasesFacade :
     IInitMemo,
     IUpdateMemo,
     IDeleteMemo,

@@ -114,3 +114,7 @@ fun IMakeRelationShipFolderAndMemo.Info.toResponse(): AddParentFolderResponse {
         folderId = this.folderId?.value,
     )
 }
+
+data class AddParentFolderRequest(
+    val folderId: Long?,
+)

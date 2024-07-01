@@ -1,6 +1,6 @@
 package kr.co.jiniaslog.memo.usecase
 
-interface UseCasesFolderFacade :
+interface FolderUseCasesFacade :
     ICreateNewFolder,
     IChangeFolderName,
     IMakeRelationShipFolderAndFolder,

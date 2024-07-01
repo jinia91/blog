@@ -8,11 +8,12 @@ import org.springframework.web.bind.annotation.ModelAttribute
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
+import java.net.URI
 
 @RestController
 @RequestMapping("/api/v1/media/image")
 @PreAuthorize("hasRole('ADMIN')")
-class ImageController(
+class ImageResources(
     private val imageUseCases: ImageUseCasesFacade,
 ) {
     @PostMapping()
@@ -20,6 +21,7 @@ class ImageController(
     fun uploadImage(@ModelAttribute request: ImgUploadRequest): ResponseEntity<ImgUploadResponse> {
         val command = request.toCommand()
         val info = imageUseCases.uploadImage(command)
-        return ResponseEntity.ok(ImgUploadResponse(info.url.value))
+        return ResponseEntity.created(URI.create(info.url.value))
+            .body(ImgUploadResponse(info.url.value))
     }
 }

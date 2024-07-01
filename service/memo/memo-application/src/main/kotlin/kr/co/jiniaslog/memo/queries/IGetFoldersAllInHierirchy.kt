@@ -5,7 +5,7 @@ import kr.co.jiniaslog.memo.domain.folder.FolderName
 import kr.co.jiniaslog.memo.domain.memo.MemoId
 import kr.co.jiniaslog.memo.domain.memo.MemoTitle
 
-interface IGetFoldersAll {
+interface IGetFoldersAllInHierirchy {
     fun handle(query: Query): Info
 
     @JvmInline

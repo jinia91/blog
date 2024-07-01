@@ -1,4 +1,4 @@
-package kr.co.jiniaslog.memo
+package kr.co.jiniaslog.memo.usecase
 
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.shouldBe
@@ -10,11 +10,6 @@ import kr.co.jiniaslog.memo.domain.memo.MemoContent
 import kr.co.jiniaslog.memo.domain.memo.MemoTitle
 import kr.co.jiniaslog.memo.outbound.FolderRepository
 import kr.co.jiniaslog.memo.outbound.MemoRepository
-import kr.co.jiniaslog.memo.usecase.IDeleteMemo
-import kr.co.jiniaslog.memo.usecase.IInitMemo
-import kr.co.jiniaslog.memo.usecase.IMakeRelationShipFolderAndMemo
-import kr.co.jiniaslog.memo.usecase.IUpdateMemo
-import kr.co.jiniaslog.memo.usecase.UseCasesMemoFacade
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 
@@ -26,7 +21,7 @@ class MemoUseCaseTests : TestContainerAbstractSkeleton() {
     lateinit var folderRepository: FolderRepository
 
     @Autowired
-    lateinit var sut: UseCasesMemoFacade
+    lateinit var sut: MemoUseCasesFacade
 
     @Test
     fun `유효한 폴더 초기화 요청시 폴더는 초기화 된다`() {

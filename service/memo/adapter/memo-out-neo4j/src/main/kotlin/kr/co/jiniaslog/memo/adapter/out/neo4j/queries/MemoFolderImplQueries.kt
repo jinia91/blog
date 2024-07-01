@@ -9,25 +9,25 @@ import kr.co.jiniaslog.memo.domain.folder.FolderName
 import kr.co.jiniaslog.memo.domain.memo.MemoContent
 import kr.co.jiniaslog.memo.domain.memo.MemoId
 import kr.co.jiniaslog.memo.domain.memo.MemoTitle
+import kr.co.jiniaslog.memo.queries.FolderQueriesFacade
 import kr.co.jiniaslog.memo.queries.ICheckMemoExisted
 import kr.co.jiniaslog.memo.queries.IGetAllMemos
 import kr.co.jiniaslog.memo.queries.IGetAllReferencedByMemo
 import kr.co.jiniaslog.memo.queries.IGetAllReferencesByMemo
-import kr.co.jiniaslog.memo.queries.IGetFoldersAll
+import kr.co.jiniaslog.memo.queries.IGetFoldersAllInHierirchy
 import kr.co.jiniaslog.memo.queries.IGetMemoById
 import kr.co.jiniaslog.memo.queries.IRecommendRelatedMemo
-import kr.co.jiniaslog.memo.queries.QueriesFolderFacade
-import kr.co.jiniaslog.memo.queries.QueriesMemoFacade
+import kr.co.jiniaslog.memo.queries.MemoQueriesFacade
 import kr.co.jiniaslog.shared.core.annotation.PersistenceAdapter
 import org.springframework.transaction.annotation.Transactional
 import kotlin.jvm.optionals.getOrNull
 
 @PersistenceAdapter
 @Transactional(readOnly = true)
-internal open class QueriesMemoFolderImpl(
+internal open class MemoFolderImplQueries(
     private val memoNeo4jRepository: MemoNeo4jRepository,
     private val folderNeo4jRepository: FolderNeo4jRepository,
-) : QueriesMemoFacade, QueriesFolderFacade {
+) : MemoQueriesFacade, FolderQueriesFacade {
     override fun handle(query: IGetAllMemos.Query): List<IGetAllMemos.Info> {
         return memoNeo4jRepository.findAll().map {
             val id = it.id
@@ -116,14 +116,14 @@ internal open class QueriesMemoFolderImpl(
         return memoNeo4jRepository.existsById(query.memoId.value)
     }
 
-    override fun handle(query: IGetFoldersAll.Query): IGetFoldersAll.Info {
+    override fun handle(query: IGetFoldersAllInHierirchy.Query): IGetFoldersAllInHierirchy.Info {
         if (query.value.isNullOrBlank()) {
             return findAll()
         }
         return findByKeyword(query)
     }
 
-    private fun findAll(): IGetFoldersAll.Info {
+    private fun findAll(): IGetFoldersAllInHierirchy.Info {
         val foldersWithDepth = folderNeo4jRepository.findAll()
         val folderMap = foldersWithDepth.associate { it.id to it.toFolderInfo() }
         val memos = memoNeo4jRepository.findAll().groupBy { it.parentFolder?.id }
@@ -134,9 +134,9 @@ internal open class QueriesMemoFolderImpl(
             folderInfo?.memos = memos[folderInfo?.id?.value]?.map { it.toMemoInfo() } ?: emptyList()
         }
 
-        return IGetFoldersAll.Info(
+        return IGetFoldersAllInHierirchy.Info(
             folderMap.values.filter { it.parent == null } +
-                IGetFoldersAll.FolderInfo(
+                IGetFoldersAllInHierirchy.FolderInfo(
                     id = null,
                     name = FolderName("Uncategorized"),
                     parent = null,
@@ -146,11 +146,11 @@ internal open class QueriesMemoFolderImpl(
         )
     }
 
-    private fun findByKeyword(query: IGetFoldersAll.Query): IGetFoldersAll.Info {
+    private fun findByKeyword(query: IGetFoldersAllInHierirchy.Query): IGetFoldersAllInHierirchy.Info {
         val memos = memoNeo4jRepository.findByKeywordFullTextSearching(query.value!!)
-        return IGetFoldersAll.Info(
+        return IGetFoldersAllInHierirchy.Info(
             listOf(
-                IGetFoldersAll.FolderInfo(
+                IGetFoldersAllInHierirchy.FolderInfo(
                     id = null,
                     name = FolderName("검색 결과"),
                     parent = null,
@@ -161,8 +161,8 @@ internal open class QueriesMemoFolderImpl(
         )
     }
 
-    private fun FolderNeo4jEntity.toFolderInfo(): IGetFoldersAll.FolderInfo {
-        return IGetFoldersAll.FolderInfo(
+    private fun FolderNeo4jEntity.toFolderInfo(): IGetFoldersAllInHierirchy.FolderInfo {
+        return IGetFoldersAllInHierirchy.FolderInfo(
             id = FolderId(this.id),
             name = FolderName(this.name),
             parent = this.parent?.toFolderInfo(),
@@ -171,11 +171,16 @@ internal open class QueriesMemoFolderImpl(
         )
     }
 
-    private fun MemoNeo4jEntity.toMemoInfo(): IGetFoldersAll.MemoInfo {
-        return IGetFoldersAll.MemoInfo(
+    private fun MemoNeo4jEntity.toMemoInfo(): IGetFoldersAllInHierirchy.MemoInfo {
+        return IGetFoldersAllInHierirchy.MemoInfo(
             id = MemoId(this.id),
             title = MemoTitle(this.title),
-            references = this.references.map { IGetFoldersAll.MemoReferenceInfo(MemoId(it.id), MemoTitle(it.title)) },
+            references = this.references.map {
+                IGetFoldersAllInHierirchy.MemoReferenceInfo(
+                    MemoId(it.id),
+                    MemoTitle(it.title)
+                )
+            },
         )
     }
 }

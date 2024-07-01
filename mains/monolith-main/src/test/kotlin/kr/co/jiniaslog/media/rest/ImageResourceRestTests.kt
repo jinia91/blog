@@ -1,21 +1,15 @@
 package kr.co.jiniaslog.media.rest
 
-import com.ninjasquad.springmockk.MockkBean
 import io.mockk.every
 import io.restassured.module.mockmvc.RestAssuredMockMvc
 import kr.co.jiniaslog.RestTestAbstractSkeleton
 import kr.co.jiniaslog.media.domain.ImageUrl
 import kr.co.jiniaslog.media.usecase.IUploadImage
-import kr.co.jiniaslog.media.usecase.ImageUseCasesFacade
 import kr.co.jiniaslog.user.application.security.PreAuthFilter
-import kr.co.jiniaslog.utils.AuthTestFixtures
 import org.junit.jupiter.api.Test
 import org.springframework.http.MediaType
 
 class ImageResourceRestTests : RestTestAbstractSkeleton() {
-
-    @MockkBean
-    private lateinit var imageService: ImageUseCasesFacade
 
     private val sampleImageFile = this::class.java.getResourceAsStream("/sample.jpg")!!.readBytes()
 
@@ -55,7 +49,7 @@ class ImageResourceRestTests : RestTestAbstractSkeleton() {
         every { imageService.uploadImage(any()) } returns IUploadImage.Info(ImageUrl("http://test.com/sample.jpg"))
 
         RestAssuredMockMvc.given()
-            .cookies(PreAuthFilter.ACCESS_TOKEN_HEADER, AuthTestFixtures.VALID_TEST_USER_TOKEN)
+            .cookies(PreAuthFilter.ACCESS_TOKEN_HEADER, getTestUserToken())
             .contentType(MediaType.MULTIPART_FORM_DATA_VALUE)
             .multiPart("image", "test.jpg", sampleImageFile)
             // when
@@ -66,19 +60,19 @@ class ImageResourceRestTests : RestTestAbstractSkeleton() {
     }
 
     @Test
-    fun `권한이 있고 인증된 사용자가 이미지를 업로드하면 200을 반환한다`() {
+    fun `권한이 있고 인증된 사용자가 이미지를 업로드하면 201을 반환한다`() {
         // given
         every { imageService.uploadImage(any()) } returns IUploadImage.Info(ImageUrl("http://test.com/sample.jpg"))
 
         RestAssuredMockMvc.given()
-            .cookies(PreAuthFilter.ACCESS_TOKEN_HEADER, AuthTestFixtures.VALID_TEST_ADMIN_USER_TOKEN)
+            .cookies(PreAuthFilter.ACCESS_TOKEN_HEADER, getTestAdminUserToken())
             .contentType(MediaType.MULTIPART_FORM_DATA_VALUE)
             .multiPart("image", "test.jpg", sampleImageFile)
             // when
             .post("/api/v1/media/image")
             // then
             .then()
-            .statusCode(200)
+            .statusCode(201)
     }
 
     @Test
@@ -87,7 +81,7 @@ class ImageResourceRestTests : RestTestAbstractSkeleton() {
         every { imageService.uploadImage(any()) } returns IUploadImage.Info(ImageUrl("http://test.com/sample.jpg"))
 
         RestAssuredMockMvc.given()
-            .cookies(PreAuthFilter.ACCESS_TOKEN_HEADER, AuthTestFixtures.VALID_TEST_ADMIN_USER_TOKEN)
+            .cookies(PreAuthFilter.ACCESS_TOKEN_HEADER, getTestAdminUserToken())
             .contentType(MediaType.MULTIPART_FORM_DATA_VALUE)
             .multiPart("image", "test.jpg", "".toByteArray())
             // when

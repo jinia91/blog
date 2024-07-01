@@ -3,16 +3,15 @@ package kr.co.jiniaslog.memo.adapter.inbound.http
 import kr.co.jiniaslog.memo.domain.folder.FolderId
 import kr.co.jiniaslog.memo.domain.memo.AuthorId
 import kr.co.jiniaslog.memo.domain.memo.MemoId
-import kr.co.jiniaslog.memo.queries.IGetAllMemos
 import kr.co.jiniaslog.memo.queries.IGetAllReferencedByMemo
 import kr.co.jiniaslog.memo.queries.IGetAllReferencesByMemo
 import kr.co.jiniaslog.memo.queries.IGetMemoById
 import kr.co.jiniaslog.memo.queries.IRecommendRelatedMemo
-import kr.co.jiniaslog.memo.queries.QueriesMemoFacade
+import kr.co.jiniaslog.memo.queries.MemoQueriesFacade
 import kr.co.jiniaslog.memo.usecase.IDeleteMemo
 import kr.co.jiniaslog.memo.usecase.IInitMemo
 import kr.co.jiniaslog.memo.usecase.IMakeRelationShipFolderAndMemo
-import kr.co.jiniaslog.memo.usecase.UseCasesMemoFacade
+import kr.co.jiniaslog.memo.usecase.MemoUseCasesFacade
 import kr.cojiniaslog.shared.adapter.inbound.http.AuthUserId
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
@@ -33,19 +32,19 @@ private val log = mu.KotlinLogging.logger { }
 @RequestMapping("/api/v1/memos")
 @PreAuthorize("hasRole('ADMIN')")
 class MemoResources(
-    private val memoUseCases: UseCasesMemoFacade,
-    private val memoQueries: QueriesMemoFacade,
+    private val memoUseCases: MemoUseCasesFacade,
+    private val memoQueries: MemoQueriesFacade,
 ) {
     @PostMapping
-    @PreAuthorize("hasRole('ADMIN')")
-    fun initMemo(
+    fun createEmptyMemo(
         @AuthUserId userId: Long?,
         @RequestBody request: InitMemoRequest,
     ): ResponseEntity<InitMemoResponse> {
+        require(userId != null) { "반드시 인증된 사용자여야합니다" }
         val info =
             memoUseCases.handle(
                 IInitMemo.Command(
-                    authorId = AuthorId(userId!!),
+                    authorId = AuthorId(userId),
                     parentFolderId = request.parentFolderId?.let { FolderId(it) },
                 ),
             )
@@ -64,36 +63,20 @@ class MemoResources(
             .build()
     }
 
-    @PutMapping("/{id}/folders/{folderId}")
+    @PutMapping("/{id}/parent")
     fun addParentFolder(
         @PathVariable id: Long,
-        @PathVariable folderId: Long,
+        @RequestBody request: AddParentFolderRequest,
     ): ResponseEntity<AddParentFolderResponse> {
         val response =
             memoUseCases.handle(
                 IMakeRelationShipFolderAndMemo.Command(
                     memoId = MemoId(id),
-                    folderId = folderId.takeIf { it != -1L }?.let { FolderId(it) },
+                    folderId = request.folderId?.let { FolderId(it) },
                 ),
             ).toResponse()
         return ResponseEntity
             .ok(response)
-    }
-
-    @GetMapping
-    fun getMemos(
-        @RequestParam keyword: String?,
-        @RequestParam thisId: Long?,
-    ): ResponseEntity<MemoResponse> {
-        val response =
-            if (keyword.isNullOrBlank() && thisId == null) {
-                memoQueries.handle(IGetAllMemos.Query()).sortedBy { it.memoId.value }
-                    .toResponse()
-            } else {
-                memoQueries.handle(IRecommendRelatedMemo.Query(keyword!!, MemoId(thisId!!)))
-                    .toResponse()
-            }
-        return ResponseEntity.ok(response)
     }
 
     @GetMapping("/{id}")
@@ -102,6 +85,17 @@ class MemoResources(
     ): ResponseEntity<GetMemoByIdResponse> {
         val response =
             memoQueries.handle(IGetMemoById.Query(MemoId(id)))
+                .toResponse()
+        return ResponseEntity.ok(response)
+    }
+
+    @GetMapping("/{id}/recommended")
+    fun recommendRelatedMemo(
+        @PathVariable id: Long,
+        @RequestParam keyword: String,
+    ): ResponseEntity<MemoResponse> {
+        val response =
+            memoQueries.handle(IRecommendRelatedMemo.Query(keyword, MemoId(id)))
                 .toResponse()
         return ResponseEntity.ok(response)
     }

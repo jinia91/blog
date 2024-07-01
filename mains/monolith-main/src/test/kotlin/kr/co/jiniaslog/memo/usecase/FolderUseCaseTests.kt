@@ -1,4 +1,4 @@
-package kr.co.jiniaslog.memo
+package kr.co.jiniaslog.memo.usecase
 
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
@@ -7,11 +7,6 @@ import kr.co.jiniaslog.memo.domain.folder.Folder
 import kr.co.jiniaslog.memo.domain.folder.FolderName
 import kr.co.jiniaslog.memo.domain.memo.AuthorId
 import kr.co.jiniaslog.memo.outbound.FolderRepository
-import kr.co.jiniaslog.memo.usecase.IChangeFolderName
-import kr.co.jiniaslog.memo.usecase.ICreateNewFolder
-import kr.co.jiniaslog.memo.usecase.IDeleteFoldersRecursively
-import kr.co.jiniaslog.memo.usecase.IMakeRelationShipFolderAndFolder
-import kr.co.jiniaslog.memo.usecase.UseCasesFolderFacade
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 
@@ -20,7 +15,7 @@ class FolderUseCaseTests : TestContainerAbstractSkeleton() {
     lateinit var folderRepository: FolderRepository
 
     @Autowired
-    lateinit var sut: UseCasesFolderFacade
+    lateinit var sut: FolderUseCasesFacade
 
     @Test
     fun `유효한 폴더 초기화 요청시 폴더는 초기화 된다`() {

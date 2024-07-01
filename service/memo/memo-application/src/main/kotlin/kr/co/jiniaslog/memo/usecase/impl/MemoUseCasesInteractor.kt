@@ -9,14 +9,14 @@ import kr.co.jiniaslog.memo.usecase.IDeleteMemo
 import kr.co.jiniaslog.memo.usecase.IInitMemo
 import kr.co.jiniaslog.memo.usecase.IMakeRelationShipFolderAndMemo
 import kr.co.jiniaslog.memo.usecase.IUpdateMemo
-import kr.co.jiniaslog.memo.usecase.UseCasesMemoFacade
+import kr.co.jiniaslog.memo.usecase.MemoUseCasesFacade
 import kr.co.jiniaslog.shared.core.annotation.UseCaseInteractor
 
 @UseCaseInteractor
-internal class UseCasesMemoInteractor(
+internal class MemoUseCasesInteractor(
     private val memoRepository: MemoRepository,
     private val folderRepository: FolderRepository,
-) : UseCasesMemoFacade {
+) : MemoUseCasesFacade {
     override fun handle(command: IInitMemo.Command): IInitMemo.Info {
         val newOne =
             Memo.init(
