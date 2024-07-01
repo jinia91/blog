@@ -7,11 +7,11 @@ import kr.co.jiniaslog.memo.queries.IGetAllReferencedByMemo
 import kr.co.jiniaslog.memo.queries.IGetAllReferencesByMemo
 import kr.co.jiniaslog.memo.queries.IGetMemoById
 import kr.co.jiniaslog.memo.queries.IRecommendRelatedMemo
-import kr.co.jiniaslog.memo.queries.QueriesMemoFacade
+import kr.co.jiniaslog.memo.queries.MemoQueriesFacade
 import kr.co.jiniaslog.memo.usecase.IDeleteMemo
 import kr.co.jiniaslog.memo.usecase.IInitMemo
 import kr.co.jiniaslog.memo.usecase.IMakeRelationShipFolderAndMemo
-import kr.co.jiniaslog.memo.usecase.UseCasesMemoFacade
+import kr.co.jiniaslog.memo.usecase.MemoUseCasesFacade
 import kr.cojiniaslog.shared.adapter.inbound.http.AuthUserId
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
@@ -32,8 +32,8 @@ private val log = mu.KotlinLogging.logger { }
 @RequestMapping("/api/v1/memos")
 @PreAuthorize("hasRole('ADMIN')")
 class MemoResources(
-    private val memoUseCases: UseCasesMemoFacade,
-    private val memoQueries: QueriesMemoFacade,
+    private val memoUseCases: MemoUseCasesFacade,
+    private val memoQueries: MemoQueriesFacade,
 ) {
     @PostMapping
     fun createEmptyMemo(

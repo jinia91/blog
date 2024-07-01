@@ -17,7 +17,7 @@ import kr.co.jiniaslog.memo.queries.IGetAllReferencesByMemo
 import kr.co.jiniaslog.memo.queries.IGetFoldersAllInHierirchy
 import kr.co.jiniaslog.memo.queries.IGetMemoById
 import kr.co.jiniaslog.memo.queries.IRecommendRelatedMemo
-import kr.co.jiniaslog.memo.queries.QueriesMemoFacade
+import kr.co.jiniaslog.memo.queries.MemoQueriesFacade
 import kr.co.jiniaslog.shared.core.annotation.PersistenceAdapter
 import org.springframework.transaction.annotation.Transactional
 import kotlin.jvm.optionals.getOrNull
@@ -27,7 +27,7 @@ import kotlin.jvm.optionals.getOrNull
 internal open class MemoFolderImplQueries(
     private val memoNeo4jRepository: MemoNeo4jRepository,
     private val folderNeo4jRepository: FolderNeo4jRepository,
-) : QueriesMemoFacade, FolderQueriesFacade {
+) : MemoQueriesFacade, FolderQueriesFacade {
     override fun handle(query: IGetAllMemos.Query): List<IGetAllMemos.Info> {
         return memoNeo4jRepository.findAll().map {
             val id = it.id

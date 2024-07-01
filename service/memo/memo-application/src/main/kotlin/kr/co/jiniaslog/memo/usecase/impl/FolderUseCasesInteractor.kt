@@ -3,17 +3,17 @@ package kr.co.jiniaslog.memo.usecase.impl
 import kr.co.jiniaslog.memo.domain.folder.Folder
 import kr.co.jiniaslog.memo.domain.folder.FolderId
 import kr.co.jiniaslog.memo.outbound.FolderRepository
+import kr.co.jiniaslog.memo.usecase.FolderUseCasesFacade
 import kr.co.jiniaslog.memo.usecase.IChangeFolderName
 import kr.co.jiniaslog.memo.usecase.ICreateNewFolder
 import kr.co.jiniaslog.memo.usecase.IDeleteFoldersRecursively
 import kr.co.jiniaslog.memo.usecase.IMakeRelationShipFolderAndFolder
-import kr.co.jiniaslog.memo.usecase.UseCasesFolderFacade
 import kr.co.jiniaslog.shared.core.annotation.UseCaseInteractor
 
 @UseCaseInteractor
-internal class UseCasesFolderInteractor(
+internal class FolderUseCasesInteractor(
     private val folderRepository: FolderRepository,
-) : UseCasesFolderFacade {
+) : FolderUseCasesFacade {
     override fun handle(command: ICreateNewFolder.Command): ICreateNewFolder.Info {
         val newOne =
             Folder.init(

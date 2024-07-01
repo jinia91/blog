@@ -21,7 +21,7 @@ class MemoUseCaseTests : TestContainerAbstractSkeleton() {
     lateinit var folderRepository: FolderRepository
 
     @Autowired
-    lateinit var sut: UseCasesMemoFacade
+    lateinit var sut: MemoUseCasesFacade
 
     @Test
     fun `유효한 폴더 초기화 요청시 폴더는 초기화 된다`() {

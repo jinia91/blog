@@ -4,9 +4,12 @@ import com.ninjasquad.springmockk.MockkBean
 import io.restassured.module.mockmvc.RestAssuredMockMvc
 import kr.co.jiniaslog.media.inbound.http.ImageResources
 import kr.co.jiniaslog.media.usecase.ImageUseCasesFacade
+import kr.co.jiniaslog.memo.adapter.inbound.http.FolderResources
 import kr.co.jiniaslog.memo.adapter.inbound.http.MemoResources
-import kr.co.jiniaslog.memo.queries.QueriesMemoFacade
-import kr.co.jiniaslog.memo.usecase.UseCasesMemoFacade
+import kr.co.jiniaslog.memo.queries.FolderQueriesFacade
+import kr.co.jiniaslog.memo.queries.MemoQueriesFacade
+import kr.co.jiniaslog.memo.usecase.FolderUseCasesFacade
+import kr.co.jiniaslog.memo.usecase.MemoUseCasesFacade
 import kr.co.jiniaslog.user.application.security.AccessTokenConfig
 import kr.co.jiniaslog.user.application.security.AuthProvider
 import kr.co.jiniaslog.user.application.security.PreAuthFilter
@@ -42,7 +45,8 @@ class SecurityTestContextConfig {
 @WebMvcTest(
     controllers = [
         ImageResources::class,
-        MemoResources::class
+        MemoResources::class,
+        FolderResources::class
     ]
 )
 @Import(value = [SecurityTestContextConfig::class, AccessTokenConfig::class, SecurityConfig::class])
@@ -57,10 +61,16 @@ abstract class RestTestAbstractSkeleton {
     protected lateinit var imageService: ImageUseCasesFacade
 
     @MockkBean
-    protected lateinit var memoService: UseCasesMemoFacade
+    protected lateinit var memoService: MemoUseCasesFacade
 
     @MockkBean
-    protected lateinit var memoQueries: QueriesMemoFacade
+    protected lateinit var memoQueries: MemoQueriesFacade
+
+    @MockkBean
+    protected lateinit var folderService: FolderUseCasesFacade
+
+    @MockkBean
+    protected lateinit var folderQueries: FolderQueriesFacade
 
     @BeforeEach
     fun setup() {
