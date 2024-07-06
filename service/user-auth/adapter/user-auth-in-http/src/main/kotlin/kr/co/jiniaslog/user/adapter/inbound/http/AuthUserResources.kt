@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
+import java.awt.SystemColor.info
 
 @RestController
 @RequestMapping("api/v1/auth")
@@ -43,14 +44,11 @@ class AuthUserResources(
         @PathVariable provider: String,
         @RequestBody request: OAuthLoginRequest,
     ): ResponseEntity<LoginResponse> {
-        val info =
-            usecases.handle(
-                ISignInOAuthUser.Command(
-                    provider = Provider.valueOf(provider),
-                    code = AuthorizationCode(request.code),
-                ),
-            )
-
+        val command = ISignInOAuthUser.Command(
+            provider = Provider.valueOf(provider),
+            code = AuthorizationCode(request.code),
+        )
+        val info = usecases.handle(command)
         val response =
             LoginResponse(
                 nickName = info.nickName.value,
@@ -89,13 +87,8 @@ class AuthUserResources(
     fun refresh(
         @CookieValue("jiniaslog_refresh") refreshToken: String,
     ): ResponseEntity<EmptyResponse> {
-        val info =
-            usecases.handle(
-                IRefreshToken.Command(
-                    refreshToken = RefreshToken(refreshToken),
-                ),
-            )
-
+        val command = IRefreshToken.Command(RefreshToken(refreshToken))
+        val info = usecases.handle(command)
         val accessCookie =
             ResponseCookie.from("jiniaslog_access", info.accessToken.value)
                 .domain("localhost")
@@ -106,7 +99,6 @@ class AuthUserResources(
                 .sameSite("None")
                 .build()
 
-        // rotate refresh token
         val refreshCookie =
             ResponseCookie.from("jiniaslog_refresh", info.refreshToken.value)
                 .domain("localhost")

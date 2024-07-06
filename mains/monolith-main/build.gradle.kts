@@ -8,7 +8,6 @@ plugins {
  */
 // cross-cutting concern for main boot
 val shared = mutableListOf(
-    project(Modules.Libs.GlobalLogging.path),
     project(Modules.Libs.SnowflakeIdGenerator.path),
     project(Modules.Libs.RdbKernel.path),
     project(Modules.Libs.RestKernel.path),
