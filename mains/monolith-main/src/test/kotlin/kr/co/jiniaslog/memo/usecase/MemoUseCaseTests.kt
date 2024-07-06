@@ -51,7 +51,7 @@ class MemoUseCaseTests : TestContainerAbstractSkeleton() {
                 ),
             )
         val command =
-            IUpdateMemo.Command.UpdateForm(
+            IUpdateMemoContents.Command(
                 memoId = memo.id,
                 title = MemoTitle("title"),
             )
@@ -77,7 +77,7 @@ class MemoUseCaseTests : TestContainerAbstractSkeleton() {
                 ),
             )
         val command =
-            IUpdateMemo.Command.UpdateForm(
+            IUpdateMemoContents.Command(
                 memoId = memo.id,
                 content = MemoContent("content"),
             )
@@ -111,7 +111,7 @@ class MemoUseCaseTests : TestContainerAbstractSkeleton() {
             )
 
         val command =
-            IUpdateMemo.Command.AddReference(
+            IUpdateMemoReferences.Command.AddReference(
                 memoId = rootMemo.id,
                 referenceId = referenceTarget.id,
             )
@@ -156,7 +156,7 @@ class MemoUseCaseTests : TestContainerAbstractSkeleton() {
         memoRepository.save(rootMemo)
 
         val command =
-            IUpdateMemo.Command.AddReference(
+            IUpdateMemoReferences.Command.AddReference(
                 memoId = rootMemo.id,
                 referenceId = referenceTarget2.id,
             )
@@ -192,7 +192,7 @@ class MemoUseCaseTests : TestContainerAbstractSkeleton() {
         memoRepository.save(rootMemo)
 
         val command =
-            IUpdateMemo.Command.RemoveReference(
+            IUpdateMemoReferences.Command.RemoveReference(
                 memoId = rootMemo.id,
                 referenceId = referenceTarget.id,
             )
@@ -219,7 +219,7 @@ class MemoUseCaseTests : TestContainerAbstractSkeleton() {
             )
 
         val command =
-            IUpdateMemo.Command.AddReference(
+            IUpdateMemoReferences.Command.AddReference(
                 memoId = rootMemo.id,
                 referenceId = rootMemo.id,
             )

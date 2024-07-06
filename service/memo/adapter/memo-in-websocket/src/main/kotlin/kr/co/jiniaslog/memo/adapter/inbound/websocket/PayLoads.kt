@@ -6,7 +6,8 @@ import jakarta.validation.constraints.NotEmpty
 import kr.co.jiniaslog.memo.domain.memo.MemoContent
 import kr.co.jiniaslog.memo.domain.memo.MemoId
 import kr.co.jiniaslog.memo.domain.memo.MemoTitle
-import kr.co.jiniaslog.memo.usecase.IUpdateMemo
+import kr.co.jiniaslog.memo.usecase.IUpdateMemoContents
+import kr.co.jiniaslog.memo.usecase.IUpdateMemoReferences
 
 @JsonTypeInfo(
     use = JsonTypeInfo.Id.NAME,
@@ -29,8 +30,8 @@ data class UpdateMemoPayload(
     @field:NotEmpty
     val title: String,
 ) : PayLoad() {
-    fun toCommand(): IUpdateMemo.Command.UpdateForm {
-        return IUpdateMemo.Command.UpdateForm(
+    fun toCommand(): IUpdateMemoContents.Command {
+        return IUpdateMemoContents.Command(
             content = MemoContent(content),
             title = MemoTitle(title),
             memoId = MemoId(id),
@@ -50,7 +51,7 @@ data class UpdateMemoResponse(
     }
 }
 
-fun IUpdateMemo.Info.toResponse(): UpdateMemoResponse {
+fun IUpdateMemoContents.Info.toResponse(): UpdateMemoResponse {
     return UpdateMemoResponse.from(id.value)
 }
 
@@ -59,8 +60,8 @@ data class UpdateReferencesPayload(
     val id: Long,
     val references: List<Long>,
 ) : PayLoad() {
-    fun toCommand(): IUpdateMemo.Command {
-        return IUpdateMemo.Command.UpdateReferences(
+    fun toCommand(): IUpdateMemoReferences.Command {
+        return IUpdateMemoReferences.Command.UpdateReferences(
             memoId = MemoId(id),
             references = references.map { MemoId(it) }.toSet(),
         )
@@ -77,4 +78,8 @@ data class UpdateReferencesResponse(
             )
         }
     }
+}
+
+fun IUpdateMemoReferences.Info.toResponse(): UpdateReferencesResponse {
+    return UpdateReferencesResponse.from(id.value)
 }

@@ -1,14 +1,14 @@
 package kr.co.jiniaslog.memo.adapter.inbound.websocket
 
 import jakarta.validation.Valid
-import kr.co.jiniaslog.memo.usecase.IUpdateMemo
+import kr.co.jiniaslog.memo.usecase.IUpdateMemoContents
+import kr.co.jiniaslog.memo.usecase.IUpdateMemoReferences
 import kr.co.jiniaslog.memo.usecase.MemoUseCasesFacade
 import org.springframework.messaging.handler.annotation.MessageMapping
 import org.springframework.messaging.handler.annotation.SendTo
 import org.springframework.stereotype.Controller
 
 private const val MEMO_PROTOCOL = "/topic/memoResponse"
-private val log = mu.KotlinLogging.logger { }
 
 @Controller
 class MemoWebSocketHandler(
@@ -19,9 +19,9 @@ class MemoWebSocketHandler(
     fun handle(
         @Valid payload: UpdateMemoPayload,
     ): UpdateMemoResponse {
-        val command: IUpdateMemo.Command = payload.toCommand()
-        return memoUseCases.handle(command)
-            .toResponse()
+        val command: IUpdateMemoContents.Command = payload.toCommand()
+        val info = memoUseCases.handle(command)
+        return info.toResponse()
     }
 
     @MessageMapping("/updateReferences")
@@ -29,7 +29,8 @@ class MemoWebSocketHandler(
     fun handle(
         @Valid payload: UpdateReferencesPayload,
     ): UpdateReferencesResponse {
-        val command: IUpdateMemo.Command = payload.toCommand()
-        return UpdateReferencesResponse.from(memoUseCases.handle(command).id.value)
+        val command: IUpdateMemoReferences.Command = payload.toCommand()
+        val info = memoUseCases.handle(command)
+        return info.toResponse()
     }
 }
