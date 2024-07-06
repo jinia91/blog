@@ -74,9 +74,7 @@ class FolderResources(
     ): ResponseEntity<DeleteFolderResponse> {
         val info =
             folderUseCases.handle(IDeleteFoldersRecursively.Command(FolderId(folderId)))
-        return ResponseEntity
-            .status(204)
-            .body(DeleteFolderResponse(info.folderId.value))
+        return ResponseEntity.ok(DeleteFolderResponse(info.folderId.value))
     }
 
     @GetMapping()

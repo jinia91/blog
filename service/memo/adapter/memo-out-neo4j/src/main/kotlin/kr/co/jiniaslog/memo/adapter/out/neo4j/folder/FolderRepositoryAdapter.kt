@@ -1,6 +1,5 @@
 package kr.co.jiniaslog.memo.adapter.out.neo4j.folder
 
-import kr.co.jiniaslog.memo.adapter.out.neo4j.memo.MemoNeo4jRepository
 import kr.co.jiniaslog.memo.domain.folder.Folder
 import kr.co.jiniaslog.memo.domain.folder.FolderId
 import kr.co.jiniaslog.memo.outbound.FolderRepository
@@ -11,7 +10,6 @@ import kotlin.jvm.optionals.getOrNull
 @PersistenceAdapter
 internal open class FolderRepositoryAdapter(
     private val folderNeo4jRepository: FolderNeo4jRepository,
-    private val memoNeo4jRepository: MemoNeo4jRepository,
 ) : FolderRepository {
     @Transactional(readOnly = true)
     override fun findById(id: FolderId): Folder? {

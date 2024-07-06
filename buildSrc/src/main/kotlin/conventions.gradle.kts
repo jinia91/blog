@@ -48,6 +48,7 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("io.github.microutils:kotlin-logging-jvm:3.0.5")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.16.0")
+    implementation("com.fasterxml.jackson.core:jackson-databind")
 
     // test dependencies
     testImplementation("org.junit.jupiter:junit-jupiter-params:5.10.1")

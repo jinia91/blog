@@ -13,6 +13,7 @@ import kr.co.jiniaslog.memo.usecase.ICreateNewFolder
 import kr.co.jiniaslog.memo.usecase.IDeleteFoldersRecursively
 import kr.co.jiniaslog.memo.usecase.IMakeRelationShipFolderAndFolder
 import kr.co.jiniaslog.user.application.security.PreAuthFilter
+import org.hamcrest.CoreMatchers.equalTo
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.springframework.http.MediaType
@@ -143,7 +144,7 @@ class FolderResourceRestTests : RestTestAbstractSkeleton() {
     @Nested
     inner class `폴더 삭제` {
         @Test
-        fun `유효한 폴더 삭제 요청시 204을 받는다`() {
+        fun `유효한 폴더 삭제 요청시 200을 받는다`() {
             // given
             every { folderService.handle(any(IDeleteFoldersRecursively.Command::class)) } returns IDeleteFoldersRecursively.Info(
                 FolderId(
@@ -156,7 +157,8 @@ class FolderResourceRestTests : RestTestAbstractSkeleton() {
                 .cookies(PreAuthFilter.ACCESS_TOKEN_HEADER, getTestAdminUserToken())
                 .delete("/api/v1/folders/1")
                 .then()
-                .statusCode(204)
+                .statusCode(200)
+                .body("folderId", equalTo(1))
         }
     }
 

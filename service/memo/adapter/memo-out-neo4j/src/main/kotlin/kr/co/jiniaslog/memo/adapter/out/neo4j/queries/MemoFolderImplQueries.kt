@@ -11,7 +11,6 @@ import kr.co.jiniaslog.memo.domain.memo.MemoId
 import kr.co.jiniaslog.memo.domain.memo.MemoTitle
 import kr.co.jiniaslog.memo.queries.FolderQueriesFacade
 import kr.co.jiniaslog.memo.queries.ICheckMemoExisted
-import kr.co.jiniaslog.memo.queries.IGetAllMemos
 import kr.co.jiniaslog.memo.queries.IGetAllReferencedByMemo
 import kr.co.jiniaslog.memo.queries.IGetAllReferencesByMemo
 import kr.co.jiniaslog.memo.queries.IGetFoldersAllInHierirchy
@@ -28,23 +27,6 @@ internal open class MemoFolderImplQueries(
     private val memoNeo4jRepository: MemoNeo4jRepository,
     private val folderNeo4jRepository: FolderNeo4jRepository,
 ) : MemoQueriesFacade, FolderQueriesFacade {
-    override fun handle(query: IGetAllMemos.Query): List<IGetAllMemos.Info> {
-        return memoNeo4jRepository.findAll().map {
-            val id = it.id
-            IGetAllMemos.Info(
-                memoId = MemoId(it.id),
-                title = MemoTitle(it.title),
-                references =
-                it.references.map {
-                    IGetAllMemos.MemoReferenceInfo(
-                        rootId = MemoId(id),
-                        referenceId = MemoId(it.id)
-                    )
-                }
-                    .toSet(),
-            )
-        }
-    }
 
     override fun handle(query: IRecommendRelatedMemo.Query): IRecommendRelatedMemo.Info {
         val relatedMemoCandidates =
@@ -83,7 +65,7 @@ internal open class MemoFolderImplQueries(
         )
     }
 
-    // todo : n+1인지 쿼리 체크
+    // todo : 위의 유즈케이스와 분리하여 더 최적화하도록 고려
     override fun handle(query: IGetAllReferencesByMemo.Query): IGetAllReferencesByMemo.Info {
         val memo =
             memoNeo4jRepository.findById(query.memoId.value).getOrNull()

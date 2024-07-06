@@ -2,6 +2,7 @@ package kr.co.jiniaslog.memo.usecase
 
 interface MemoUseCasesFacade :
     IInitMemo,
-    IUpdateMemo,
+    IUpdateMemoContents,
     IDeleteMemo,
-    IMakeRelationShipFolderAndMemo
+    IMakeRelationShipFolderAndMemo,
+    IUpdateMemoReferences

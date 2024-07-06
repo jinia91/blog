@@ -1,5 +1,13 @@
 package kr.co.jiniaslog.memo.adapter.inbound.http
 
+import kr.co.jiniaslog.memo.adapter.inbound.http.viewmodel.AddParentFolderRequest
+import kr.co.jiniaslog.memo.adapter.inbound.http.viewmodel.GetAllReferencedByMemoResponse
+import kr.co.jiniaslog.memo.adapter.inbound.http.viewmodel.GetAllReferencesByMemoResponse
+import kr.co.jiniaslog.memo.adapter.inbound.http.viewmodel.GetMemoByIdResponse
+import kr.co.jiniaslog.memo.adapter.inbound.http.viewmodel.InitMemoRequest
+import kr.co.jiniaslog.memo.adapter.inbound.http.viewmodel.InitMemoResponse
+import kr.co.jiniaslog.memo.adapter.inbound.http.viewmodel.RecommendRelatedMemoResponse
+import kr.co.jiniaslog.memo.adapter.inbound.http.viewmodel.toResponse
 import kr.co.jiniaslog.memo.domain.folder.FolderId
 import kr.co.jiniaslog.memo.domain.memo.AuthorId
 import kr.co.jiniaslog.memo.domain.memo.MemoId
@@ -26,8 +34,6 @@ import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import java.net.URI
 
-private val log = mu.KotlinLogging.logger { }
-
 @RestController
 @RequestMapping("/api/v1/memos")
 @PreAuthorize("hasRole('ADMIN')")
@@ -41,13 +47,11 @@ class MemoResources(
         @RequestBody request: InitMemoRequest,
     ): ResponseEntity<InitMemoResponse> {
         require(userId != null) { "반드시 인증된 사용자여야합니다" }
-        val info =
-            memoUseCases.handle(
-                IInitMemo.Command(
-                    authorId = AuthorId(userId),
-                    parentFolderId = request.parentFolderId?.let { FolderId(it) },
-                ),
-            )
+        val command = IInitMemo.Command(
+            authorId = AuthorId(userId),
+            parentFolderId = request.parentFolderId?.let { FolderId(it) },
+        )
+        val info = memoUseCases.handle(command)
         return ResponseEntity
             .created(URI("/api/v1/memos/${info.id.value}"))
             .body(InitMemoResponse(info.id.value))
@@ -57,7 +61,8 @@ class MemoResources(
     fun deleteMemoById(
         @PathVariable id: Long,
     ): ResponseEntity<Unit> {
-        memoUseCases.handle(IDeleteMemo.Command(MemoId(id)))
+        val command = IDeleteMemo.Command(MemoId(id))
+        memoUseCases.handle(command)
         return ResponseEntity
             .status(204)
             .build()
@@ -68,55 +73,48 @@ class MemoResources(
         @PathVariable id: Long,
         @RequestBody request: AddParentFolderRequest,
     ): ResponseEntity<AddParentFolderResponse> {
-        val response =
-            memoUseCases.handle(
-                IMakeRelationShipFolderAndMemo.Command(
-                    memoId = MemoId(id),
-                    folderId = request.folderId?.let { FolderId(it) },
-                ),
-            ).toResponse()
-        return ResponseEntity
-            .ok(response)
+        val command = IMakeRelationShipFolderAndMemo.Command(
+            memoId = MemoId(id),
+            folderId = request.folderId?.let { FolderId(it) },
+        )
+        val info = memoUseCases.handle(command)
+        return ResponseEntity.ok(info.toResponse())
     }
 
     @GetMapping("/{id}")
     fun getMemoById(
         @PathVariable id: Long,
     ): ResponseEntity<GetMemoByIdResponse> {
-        val response =
-            memoQueries.handle(IGetMemoById.Query(MemoId(id)))
-                .toResponse()
-        return ResponseEntity.ok(response)
+        val query = IGetMemoById.Query(MemoId(id))
+        val info = memoQueries.handle(query)
+        return ResponseEntity.ok(info.toResponse())
     }
 
     @GetMapping("/{id}/recommended")
     fun recommendRelatedMemo(
         @PathVariable id: Long,
         @RequestParam keyword: String,
-    ): ResponseEntity<MemoResponse> {
-        val response =
-            memoQueries.handle(IRecommendRelatedMemo.Query(keyword, MemoId(id)))
-                .toResponse()
-        return ResponseEntity.ok(response)
+    ): ResponseEntity<RecommendRelatedMemoResponse> {
+        val query = IRecommendRelatedMemo.Query(keyword, MemoId(id))
+        val info = memoQueries.handle(query)
+        return ResponseEntity.ok(info.toResponse())
     }
 
     @GetMapping("/{id}/references")
     fun getAllReferencesByMemo(
         @PathVariable id: Long,
     ): ResponseEntity<GetAllReferencesByMemoResponse> {
-        val reference =
-            memoQueries.handle(IGetAllReferencesByMemo.Query(MemoId(id)))
-                .toResponse()
-        return ResponseEntity.ok(reference)
+        val query = IGetAllReferencesByMemo.Query(MemoId(id))
+        val info = memoQueries.handle(query)
+        return ResponseEntity.ok(info.toResponse())
     }
 
     @GetMapping("/{id}/referenced")
     fun getAllReferencedByMemo(
         @PathVariable id: Long,
     ): ResponseEntity<GetAllReferencedByMemoResponse> {
-        val referenced =
-            memoQueries.handle(IGetAllReferencedByMemo.Query(MemoId(id)))
-                .toResponse()
-        return ResponseEntity.ok(referenced)
+        val query = IGetAllReferencedByMemo.Query(MemoId(id))
+        val info = memoQueries.handle(query)
+        return ResponseEntity.ok(info.toResponse())
     }
 }

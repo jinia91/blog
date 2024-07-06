@@ -81,6 +81,8 @@ dependencies {
     integrationTestLib.forEach {
         testImplementation(it)
     }
+    testImplementation("org.springframework.boot:spring-boot-starter-websocket")
+    testImplementation("org.jetbrains.kotlin:kotlin-serialization:1.9.0")
     testImplementation(testFixtures(project(Modules.Service.Memo.Adaptors.OutNeo4j.path)))
     testImplementation(testFixtures(project(Modules.Service.Memo.Domain.path)))
     testImplementation(testFixtures(project(Modules.Service.AuthUser.Application.path)))

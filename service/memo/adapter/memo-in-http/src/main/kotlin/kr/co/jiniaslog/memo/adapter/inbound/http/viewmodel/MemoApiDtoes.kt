@@ -1,33 +1,26 @@
-package kr.co.jiniaslog.memo.adapter.inbound.http
+package kr.co.jiniaslog.memo.adapter.inbound.http.viewmodel
 
-import kr.co.jiniaslog.memo.queries.IGetAllMemos
+import kr.co.jiniaslog.memo.adapter.inbound.http.AddParentFolderResponse
 import kr.co.jiniaslog.memo.queries.IGetAllReferencedByMemo
 import kr.co.jiniaslog.memo.queries.IGetAllReferencesByMemo
 import kr.co.jiniaslog.memo.queries.IGetMemoById
 import kr.co.jiniaslog.memo.queries.IRecommendRelatedMemo
 import kr.co.jiniaslog.memo.usecase.IMakeRelationShipFolderAndMemo
 
-data class MemoResponse(
-    val memos: List<IGetAllMemos.Info>,
+data class RecommendRelatedMemoResponse(
+    val memos: List<MemoViewModel>,
 )
 
-fun IRecommendRelatedMemo.Info.toResponse(): MemoResponse {
-    return MemoResponse(
+fun IRecommendRelatedMemo.Info.toResponse(): RecommendRelatedMemoResponse {
+    return RecommendRelatedMemoResponse(
         memos =
         this.relatedMemoCandidates.map {
-            IGetAllMemos.Info(
-                memoId = it.first,
-                title = it.second,
-                content = it.third,
-                references = emptySet(),
+            MemoViewModel(
+                memoId = it.first.value,
+                title = it.second.value,
+                content = it.third.value,
             )
         },
-    )
-}
-
-fun List<IGetAllMemos.Info>.toResponse(): MemoResponse {
-    return MemoResponse(
-        memos = this,
     )
 }
 
@@ -57,14 +50,6 @@ fun IGetMemoById.Info.toResponse(): GetMemoByIdResponse {
         }.toSet(),
     )
 }
-
-data class InitMemoRequest(
-    val parentFolderId: Long?,
-)
-
-data class InitMemoResponse(
-    val memoId: Long,
-)
 
 data class GetAllReferencesByMemoResponse(
     val references: List<Reference>,

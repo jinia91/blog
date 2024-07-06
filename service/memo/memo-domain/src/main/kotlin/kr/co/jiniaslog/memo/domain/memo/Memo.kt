@@ -8,8 +8,8 @@ import java.time.LocalDateTime
 class Memo private constructor(
     id: MemoId,
     authorId: AuthorId,
-    content: MemoContent,
     title: MemoTitle,
+    content: MemoContent,
     references: MutableSet<MemoReference>,
     parentFolderId: FolderId?,
 ) : AggregateRoot<MemoId>() {

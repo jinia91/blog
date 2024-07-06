@@ -8,7 +8,8 @@ import kr.co.jiniaslog.memo.outbound.MemoRepository
 import kr.co.jiniaslog.memo.usecase.IDeleteMemo
 import kr.co.jiniaslog.memo.usecase.IInitMemo
 import kr.co.jiniaslog.memo.usecase.IMakeRelationShipFolderAndMemo
-import kr.co.jiniaslog.memo.usecase.IUpdateMemo
+import kr.co.jiniaslog.memo.usecase.IUpdateMemoContents
+import kr.co.jiniaslog.memo.usecase.IUpdateMemoReferences
 import kr.co.jiniaslog.memo.usecase.MemoUseCasesFacade
 import kr.co.jiniaslog.shared.core.annotation.UseCaseInteractor
 
@@ -27,32 +28,11 @@ internal class MemoUseCasesInteractor(
         return IInitMemo.Info(newOne.id)
     }
 
-    override fun handle(command: IUpdateMemo.Command): IUpdateMemo.Info {
+    override fun handle(command: IUpdateMemoContents.Command): IUpdateMemoContents.Info {
         val memo = getMemo(command.memoId)
-
-        when (command) {
-            is IUpdateMemo.Command.AddReference -> {
-                validateMemoExistence(command.referenceId)
-                memo.addReference(command.referenceId)
-            }
-
-            is IUpdateMemo.Command.RemoveReference -> {
-                validateMemoExistence(command.referenceId)
-                memo.removeReference(command.referenceId)
-            }
-
-            is IUpdateMemo.Command.UpdateForm -> {
-                memo.update(command.title, command.content)
-            }
-
-            is IUpdateMemo.Command.UpdateReferences -> {
-                command.references.forEach { validateMemoExistence(it) }
-                memo.updateReferences(command.references)
-            }
-        }
-
+        memo.update(command.title, command.content)
         memoRepository.save(memo)
-        return IUpdateMemo.Info(memo.id)
+        return IUpdateMemoContents.Info(memo.id)
     }
 
     private fun validateMemoExistence(id: MemoId) {
@@ -74,6 +54,30 @@ internal class MemoUseCasesInteractor(
 
         memoRepository.save(memo)
         return IMakeRelationShipFolderAndMemo.Info(memo.id, command.folderId)
+    }
+
+    override fun handle(command: IUpdateMemoReferences.Command): IUpdateMemoReferences.Info {
+        val memo = getMemo(command.memoId)
+
+        when (command) {
+            is IUpdateMemoReferences.Command.AddReference -> {
+                validateMemoExistence(command.referenceId)
+                memo.addReference(command.referenceId)
+            }
+
+            is IUpdateMemoReferences.Command.RemoveReference -> {
+                validateMemoExistence(command.referenceId)
+                memo.removeReference(command.referenceId)
+            }
+
+            is IUpdateMemoReferences.Command.UpdateReferences -> {
+                command.references.forEach { validateMemoExistence(it) }
+                memo.updateReferences(command.references)
+            }
+        }
+
+        memoRepository.save(memo)
+        return IUpdateMemoReferences.Info(memo.id)
     }
 
     private fun getFolder(id: FolderId) =

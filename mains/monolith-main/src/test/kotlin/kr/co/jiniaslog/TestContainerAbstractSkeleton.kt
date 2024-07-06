@@ -8,6 +8,8 @@ import kr.co.jiniaslog.utils.Neo4jDbCleaner
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.neo4j.driver.AuthTokens
+import org.neo4j.driver.GraphDatabase
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.context.TestConfiguration
@@ -74,9 +76,7 @@ abstract class TestContainerAbstractSkeleton {
 
     companion object {
         @JvmStatic
-        val neo4j: Neo4jContainer<*> =
-            Neo4jContainer("neo4j:5")
-                .withReuse(true)
+        val neo4j: Neo4jContainer<*> = CustomNeo4jContainer()
 
         init {
             neo4j.start()
@@ -89,6 +89,32 @@ abstract class TestContainerAbstractSkeleton {
             registry.add("spring.neo4j.uri") { neo4j.boltUrl }
             registry.add("spring.neo4j.authentication.username") { "neo4j" }
             registry.add("spring.neo4j.authentication.password") { "password" }
+        }
+    }
+}
+
+class CustomNeo4jContainer : Neo4jContainer<CustomNeo4jContainer>("neo4j:5") {
+    init {
+        withReuse(true)
+    }
+
+    override fun start() {
+        super.start()
+        setupIndexes()
+    }
+
+    private fun setupIndexes() {
+        val driver = GraphDatabase.driver(boltUrl, AuthTokens.basic("neo4j", "password"))
+        driver.session().use { session ->
+            session.writeTransaction { tx ->
+                val indexExists = tx.run("SHOW INDEXES").list().any {
+                    it.get("name").asString() == "memo_full_text_index"
+                }
+                if (!indexExists) {
+                    tx.run("""CREATE FULLTEXT INDEX memo_full_text_index FOR (n:memo) ON EACH [n.title, n.content]""")
+                }
+                tx.commit()
+            }
         }
     }
 }
