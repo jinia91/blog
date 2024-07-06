@@ -16,7 +16,6 @@ include(
     "libs:rdb-kernel",
     "libs:rest-kernel",
     "libs:messaging-kernel",
-    "libs:global-logging",
     "libs:snowflake-id-generator",
 
     // blog

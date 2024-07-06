@@ -10,10 +10,12 @@ import kr.co.jiniaslog.memo.queries.FolderQueriesFacade
 import kr.co.jiniaslog.memo.queries.MemoQueriesFacade
 import kr.co.jiniaslog.memo.usecase.FolderUseCasesFacade
 import kr.co.jiniaslog.memo.usecase.MemoUseCasesFacade
+import kr.co.jiniaslog.user.adapter.inbound.http.AuthUserResources
 import kr.co.jiniaslog.user.application.security.AccessTokenConfig
 import kr.co.jiniaslog.user.application.security.AuthProvider
 import kr.co.jiniaslog.user.application.security.PreAuthFilter
 import kr.co.jiniaslog.user.application.security.SecurityConfig
+import kr.co.jiniaslog.user.application.usecase.UseCasesUserAuthFacade
 import kr.co.jiniaslog.user.domain.auth.token.TokenManger
 import kr.co.jiniaslog.user.domain.user.Role
 import kr.co.jiniaslog.user.domain.user.UserId
@@ -46,7 +48,8 @@ class SecurityTestContextConfig {
     controllers = [
         ImageResources::class,
         MemoResources::class,
-        FolderResources::class
+        FolderResources::class,
+        AuthUserResources::class
     ]
 )
 @Import(value = [SecurityTestContextConfig::class, AccessTokenConfig::class, SecurityConfig::class])
@@ -71,6 +74,9 @@ abstract class RestTestAbstractSkeleton {
 
     @MockkBean
     protected lateinit var folderQueries: FolderQueriesFacade
+
+    @MockkBean
+    protected lateinit var userUseCases: UseCasesUserAuthFacade
 
     @BeforeEach
     fun setup() {

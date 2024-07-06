@@ -1,3 +1,4 @@
+import org.gradle.internal.classpath.Instrumented.systemProperty
 import org.gradle.kotlin.dsl.kotlin
 
 plugins {
@@ -30,6 +31,14 @@ tasks {
 
     test {
         useJUnitPlatform()
+        val activeProfile =
+            if (project.hasProperty("profile")) {
+                project.property("profile").toString()
+            } else {
+                "default"
+            }
+
+        systemProperty("spring.profiles.active", activeProfile)
     }
 
     findByName("bootJar")?.let {

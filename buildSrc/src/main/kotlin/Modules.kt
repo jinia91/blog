@@ -57,7 +57,6 @@ object Modules {
     object Libs {
         val RestKernel = Module(":libs:rest-kernel")
         val SnowflakeIdGenerator = Module(":libs:snowflake-id-generator")
-        val GlobalLogging = Module(":libs:global-logging")
         val CoreKernel = Module(":libs:core-kernel")
         val RdbKernel = Module(":libs:rdb-kernel")
     }
