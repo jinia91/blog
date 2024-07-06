@@ -7,6 +7,7 @@ import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import io.kotest.matchers.string.shouldContain
 import kr.co.jiniaslog.TestContainerAbstractSkeleton
+import kr.co.jiniaslog.annotation.Ci
 import kr.co.jiniaslog.user.application.infra.TokenStore
 import kr.co.jiniaslog.user.application.infra.UserRepository
 import kr.co.jiniaslog.user.application.usecase.IGetOAuthRedirectionUrl
@@ -23,7 +24,6 @@ import kr.co.jiniaslog.user.domain.user.User
 import kr.co.jiniaslog.user.domain.user.UserId
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -127,7 +127,7 @@ class UserUseCasesTests : TestContainerAbstractSkeleton() {
         }
 
         @Test
-        @Disabled("테스트 시간이 오래걸려서 로컬에서만 확인")
+        @Ci("테스트 시간이 오래걸려서 ci에서만 확인")
         fun `저장된 리프레시 토큰이 존재하고, 캐시 유효기간 이후 리프레시토큰으로 재발급 요청시 재발급한다`() {
             // given context
             val userId = UserId(1L)
@@ -158,7 +158,7 @@ class UserUseCasesTests : TestContainerAbstractSkeleton() {
         }
 
         @Test
-        @Disabled("테스트 시간이 오래걸려서 로컬에서만 확인")
+        @Ci("테스트 시간이 오래걸려서 ci에서만 확인")
         fun `동일 유저아이디에 대한 동시성 요청시, 후속 요청은 캐싱을 사용한다`() {
             // given
             val userId = UserId(1L)
