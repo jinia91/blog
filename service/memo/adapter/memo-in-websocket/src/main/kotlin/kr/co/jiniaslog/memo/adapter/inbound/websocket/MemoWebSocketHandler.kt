@@ -14,6 +14,7 @@ private const val MEMO_PROTOCOL = "/topic/memoResponse"
 class MemoWebSocketHandler(
     private val memoUseCases: MemoUseCasesFacade,
 ) {
+
     @MessageMapping("/updateMemo")
     @SendTo(MEMO_PROTOCOL)
     fun handle(

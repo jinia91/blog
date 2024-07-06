@@ -1,5 +1,7 @@
 package kr.co.jiniaslog.memo.adapter.inbound.websocket
 
+import com.fasterxml.jackson.annotation.JsonCreator
+import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonSubTypes
 import com.fasterxml.jackson.annotation.JsonTypeInfo
 import jakarta.validation.constraints.NotEmpty
@@ -39,7 +41,8 @@ data class UpdateMemoPayload(
     }
 }
 
-data class UpdateMemoResponse(
+class UpdateMemoResponse @JsonCreator constructor(
+    @JsonProperty("id")
     val id: Long,
 ) {
     companion object {
@@ -68,7 +71,8 @@ data class UpdateReferencesPayload(
     }
 }
 
-data class UpdateReferencesResponse(
+data class UpdateReferencesResponse @JsonCreator constructor(
+    @JsonProperty("id")
     val id: Long,
 ) {
     companion object {
