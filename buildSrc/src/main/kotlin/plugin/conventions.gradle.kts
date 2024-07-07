@@ -1,6 +1,3 @@
-import org.gradle.internal.classpath.Instrumented.systemProperty
-import org.gradle.kotlin.dsl.kotlin
-
 plugins {
     kotlin("jvm")
     kotlin("plugin.allopen")
@@ -53,17 +50,17 @@ tasks {
 }
 
 dependencies {
-    // core
-    implementation("org.jetbrains.kotlin:kotlin-reflect")
-    implementation("io.github.microutils:kotlin-logging-jvm:3.0.5")
-    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.16.0")
-    implementation("com.fasterxml.jackson.core:jackson-databind")
+    implementation(libs.kotlin.reflect)
+    implementation(libs.kotlin.logging)
+    implementation(libs.kotlin.jackson)
+    implementation(libs.kotlin.jackson.binding)
 
-    // test dependencies
-    testImplementation("org.junit.jupiter:junit-jupiter-params:5.10.1")
-    testImplementation("io.kotest:kotest-runner-junit5:5.8.0")
-    testImplementation("io.kotest:kotest-assertions-core:5.8.0")
-    testImplementation("io.mockk:mockk:1.13.8")
-    testImplementation("org.assertj:assertj-core:3.24.2")
-    testImplementation("ch.qos.logback:logback-classic:1.4.5")
+    testImplementation(libs.junit.param)
+    testImplementation(libs.kotest.runner.junit5)
+    testImplementation(libs.kotest.assertion)
+    testImplementation(libs.mockk)
+    testImplementation(libs.logback.classic)
+
+    testFixturesApi(libs.kotest.runner.junit5)
+    testFixturesApi(libs.kotest.assertion)
 }

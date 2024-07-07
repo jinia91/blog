@@ -14,10 +14,6 @@ val shared = mutableListOf(
     project(Modules.Service.MessageNexus.path),
 )
 
-val libs = mutableListOf(
-    "org.springframework.boot:spring-boot-starter-security",
-)
-
 val blogService = mutableListOf(
     project(Modules.Service.Blog.Core.path),
     project(Modules.Service.Blog.Adaptors.InHttp.path),
@@ -58,33 +54,41 @@ var moduleBlocks = mutableListOf<Project>()
         addAll(authUserService)
     }
 
+val bootLib = mutableListOf(
+    libs.spring.boot.starter.security,
+    libs.spring.boot.starter.web,
+    libs.spring.boot.starter.data.neo4j,
+    libs.h2,
+)
+
 var integrationTestLib = mutableListOf(
-    "org.testcontainers:testcontainers:1.19.8",
-    "org.testcontainers:junit-jupiter:1.19.8",
-    "org.testcontainers:neo4j:1.19.8",
-    "io.rest-assured:spring-mock-mvc:5.4.0",
-    "org.springframework.cloud:spring-cloud-contract-wiremock:4.1.0",
-    "com.ninja-squad:springmockk:4.0.2"
+    libs.testcontainers,
+    libs.testcontainers.junit5,
+    libs.testcontainers.neo4j,
+    libs.restassured,
+    libs.wiremock,
+    libs.mockkbean,
+    libs.spring.boot.starter.websocket
 )
 
 dependencies {
+    // project
     moduleBlocks.forEach {
         implementation(it)
         kover(it)
     }
-    libs.forEach {
-        implementation(it)
-        kover(it)
-    }
-    implementation("com.h2database:h2:2.2.224")
-    integrationTestLib.forEach {
-        testImplementation(it)
-    }
-    testImplementation("org.springframework.boot:spring-boot-starter-websocket")
-    testImplementation("org.jetbrains.kotlin:kotlin-serialization:1.9.0")
+
     testImplementation(testFixtures(project(Modules.Service.Memo.Adaptors.OutNeo4j.path)))
     testImplementation(testFixtures(project(Modules.Service.Memo.Domain.path)))
     testImplementation(testFixtures(project(Modules.Service.AuthUser.Application.path)))
+
+    // external libs
+    bootLib.forEach {
+        implementation(it)
+    }
+    integrationTestLib.forEach {
+        testImplementation(it)
+    }
 }
 
 tasks {

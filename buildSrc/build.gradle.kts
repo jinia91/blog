@@ -7,14 +7,10 @@ repositories {
     mavenCentral()
 }
 
-java.sourceCompatibility = JavaVersion.VERSION_17
-
 dependencies {
-    implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:1.9.0")
-    implementation("org.jetbrains.kotlin:kotlin-allopen:1.9.0")
-    implementation("org.jetbrains.kotlin:kotlin-noarg:1.9.0")
-    implementation("org.springframework.boot:spring-boot-gradle-plugin:3.2.0")
-    implementation("io.spring.gradle:dependency-management-plugin:1.1.4")
-    implementation("org.jetbrains.kotlinx:kover-gradle-plugin:0.7.6")
-    implementation("org.jetbrains.kotlin.kapt:org.jetbrains.kotlin.kapt.gradle.plugin:1.9.23")
+    implementation(files(libs.javaClass.superclass.protectionDomain.codeSource.location))
+    implementation(libs.bundles.kotlin.plugins)
+    implementation(libs.bundles.spring.plugins)
+    implementation(libs.kover.plugin)
+    implementation(libs.kapt.plugin)
 }

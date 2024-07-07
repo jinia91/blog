@@ -59,5 +59,6 @@ object Modules {
         val SnowflakeIdGenerator = Module(":libs:snowflake-id-generator")
         val CoreKernel = Module(":libs:core-kernel")
         val RdbKernel = Module(":libs:rdb-kernel")
+        val MessagingHandlerGenerator = Module(":libs:messaging-handler-generator")
     }
 }
