@@ -19,7 +19,7 @@ include(
     "libs:snowflake-id-generator",
 
     // blog
-    "service:blog:blog-domain",
+    "service:blog:blog-core",
     "service:blog:adapter:blog-out-rdb",
     "service:blog:adapter:blog-in-http",
     "service:blog:adapter:blog-in-message",
