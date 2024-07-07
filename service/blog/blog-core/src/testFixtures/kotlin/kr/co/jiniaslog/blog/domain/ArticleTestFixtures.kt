@@ -1,4 +1,4 @@
-package kr.co.jiniaslog.blog.usecase
+package kr.co.jiniaslog.blog.domain
 
 import kr.co.jiniaslog.blog.domain.article.Article
 import kr.co.jiniaslog.blog.domain.article.ArticleContents
@@ -12,7 +12,7 @@ import kr.co.jiniaslog.shared.core.domain.IdUtils
 import java.time.LocalDateTime
 
 object ArticleTestFixtures {
-    fun createArticle(
+    fun createPublishedArticle(
         memoRefId: MemoId? = MemoId(IdUtils.generate()),
         authorId: UserId = UserId(1L),
         categoryId: CategoryId? = CategoryId(IdUtils.generate()),

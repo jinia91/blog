@@ -1,4 +1,4 @@
-package kr.co.jiniaslog.blog.usecase
+package kr.co.jiniaslog.blog.domain
 
 import kr.co.jiniaslog.blog.domain.category.Category
 import kr.co.jiniaslog.blog.domain.category.CategoryId
