@@ -29,7 +29,7 @@ object Modules {
         }
 
         object Blog {
-            val Domain = Module(":service:blog:blog-domain")
+            val Core = Module(":service:blog:blog-core")
 
             enum class Adaptors(val path: String) {
                 InHttp(":service:blog:adapter:blog-in-http"),

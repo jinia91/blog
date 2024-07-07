@@ -31,6 +31,7 @@ class SecurityConfig(
                 it.requestMatchers("/api/v1/media").authenticated()
                 it.requestMatchers("/api/v1/memos/**", "/api/v1/memos").hasRole("ADMIN")
                 it.requestMatchers("/api/v1/folders/**", "/api/v1/folders").hasRole("ADMIN")
+                it.requestMatchers("/api/v1/articles/**", "/api/v1/articles").hasRole("ADMIN")
                 it.anyRequest().permitAll()
             }
             .headers { it.frameOptions(Customizer { it.disable() }) }
