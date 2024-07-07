@@ -28,7 +28,7 @@ tasks {
 }
 
 dependencies {
-    implementation(project(":libs:core-kernel"))
-    implementation(project(":libs:messaging-handler-generator"))
-    ksp(project(":libs:messaging-handler-generator"))
+    implementation(project(Modules.Libs.CoreKernel.path))
+    implementation(project(Modules.Libs.MessagingHandlerGenerator.path))
+    ksp(project(Modules.Libs.MessagingHandlerGenerator.path))
 }

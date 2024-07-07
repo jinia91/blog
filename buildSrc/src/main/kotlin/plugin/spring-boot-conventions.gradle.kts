@@ -1,3 +1,6 @@
+import org.gradle.kotlin.dsl.dependencies
+import org.gradle.kotlin.dsl.kotlin
+
 plugins {
     id("conventions")
     id("org.springframework.boot")
@@ -16,7 +19,7 @@ tasks.named<Jar>("jar") {
 }
 
 dependencies {
-    implementation("org.springframework.boot:spring-boot-starter-web")
-    implementation("org.springframework.boot:spring-boot-configuration-processor")
-    testImplementation("org.springframework.boot:spring-boot-starter-test")
+    implementation(libs.spring.boot.starter.core)
+    implementation(libs.spring.boot.configuration)
+    testImplementation(libs.spring.boot.starter.test)
 }
