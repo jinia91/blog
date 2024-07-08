@@ -4,6 +4,8 @@ import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import kr.co.jiniaslog.TestContainerAbstractSkeleton
+import kr.co.jiniaslog.memo.domain.folder.Folder
+import kr.co.jiniaslog.memo.domain.folder.FolderId
 import kr.co.jiniaslog.memo.domain.memo.AuthorId
 import kr.co.jiniaslog.memo.domain.memo.Memo
 import kr.co.jiniaslog.memo.domain.memo.MemoContent
@@ -93,7 +95,7 @@ class MemoUseCaseTests : TestContainerAbstractSkeleton() {
     }
 
     @Test
-    fun `유효한 메모가 주어지고 유효한 참조 추가 커맨드가 주어지면 메모는 참조가 추가된다`() {
+    fun `유효한 메모가 주어지고 유효한 참조 업데이트 커맨드가 주어지면 메모는 참조가 추가된다`() {
         // given
         val rootMemo =
             memoRepository.save(
@@ -111,9 +113,9 @@ class MemoUseCaseTests : TestContainerAbstractSkeleton() {
             )
 
         val command =
-            IUpdateMemoReferences.Command.AddReference(
+            IUpdateMemoReferences.Command.UpdateReferences(
                 memoId = rootMemo.id,
-                referenceId = referenceTarget.id,
+                references = setOf(referenceTarget.id),
             )
 
         // when
@@ -129,7 +131,7 @@ class MemoUseCaseTests : TestContainerAbstractSkeleton() {
     }
 
     @Test
-    fun `유효한 메모가 주어지고 유효한 참조 추가 커맨드가 주어지면 메모는 참조가 추가된다 2`() {
+    fun `유효한 메모가 주어지고 유효한 참조 업데이트 커맨드가 주어지면 메모는 참조가 추가된다 2`() {
         // given
         val rootMemo =
             memoRepository.save(
@@ -145,6 +147,9 @@ class MemoUseCaseTests : TestContainerAbstractSkeleton() {
                     parentFolderId = null,
                 ),
             )
+        rootMemo.addReference(referenceTarget.id)
+        memoRepository.save(rootMemo)
+
         val referenceTarget2 =
             memoRepository.save(
                 Memo.init(
@@ -152,13 +157,10 @@ class MemoUseCaseTests : TestContainerAbstractSkeleton() {
                     parentFolderId = null,
                 ),
             )
-        rootMemo.addReference(referenceTarget.id)
-        memoRepository.save(rootMemo)
-
         val command =
-            IUpdateMemoReferences.Command.AddReference(
+            IUpdateMemoReferences.Command.UpdateReferences(
                 memoId = rootMemo.id,
-                referenceId = referenceTarget2.id,
+                references = setOf(referenceTarget.id, referenceTarget2.id),
             )
 
         // when
@@ -219,9 +221,9 @@ class MemoUseCaseTests : TestContainerAbstractSkeleton() {
             )
 
         val command =
-            IUpdateMemoReferences.Command.AddReference(
+            IUpdateMemoReferences.Command.UpdateReferences(
                 memoId = rootMemo.id,
-                referenceId = rootMemo.id,
+                references = setOf(rootMemo.id),
             )
 
         // when
@@ -285,5 +287,100 @@ class MemoUseCaseTests : TestContainerAbstractSkeleton() {
         val foundedMemo = memoRepository.findById(info.memoId)
         foundedMemo shouldNotBe null
         foundedMemo!!.parentFolderId shouldBe folder.id
+    }
+
+    @Test
+    fun `부모가 있는 메모를 부모가 없는 메모로 변경하면 부모가 없는 메모로 변경된다`() {
+        // given
+        val folder =
+            folderRepository.save(
+                Folder.init(
+                    authorId = AuthorId(1),
+                ),
+            )
+        val memo =
+            memoRepository.save(
+                Memo.init(
+                    authorId = AuthorId(1),
+                    parentFolderId = folder.id,
+                ),
+            )
+        val command =
+            IMakeRelationShipFolderAndMemo.Command(
+                memoId = memo.id,
+                folderId = null,
+            )
+
+        // when
+        val info = sut.handle(command)
+
+        // then
+        info.memoId shouldNotBe null
+        info.memoId shouldBe memo.id
+        info.folderId shouldBe null
+        val foundedMemo = memoRepository.findById(info.memoId)
+    }
+
+    @Test
+    fun `유효한 메모에 없는 부모를 설정하면 실패한다`() {
+        // given
+        val memo =
+            memoRepository.save(
+                Memo.init(
+                    authorId = AuthorId(1),
+                    parentFolderId = null,
+                ),
+            )
+        val command =
+            IMakeRelationShipFolderAndMemo.Command(
+                memoId = memo.id,
+                folderId = FolderId(1),
+            )
+
+        // when
+        // then
+        shouldThrow<IllegalArgumentException> {
+            sut.handle(command)
+        }
+    }
+
+    @Test
+    fun `부모가 있는 메모의 부모를 변경하면 변경된다`() {
+        // given
+        val folder1 =
+            folderRepository.save(
+                Folder.init(
+                    authorId = AuthorId(1),
+                ),
+            )
+        val folder2 =
+            folderRepository.save(
+                Folder.init(
+                    authorId = AuthorId(1),
+                ),
+            )
+        val memo =
+            memoRepository.save(
+                Memo.init(
+                    authorId = AuthorId(1),
+                    parentFolderId = folder1.id,
+                ),
+            )
+        val command =
+            IMakeRelationShipFolderAndMemo.Command(
+                memoId = memo.id,
+                folderId = folder2.id,
+            )
+
+        // when
+        val info = sut.handle(command)
+
+        // then
+        info.memoId shouldNotBe null
+        info.memoId shouldBe memo.id
+        info.folderId shouldBe folder2.id
+        val foundedMemo = memoRepository.findById(info.memoId)
+        foundedMemo shouldNotBe null
+        foundedMemo!!.parentFolderId shouldBe folder2.id
     }
 }

@@ -104,6 +104,7 @@ class ArticleTests : SimpleUnitTestContext() {
             // when, then
             shouldThrow<IllegalArgumentException> {
                 ArticleTestFixtures.createPublishedArticle(
+                    categoryId = null,
                     tags = listOf(TagId(IdUtils.generate())),
                     status = Article.Status.DELETED
                 )

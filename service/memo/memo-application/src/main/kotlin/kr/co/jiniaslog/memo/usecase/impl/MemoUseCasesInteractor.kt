@@ -60,11 +60,6 @@ internal class MemoUseCasesInteractor(
         val memo = getMemo(command.memoId)
 
         when (command) {
-            is IUpdateMemoReferences.Command.AddReference -> {
-                validateMemoExistence(command.referenceId)
-                memo.addReference(command.referenceId)
-            }
-
             is IUpdateMemoReferences.Command.RemoveReference -> {
                 validateMemoExistence(command.referenceId)
                 memo.removeReference(command.referenceId)

@@ -1,9 +1,11 @@
 package kr.co.jiniaslog.memo.usecase
 
+import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import kr.co.jiniaslog.TestContainerAbstractSkeleton
 import kr.co.jiniaslog.memo.domain.folder.Folder
+import kr.co.jiniaslog.memo.domain.folder.FolderId
 import kr.co.jiniaslog.memo.domain.folder.FolderName
 import kr.co.jiniaslog.memo.domain.memo.AuthorId
 import kr.co.jiniaslog.memo.outbound.FolderRepository
@@ -103,5 +105,19 @@ class FolderUseCaseTests : TestContainerAbstractSkeleton() {
         folderRepository.findById(info.childFolderId) shouldNotBe null
         info.parentFolderId shouldBe folder1.id
         info.childFolderId shouldBe folder2.id
+    }
+
+    @Test
+    fun `없는 폴더에 이름 변경을 요청하면 예외가 발생한다`() {
+        // given
+        val command =
+            IChangeFolderName.Command(
+                folderId = FolderId(1),
+                name = FolderName("name"),
+            )
+        // when & then
+        shouldThrow<IllegalArgumentException> {
+            sut.handle(command)
+        }
     }
 }

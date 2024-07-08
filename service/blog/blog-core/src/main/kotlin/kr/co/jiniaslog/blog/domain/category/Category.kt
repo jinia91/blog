@@ -45,23 +45,4 @@ class Category(
     init {
         require(sortingPoint >= 0) { "sortingPoint는 0 이상이어야 합니다" }
     }
-
-    fun edit(
-        categoryTitle: CategoryTitle,
-        depth: Int,
-        sortingPoint: Int,
-        parent: Category?
-    ) {
-        this.categoryTitle = categoryTitle
-        this.sortingPoint = sortingPoint
-        parent?.let {
-            require(parent.id != this.id) { "부모 카테고리는 자기 자신이 될 수 없습니다" }
-            this.parent = parent
-            parent.addChild(this)
-        }
-    }
-
-    private fun addChild(child: Category) {
-        this.children.add(child)
-    }
 }
