@@ -3,10 +3,10 @@ package kr.co.jiniaslog.blog.domain.article
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.nulls.shouldBeNull
 import io.kotest.matchers.shouldBe
+import kr.co.jiniaslog.blog.domain.ArticleTestFixtures
 import kr.co.jiniaslog.blog.domain.category.CategoryId
 import kr.co.jiniaslog.blog.domain.tag.TagId
 import kr.co.jiniaslog.blog.domain.user.UserId
-import kr.co.jiniaslog.blog.usecase.ArticleTestFixtures
 import kr.co.jiniaslog.shared.SimpleUnitTestContext
 import kr.co.jiniaslog.shared.core.domain.IdUtils
 import org.junit.jupiter.api.Nested
@@ -34,63 +34,53 @@ class ArticleTests : SimpleUnitTestContext() {
         @Test
         fun `게시글의 조회수는 음수가 될 수 없다`() {
             // given
-            val authorId = UserId(IdUtils.generate())
-
             // when, then
             shouldThrow<IllegalArgumentException> {
-                ArticleTestFixtures.createArticle(
+                ArticleTestFixtures.createPublishedArticle(
                     hit = -1
                 )
             }
         }
 
         @Test
-        fun `게시글이 출판될경우 카테고리가 없을 수 없다`() {
+        fun `게시글이 게시된경우 카테고리가 없을 수 없다`() {
             // given
-            val authorId = UserId(IdUtils.generate())
-
             // when, then
             shouldThrow<IllegalArgumentException> {
-                ArticleTestFixtures.createArticle(
+                ArticleTestFixtures.createPublishedArticle(
                     categoryId = null
                 )
             }
         }
 
         @Test
-        fun `게시글이 출판될경우 제목이 비어있을 수 없다`() {
+        fun `게시글이 게시된경우 제목이 비어있을 수 없다`() {
             // given
-            val authorId = UserId(IdUtils.generate())
-
             // when, then
             shouldThrow<IllegalArgumentException> {
-                ArticleTestFixtures.createArticle(
+                ArticleTestFixtures.createPublishedArticle(
                     title = ""
                 )
             }
         }
 
         @Test
-        fun `게시글이 출판될경우 내용이 비어있을 수 없다`() {
+        fun `게시글이 게시된경우 내용이 비어있을 수 없다`() {
             // given
-            val authorId = UserId(IdUtils.generate())
-
             // when, then
             shouldThrow<IllegalArgumentException> {
-                ArticleTestFixtures.createArticle(
+                ArticleTestFixtures.createPublishedArticle(
                     contents = ""
                 )
             }
         }
 
         @Test
-        fun `게시글이 출판될경우 썸네일이 비어있을수 없다`() {
+        fun `게시글이 게시된경우 썸네일이 비어있을수 없다`() {
             // given
-            val authorId = UserId(IdUtils.generate())
-
             // when, then
             shouldThrow<IllegalArgumentException> {
-                ArticleTestFixtures.createArticle(
+                ArticleTestFixtures.createPublishedArticle(
                     thumbnailUrl = ""
                 )
             }
@@ -99,11 +89,9 @@ class ArticleTests : SimpleUnitTestContext() {
         @Test
         fun `게시글이 삭제될경우 카테고리가 있을수 없다`() {
             // given
-            val authorId = UserId(IdUtils.generate())
-
             // when, then
             shouldThrow<IllegalArgumentException> {
-                ArticleTestFixtures.createArticle(
+                ArticleTestFixtures.createPublishedArticle(
                     categoryId = CategoryId(IdUtils.generate()),
                     status = Article.Status.DELETED
                 )
@@ -113,11 +101,9 @@ class ArticleTests : SimpleUnitTestContext() {
         @Test
         fun `게시글이 삭제될경우 태그가 있을수 없다`() {
             // given
-            val authorId = UserId(IdUtils.generate())
-
             // when, then
             shouldThrow<IllegalArgumentException> {
-                ArticleTestFixtures.createArticle(
+                ArticleTestFixtures.createPublishedArticle(
                     tags = listOf(TagId(IdUtils.generate())),
                     status = Article.Status.DELETED
                 )
@@ -130,7 +116,7 @@ class ArticleTests : SimpleUnitTestContext() {
         @Test
         fun `유효한 컨텐츠로 게시글 수정 요청을 하면 게시글의 내용을 수정할 수 있다`() {
             // given
-            val article = ArticleTestFixtures.createArticle()
+            val article = ArticleTestFixtures.createPublishedArticle()
             val newContents = ArticleContents(
                 title = "new title",
                 contents = "new contents",
@@ -142,6 +128,100 @@ class ArticleTests : SimpleUnitTestContext() {
 
             // then
             article.articleContents shouldBe newContents
+        }
+    }
+
+    @Nested
+    inner class `게시글 공개 테스트`() {
+        @Test
+        fun `게시글이 공개 상태로 변경가능한 상태에서 공개를 하면 공개에 성공한다`() {
+            // given
+            val article = ArticleTestFixtures.createPublishedArticle(
+                status = Article.Status.DRAFT
+            )
+            article.canBePublished() shouldBe true
+
+            // when
+            article.publish()
+
+            // then
+            article.status shouldBe Article.Status.PUBLISHED
+        }
+
+        @Test
+        fun `게시된 게시글을 다시 공개하려고 하면 실패한다`() {
+            // given
+            val article = ArticleTestFixtures.createPublishedArticle(
+                status = Article.Status.PUBLISHED
+            )
+            article.canBePublished() shouldBe false
+
+            // when, then
+            shouldThrow<IllegalArgumentException> {
+                article.publish()
+            }
+        }
+
+        @Test
+        fun `카테고리가 없는 게시글 초안을 공개하려고 하면 실패한다`() {
+            // given
+            val article = ArticleTestFixtures.createPublishedArticle(
+                categoryId = null,
+                status = Article.Status.DRAFT
+            )
+            article.canBePublished() shouldBe false
+
+            // when, then
+            shouldThrow<IllegalArgumentException> {
+                article.publish()
+            }
+        }
+
+        @Test
+        fun `제목이 없는 게시글 초안을 공개하려고 하면 실패한다`() {
+            // given
+            val article = ArticleTestFixtures.createPublishedArticle(
+                title = "",
+                status = Article.Status.DRAFT
+
+            )
+            article.canBePublished() shouldBe false
+
+            // when, then
+            shouldThrow<IllegalArgumentException> {
+                article.publish()
+            }
+        }
+
+        @Test
+        fun `내용이 없는 게시글 초안을 공개하려고 하면 실패한다`() {
+            // given
+            val article = ArticleTestFixtures.createPublishedArticle(
+                contents = "",
+                status = Article.Status.DRAFT
+
+            )
+            article.canBePublished() shouldBe false
+
+            // when, then
+            shouldThrow<IllegalArgumentException> {
+                article.publish()
+            }
+        }
+
+        @Test
+        fun `썸네일이 없는 게시글 초안을 공개하려고 하면 실패한다`() {
+            // given
+            val article = ArticleTestFixtures.createPublishedArticle(
+                thumbnailUrl = "",
+                status = Article.Status.DRAFT
+            )
+            article.canBePublished() shouldBe false
+
+            // when, then
+            shouldThrow<IllegalArgumentException> {
+                article.publish()
+            }
         }
     }
 }

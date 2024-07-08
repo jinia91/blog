@@ -3,7 +3,7 @@ package kr.co.jiniaslog
 import com.ninjasquad.springmockk.MockkBean
 import io.restassured.module.mockmvc.RestAssuredMockMvc
 import kr.co.jiniaslog.blog.adapter.inbound.http.ArticleResources
-import kr.co.jiniaslog.blog.usecase.ArticleUseCasesFacade
+import kr.co.jiniaslog.blog.usecase.article.ArticleUseCasesFacade
 import kr.co.jiniaslog.media.inbound.http.ImageResources
 import kr.co.jiniaslog.media.usecase.ImageUseCasesFacade
 import kr.co.jiniaslog.memo.adapter.inbound.http.FolderResources

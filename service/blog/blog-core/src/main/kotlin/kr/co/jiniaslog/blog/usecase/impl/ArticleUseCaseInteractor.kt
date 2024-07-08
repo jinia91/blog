@@ -4,9 +4,10 @@ import kr.co.jiniaslog.blog.domain.article.Article
 import kr.co.jiniaslog.blog.outbound.UserService
 import kr.co.jiniaslog.blog.outbound.persistence.ArticleRepository
 import kr.co.jiniaslog.blog.outbound.persistence.BlogTransactionHandler
-import kr.co.jiniaslog.blog.usecase.ArticleUseCasesFacade
-import kr.co.jiniaslog.blog.usecase.IDeleteArticle
-import kr.co.jiniaslog.blog.usecase.IStartToWriteNewArticle
+import kr.co.jiniaslog.blog.usecase.article.ArticleUseCasesFacade
+import kr.co.jiniaslog.blog.usecase.article.IDeleteArticle
+import kr.co.jiniaslog.blog.usecase.article.IPublishArticle
+import kr.co.jiniaslog.blog.usecase.article.IStartToWriteNewDraftArticle
 import kr.co.jiniaslog.shared.core.annotation.UseCaseInteractor
 
 @UseCaseInteractor
@@ -15,7 +16,7 @@ class ArticleUseCaseInteractor(
     private val articleRepository: ArticleRepository,
     private val transactionHandler: BlogTransactionHandler,
 ) : ArticleUseCasesFacade {
-    override fun handle(command: IStartToWriteNewArticle.Command): IStartToWriteNewArticle.Info {
+    override fun handle(command: IStartToWriteNewDraftArticle.Command): IStartToWriteNewDraftArticle.Info {
         command.validate()
         val article = command.toArticle()
 
@@ -23,14 +24,26 @@ class ArticleUseCaseInteractor(
             articleRepository.save(article)
         }
 
-        return IStartToWriteNewArticle.Info(article.id)
+        return IStartToWriteNewDraftArticle.Info(article.id)
     }
 
-    private fun IStartToWriteNewArticle.Command.validate() {
+    private fun IStartToWriteNewDraftArticle.Command.validate() {
         require(userService.isExistUser(this.authorId)) { "유저가 존재하지 않습니다" }
     }
 
-    private fun IStartToWriteNewArticle.Command.toArticle(): Article {
+    override fun handle(command: IPublishArticle.Command): IPublishArticle.Info {
+        val article = articleRepository.findById(command.articleId)
+            ?: throw IllegalArgumentException("게시글이 존재하지 않습니다")
+
+        transactionHandler.runInRepeatableReadTransaction {
+            article.publish()
+            articleRepository.save(article)
+        }
+
+        return IPublishArticle.Info(article.id)
+    }
+
+    private fun IStartToWriteNewDraftArticle.Command.toArticle(): Article {
         return Article.newOne(this.authorId)
     }
 

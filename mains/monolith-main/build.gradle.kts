@@ -81,6 +81,7 @@ dependencies {
     testImplementation(testFixtures(project(Modules.Service.Memo.Adaptors.OutNeo4j.path)))
     testImplementation(testFixtures(project(Modules.Service.Memo.Domain.path)))
     testImplementation(testFixtures(project(Modules.Service.AuthUser.Application.path)))
+    testImplementation(testFixtures(project(Modules.Service.Blog.Core.path)))
 
     // external libs
     bootLib.forEach {

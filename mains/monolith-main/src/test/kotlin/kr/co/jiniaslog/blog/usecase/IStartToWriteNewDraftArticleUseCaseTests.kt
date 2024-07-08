@@ -1,4 +1,4 @@
-package kr.co.jiniaslog.blog
+package kr.co.jiniaslog.blog.usecase
 
 import io.kotest.matchers.nulls.shouldBeNull
 import io.kotest.matchers.nulls.shouldNotBeNull
@@ -11,7 +11,7 @@ import kr.co.jiniaslog.blog.domain.article.ArticleContents
 import kr.co.jiniaslog.blog.domain.user.UserId
 import kr.co.jiniaslog.blog.outbound.persistence.ArticleRepository
 import kr.co.jiniaslog.blog.outbound.persistence.BlogTransactionHandler
-import kr.co.jiniaslog.blog.usecase.IStartToWriteNewArticle
+import kr.co.jiniaslog.blog.usecase.article.IStartToWriteNewDraftArticle
 import kr.co.jiniaslog.user.application.infra.UserRepository
 import kr.co.jiniaslog.user.domain.user.Email
 import kr.co.jiniaslog.user.domain.user.NickName
@@ -19,9 +19,9 @@ import kr.co.jiniaslog.user.domain.user.User
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 
-class IStartToWriteNewArticleUseCasesTests : TestContainerAbstractSkeleton() {
+class IStartToWriteNewDraftArticleUseCaseTests : TestContainerAbstractSkeleton() {
     @Autowired
-    private lateinit var sut: IStartToWriteNewArticle
+    private lateinit var sut: IStartToWriteNewDraftArticle
 
     @Autowired
     private lateinit var userRepository: UserRepository
@@ -47,7 +47,7 @@ class IStartToWriteNewArticleUseCasesTests : TestContainerAbstractSkeleton() {
             )
 
         val command =
-            IStartToWriteNewArticle.Command(
+            IStartToWriteNewDraftArticle.Command(
                 authorId = UserId(user.id.value),
             )
 

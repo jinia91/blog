@@ -2,15 +2,17 @@ package kr.co.jiniaslog.blog.adapter.inbound.http
 
 import kr.co.jiniaslog.blog.domain.article.ArticleId
 import kr.co.jiniaslog.blog.domain.user.UserId
-import kr.co.jiniaslog.blog.usecase.ArticleUseCasesFacade
-import kr.co.jiniaslog.blog.usecase.IDeleteArticle
-import kr.co.jiniaslog.blog.usecase.IStartToWriteNewArticle
+import kr.co.jiniaslog.blog.usecase.article.ArticleUseCasesFacade
+import kr.co.jiniaslog.blog.usecase.article.IDeleteArticle
+import kr.co.jiniaslog.blog.usecase.article.IPublishArticle
+import kr.co.jiniaslog.blog.usecase.article.IStartToWriteNewDraftArticle
 import kr.cojiniaslog.shared.adapter.inbound.http.AuthUserId
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import java.net.URI
@@ -22,11 +24,21 @@ class ArticleResources(private val articleFacade: ArticleUseCasesFacade) {
     @PreAuthorize("hasRole('ADMIN')")
     fun startNewArticle(@AuthUserId userId: Long?): ResponseEntity<ArticlePostResponse> {
         require(userId != null) { "유저 정보가 없습니다" }
-        val command = IStartToWriteNewArticle.Command(UserId(userId))
+        val command = IStartToWriteNewDraftArticle.Command(UserId(userId))
         val info = articleFacade.handle(command)
         return ResponseEntity
             .created(URI("/api/v1/articles/${info.articleId.value}"))
             .body(ArticlePostResponse(info.articleId.value))
+    }
+
+    @PutMapping("/{articleId}/publish")
+    @PreAuthorize("hasRole('ADMIN')")
+    fun publishArticle(
+        @PathVariable articleId: Long,
+    ): ResponseEntity<ArticlePublishResponse> {
+        val command = IPublishArticle.Command(ArticleId(articleId))
+        val info = articleFacade.handle(command)
+        return ResponseEntity.ok(ArticlePublishResponse(info.articleId.value))
     }
 
     @DeleteMapping("/{articleId}")
