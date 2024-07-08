@@ -6,7 +6,11 @@ import java.io.Serializable
 
 @Embeddable
 data class UserId(val value: Long) : ValueObject, Serializable {
+    init {
+        validate()
+    }
+
     override fun validate() {
-        require(value > 0) { "id must be positive" }
+        require(value > 0) { "유저 id는 양수여야 합니다" }
     }
 }

@@ -10,6 +10,9 @@ data class ArticleContents(
     val contents: String,
     val thumbnailUrl: String,
 ) : ValueObject, Serializable {
+    init {
+        validate()
+    }
     override fun validate() {
         require(title.length <= 100) { "제목은 100자를 넘을 수 없습니다." }
     }

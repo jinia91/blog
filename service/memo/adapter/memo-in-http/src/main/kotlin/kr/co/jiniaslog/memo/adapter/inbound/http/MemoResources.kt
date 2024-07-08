@@ -46,9 +46,8 @@ class MemoResources(
         @AuthUserId userId: Long?,
         @RequestBody request: InitMemoRequest,
     ): ResponseEntity<InitMemoResponse> {
-        require(userId != null) { "반드시 인증된 사용자여야합니다" }
         val command = IInitMemo.Command(
-            authorId = AuthorId(userId),
+            authorId = AuthorId(userId!!),
             parentFolderId = request.parentFolderId?.let { FolderId(it) },
         )
         val info = memoUseCases.handle(command)

@@ -9,5 +9,8 @@ import java.io.Serializable
 data class Tagging(
     val tagId: TagId,
 ) : ValueObject, Serializable {
+    init {
+        validate()
+    }
     override fun validate() {}
 }

@@ -151,7 +151,7 @@ class MemoWebSocketHandlerTest {
     fun `유효한 메모 참조 추가 커맨드시 유효한 응답이 온다`() {
         // given
         every {
-            memoUseCases.handle(any(IUpdateMemoReferences.Command.AddReference::class))
+            memoUseCases.handle(any(IUpdateMemoReferences.Command.UpdateReferences::class))
         } returns IUpdateMemoReferences.Info(
             id = MemoId(1)
         )

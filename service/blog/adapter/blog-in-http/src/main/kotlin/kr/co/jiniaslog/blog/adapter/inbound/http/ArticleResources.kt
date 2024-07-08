@@ -23,8 +23,7 @@ class ArticleResources(private val articleFacade: ArticleUseCasesFacade) {
     @PostMapping("")
     @PreAuthorize("hasRole('ADMIN')")
     fun startNewArticle(@AuthUserId userId: Long?): ResponseEntity<ArticlePostResponse> {
-        require(userId != null) { "유저 정보가 없습니다" }
-        val command = IStartToWriteNewDraftArticle.Command(UserId(userId))
+        val command = IStartToWriteNewDraftArticle.Command(UserId(userId!!))
         val info = articleFacade.handle(command)
         return ResponseEntity
             .created(URI("/api/v1/articles/${info.articleId.value}"))
@@ -44,10 +43,8 @@ class ArticleResources(private val articleFacade: ArticleUseCasesFacade) {
     @DeleteMapping("/{articleId}")
     @PreAuthorize("hasRole('ADMIN')")
     fun deleteArticle(
-        @AuthUserId userId: Long?,
         @PathVariable articleId: Long,
     ): ResponseEntity<ArticleDeleteResponse> {
-        require(userId != null) { "유저 정보가 없습니다" }
         val command = IDeleteArticle.Command(ArticleId(articleId))
         articleFacade.handle(command)
         return ResponseEntity.ok(ArticleDeleteResponse(articleId))

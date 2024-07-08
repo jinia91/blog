@@ -22,7 +22,12 @@ koverReport {
 
             bound {
                 metric = MetricType.BRANCH
-                minValue = 60
+                minValue = 80
+            }
+
+            bound {
+                metric = MetricType.LINE
+                minValue = 80
             }
         }
     }

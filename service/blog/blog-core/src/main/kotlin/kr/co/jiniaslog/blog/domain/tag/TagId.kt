@@ -8,11 +8,13 @@ import java.io.Serializable
 
 @Embeddable
 data class TagId(val id: Long) : ValueObject, Serializable {
+    init {
+        validate()
+    }
+
     @PreUpdate
     @PrePersist
     override fun validate() {
-        require(id > 0) {
-            "id must be positive"
-        }
+        require(id > 0) { "태그 id는 양수여야 합니다" }
     }
 }

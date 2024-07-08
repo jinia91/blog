@@ -30,11 +30,11 @@ class MemoQueriesTests : TestContainerAbstractSkeleton() {
         // given IRecommendRelatedMemo
         val dummyFolder = folderRepository.save(FolderTestFixtures.build())
         val memo = memoRepository.save(MemoTestFixtures.build(parentFolderId = dummyFolder.id))
-        val unRelatedMemo1 = memoRepository.save(MemoTestFixtures.build(parentFolderId = dummyFolder.id))
-        val unRelatedMemo2 = memoRepository.save(MemoTestFixtures.build(parentFolderId = dummyFolder.id))
-        val unRelatedMemo3 = memoRepository.save(MemoTestFixtures.build(parentFolderId = dummyFolder.id))
-        val unRelatedMemo4 = memoRepository.save(MemoTestFixtures.build(parentFolderId = dummyFolder.id))
-        val unRelatedMemo5 = memoRepository.save(MemoTestFixtures.build(parentFolderId = dummyFolder.id))
+        memoRepository.save(MemoTestFixtures.build(parentFolderId = dummyFolder.id))
+        memoRepository.save(MemoTestFixtures.build(parentFolderId = dummyFolder.id))
+        memoRepository.save(MemoTestFixtures.build(parentFolderId = dummyFolder.id))
+        memoRepository.save(MemoTestFixtures.build(parentFolderId = dummyFolder.id))
+        memoRepository.save(MemoTestFixtures.build(parentFolderId = dummyFolder.id))
         val relatedMemo = memoRepository.save(
             MemoTestFixtures.build(parentFolderId = dummyFolder.id, content = MemoContent("test"))
         )
