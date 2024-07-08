@@ -13,6 +13,7 @@ import java.time.LocalDateTime
 
 object ArticleTestFixtures {
     fun createPublishedArticle(
+        id: ArticleId = ArticleId(IdUtils.generate()),
         memoRefId: MemoId? = MemoId(IdUtils.generate()),
         authorId: UserId = UserId(1L),
         categoryId: CategoryId? = CategoryId(IdUtils.generate()),
@@ -43,7 +44,7 @@ object ArticleTestFixtures {
             tags = tags.map { Tagging(it) }.toMutableSet(),
             hit = hit,
             status = status,
-            id = ArticleId(IdUtils.generate()),
+            id = id,
         ).apply {
             this.createdAt = createdAt
             this.updatedAt = updatedAt

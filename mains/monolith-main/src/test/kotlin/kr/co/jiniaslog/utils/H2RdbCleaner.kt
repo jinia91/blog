@@ -20,6 +20,8 @@ class H2RdbCleaner(private val dataSources: List<DataSource>) : DbCleaner {
         try {
             connection = DataSourceUtils.getConnection(jdbcTemplate.dataSource!!)
 
+            jdbcTemplate.execute(FOREIGN_KEY_FALSE)
+
             val tableNames: List<String> =
                 jdbcTemplate.query(
                     QUERY_TABLE_NAMES,
@@ -32,12 +34,15 @@ class H2RdbCleaner(private val dataSources: List<DataSource>) : DbCleaner {
             }
         } finally {
             if (connection != null) {
+                jdbcTemplate.execute(FOREIGN_KEY_TRUE)
                 DataSourceUtils.releaseConnection(connection, jdbcTemplate.dataSource!!)
             }
         }
     }
 
     companion object {
+        private const val FOREIGN_KEY_FALSE = "SET REFERENTIAL_INTEGRITY FALSE;"
+        private const val FOREIGN_KEY_TRUE = "SET REFERENTIAL_INTEGRITY TRUE;"
         private const val QUERY_TABLE_NAMES = "SELECT table_name FROM information_schema.tables WHERE table_schema = ?"
         private const val H2_SCHEMA = "PUBLIC"
         private const val TABLE_NAME = "table_name"
