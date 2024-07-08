@@ -4,3 +4,9 @@
 1720362685199|0|statement|connection 408|url jdbc:h2:mem:jiniaslog_blog|drop table if exists Category cascade |drop table if exists Category cascade 
 1720362685199|0|statement|connection 408|url jdbc:h2:mem:jiniaslog_blog|drop table if exists Tag cascade |drop table if exists Tag cascade 
 1720362685199|0|statement|connection 408|url jdbc:h2:mem:jiniaslog_blog|drop table if exists Tag_tagging cascade |drop table if exists Tag_tagging cascade 
+1720444366208|0|statement|connection 576|url jdbc:h2:mem:jiniaslog_user|drop table if exists users cascade |drop table if exists users cascade 
+1720444366210|0|statement|connection 577|url jdbc:h2:mem:jiniaslog_blog|drop table if exists Article cascade |drop table if exists Article cascade 
+1720444366210|0|statement|connection 577|url jdbc:h2:mem:jiniaslog_blog|drop table if exists Article_tags cascade |drop table if exists Article_tags cascade 
+1720444366210|0|statement|connection 577|url jdbc:h2:mem:jiniaslog_blog|drop table if exists Category cascade |drop table if exists Category cascade 
+1720444366210|0|statement|connection 577|url jdbc:h2:mem:jiniaslog_blog|drop table if exists Tag cascade |drop table if exists Tag cascade 
+1720444366210|0|statement|connection 577|url jdbc:h2:mem:jiniaslog_blog|drop table if exists Tag_tagging cascade |drop table if exists Tag_tagging cascade 

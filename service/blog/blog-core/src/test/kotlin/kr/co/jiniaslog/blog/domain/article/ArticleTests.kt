@@ -34,8 +34,6 @@ class ArticleTests : SimpleUnitTestContext() {
         @Test
         fun `게시글의 조회수는 음수가 될 수 없다`() {
             // given
-            val authorId = UserId(IdUtils.generate())
-
             // when, then
             shouldThrow<IllegalArgumentException> {
                 ArticleTestFixtures.createPublishedArticle(
@@ -47,8 +45,6 @@ class ArticleTests : SimpleUnitTestContext() {
         @Test
         fun `게시글이 게시된경우 카테고리가 없을 수 없다`() {
             // given
-            val authorId = UserId(IdUtils.generate())
-
             // when, then
             shouldThrow<IllegalArgumentException> {
                 ArticleTestFixtures.createPublishedArticle(
@@ -60,8 +56,6 @@ class ArticleTests : SimpleUnitTestContext() {
         @Test
         fun `게시글이 게시된경우 제목이 비어있을 수 없다`() {
             // given
-            val authorId = UserId(IdUtils.generate())
-
             // when, then
             shouldThrow<IllegalArgumentException> {
                 ArticleTestFixtures.createPublishedArticle(
@@ -73,8 +67,6 @@ class ArticleTests : SimpleUnitTestContext() {
         @Test
         fun `게시글이 게시된경우 내용이 비어있을 수 없다`() {
             // given
-            val authorId = UserId(IdUtils.generate())
-
             // when, then
             shouldThrow<IllegalArgumentException> {
                 ArticleTestFixtures.createPublishedArticle(
@@ -86,8 +78,6 @@ class ArticleTests : SimpleUnitTestContext() {
         @Test
         fun `게시글이 게시된경우 썸네일이 비어있을수 없다`() {
             // given
-            val authorId = UserId(IdUtils.generate())
-
             // when, then
             shouldThrow<IllegalArgumentException> {
                 ArticleTestFixtures.createPublishedArticle(
@@ -99,8 +89,6 @@ class ArticleTests : SimpleUnitTestContext() {
         @Test
         fun `게시글이 삭제될경우 카테고리가 있을수 없다`() {
             // given
-            val authorId = UserId(IdUtils.generate())
-
             // when, then
             shouldThrow<IllegalArgumentException> {
                 ArticleTestFixtures.createPublishedArticle(
@@ -113,8 +101,6 @@ class ArticleTests : SimpleUnitTestContext() {
         @Test
         fun `게시글이 삭제될경우 태그가 있을수 없다`() {
             // given
-            val authorId = UserId(IdUtils.generate())
-
             // when, then
             shouldThrow<IllegalArgumentException> {
                 ArticleTestFixtures.createPublishedArticle(
