@@ -16,7 +16,7 @@ class CategoryTestFixtures {
         updatedAt: LocalDateTime? = null,
     ): Category {
         return Category(
-            categoryId = categoryId,
+            id = categoryId,
             categoryTitle = categoryTitle,
             sortingPoint = sortingPoint,
             parent = parent

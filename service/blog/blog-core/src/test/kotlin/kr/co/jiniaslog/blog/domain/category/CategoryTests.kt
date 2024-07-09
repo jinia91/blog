@@ -16,7 +16,7 @@ class CategoryTests {
             categoryTitle = categoryTitle,
             sortingPoint = sortingPoint,
             parent = parent,
-            categoryId = CategoryId(1)
+            id = CategoryId(1)
         )
 
         // then
