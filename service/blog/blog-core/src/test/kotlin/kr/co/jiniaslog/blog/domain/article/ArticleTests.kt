@@ -254,4 +254,30 @@ class ArticleTests : SimpleUnitTestContext() {
             }
         }
     }
+
+    @Nested
+    inner class `게시글 되살리기 테스트`() {
+        @Test
+        fun `삭제된 게시글을 되살리면 게시글 초안이 된다`() {
+            // given
+            val article = ArticleTestFixtures.createDeletedArticle()
+
+            // when
+            article.unDelete()
+
+            // then
+            article.status shouldBe Article.Status.DRAFT
+        }
+
+        @Test
+        fun `삭제된 게시글이 아니면 되살리기를할 수 없다`() {
+            // given
+            val article = ArticleTestFixtures.createPublishedArticle()
+
+            // when, then
+            shouldThrow<IllegalArgumentException> {
+                article.unDelete()
+            }
+        }
+    }
 }
