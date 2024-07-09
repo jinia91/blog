@@ -9,7 +9,5 @@ class SpyConfig {
     @PostConstruct
     fun setLogFormat() {
         P6SpyOptions.getActiveInstance().logMessageFormat = SqlFormatter::class.java.name
-        P6SpyOptions.getActiveInstance().append = false
-        P6SpyOptions.getActiveInstance().logfile = "dev.null"
     }
 }
