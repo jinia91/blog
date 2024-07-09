@@ -7,6 +7,7 @@ import kr.co.jiniaslog.blog.domain.article.ArticleId
 import kr.co.jiniaslog.blog.usecase.article.IDeleteArticle
 import kr.co.jiniaslog.blog.usecase.article.IPublishArticle
 import kr.co.jiniaslog.blog.usecase.article.IStartToWriteNewDraftArticle
+import kr.co.jiniaslog.blog.usecase.article.IUnDeleteArticle
 import kr.co.jiniaslog.user.application.security.PreAuthFilter
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
@@ -64,11 +65,35 @@ class ArticleResourceRestTests : RestTestAbstractSkeleton() {
                 .then()
                 .statusCode(401)
         }
+    }
 
+    @Nested
+    inner class `게시글 게시 테스트` {
+        @Test
+        fun `인증된 사용자의 유효한 게시글 게시 요청이 있으면 200을 반환한다`() {
+            // given
+            every { articleUseCasesFacade.handle(any(IPublishArticle.Command::class)) } returns IPublishArticle.Info(
+                ArticleId(1L)
+            )
+            // when
+            RestAssuredMockMvc.given()
+                .cookies(PreAuthFilter.ACCESS_TOKEN_HEADER, getTestAdminUserToken())
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .put("/api/v1/articles/1/publish")
+                // then
+                .then()
+                .statusCode(200)
+        }
+    }
+
+    @Nested
+    inner class `게시글 삭제 테스트` {
         @Test
         fun `정상적인 게시글 삭제 요청이 있으면 200을 반환한다`() {
             // given
-            every { articleUseCasesFacade.handle(any(IDeleteArticle.Command::class)) } returns IDeleteArticle.Info(ArticleId(1L))
+            every { articleUseCasesFacade.handle(any(IDeleteArticle.Command::class)) } returns IDeleteArticle.Info(
+                ArticleId(1L)
+            )
             // when
             RestAssuredMockMvc.given()
                 .cookies(PreAuthFilter.ACCESS_TOKEN_HEADER, getTestAdminUserToken())
@@ -81,16 +106,19 @@ class ArticleResourceRestTests : RestTestAbstractSkeleton() {
     }
 
     @Nested
-    inner class `게시글 게시 테스트` {
+    inner class `게시글 삭제 복구 테스트` {
         @Test
-        fun `인증된 사용자의 유효한 게시글 게시 요청이 있으면 200을 반환한다`() {
+        fun `삭제된 게시글을 성공적으로 복구하면 200을 반환한다`() {
             // given
-            every { articleUseCasesFacade.handle(any(IPublishArticle.Command::class)) } returns IPublishArticle.Info(ArticleId(1L))
+            every { articleUseCasesFacade.handle(any(IUnDeleteArticle.Command::class)) } returns IUnDeleteArticle.Info(
+                ArticleId(1L)
+            )
+
             // when
             RestAssuredMockMvc.given()
                 .cookies(PreAuthFilter.ACCESS_TOKEN_HEADER, getTestAdminUserToken())
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .put("/api/v1/articles/1/publish")
+                .put("/api/v1/articles/1/undelete")
                 // then
                 .then()
                 .statusCode(200)

@@ -139,6 +139,11 @@ class Article internal constructor(
         status = Status.DELETED
     }
 
+    fun unDelete() {
+        require(status == Status.DELETED) { "이미 삭제되지 않은 게시글입니다." }
+        status = Status.DRAFT
+    }
+
     fun editContents(articleContents: ArticleContents) {
         this.articleContents = articleContents
     }
