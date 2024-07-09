@@ -7,6 +7,7 @@ import jakarta.persistence.ElementCollection
 import jakarta.persistence.EmbeddedId
 import jakarta.persistence.Entity
 import jakarta.persistence.FetchType
+import kr.co.jiniaslog.blog.domain.category.Category
 import kr.co.jiniaslog.blog.domain.category.CategoryId
 import kr.co.jiniaslog.blog.domain.memo.MemoId
 import kr.co.jiniaslog.blog.domain.user.UserId
@@ -95,6 +96,22 @@ class Article internal constructor(
     var tags: MutableSet<Tagging> = tags
         private set
 
+    val canPublish: Boolean
+        get() {
+            val isNotPublished = this.status != Status.PUBLISHED
+            val hasCategory = this.categoryId != null
+            val hasTitle = this.articleContents.title.isNotBlank()
+            val hasContents = this.articleContents.contents.isNotBlank()
+            val hasThumbnail = this.articleContents.thumbnailUrl.isNotBlank()
+            return isNotPublished && hasCategory && hasTitle && hasContents && hasThumbnail
+        }
+
+    private val canDelete: Boolean
+        get() = status != Status.DELETED
+
+    private val canUnDelete: Boolean
+        get() = status == Status.DELETED
+
     init {
         id.validate()
         authorId.validate()
@@ -118,21 +135,12 @@ class Article internal constructor(
     }
 
     fun publish() {
-        require(canPublish()) { "게시글을 게시할 수 없습니다." }
+        require(canPublish) { "게시글을 게시할 수 없습니다." }
         status = Status.PUBLISHED
     }
 
-    fun canPublish(): Boolean {
-        val isNotPublished = this.status != Status.PUBLISHED
-        val hasCategory = this.categoryId != null
-        val hasTitle = this.articleContents.title.isNotBlank()
-        val hasContents = this.articleContents.contents.isNotBlank()
-        val hasThumbnail = this.articleContents.thumbnailUrl.isNotBlank()
-        return isNotPublished && hasCategory && hasTitle && hasContents && hasThumbnail
-    }
-
     fun delete() {
-        require(status != Status.DELETED) { "이미 삭제된 게시글입니다." }
+        require(canDelete) { "이미 삭제된 게시글입니다." }
         categoryId = null
         tags.clear()
         memoRefId = null
@@ -140,8 +148,14 @@ class Article internal constructor(
     }
 
     fun unDelete() {
-        require(status == Status.DELETED) { "이미 삭제되지 않은 게시글입니다." }
+        require(canUnDelete) { "이미 삭제되지 않은 게시글입니다." }
         status = Status.DRAFT
+    }
+
+    fun categorize(category: Category) {
+        require(category.isChild) { "카테고리는 하위 카테고리여야 합니다." }
+        require(this.status != Status.DELETED) { "삭제된 게시글은 카테고리를 설정할 수 없습니다." }
+        this.categoryId = category.id
     }
 
     fun editContents(articleContents: ArticleContents) {

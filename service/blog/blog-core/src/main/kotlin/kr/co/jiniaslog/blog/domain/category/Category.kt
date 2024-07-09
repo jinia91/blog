@@ -11,7 +11,7 @@ import kr.co.jiniaslog.shared.core.domain.AggregateRoot
 
 @Entity
 class Category(
-    categoryId: CategoryId,
+    id: CategoryId,
     categoryTitle: CategoryTitle,
     sortingPoint: Int,
     parent: Category?
@@ -21,7 +21,7 @@ class Category(
         column = Column(name = "category_id"),
         name = "value",
     )
-    override val id: CategoryId = categoryId
+    override val id: CategoryId = id
 
     @AttributeOverride(
         column = Column(name = "category_title"),
@@ -41,6 +41,9 @@ class Category(
 
     var sortingPoint: Int = sortingPoint
         private set
+
+    val isChild: Boolean
+        get() = parent != null
 
     init {
         require(sortingPoint >= 0) { "sortingPoint는 0 이상이어야 합니다" }

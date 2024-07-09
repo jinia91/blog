@@ -4,7 +4,9 @@ import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.nulls.shouldBeNull
 import io.kotest.matchers.shouldBe
 import kr.co.jiniaslog.blog.domain.ArticleTestFixtures
+import kr.co.jiniaslog.blog.domain.category.Category
 import kr.co.jiniaslog.blog.domain.category.CategoryId
+import kr.co.jiniaslog.blog.domain.category.CategoryTitle
 import kr.co.jiniaslog.blog.domain.tag.TagId
 import kr.co.jiniaslog.blog.domain.user.UserId
 import kr.co.jiniaslog.shared.SimpleUnitTestContext
@@ -140,7 +142,7 @@ class ArticleTests : SimpleUnitTestContext() {
             val article = ArticleTestFixtures.createPublishedArticle(
                 status = Article.Status.DRAFT
             )
-            article.canPublish() shouldBe true
+            article.canPublish shouldBe true
 
             // when
             article.publish()
@@ -155,7 +157,7 @@ class ArticleTests : SimpleUnitTestContext() {
             val article = ArticleTestFixtures.createPublishedArticle(
                 status = Article.Status.PUBLISHED
             )
-            article.canPublish() shouldBe false
+            article.canPublish shouldBe false
 
             // when, then
             shouldThrow<IllegalArgumentException> {
@@ -170,7 +172,7 @@ class ArticleTests : SimpleUnitTestContext() {
                 categoryId = null,
                 status = Article.Status.DRAFT
             )
-            article.canPublish() shouldBe false
+            article.canPublish shouldBe false
 
             // when, then
             shouldThrow<IllegalArgumentException> {
@@ -186,7 +188,7 @@ class ArticleTests : SimpleUnitTestContext() {
                 status = Article.Status.DRAFT
 
             )
-            article.canPublish() shouldBe false
+            article.canPublish shouldBe false
 
             // when, then
             shouldThrow<IllegalArgumentException> {
@@ -202,7 +204,7 @@ class ArticleTests : SimpleUnitTestContext() {
                 status = Article.Status.DRAFT
 
             )
-            article.canPublish() shouldBe false
+            article.canPublish shouldBe false
 
             // when, then
             shouldThrow<IllegalArgumentException> {
@@ -217,7 +219,7 @@ class ArticleTests : SimpleUnitTestContext() {
                 thumbnailUrl = "",
                 status = Article.Status.DRAFT
             )
-            article.canPublish() shouldBe false
+            article.canPublish shouldBe false
 
             // when, then
             shouldThrow<IllegalArgumentException> {
@@ -277,6 +279,73 @@ class ArticleTests : SimpleUnitTestContext() {
             // when, then
             shouldThrow<IllegalArgumentException> {
                 article.unDelete()
+            }
+        }
+    }
+
+    @Nested
+    inner class `게시글 카테고리 세팅 테스트`() {
+        @Test
+        fun `자식 카테고리는 게시글에 세팅할 수 있다`() {
+            // given
+            val article = ArticleTestFixtures.createPublishedArticle()
+            val parent = Category(
+                id = CategoryId(IdUtils.generate()),
+                parent = null,
+                categoryTitle = CategoryTitle("parent"),
+                sortingPoint = 0
+            )
+            val child = Category(
+                id = CategoryId(IdUtils.generate()),
+                categoryTitle = CategoryTitle("child"),
+                parent = parent,
+                sortingPoint = 0
+            )
+
+            // when
+            article.categorize(child)
+
+            // then
+            article.categoryId shouldBe child.id
+        }
+
+        @Test
+        fun `부모 카테고리는 게시글에 세팅할 수 없다`() {
+            // given
+            val article = ArticleTestFixtures.createPublishedArticle()
+            val parent = Category(
+                id = CategoryId(IdUtils.generate()),
+                parent = null,
+                categoryTitle = CategoryTitle("parent"),
+                sortingPoint = 0
+            )
+
+            // when, then
+            shouldThrow<IllegalArgumentException> {
+                article.categorize(parent)
+            }
+        }
+
+        @Test
+        fun `삭제된 게시글은 카테고리를 세팅할 수 없다`() {
+            // given
+            val article = ArticleTestFixtures.createDeletedArticle()
+            val parent = Category(
+                id = CategoryId(IdUtils.generate()),
+                parent = null,
+                categoryTitle = CategoryTitle("parent"),
+                sortingPoint = 0
+            )
+            val child = Category(
+                id = CategoryId(IdUtils.generate()),
+                categoryTitle = CategoryTitle("child"),
+                parent = parent,
+                sortingPoint = 0
+            )
+
+            // when, then
+            shouldThrow<IllegalArgumentException> {
+                article.categorize(child)
             }
         }
     }

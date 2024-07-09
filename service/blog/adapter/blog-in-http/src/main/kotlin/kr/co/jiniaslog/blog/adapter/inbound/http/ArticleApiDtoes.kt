@@ -15,3 +15,7 @@ data class ArticleDeleteResponse(
 data class AunDeleteArticleResponse(
     val articleId: Long,
 )
+
+data class ArticleCategorizeResponse(
+    val articleId: Long,
+)

@@ -1,8 +1,10 @@
 package kr.co.jiniaslog.blog.adapter.inbound.http
 
 import kr.co.jiniaslog.blog.domain.article.ArticleId
+import kr.co.jiniaslog.blog.domain.category.CategoryId
 import kr.co.jiniaslog.blog.domain.user.UserId
 import kr.co.jiniaslog.blog.usecase.article.ArticleUseCasesFacade
+import kr.co.jiniaslog.blog.usecase.article.ICategorizeArticle
 import kr.co.jiniaslog.blog.usecase.article.IDeleteArticle
 import kr.co.jiniaslog.blog.usecase.article.IPublishArticle
 import kr.co.jiniaslog.blog.usecase.article.IStartToWriteNewDraftArticle
@@ -59,5 +61,16 @@ class ArticleResources(private val articleFacade: ArticleUseCasesFacade) {
         val command = IUnDeleteArticle.Command(ArticleId(articleId))
         val info = articleFacade.handle(command)
         return ResponseEntity.ok(AunDeleteArticleResponse(info.articleId.value))
+    }
+
+    @PutMapping("/{articleId}/category/{categoryId}")
+    @PreAuthorize("hasRole('ADMIN')")
+    fun categorizeArticle(
+        @PathVariable articleId: Long,
+        @PathVariable categoryId: Long,
+    ): ResponseEntity<ArticleCategorizeResponse> {
+        val command = ICategorizeArticle.Command(ArticleId(articleId), CategoryId(categoryId))
+        val info = articleFacade.handle(command)
+        return ResponseEntity.ok(ArticleCategorizeResponse(info.articleId.value))
     }
 }
