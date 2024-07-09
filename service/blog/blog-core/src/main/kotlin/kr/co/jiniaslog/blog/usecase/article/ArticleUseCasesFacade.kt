@@ -4,4 +4,5 @@ interface ArticleUseCasesFacade :
     IStartToWriteNewDraftArticle,
     IPublishArticle,
     IDeleteArticle,
-    IUnDeleteArticle
+    IUnDeleteArticle,
+    ICategorizeArticle

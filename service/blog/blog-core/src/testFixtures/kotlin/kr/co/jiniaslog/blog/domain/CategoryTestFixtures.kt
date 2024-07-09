@@ -6,7 +6,7 @@ import kr.co.jiniaslog.blog.domain.category.CategoryTitle
 import kr.co.jiniaslog.shared.core.domain.IdUtils
 import java.time.LocalDateTime
 
-class CategoryTestFixtures {
+object CategoryTestFixtures {
     fun createCategory(
         categoryId: CategoryId = CategoryId(IdUtils.generate()),
         categoryTitle: CategoryTitle = CategoryTitle("카테고리"),

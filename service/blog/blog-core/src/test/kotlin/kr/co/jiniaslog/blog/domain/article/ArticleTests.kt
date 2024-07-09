@@ -303,7 +303,7 @@ class ArticleTests : SimpleUnitTestContext() {
             )
 
             // when
-            article.setCategory(child)
+            article.categorize(child)
 
             // then
             article.categoryId shouldBe child.id
@@ -322,7 +322,7 @@ class ArticleTests : SimpleUnitTestContext() {
 
             // when, then
             shouldThrow<IllegalArgumentException> {
-                article.setCategory(parent)
+                article.categorize(parent)
             }
         }
 
@@ -345,7 +345,7 @@ class ArticleTests : SimpleUnitTestContext() {
 
             // when, then
             shouldThrow<IllegalArgumentException> {
-                article.setCategory(child)
+                article.categorize(child)
             }
         }
     }

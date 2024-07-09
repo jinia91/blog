@@ -6,7 +6,9 @@ import kr.co.jiniaslog.blog.domain.article.QArticle.article
 import kr.co.jiniaslog.blog.outbound.UserService
 import kr.co.jiniaslog.blog.outbound.persistence.ArticleRepository
 import kr.co.jiniaslog.blog.outbound.persistence.BlogTransactionHandler
+import kr.co.jiniaslog.blog.outbound.persistence.CategoryRepository
 import kr.co.jiniaslog.blog.usecase.article.ArticleUseCasesFacade
+import kr.co.jiniaslog.blog.usecase.article.ICategorizeArticle
 import kr.co.jiniaslog.blog.usecase.article.IDeleteArticle
 import kr.co.jiniaslog.blog.usecase.article.IPublishArticle
 import kr.co.jiniaslog.blog.usecase.article.IStartToWriteNewDraftArticle
@@ -18,6 +20,7 @@ class ArticleUseCaseInteractor(
     private val userService: UserService,
     private val articleRepository: ArticleRepository,
     private val transactionHandler: BlogTransactionHandler,
+    private val categoryRepository: CategoryRepository
 ) : ArticleUseCasesFacade {
     override fun handle(command: IStartToWriteNewDraftArticle.Command): IStartToWriteNewDraftArticle.Info {
         command.validate()
@@ -62,7 +65,6 @@ class ArticleUseCaseInteractor(
 
     override fun handle(command: IUnDeleteArticle.Command): IUnDeleteArticle.Info {
         val article = getArticle(command.articleId)
-        require(article.status == Article.Status.DELETED) { "삭제되지 않은 게시글입니다" }
 
         transactionHandler.runInRepeatableReadTransaction {
             article.unDelete()
@@ -70,6 +72,19 @@ class ArticleUseCaseInteractor(
         }
 
         return IUnDeleteArticle.Info(article.id)
+    }
+
+    override fun handle(command: ICategorizeArticle.Command): ICategorizeArticle.Info {
+        val article = getArticle(command.articleId)
+        val category = categoryRepository.findById(command.categoryId)
+            ?: throw IllegalArgumentException("카테고리가 존재하지 않습니다")
+
+        transactionHandler.runInRepeatableReadTransaction {
+            article.categorize(category)
+            articleRepository.save(article)
+        }
+
+        return ICategorizeArticle.Info(article.id)
     }
 
     private fun getArticle(articleId: ArticleId) =
