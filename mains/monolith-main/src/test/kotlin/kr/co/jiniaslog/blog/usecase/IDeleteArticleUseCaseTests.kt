@@ -68,9 +68,7 @@ class IDeleteArticleUseCaseTests : TestContainerAbstractSkeleton() {
     @Transactional
     fun `논리삭제된 게시글을 삭제하려하면 예외가 발생한다`() {
         // given
-        val article = ArticleTestFixtures.createPublishedArticle(
-            status = Article.Status.DELETED,
-        )
+        val article = ArticleTestFixtures.createDeletedArticle()
         articleRepository.save(article)
 
         // when, then
