@@ -325,5 +325,28 @@ class ArticleTests : SimpleUnitTestContext() {
                 article.setCategory(parent)
             }
         }
+
+        @Test
+        fun `삭제된 게시글은 카테고리를 세팅할 수 없다`() {
+            // given
+            val article = ArticleTestFixtures.createDeletedArticle()
+            val parent = Category(
+                id = CategoryId(IdUtils.generate()),
+                parent = null,
+                categoryTitle = CategoryTitle("parent"),
+                sortingPoint = 0
+            )
+            val child = Category(
+                id = CategoryId(IdUtils.generate()),
+                categoryTitle = CategoryTitle("child"),
+                parent = parent,
+                sortingPoint = 0
+            )
+
+            // when, then
+            shouldThrow<IllegalArgumentException> {
+                article.setCategory(child)
+            }
+        }
     }
 }
