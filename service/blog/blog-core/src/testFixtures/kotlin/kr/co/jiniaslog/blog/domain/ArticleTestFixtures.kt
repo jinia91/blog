@@ -50,4 +50,35 @@ object ArticleTestFixtures {
             this.updatedAt = updatedAt
         }
     }
+
+    fun createDeletedArticle(
+        id: ArticleId = ArticleId(IdUtils.generate()),
+        memoRefId: MemoId? = MemoId(IdUtils.generate()),
+        authorId: UserId = UserId(1L),
+        title: String = "title",
+        contents: String = "contents",
+        thumbnailUrl: String = "thumbnailUrl",
+        status: Article.Status = Article.Status.DELETED,
+        hit: Int = 0,
+        createdAt: LocalDateTime? = null,
+        updatedAt: LocalDateTime? = null,
+    ): Article {
+        return Article(
+            memoRefId = memoRefId,
+            authorId = authorId,
+            categoryId = null,
+            articleContents = ArticleContents(
+                title = title,
+                contents = contents,
+                thumbnailUrl = thumbnailUrl,
+            ),
+            tags = mutableSetOf(),
+            hit = hit,
+            status = status,
+            id = id,
+        ).apply {
+            this.createdAt = createdAt
+            this.updatedAt = updatedAt
+        }
+    }
 }

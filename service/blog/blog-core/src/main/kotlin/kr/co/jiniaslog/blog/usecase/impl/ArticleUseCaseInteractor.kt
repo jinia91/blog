@@ -48,6 +48,14 @@ class ArticleUseCaseInteractor(
     }
 
     override fun handle(command: IDeleteArticle.Command): IDeleteArticle.Info {
-        TODO("Not yet implemented")
+        val article = articleRepository.findById(command.articleId)
+            ?: throw IllegalArgumentException("게시글이 존재하지 않습니다")
+
+        transactionHandler.runInRepeatableReadTransaction {
+            article.delete()
+            articleRepository.save(article)
+        }
+
+        return IDeleteArticle.Info(article.id)
     }
 }

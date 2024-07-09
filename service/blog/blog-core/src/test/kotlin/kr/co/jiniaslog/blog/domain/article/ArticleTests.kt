@@ -140,7 +140,7 @@ class ArticleTests : SimpleUnitTestContext() {
             val article = ArticleTestFixtures.createPublishedArticle(
                 status = Article.Status.DRAFT
             )
-            article.canBePublished() shouldBe true
+            article.canPublish() shouldBe true
 
             // when
             article.publish()
@@ -155,7 +155,7 @@ class ArticleTests : SimpleUnitTestContext() {
             val article = ArticleTestFixtures.createPublishedArticle(
                 status = Article.Status.PUBLISHED
             )
-            article.canBePublished() shouldBe false
+            article.canPublish() shouldBe false
 
             // when, then
             shouldThrow<IllegalArgumentException> {
@@ -170,7 +170,7 @@ class ArticleTests : SimpleUnitTestContext() {
                 categoryId = null,
                 status = Article.Status.DRAFT
             )
-            article.canBePublished() shouldBe false
+            article.canPublish() shouldBe false
 
             // when, then
             shouldThrow<IllegalArgumentException> {
@@ -186,7 +186,7 @@ class ArticleTests : SimpleUnitTestContext() {
                 status = Article.Status.DRAFT
 
             )
-            article.canBePublished() shouldBe false
+            article.canPublish() shouldBe false
 
             // when, then
             shouldThrow<IllegalArgumentException> {
@@ -202,7 +202,7 @@ class ArticleTests : SimpleUnitTestContext() {
                 status = Article.Status.DRAFT
 
             )
-            article.canBePublished() shouldBe false
+            article.canPublish() shouldBe false
 
             // when, then
             shouldThrow<IllegalArgumentException> {
@@ -217,11 +217,40 @@ class ArticleTests : SimpleUnitTestContext() {
                 thumbnailUrl = "",
                 status = Article.Status.DRAFT
             )
-            article.canBePublished() shouldBe false
+            article.canPublish() shouldBe false
 
             // when, then
             shouldThrow<IllegalArgumentException> {
                 article.publish()
+            }
+        }
+    }
+
+    @Nested
+    inner class `게시글 삭제 테스트`() {
+        @Test
+        fun `게시글이 삭제되면 모든 연관관계가 해제된다`() {
+            // given
+            val article = ArticleTestFixtures.createPublishedArticle()
+
+            // when
+            article.delete()
+
+            // then
+            article.categoryId.shouldBeNull()
+            article.tags.size shouldBe 0
+            article.memoRefId.shouldBeNull()
+            article.status shouldBe Article.Status.DELETED
+        }
+
+        @Test
+        fun `삭제된 게시글은 재삭제할 수 없다`() {
+            // given
+            val article = ArticleTestFixtures.createDeletedArticle()
+
+            // when, then
+            shouldThrow<IllegalArgumentException> {
+                article.delete()
             }
         }
     }

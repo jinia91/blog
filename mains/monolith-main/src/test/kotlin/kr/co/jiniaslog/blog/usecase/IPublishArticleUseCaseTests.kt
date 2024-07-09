@@ -31,7 +31,7 @@ class IPublishArticleUseCaseTests : TestContainerAbstractSkeleton() {
             id = ArticleId(1L),
             status = Article.Status.DRAFT,
         ).also {
-            it.canBePublished() shouldBe true
+            it.canPublish() shouldBe true
         }
         articleRepository.save(draftArticle)
 
