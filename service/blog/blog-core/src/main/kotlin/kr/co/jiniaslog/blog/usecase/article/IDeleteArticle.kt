@@ -9,5 +9,7 @@ interface IDeleteArticle {
         val articleId: ArticleId,
     )
 
-    class Info()
+    class Info(
+        val articleId: ArticleId
+    )
 }

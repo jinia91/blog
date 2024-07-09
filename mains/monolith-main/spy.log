@@ -100,3 +100,15 @@
 1720450446177|0|statement|connection 663|url jdbc:h2:mem:jiniaslog_blog|drop table if exists Category cascade |drop table if exists Category cascade 
 1720450446177|0|statement|connection 663|url jdbc:h2:mem:jiniaslog_blog|drop table if exists Tag cascade |drop table if exists Tag cascade 
 1720450446178|0|statement|connection 663|url jdbc:h2:mem:jiniaslog_blog|drop table if exists Tag_tagging cascade |drop table if exists Tag_tagging cascade 
+1720452280379|0|statement|connection 662|url jdbc:h2:mem:jiniaslog_user|drop table if exists users cascade |drop table if exists users cascade 
+1720452280382|0|statement|connection 663|url jdbc:h2:mem:jiniaslog_blog|drop table if exists Article cascade |drop table if exists Article cascade 
+1720452280382|0|statement|connection 663|url jdbc:h2:mem:jiniaslog_blog|drop table if exists Article_tags cascade |drop table if exists Article_tags cascade 
+1720452280382|0|statement|connection 663|url jdbc:h2:mem:jiniaslog_blog|drop table if exists Category cascade |drop table if exists Category cascade 
+1720452280382|0|statement|connection 663|url jdbc:h2:mem:jiniaslog_blog|drop table if exists Tag cascade |drop table if exists Tag cascade 
+1720452280382|0|statement|connection 663|url jdbc:h2:mem:jiniaslog_blog|drop table if exists Tag_tagging cascade |drop table if exists Tag_tagging cascade 
+1720506236845|0|statement|connection 683|url jdbc:h2:mem:jiniaslog_user|drop table if exists users cascade |drop table if exists users cascade 
+1720506236848|0|statement|connection 684|url jdbc:h2:mem:jiniaslog_blog|drop table if exists Article cascade |drop table if exists Article cascade 
+1720506236848|0|statement|connection 684|url jdbc:h2:mem:jiniaslog_blog|drop table if exists Article_tags cascade |drop table if exists Article_tags cascade 
+1720506236848|0|statement|connection 684|url jdbc:h2:mem:jiniaslog_blog|drop table if exists Category cascade |drop table if exists Category cascade 
+1720506236848|0|statement|connection 684|url jdbc:h2:mem:jiniaslog_blog|drop table if exists Tag cascade |drop table if exists Tag cascade 
+1720506236848|0|statement|connection 684|url jdbc:h2:mem:jiniaslog_blog|drop table if exists Tag_tagging cascade |drop table if exists Tag_tagging cascade 

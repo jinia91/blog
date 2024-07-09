@@ -1,0 +1,52 @@
+package kr.co.jiniaslog.blog.usecase
+
+import io.kotest.matchers.nulls.shouldNotBeNull
+import io.kotest.matchers.shouldBe
+import jakarta.persistence.EntityManager
+import kr.co.jiniaslog.TestContainerAbstractSkeleton
+import kr.co.jiniaslog.blog.domain.ArticleTestFixtures
+import kr.co.jiniaslog.blog.domain.article.Article
+import kr.co.jiniaslog.blog.domain.tag.Tag
+import kr.co.jiniaslog.blog.domain.tag.TagName
+import kr.co.jiniaslog.blog.outbound.persistence.ArticleRepository
+import kr.co.jiniaslog.blog.outbound.persistence.TagRepository
+import kr.co.jiniaslog.blog.usecase.article.IDeleteArticle
+import org.junit.jupiter.api.Test
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.transaction.annotation.Transactional
+
+class IDeleteArticleUseCaseTests : TestContainerAbstractSkeleton() {
+    @Autowired
+    private lateinit var sut: IDeleteArticle
+
+    @Autowired
+    private lateinit var tagRepository: TagRepository
+
+    @Autowired
+    private lateinit var articleRepository: ArticleRepository
+
+    @Autowired
+    private lateinit var em: EntityManager
+
+    @Test
+    @Transactional
+    fun `게시글을 삭제하면 모든 연관관계가 해지되며 삭제상태가 된다`() {
+        // given
+        val tag = Tag.newOne(TagName("tag"))
+        tagRepository.save(tag)
+        val article = ArticleTestFixtures.createPublishedArticle(
+            tags = listOf(tag.id),
+        )
+        articleRepository.save(article)
+
+        // when
+        val info = sut.handle(IDeleteArticle.Command(article.id))
+
+        // then
+        info.articleId shouldBe article.id
+        em.clear()
+        val foundOne = articleRepository.findById(info.articleId)
+        foundOne.shouldNotBeNull()
+        foundOne.status shouldBe Article.Status.DELETED
+    }
+}

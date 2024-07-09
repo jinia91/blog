@@ -68,7 +68,7 @@ class ArticleResourceRestTests : RestTestAbstractSkeleton() {
         @Test
         fun `정상적인 게시글 삭제 요청이 있으면 200을 반환한다`() {
             // given
-            every { articleUseCasesFacade.handle(any(IDeleteArticle.Command::class)) } returns IDeleteArticle.Info()
+            every { articleUseCasesFacade.handle(any(IDeleteArticle.Command::class)) } returns IDeleteArticle.Info(ArticleId(1L))
             // when
             RestAssuredMockMvc.given()
                 .cookies(PreAuthFilter.ACCESS_TOKEN_HEADER, getTestAdminUserToken())

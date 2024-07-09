@@ -6,6 +6,7 @@ import jakarta.persistence.Column
 import jakarta.persistence.ElementCollection
 import jakarta.persistence.EmbeddedId
 import jakarta.persistence.Entity
+import jakarta.persistence.FetchType
 import kr.co.jiniaslog.blog.domain.category.CategoryId
 import kr.co.jiniaslog.blog.domain.memo.MemoId
 import kr.co.jiniaslog.blog.domain.user.UserId
@@ -90,7 +91,7 @@ class Article internal constructor(
     var hit: Int = hit
         private set
 
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
     var tags: MutableSet<Tagging> = tags
         private set
 
@@ -116,7 +117,12 @@ class Article internal constructor(
         }
     }
 
-    fun canBePublished(): Boolean {
+    fun publish() {
+        require(canPublish()) { "게시글을 게시할 수 없습니다." }
+        status = Status.PUBLISHED
+    }
+
+    fun canPublish(): Boolean {
         val isNotPublished = this.status != Status.PUBLISHED
         val hasCategory = this.categoryId != null
         val hasTitle = this.articleContents.title.isNotBlank()
@@ -125,9 +131,11 @@ class Article internal constructor(
         return isNotPublished && hasCategory && hasTitle && hasContents && hasThumbnail
     }
 
-    fun publish() {
-        require(canBePublished()) { "게시글을 게시할 수 없습니다." }
-        status = Status.PUBLISHED
+    fun delete() {
+        categoryId = null
+        tags.clear()
+        memoRefId = null
+        status = Status.DELETED
     }
 
     fun editContents(articleContents: ArticleContents) {

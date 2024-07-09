@@ -46,7 +46,7 @@ class ArticleResources(private val articleFacade: ArticleUseCasesFacade) {
         @PathVariable articleId: Long,
     ): ResponseEntity<ArticleDeleteResponse> {
         val command = IDeleteArticle.Command(ArticleId(articleId))
-        articleFacade.handle(command)
-        return ResponseEntity.ok(ArticleDeleteResponse(articleId))
+        val info = articleFacade.handle(command)
+        return ResponseEntity.ok(ArticleDeleteResponse(info.articleId.value))
     }
 }
