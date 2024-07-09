@@ -1,11 +1,13 @@
 package kr.co.jiniaslog.blog.usecase
 
+import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
 import jakarta.persistence.EntityManager
 import kr.co.jiniaslog.TestContainerAbstractSkeleton
 import kr.co.jiniaslog.blog.domain.ArticleTestFixtures
 import kr.co.jiniaslog.blog.domain.article.Article
+import kr.co.jiniaslog.blog.domain.article.ArticleId
 import kr.co.jiniaslog.blog.domain.tag.Tag
 import kr.co.jiniaslog.blog.domain.tag.TagName
 import kr.co.jiniaslog.blog.outbound.persistence.ArticleRepository
@@ -48,5 +50,32 @@ class IDeleteArticleUseCaseTests : TestContainerAbstractSkeleton() {
         val foundOne = articleRepository.findById(info.articleId)
         foundOne.shouldNotBeNull()
         foundOne.status shouldBe Article.Status.DELETED
+    }
+
+    @Test
+    @Transactional
+    fun `없는 게시글을 삭제하려하면 예외가 발생한다`() {
+        // given
+        val articleId = ArticleId(1L)
+
+        // when, then
+        shouldThrow<IllegalArgumentException> {
+            sut.handle(IDeleteArticle.Command(articleId))
+        }
+    }
+
+    @Test
+    @Transactional
+    fun `논리삭제된 게시글을 삭제하려하면 예외가 발생한다`() {
+        // given
+        val article = ArticleTestFixtures.createPublishedArticle(
+            status = Article.Status.DELETED,
+        )
+        articleRepository.save(article)
+
+        // when, then
+        shouldThrow<IllegalArgumentException> {
+            sut.handle(IDeleteArticle.Command(article.id))
+        }
     }
 }

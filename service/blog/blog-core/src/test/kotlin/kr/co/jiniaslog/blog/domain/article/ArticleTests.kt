@@ -242,5 +242,16 @@ class ArticleTests : SimpleUnitTestContext() {
             article.memoRefId.shouldBeNull()
             article.status shouldBe Article.Status.DELETED
         }
+
+        @Test
+        fun `삭제된 게시글은 재삭제할 수 없다`() {
+            // given
+            val article = ArticleTestFixtures.createDeletedArticle()
+
+            // when, then
+            shouldThrow<IllegalArgumentException> {
+                article.delete()
+            }
+        }
     }
 }

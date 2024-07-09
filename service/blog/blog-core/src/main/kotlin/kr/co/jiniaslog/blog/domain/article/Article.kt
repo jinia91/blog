@@ -132,6 +132,7 @@ class Article internal constructor(
     }
 
     fun delete() {
+        require(status != Status.DELETED) { "이미 삭제된 게시글입니다." }
         categoryId = null
         tags.clear()
         memoRefId = null
