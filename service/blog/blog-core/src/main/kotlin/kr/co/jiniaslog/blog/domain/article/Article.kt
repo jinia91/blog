@@ -53,26 +53,17 @@ class Article internal constructor(
     enum class Status { DRAFT, PUBLISHED, DELETED }
 
     @EmbeddedId
-    @AttributeOverride(
-        column = Column(name = "article_id"),
-        name = "value",
-    )
+    @AttributeOverride(column = Column(name = "article_id"), name = "value")
     override val id: ArticleId = id
 
-    @AttributeOverride(
-        column = Column(name = "author_id"),
-        name = "value",
-    )
+    @AttributeOverride(column = Column(name = "author_id"), name = "value")
     val authorId: UserId = authorId
 
     @Column(name = "article_status")
     var status: Status = status
         private set
 
-    @AttributeOverride(
-        column = Column(name = "memo_ref_id", nullable = true),
-        name = "value",
-    )
+    @AttributeOverride(column = Column(name = "memo_ref_id", nullable = true), name = "value")
     var memoRefId: MemoId? = memoRefId
         private set
 
@@ -98,35 +89,21 @@ class Article internal constructor(
 
     val canPublish: Boolean
         get() {
-            val isNotPublished = this.status != Status.PUBLISHED
-            val hasCategory = this.categoryId != null
-            val hasTitle = this.articleContents.title.isNotBlank()
-            val hasContents = this.articleContents.contents.isNotBlank()
-            val hasThumbnail = this.articleContents.thumbnailUrl.isNotBlank()
-            return isNotPublished && hasCategory && hasTitle && hasContents && hasThumbnail
+            return status != Status.PUBLISHED &&
+                categoryId != null &&
+                articleContents.canPublish
         }
 
-    private val canDelete: Boolean
-        get() = status != Status.DELETED
-
-    private val canUnDelete: Boolean
-        get() = status == Status.DELETED
-
     init {
-        id.validate()
-        authorId.validate()
-        articleContents.validate()
         require(hit >= 0) { "조회수는 양수거나 0이여야 합니다" }
         when (status) {
             Status.DRAFT -> {}
+
             Status.PUBLISHED -> {
                 requireNotNull(categoryId) { "게시글이 속한 카테고리는 필수입니다." }
-                categoryId.validate()
-                require(articleContents.title.isNotBlank()) { "제목은 필수입니다." }
-                require(articleContents.contents.isNotBlank()) { "내용은 필수입니다." }
-                require(articleContents.thumbnailUrl.isNotBlank()) { "썸네일은 필수입니다." }
-                tags.forEach { it.validate() }
+                articleContents.validateOnPublish()
             }
+
             Status.DELETED -> {
                 require(categoryId == null) { "삭제된 게시글은 카테고리를 가질 수 없습니다." }
                 require(tags.isEmpty()) { "삭제된 게시글은 태그를 가질 수 없습니다." }
@@ -140,7 +117,7 @@ class Article internal constructor(
     }
 
     fun delete() {
-        require(canDelete) { "이미 삭제된 게시글입니다." }
+        require(status != Status.DELETED) { "이미 삭제된 게시글입니다." }
         categoryId = null
         tags.clear()
         memoRefId = null
@@ -148,7 +125,7 @@ class Article internal constructor(
     }
 
     fun unDelete() {
-        require(canUnDelete) { "이미 삭제되지 않은 게시글입니다." }
+        require(status == Status.DELETED) { "이미 삭제되지 않은 게시글입니다." }
         status = Status.DRAFT
     }
 
@@ -158,8 +135,21 @@ class Article internal constructor(
         this.categoryId = category.id
     }
 
-    fun editContents(articleContents: ArticleContents) {
+    fun updateArticleContents(articleContents: ArticleContents) {
+        validateContentEditable(articleContents)
         this.articleContents = articleContents
+    }
+
+    private fun validateContentEditable(articleContents: ArticleContents) {
+        when (status) {
+            Status.DRAFT -> {}
+
+            Status.PUBLISHED -> {
+                articleContents.validateOnPublish()
+            }
+
+            Status.DELETED -> throw IllegalStateException("삭제된 게시글은 수정할 수 없습니다.")
+        }
     }
 
     companion object {

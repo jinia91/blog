@@ -81,4 +81,37 @@ object ArticleTestFixtures {
             this.updatedAt = updatedAt
         }
     }
+
+    fun createDraftArticle(
+        id: ArticleId = ArticleId(IdUtils.generate()),
+        memoRefId: MemoId? = null,
+        authorId: UserId = UserId(1L),
+        categoryId: CategoryId? = null,
+        title: String = "",
+        contents: String = "",
+        thumbnailUrl: String = "",
+        tags: List<TagId> = emptyList(),
+        status: Article.Status = Article.Status.DRAFT,
+        hit: Int = 0,
+        createdAt: LocalDateTime? = null,
+        updatedAt: LocalDateTime? = null,
+    ): Article {
+        return Article(
+            memoRefId = memoRefId,
+            authorId = authorId,
+            categoryId = categoryId,
+            articleContents = ArticleContents(
+                title = title,
+                contents = contents,
+                thumbnailUrl = thumbnailUrl,
+            ),
+            tags = tags.map { Tagging(it) }.toMutableSet(),
+            hit = hit,
+            status = status,
+            id = id,
+        ).apply {
+            this.createdAt = createdAt
+            this.updatedAt = updatedAt
+        }
+    }
 }

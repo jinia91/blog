@@ -127,10 +127,93 @@ class ArticleTests : SimpleUnitTestContext() {
             )
 
             // when
-            article.editContents(newContents)
+            article.updateArticleContents(newContents)
 
             // then
             article.articleContents shouldBe newContents
+        }
+
+        @Test
+        fun `게시된 게시글은 제목이 없는 게시글을 수정하려고 하면 실패한다`() {
+            // given
+            val article = ArticleTestFixtures.createPublishedArticle(
+                title = "new title"
+            )
+            val newContents = ArticleContents(
+                title = "",
+                contents = "new contents",
+                thumbnailUrl = "new thumbnailUrl",
+            )
+
+            // when, then
+            shouldThrow<IllegalArgumentException> {
+                article.updateArticleContents(newContents)
+            }
+        }
+
+        @Test
+        fun `게시된 게시글은 내용이 없는 게시글을 수정하려고 하면 실패한다`() {
+            // given
+            val article = ArticleTestFixtures.createPublishedArticle(
+                contents = "new contents"
+            )
+            val newContents = ArticleContents(
+                title = "new title",
+                contents = "",
+                thumbnailUrl = "new thumbnailUrl",
+            )
+
+            // when, then
+            shouldThrow<IllegalArgumentException> {
+                article.updateArticleContents(newContents)
+            }
+        }
+
+        @Test
+        fun `게시된 게시글은 썸네일이 없는 게시글을 수정하려고 하면 실패한다`() {
+            // given
+            val article = ArticleTestFixtures.createPublishedArticle(
+                thumbnailUrl = "new thumbnailUrl"
+            )
+            val newContents = ArticleContents(
+                title = "new title",
+                contents = "new contents",
+                thumbnailUrl = "",
+            )
+
+            // when, then
+            shouldThrow<IllegalArgumentException> {
+                article.updateArticleContents(newContents)
+            }
+        }
+
+        @Test
+        fun `게시글 초안은 어떤 상태든 수정할 수 있다`() {
+            // given
+            val article = ArticleTestFixtures.createDraftArticle()
+            val newContents = ArticleContents.EMPTY
+
+            // when
+            article.updateArticleContents(newContents)
+
+            // then
+            article.articleContents shouldBe newContents
+        }
+
+        @Test
+        fun `삭제된 게시글은 내용 수정할 수 없다`() {
+            // given
+            val article = ArticleTestFixtures.createDeletedArticle()
+            val newContents = ArticleContents(
+                title = "new title",
+                contents = "new contents",
+                thumbnailUrl = "new thumbnailUrl",
+            )
+
+            // when, then
+            shouldThrow<IllegalStateException> {
+                article.updateArticleContents(newContents)
+            }
         }
     }
 
