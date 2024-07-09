@@ -6,6 +6,7 @@ import kr.co.jiniaslog.blog.usecase.article.ArticleUseCasesFacade
 import kr.co.jiniaslog.blog.usecase.article.IDeleteArticle
 import kr.co.jiniaslog.blog.usecase.article.IPublishArticle
 import kr.co.jiniaslog.blog.usecase.article.IStartToWriteNewDraftArticle
+import kr.co.jiniaslog.blog.usecase.article.IUnDeleteArticle
 import kr.cojiniaslog.shared.adapter.inbound.http.AuthUserId
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
@@ -48,5 +49,15 @@ class ArticleResources(private val articleFacade: ArticleUseCasesFacade) {
         val command = IDeleteArticle.Command(ArticleId(articleId))
         val info = articleFacade.handle(command)
         return ResponseEntity.ok(ArticleDeleteResponse(info.articleId.value))
+    }
+
+    @PutMapping("/{articleId}/undelete")
+    @PreAuthorize("hasRole('ADMIN')")
+    fun unDeleteArticle(
+        @PathVariable articleId: Long,
+    ): ResponseEntity<AunDeleteArticleResponse> {
+        val command = IUnDeleteArticle.Command(ArticleId(articleId))
+        val info = articleFacade.handle(command)
+        return ResponseEntity.ok(AunDeleteArticleResponse(info.articleId.value))
     }
 }

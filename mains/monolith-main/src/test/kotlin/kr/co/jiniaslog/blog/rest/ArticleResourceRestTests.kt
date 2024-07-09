@@ -7,6 +7,7 @@ import kr.co.jiniaslog.blog.domain.article.ArticleId
 import kr.co.jiniaslog.blog.usecase.article.IDeleteArticle
 import kr.co.jiniaslog.blog.usecase.article.IPublishArticle
 import kr.co.jiniaslog.blog.usecase.article.IStartToWriteNewDraftArticle
+import kr.co.jiniaslog.blog.usecase.article.IUnDeleteArticle
 import kr.co.jiniaslog.user.application.security.PreAuthFilter
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
@@ -109,6 +110,18 @@ class ArticleResourceRestTests : RestTestAbstractSkeleton() {
         @Test
         fun `삭제된 게시글을 성공적으로 복구하면 200을 반환한다`() {
             // given
+            every { articleUseCasesFacade.handle(any(IUnDeleteArticle.Command::class)) } returns IUnDeleteArticle.Info(
+                ArticleId(1L)
+            )
+
+            // when
+            RestAssuredMockMvc.given()
+                .cookies(PreAuthFilter.ACCESS_TOKEN_HEADER, getTestAdminUserToken())
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .put("/api/v1/articles/1/undelete")
+                // then
+                .then()
+                .statusCode(200)
         }
     }
 }
