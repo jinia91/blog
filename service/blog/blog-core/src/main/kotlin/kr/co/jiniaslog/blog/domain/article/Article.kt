@@ -90,13 +90,9 @@ class Article internal constructor(
     var tags: MutableSet<Tagging> = tags
         private set
 
-    val canPublish: Boolean
-        get() {
-            return status != Status.PUBLISHED &&
-                categoryId != null &&
-                articleContents.canPublish
-        }
-
+    /**
+     *  초기화시 상태에 따라 게시글의 불변성(Invariant) 검증
+     */
     init {
         require(hit >= 0) { "조회수는 양수거나 0이여야 합니다" }
         when (status) {
@@ -114,11 +110,40 @@ class Article internal constructor(
         }
     }
 
+    /**
+     * 게시글을 공개할 수 있다
+     *
+     * - 게시글의 공개 상태 검증
+     * - can / execute pattern
+     *
+     * @see publish
+     */
+    val canPublish: Boolean
+        get() {
+            return status != Status.PUBLISHED &&
+                categoryId != null &&
+                articleContents.canPublish
+        }
+
+    /**
+     * 게시글을 공개한다
+     *
+     * @see canPublish
+     *
+     */
     fun publish() {
         require(canPublish) { "게시글을 게시할 수 없습니다." }
         status = Status.PUBLISHED
     }
 
+    /**
+     * 게시글을 삭제한다
+     *
+     * - 삭제된 게시글 롤백을 위해 논리 삭제로 구현
+     * - 검색 쿼리 편의를 위해 연관관계는 모두 해제한다
+     *
+     * @see unDelete
+     */
     fun delete() {
         require(status != Status.DELETED) { "이미 삭제된 게시글입니다." }
         categoryId = null
@@ -127,17 +152,36 @@ class Article internal constructor(
         status = Status.DELETED
     }
 
+    /**
+     * 게시글을 삭제 취소한다
+     *
+     * @see delete
+     */
     fun unDelete() {
         require(status == Status.DELETED) { "이미 삭제되지 않은 게시글입니다." }
         status = Status.DRAFT
     }
 
+    /**
+     * 게시글을 분류한다
+     *
+     * - 최하위 카테고리만 분류 가능
+     *
+     * @param category 강검증을 위해 아이디가 아닌 카테고리 어그리게이트 루트를 전달
+     */
     fun categorize(category: Category) {
         require(category.isChild) { "카테고리는 하위 카테고리여야 합니다." }
         require(this.status != Status.DELETED) { "삭제된 게시글은 카테고리를 설정할 수 없습니다." }
         this.categoryId = category.entityId
     }
 
+    /**
+     * 게시글의 내용들을 수정한다
+     *
+     * - 제목, 썸네일, 내용을 한번에 수정
+     *
+     * @param articleContents
+     */
     fun updateArticleContents(articleContents: ArticleContents) {
         validateContentEditable(articleContents)
         this.articleContents = articleContents
@@ -155,6 +199,14 @@ class Article internal constructor(
         }
     }
 
+    override fun getId(): ArticleId {
+        return entityId
+    }
+
+    override fun isNew(): Boolean {
+        return isPersisted.not()
+    }
+
     companion object {
         fun newOne(
             authorId: UserId,
@@ -170,13 +222,5 @@ class Article internal constructor(
                 hit = 0,
             )
         }
-    }
-
-    override fun getId(): ArticleId {
-        return entityId
-    }
-
-    override fun isNew(): Boolean {
-        return isPersisted.not()
     }
 }
