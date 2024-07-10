@@ -31,12 +31,12 @@ class IUnDeleteArticleUseCaseTests : TestContainerAbstractSkeleton() {
         articleRepository.save(deletedArticle)
 
         // when
-        val info = sut.handle(IUnDeleteArticle.Command(deletedArticle.id))
+        val info = sut.handle(IUnDeleteArticle.Command(deletedArticle.entityId))
 
         //
-        info.articleId shouldBe deletedArticle.id
+        info.articleId shouldBe deletedArticle.entityId
         em.clear()
-        val foundArticle = articleRepository.findById(deletedArticle.id)
+        val foundArticle = articleRepository.findById(deletedArticle.entityId)
         foundArticle.shouldNotBeNull()
         foundArticle.status shouldBe Article.Status.DRAFT
     }
@@ -49,7 +49,7 @@ class IUnDeleteArticleUseCaseTests : TestContainerAbstractSkeleton() {
 
         // when, then
         shouldThrow<IllegalArgumentException> {
-            sut.handle(IUnDeleteArticle.Command(publishedArticle.id))
+            sut.handle(IUnDeleteArticle.Command(publishedArticle.entityId))
         }
     }
 

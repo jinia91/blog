@@ -17,7 +17,7 @@ class FolderTests : CustomBehaviorSpec() {
                 val newFolder = Folder.init(authorId)
                 Then("폴더가 생성된다.") {
                     newFolder shouldNotBe null
-                    newFolder.id shouldNotBe null
+                    newFolder.entityId shouldNotBe null
                     newFolder.parent shouldBe null
                     newFolder.name shouldBe FolderName.UNTITLED
                 }
@@ -25,12 +25,12 @@ class FolderTests : CustomBehaviorSpec() {
             And("특정 폴더 하위이고") {
                 val parentFolder = Folder.init(authorId)
                 When("폴더를 생성하면") {
-                    val newFolder = Folder.init(authorId, parentFolder.id)
+                    val newFolder = Folder.init(authorId, parentFolder.entityId)
                     Then("폴더가 생성된다.") {
                         newFolder shouldNotBe null
-                        newFolder.id shouldNotBe null
+                        newFolder.entityId shouldNotBe null
                         newFolder.name shouldBe FolderName.UNTITLED
-                        newFolder.parent shouldBe parentFolder.id
+                        newFolder.parent shouldBe parentFolder.entityId
                     }
                 }
             }
@@ -71,7 +71,7 @@ class FolderTests : CustomBehaviorSpec() {
                     val newParentFolder = Folder.init(authorId)
                     childFolder.changeParent(newParentFolder)
                     Then("부모가 변경된다.") {
-                        childFolder.parent shouldBe newParentFolder.id
+                        childFolder.parent shouldBe newParentFolder.entityId
                     }
                 }
             }
@@ -112,7 +112,7 @@ class FolderTests : CustomBehaviorSpec() {
                         updatedAt = null,
                     )
                 Then("폴더가 생성된다.") {
-                    folder.id shouldBe folderId
+                    folder.entityId shouldBe folderId
                     folder.name shouldBe folderName
                     folder.authorId shouldBe authorId
                     folder.parent shouldBe parentFolderId

@@ -23,6 +23,6 @@ class CategoryTests {
         category.categoryTitle shouldBe categoryTitle
         category.sortingPoint shouldBe sortingPoint
         category.parent shouldBe null
-        category.id shouldBe CategoryId(1)
+        category.entityId shouldBe CategoryId(1)
     }
 }

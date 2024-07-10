@@ -48,9 +48,9 @@ class UserAuthService(
             val info =
                 transactionHandler.runInRepeatableReadTransaction {
                     val user = getOrCreateUser(providerUserInfo)
-                    val accessToken = tokenManger.generateAccessToken(user.id, user.roles)
-                    val refreshToken = tokenManger.generateRefreshToken(user.id, user.roles)
-                    tokenStore.save(user.id, accessToken, refreshToken)
+                    val accessToken = tokenManger.generateAccessToken(user.entityId, user.roles)
+                    val refreshToken = tokenManger.generateRefreshToken(user.entityId, user.roles)
+                    tokenStore.save(user.entityId, accessToken, refreshToken)
 
                     return@runInRepeatableReadTransaction ISignInOAuthUser.Info(
                         accessToken = accessToken,

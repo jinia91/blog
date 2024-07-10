@@ -1,5 +1,8 @@
 package kr.co.jiniaslog.user.adapter.inbound.http
 
+import kr.co.jiniaslog.user.adapter.inbound.http.dto.OAuthLoginRequest
+import kr.co.jiniaslog.user.adapter.inbound.http.dto.OAuthLoginResponse
+import kr.co.jiniaslog.user.adapter.inbound.http.dto.RedirectUrlResponse
 import kr.co.jiniaslog.user.application.usecase.IGetOAuthRedirectionUrl
 import kr.co.jiniaslog.user.application.usecase.IRefreshToken
 import kr.co.jiniaslog.user.application.usecase.ISignInOAuthUser
@@ -17,7 +20,6 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
-import java.awt.SystemColor.info
 
 @RestController
 @RequestMapping("api/v1/auth")
@@ -43,14 +45,14 @@ class AuthUserResources(
     fun login(
         @PathVariable provider: String,
         @RequestBody request: OAuthLoginRequest,
-    ): ResponseEntity<LoginResponse> {
+    ): ResponseEntity<OAuthLoginResponse> {
         val command = ISignInOAuthUser.Command(
             provider = Provider.valueOf(provider),
             code = AuthorizationCode(request.code),
         )
         val info = usecases.handle(command)
         val response =
-            LoginResponse(
+            OAuthLoginResponse(
                 nickName = info.nickName.value,
                 email = info.email.value,
                 roles = info.roles.map { it.toString() }.toSet(),
@@ -64,7 +66,7 @@ class AuthUserResources(
                 .httpOnly(true)
                 .maxAge(60 * 60)
                 .secure(true)
-                .sameSite("None")
+                .sameSite("Strict")
                 .build()
 
         val refreshCookie =
@@ -74,7 +76,7 @@ class AuthUserResources(
                 .httpOnly(true)
                 .maxAge(60 * 60 * 24 * 7)
                 .secure(true)
-                .sameSite("None")
+                .sameSite("Strict")
                 .build()
 
         return ResponseEntity.ok()
@@ -86,7 +88,7 @@ class AuthUserResources(
     @PostMapping("/refresh")
     fun refresh(
         @CookieValue("jiniaslog_refresh") refreshToken: String,
-    ): ResponseEntity<EmptyResponse> {
+    ): ResponseEntity<Void> {
         val command = IRefreshToken.Command(RefreshToken(refreshToken))
         val info = usecases.handle(command)
         val accessCookie =
@@ -96,7 +98,7 @@ class AuthUserResources(
                 .httpOnly(true)
                 .maxAge(60 * 60)
                 .secure(true)
-                .sameSite("None")
+                .sameSite("Strict")
                 .build()
 
         val refreshCookie =
@@ -106,12 +108,12 @@ class AuthUserResources(
                 .httpOnly(true)
                 .maxAge(60 * 60 * 24 * 7)
                 .secure(true)
-                .sameSite("None")
+                .sameSite("Strict")
                 .build()
 
         return ResponseEntity.ok()
             .header(SET_COOKIE, accessCookie.toString())
             .header(SET_COOKIE, refreshCookie.toString())
-            .body(EmptyResponse())
+            .body(null)
     }
 }

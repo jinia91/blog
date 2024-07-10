@@ -7,7 +7,7 @@ abstract class DomainEntity<out T : ValueObject>(
     var createdAt: LocalDateTime? = null,
     var updatedAt: LocalDateTime? = null,
 ) {
-    abstract val id: T?
+    abstract val entityId: T?
 
     val isPersisted: Boolean
         get() = createdAt != null
@@ -18,10 +18,10 @@ abstract class DomainEntity<out T : ValueObject>(
 
         other as DomainEntity<*>
 
-        return id == other.id
+        return entityId == other.entityId
     }
 
     override fun hashCode(): Int {
-        return id.hashCode()
+        return entityId.hashCode()
     }
 }

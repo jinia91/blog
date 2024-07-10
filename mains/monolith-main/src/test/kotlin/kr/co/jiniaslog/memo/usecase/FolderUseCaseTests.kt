@@ -46,7 +46,7 @@ class FolderUseCaseTests : TestContainerAbstractSkeleton() {
             )
         val command =
             IChangeFolderName.Command(
-                folderId = folder.id,
+                folderId = folder.entityId,
                 name = FolderName("name"),
             )
         // when
@@ -67,7 +67,7 @@ class FolderUseCaseTests : TestContainerAbstractSkeleton() {
             )
         val command =
             IDeleteFoldersRecursively.Command(
-                folderId = folder.id,
+                folderId = folder.entityId,
             )
         // when
         val info = sut.handle(command)
@@ -93,8 +93,8 @@ class FolderUseCaseTests : TestContainerAbstractSkeleton() {
             )
         val command =
             IMakeRelationShipFolderAndFolder.Command(
-                parentFolderId = folder1.id,
-                childFolderId = folder2.id,
+                parentFolderId = folder1.entityId,
+                childFolderId = folder2.entityId,
             )
         // when
         val info = sut.handle(command)
@@ -103,8 +103,8 @@ class FolderUseCaseTests : TestContainerAbstractSkeleton() {
         info.childFolderId shouldNotBe null
         folderRepository.findById(info.parentFolderId!!) shouldNotBe null
         folderRepository.findById(info.childFolderId) shouldNotBe null
-        info.parentFolderId shouldBe folder1.id
-        info.childFolderId shouldBe folder2.id
+        info.parentFolderId shouldBe folder1.entityId
+        info.childFolderId shouldBe folder2.entityId
     }
 
     @Test

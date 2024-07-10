@@ -20,7 +20,7 @@ internal class ImageUseCasesInteractor(
 
     private fun IUploadImage.Command.toImageFile(): ImageFile {
         return ImageFile(
-            id = ImageId(IdUtils.generate()),
+            entityId = ImageId(IdUtils.generate()),
             rawImage = this.rawImage,
         )
     }

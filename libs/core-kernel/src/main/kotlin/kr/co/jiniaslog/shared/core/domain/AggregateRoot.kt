@@ -16,15 +16,4 @@ abstract class AggregateRoot<out T : ValueObject> : DomainEntity<T>() {
     fun clearEvents() = eventManager.clear()
 
     fun getEvents() = eventManager.toListAndClear()
-
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (other !is AggregateRoot<*>) return false
-
-        return id == other.id
-    }
-
-    override fun hashCode(): Int {
-        return id.hashCode()
-    }
 }

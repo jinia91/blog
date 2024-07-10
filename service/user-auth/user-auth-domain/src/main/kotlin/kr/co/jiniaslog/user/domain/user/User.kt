@@ -10,7 +10,7 @@ class User private constructor(
     roles: Set<Role>,
     email: Email,
 ) : AggregateRoot<UserId>() {
-    override val id: UserId = id
+    override val entityId: UserId = id
 
     var nickName: NickName = nickName
         private set

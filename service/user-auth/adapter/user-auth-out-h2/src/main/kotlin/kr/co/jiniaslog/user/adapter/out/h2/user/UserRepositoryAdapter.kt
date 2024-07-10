@@ -14,12 +14,12 @@ internal class UserRepositoryAdapter(
         return userJpaRepository.findByEmail(email.value)?.toDomain()
     }
 
-    override fun findById(id: UserId): User? {
-        return userJpaRepository.findById(id.value).orElse(null)?.toDomain()
-    }
-
     override fun findAll(): List<User> {
         return userJpaRepository.findAll().map { it.toDomain() }
+    }
+
+    override fun findById(id: UserId): User? {
+        return userJpaRepository.findById(id.value).orElse(null)?.toDomain()
     }
 
     override fun deleteById(id: UserId) {
@@ -27,7 +27,7 @@ internal class UserRepositoryAdapter(
     }
 
     override fun save(entity: User): User {
-        val pm = userJpaRepository.findById(entity.id.value).orElse(null)
+        val pm = userJpaRepository.findById(entity.entityId.value).orElse(null)
 
         val userJpaEntity =
             pm?.apply {
@@ -35,7 +35,7 @@ internal class UserRepositoryAdapter(
                 nickName = entity.nickName.value
                 roles = entity.roles.joinToString(separator = ",") { it.name }
             } ?: UserJpaEntity(
-                id = entity.id.value,
+                id = entity.entityId.value,
                 email = entity.email.value,
                 nickName = entity.nickName.value,
                 roles = entity.roles.joinToString(separator = ",") { it.name },

@@ -16,11 +16,6 @@ internal open class FolderRepositoryAdapter(
         return folderNeo4jRepository.findById(id.value).orElse(null)?.toDomain()
     }
 
-    @Transactional(readOnly = true)
-    override fun findAll(): List<Folder> {
-        return folderNeo4jRepository.findAll().map { it.toDomain() }
-    }
-
     @Transactional
     override fun deleteById(id: FolderId) {
         folderNeo4jRepository.deleteFolderRecursivelyById(id.value)
@@ -28,7 +23,7 @@ internal open class FolderRepositoryAdapter(
 
     @Transactional
     override fun save(entity: Folder): Folder {
-        var pm = folderNeo4jRepository.findById(entity.id.value).getOrNull()
+        var pm = folderNeo4jRepository.findById(entity.entityId.value).getOrNull()
 
         pm =
             when (pm) {
@@ -40,7 +35,7 @@ internal open class FolderRepositoryAdapter(
 
                     val folderNeo4jEntity =
                         FolderNeo4jEntity(
-                            id = entity.id.value,
+                            id = entity.entityId.value,
                             name = entity.name.value,
                             authorId = entity.authorId.value,
                             parent = parentFolder,

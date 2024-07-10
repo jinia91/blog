@@ -2,7 +2,6 @@ package kr.co.jiniaslog.blog.usecase.impl
 
 import kr.co.jiniaslog.blog.domain.article.Article
 import kr.co.jiniaslog.blog.domain.article.ArticleId
-import kr.co.jiniaslog.blog.domain.article.QArticle.article
 import kr.co.jiniaslog.blog.outbound.UserService
 import kr.co.jiniaslog.blog.outbound.persistence.ArticleRepository
 import kr.co.jiniaslog.blog.outbound.persistence.BlogTransactionHandler
@@ -20,7 +19,7 @@ class ArticleUseCaseInteractor(
     private val userService: UserService,
     private val articleRepository: ArticleRepository,
     private val transactionHandler: BlogTransactionHandler,
-    private val categoryRepository: CategoryRepository
+    private val categoryRepository: CategoryRepository,
 ) : ArticleUseCasesFacade {
     override fun handle(command: IStartToWriteNewDraftArticle.Command): IStartToWriteNewDraftArticle.Info {
         command.validate()
@@ -30,7 +29,7 @@ class ArticleUseCaseInteractor(
             articleRepository.save(article)
         }
 
-        return IStartToWriteNewDraftArticle.Info(article.id)
+        return IStartToWriteNewDraftArticle.Info(article.entityId)
     }
 
     private fun IStartToWriteNewDraftArticle.Command.validate() {
@@ -38,14 +37,13 @@ class ArticleUseCaseInteractor(
     }
 
     override fun handle(command: IPublishArticle.Command): IPublishArticle.Info {
-        val article = getArticle(command.articleId)
-
-        transactionHandler.runInRepeatableReadTransaction {
+        val article = transactionHandler.runInRepeatableReadTransaction {
+            val article = getArticle(command.articleId)
             article.publish()
             articleRepository.save(article)
         }
 
-        return IPublishArticle.Info(article.id)
+        return IPublishArticle.Info(article.entityId)
     }
 
     private fun IStartToWriteNewDraftArticle.Command.toArticle(): Article {
@@ -53,43 +51,37 @@ class ArticleUseCaseInteractor(
     }
 
     override fun handle(command: IDeleteArticle.Command): IDeleteArticle.Info {
-        val article = getArticle(command.articleId)
-
-        transactionHandler.runInRepeatableReadTransaction {
+        val article = transactionHandler.runInRepeatableReadTransaction {
+            val article = getArticle(command.articleId)
             article.delete()
             articleRepository.save(article)
         }
 
-        return IDeleteArticle.Info(article.id)
+        return IDeleteArticle.Info(article.entityId)
     }
 
     override fun handle(command: IUnDeleteArticle.Command): IUnDeleteArticle.Info {
-        val article = getArticle(command.articleId)
-
-        transactionHandler.runInRepeatableReadTransaction {
+        val article = transactionHandler.runInRepeatableReadTransaction {
+            val article = getArticle(command.articleId)
             article.unDelete()
             articleRepository.save(article)
         }
 
-        return IUnDeleteArticle.Info(article.id)
+        return IUnDeleteArticle.Info(article.entityId)
     }
 
     override fun handle(command: ICategorizeArticle.Command): ICategorizeArticle.Info {
-        val article = getArticle(command.articleId)
-        val category = categoryRepository.findById(command.categoryId)
-            ?: throw IllegalArgumentException("카테고리가 존재하지 않습니다")
-
-        transactionHandler.runInRepeatableReadTransaction {
+        val article = transactionHandler.runInRepeatableReadTransaction {
+            val article = getArticle(command.articleId)
+            val category = categoryRepository.findById(command.categoryId)
+                ?: throw IllegalArgumentException("카테고리가 존재하지 않습니다")
             article.categorize(category)
             articleRepository.save(article)
         }
 
-        return ICategorizeArticle.Info(article.id)
+        return ICategorizeArticle.Info(article.entityId)
     }
 
-    private fun getArticle(articleId: ArticleId) =
-        (
-            articleRepository.findById(articleId)
-                ?: throw IllegalArgumentException("게시글이 존재하지 않습니다")
-            )
+    private fun getArticle(articleId: ArticleId) = articleRepository.findById(articleId)
+        ?: throw IllegalArgumentException("게시글이 존재하지 않습니다")
 }

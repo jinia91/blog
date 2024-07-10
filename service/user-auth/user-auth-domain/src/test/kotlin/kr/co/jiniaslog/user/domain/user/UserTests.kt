@@ -21,8 +21,8 @@ class UserTests : SimpleUnitTestContext() {
 
             // then
             sut shouldNotBe null
-            sut.id shouldNotBe null
-            sut.id shouldBe UserId(1L)
+            sut.entityId shouldNotBe null
+            sut.entityId shouldBe UserId(1L)
             sut.nickName shouldBe nickName
             sut.email shouldBe email
             sut.roles shouldBe listOf(Role.USER)

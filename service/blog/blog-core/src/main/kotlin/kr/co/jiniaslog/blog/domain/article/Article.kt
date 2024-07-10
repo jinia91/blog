@@ -6,13 +6,15 @@ import jakarta.persistence.Column
 import jakarta.persistence.ElementCollection
 import jakarta.persistence.EmbeddedId
 import jakarta.persistence.Entity
-import jakarta.persistence.FetchType
 import kr.co.jiniaslog.blog.domain.category.Category
 import kr.co.jiniaslog.blog.domain.category.CategoryId
 import kr.co.jiniaslog.blog.domain.memo.MemoId
 import kr.co.jiniaslog.blog.domain.user.UserId
 import kr.co.jiniaslog.shared.core.domain.AggregateRoot
 import kr.co.jiniaslog.shared.core.domain.IdUtils
+import org.hibernate.annotations.Fetch
+import org.hibernate.annotations.FetchMode
+import org.springframework.data.domain.Persistable
 
 /**
  * 블로그 게시글
@@ -42,7 +44,7 @@ class Article internal constructor(
     tags: MutableSet<Tagging>,
     categoryId: CategoryId?,
     hit: Int,
-) : AggregateRoot<ArticleId>() {
+) : AggregateRoot<ArticleId>(), Persistable<ArticleId> {
 
     /**
      * 게시글 상태
@@ -54,7 +56,7 @@ class Article internal constructor(
 
     @EmbeddedId
     @AttributeOverride(column = Column(name = "article_id"), name = "value")
-    override val id: ArticleId = id
+    override val entityId: ArticleId = id
 
     @AttributeOverride(column = Column(name = "author_id"), name = "value")
     val authorId: UserId = authorId
@@ -83,7 +85,8 @@ class Article internal constructor(
     var hit: Int = hit
         private set
 
-    @ElementCollection(fetch = FetchType.EAGER)
+    @ElementCollection
+    @Fetch(FetchMode.JOIN)
     var tags: MutableSet<Tagging> = tags
         private set
 
@@ -132,7 +135,7 @@ class Article internal constructor(
     fun categorize(category: Category) {
         require(category.isChild) { "카테고리는 하위 카테고리여야 합니다." }
         require(this.status != Status.DELETED) { "삭제된 게시글은 카테고리를 설정할 수 없습니다." }
-        this.categoryId = category.id
+        this.categoryId = category.entityId
     }
 
     fun updateArticleContents(articleContents: ArticleContents) {
@@ -167,5 +170,13 @@ class Article internal constructor(
                 hit = 0,
             )
         }
+    }
+
+    override fun getId(): ArticleId {
+        return entityId
+    }
+
+    override fun isNew(): Boolean {
+        return isPersisted.not()
     }
 }

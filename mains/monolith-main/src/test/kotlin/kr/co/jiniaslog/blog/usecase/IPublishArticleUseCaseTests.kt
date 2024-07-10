@@ -39,7 +39,7 @@ class IPublishArticleUseCaseTests : TestContainerAbstractSkeleton() {
         val result = sut.handle(command)
 
         // then
-        result.articleId shouldBe draftArticle.id
+        result.articleId shouldBe draftArticle.entityId
         em.clear()
 
         val publishedArticle = articleRepository.findById(result.articleId)

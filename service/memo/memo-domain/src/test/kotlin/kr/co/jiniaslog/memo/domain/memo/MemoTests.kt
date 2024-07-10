@@ -13,8 +13,8 @@ internal class MemoTests : CustomBehaviorSpec() {
             When("메모 초기화를 하면") {
                 val sutMemo = Memo.init(authorId = authorId, parentFolderId = null)
                 Then("메모가 초기화된다") {
-                    sutMemo.id shouldNotBe null
-                    sutMemo.id.value shouldNotBe 0
+                    sutMemo.entityId shouldNotBe null
+                    sutMemo.entityId.value shouldNotBe 0
                     sutMemo.authorId shouldBe authorId
                 }
                 Then("persist 되지 않은상태여야한다") {
@@ -73,7 +73,7 @@ internal class MemoTests : CustomBehaviorSpec() {
                         updatedAt = updatedAt,
                     )
                 Then("메모가 생성된다") {
-                    sutMemo.id shouldBe id
+                    sutMemo.entityId shouldBe id
                     sutMemo.authorId shouldBe authorId
                     sutMemo.title shouldBe title
                     sutMemo.content shouldBe content

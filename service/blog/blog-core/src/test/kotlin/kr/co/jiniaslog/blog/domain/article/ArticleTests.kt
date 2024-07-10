@@ -389,7 +389,7 @@ class ArticleTests : SimpleUnitTestContext() {
             article.categorize(child)
 
             // then
-            article.categoryId shouldBe child.id
+            article.categoryId shouldBe child.entityId
         }
 
         @Test

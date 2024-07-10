@@ -30,7 +30,7 @@ class FolderQueriesTests : TestContainerAbstractSkeleton() {
         folderRepository.save(dummyParentFolder)
 
         val emptyChildFolder = FolderTestFixtures.build(
-            parent = dummyParentFolder.id
+            parent = dummyParentFolder.entityId
         )
         folderRepository.save(emptyChildFolder)
 
@@ -38,7 +38,7 @@ class FolderQueriesTests : TestContainerAbstractSkeleton() {
             (1..10).map {
                 memoRepository.save(
                     MemoTestFixtures.build(
-                        parentFolderId = dummyParentFolder.id
+                        parentFolderId = dummyParentFolder.entityId
                     )
                 )
             }
@@ -58,7 +58,7 @@ class FolderQueriesTests : TestContainerAbstractSkeleton() {
         // then
         result.folderInfos.size shouldBe 2
         result.folderInfos.find {
-            it.id == dummyParentFolder.id
+            it.id == dummyParentFolder.entityId
         }?.let { parentFolderInfo ->
             parentFolderInfo.children.size shouldBe 1
             parentFolderInfo.memos.size shouldBe 10
@@ -79,7 +79,7 @@ class FolderQueriesTests : TestContainerAbstractSkeleton() {
         folderRepository.save(dummyParentFolder)
 
         val emptyChildFolder = FolderTestFixtures.build(
-            parent = dummyParentFolder.id
+            parent = dummyParentFolder.entityId
         )
         folderRepository.save(emptyChildFolder)
 
