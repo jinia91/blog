@@ -54,7 +54,7 @@ class MemoUseCaseTests : TestContainerAbstractSkeleton() {
             )
         val command =
             IUpdateMemoContents.Command(
-                memoId = memo.id,
+                memoId = memo.entityId,
                 title = MemoTitle("title"),
             )
 
@@ -80,7 +80,7 @@ class MemoUseCaseTests : TestContainerAbstractSkeleton() {
             )
         val command =
             IUpdateMemoContents.Command(
-                memoId = memo.id,
+                memoId = memo.entityId,
                 content = MemoContent("content"),
             )
 
@@ -114,8 +114,8 @@ class MemoUseCaseTests : TestContainerAbstractSkeleton() {
 
         val command =
             IUpdateMemoReferences.Command.UpdateReferences(
-                memoId = rootMemo.id,
-                references = setOf(referenceTarget.id),
+                memoId = rootMemo.entityId,
+                references = setOf(referenceTarget.entityId),
             )
 
         // when
@@ -126,8 +126,8 @@ class MemoUseCaseTests : TestContainerAbstractSkeleton() {
         val foundTarget = memoRepository.findById(info.id)
         foundTarget shouldNotBe null
         foundTarget!!.references.size shouldBe 1
-        foundTarget.references.first().referenceId shouldBe referenceTarget.id
-        foundTarget.references.first().rootId shouldBe rootMemo.id
+        foundTarget.references.first().referenceId shouldBe referenceTarget.entityId
+        foundTarget.references.first().rootId shouldBe rootMemo.entityId
     }
 
     @Test
@@ -147,7 +147,7 @@ class MemoUseCaseTests : TestContainerAbstractSkeleton() {
                     parentFolderId = null,
                 ),
             )
-        rootMemo.addReference(referenceTarget.id)
+        rootMemo.addReference(referenceTarget.entityId)
         memoRepository.save(rootMemo)
 
         val referenceTarget2 =
@@ -159,8 +159,8 @@ class MemoUseCaseTests : TestContainerAbstractSkeleton() {
             )
         val command =
             IUpdateMemoReferences.Command.UpdateReferences(
-                memoId = rootMemo.id,
-                references = setOf(referenceTarget.id, referenceTarget2.id),
+                memoId = rootMemo.entityId,
+                references = setOf(referenceTarget.entityId, referenceTarget2.entityId),
             )
 
         // when
@@ -190,13 +190,13 @@ class MemoUseCaseTests : TestContainerAbstractSkeleton() {
                     parentFolderId = null,
                 ),
             )
-        rootMemo.addReference(referenceTarget.id)
+        rootMemo.addReference(referenceTarget.entityId)
         memoRepository.save(rootMemo)
 
         val command =
             IUpdateMemoReferences.Command.RemoveReference(
-                memoId = rootMemo.id,
-                referenceId = referenceTarget.id,
+                memoId = rootMemo.entityId,
+                referenceId = referenceTarget.entityId,
             )
 
         // when
@@ -222,8 +222,8 @@ class MemoUseCaseTests : TestContainerAbstractSkeleton() {
 
         val command =
             IUpdateMemoReferences.Command.UpdateReferences(
-                memoId = rootMemo.id,
-                references = setOf(rootMemo.id),
+                memoId = rootMemo.entityId,
+                references = setOf(rootMemo.entityId),
             )
 
         // when
@@ -245,14 +245,14 @@ class MemoUseCaseTests : TestContainerAbstractSkeleton() {
             )
         val command =
             IDeleteMemo.Command(
-                id = memo.id,
+                id = memo.entityId,
             )
 
         // when
         sut.handle(command)
 
         // then
-        memoRepository.findById(memo.id) shouldBe null
+        memoRepository.findById(memo.entityId) shouldBe null
     }
 
     @Test
@@ -273,8 +273,8 @@ class MemoUseCaseTests : TestContainerAbstractSkeleton() {
             )
         val command =
             IMakeRelationShipFolderAndMemo.Command(
-                memoId = memo.id,
-                folderId = folder.id,
+                memoId = memo.entityId,
+                folderId = folder.entityId,
             )
 
         // when
@@ -282,11 +282,11 @@ class MemoUseCaseTests : TestContainerAbstractSkeleton() {
 
         // then
         info.memoId shouldNotBe null
-        info.memoId shouldBe memo.id
-        info.folderId shouldBe folder.id
+        info.memoId shouldBe memo.entityId
+        info.folderId shouldBe folder.entityId
         val foundedMemo = memoRepository.findById(info.memoId)
         foundedMemo shouldNotBe null
-        foundedMemo!!.parentFolderId shouldBe folder.id
+        foundedMemo!!.parentFolderId shouldBe folder.entityId
     }
 
     @Test
@@ -302,12 +302,12 @@ class MemoUseCaseTests : TestContainerAbstractSkeleton() {
             memoRepository.save(
                 Memo.init(
                     authorId = AuthorId(1),
-                    parentFolderId = folder.id,
+                    parentFolderId = folder.entityId,
                 ),
             )
         val command =
             IMakeRelationShipFolderAndMemo.Command(
-                memoId = memo.id,
+                memoId = memo.entityId,
                 folderId = null,
             )
 
@@ -316,7 +316,7 @@ class MemoUseCaseTests : TestContainerAbstractSkeleton() {
 
         // then
         info.memoId shouldNotBe null
-        info.memoId shouldBe memo.id
+        info.memoId shouldBe memo.entityId
         info.folderId shouldBe null
         val foundedMemo = memoRepository.findById(info.memoId)
     }
@@ -333,7 +333,7 @@ class MemoUseCaseTests : TestContainerAbstractSkeleton() {
             )
         val command =
             IMakeRelationShipFolderAndMemo.Command(
-                memoId = memo.id,
+                memoId = memo.entityId,
                 folderId = FolderId(1),
             )
 
@@ -363,13 +363,13 @@ class MemoUseCaseTests : TestContainerAbstractSkeleton() {
             memoRepository.save(
                 Memo.init(
                     authorId = AuthorId(1),
-                    parentFolderId = folder1.id,
+                    parentFolderId = folder1.entityId,
                 ),
             )
         val command =
             IMakeRelationShipFolderAndMemo.Command(
-                memoId = memo.id,
-                folderId = folder2.id,
+                memoId = memo.entityId,
+                folderId = folder2.entityId,
             )
 
         // when
@@ -377,10 +377,10 @@ class MemoUseCaseTests : TestContainerAbstractSkeleton() {
 
         // then
         info.memoId shouldNotBe null
-        info.memoId shouldBe memo.id
-        info.folderId shouldBe folder2.id
+        info.memoId shouldBe memo.entityId
+        info.folderId shouldBe folder2.entityId
         val foundedMemo = memoRepository.findById(info.memoId)
         foundedMemo shouldNotBe null
-        foundedMemo!!.parentFolderId shouldBe folder2.id
+        foundedMemo!!.parentFolderId shouldBe folder2.entityId
     }
 }

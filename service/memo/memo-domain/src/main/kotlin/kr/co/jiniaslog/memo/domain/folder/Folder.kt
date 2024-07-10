@@ -11,7 +11,7 @@ class Folder private constructor(
     authorId: AuthorId,
     parent: FolderId?,
 ) : AggregateRoot<FolderId>() {
-    override val id: FolderId = id
+    override val entityId: FolderId = id
 
     var name: FolderName = name
         private set
@@ -26,9 +26,9 @@ class Folder private constructor(
     }
 
     fun changeParent(parent: Folder?) {
-        require(parent?.id != this.id) { "자기 자신을 부모로 설정할 수 없습니다." }
-        require(parent?.parent != this.id) { "상위 폴더를 자식 폴더로 설정할 수 없습니다." }
-        this.parent = parent?.id
+        require(parent?.entityId != this.entityId) { "자기 자신을 부모로 설정할 수 없습니다." }
+        require(parent?.parent != this.entityId) { "상위 폴더를 자식 폴더로 설정할 수 없습니다." }
+        this.parent = parent?.entityId
     }
 
     companion object {

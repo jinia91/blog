@@ -25,14 +25,14 @@ internal class MemoUseCasesInteractor(
                 parentFolderId = command.parentFolderId,
             )
         memoRepository.save(newOne)
-        return IInitMemo.Info(newOne.id)
+        return IInitMemo.Info(newOne.entityId)
     }
 
     override fun handle(command: IUpdateMemoContents.Command): IUpdateMemoContents.Info {
         val memo = getMemo(command.memoId)
         memo.update(command.title, command.content)
         memoRepository.save(memo)
-        return IUpdateMemoContents.Info(memo.id)
+        return IUpdateMemoContents.Info(memo.entityId)
     }
 
     private fun validateMemoExistence(id: MemoId) {
@@ -42,7 +42,7 @@ internal class MemoUseCasesInteractor(
     override fun handle(command: IDeleteMemo.Command): IDeleteMemo.Info {
         val memo = getMemo(command.id)
 
-        memoRepository.deleteById(memo.id)
+        memoRepository.deleteById(memo.entityId)
         return IDeleteMemo.Info()
     }
 
@@ -50,10 +50,10 @@ internal class MemoUseCasesInteractor(
         val folder = command.folderId?.let { getFolder(it) }
         val memo = getMemo(command.memoId)
 
-        memo.setParentFolder(folder?.id)
+        memo.setParentFolder(folder?.entityId)
 
         memoRepository.save(memo)
-        return IMakeRelationShipFolderAndMemo.Info(memo.id, command.folderId)
+        return IMakeRelationShipFolderAndMemo.Info(memo.entityId, command.folderId)
     }
 
     override fun handle(command: IUpdateMemoReferences.Command): IUpdateMemoReferences.Info {
@@ -72,7 +72,7 @@ internal class MemoUseCasesInteractor(
         }
 
         memoRepository.save(memo)
-        return IUpdateMemoReferences.Info(memo.id)
+        return IUpdateMemoReferences.Info(memo.entityId)
     }
 
     private fun getFolder(id: FolderId) =

@@ -21,10 +21,6 @@ class TagRepositoryAdapter(
         return tagJpaRepository.findById(id).orElse(null)
     }
 
-    override fun findAll(): List<Tag> {
-        return tagJpaRepository.findAll()
-    }
-
     override fun deleteById(id: TagId) {
         tagJpaRepository.deleteById(id)
     }

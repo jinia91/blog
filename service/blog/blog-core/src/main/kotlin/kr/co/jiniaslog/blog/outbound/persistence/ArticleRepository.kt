@@ -21,10 +21,6 @@ class ArticleRepositoryAdapter(
         return articleJpaRepository.findById(id).orElse(null)
     }
 
-    override fun findAll(): List<Article> {
-        return articleJpaRepository.findAll()
-    }
-
     override fun deleteById(id: ArticleId) {
         articleJpaRepository.deleteById(id)
     }

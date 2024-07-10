@@ -31,21 +31,22 @@ class IDeleteArticleUseCaseTests : TestContainerAbstractSkeleton() {
     private lateinit var em: EntityManager
 
     @Test
-    @Transactional
     fun `게시글을 삭제하면 모든 연관관계가 해지되며 삭제상태가 된다`() {
         // given
         val tag = Tag.newOne(TagName("tag"))
+        val tag2 = Tag.newOne(TagName("tag2"))
         tagRepository.save(tag)
+        tagRepository.save(tag2)
         val article = ArticleTestFixtures.createPublishedArticle(
-            tags = listOf(tag.id),
+            tags = listOf(tag.entityId, tag2.entityId),
         )
         articleRepository.save(article)
 
         // when
-        val info = sut.handle(IDeleteArticle.Command(article.id))
+        val info = sut.handle(IDeleteArticle.Command(article.entityId))
 
         // then
-        info.articleId shouldBe article.id
+        info.articleId shouldBe article.entityId
         em.clear()
         val foundOne = articleRepository.findById(info.articleId)
         foundOne.shouldNotBeNull()
@@ -73,7 +74,7 @@ class IDeleteArticleUseCaseTests : TestContainerAbstractSkeleton() {
 
         // when, then
         shouldThrow<IllegalArgumentException> {
-            sut.handle(IDeleteArticle.Command(article.id))
+            sut.handle(IDeleteArticle.Command(article.entityId))
         }
     }
 }

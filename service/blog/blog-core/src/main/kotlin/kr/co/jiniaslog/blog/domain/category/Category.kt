@@ -21,7 +21,7 @@ class Category(
         column = Column(name = "category_id"),
         name = "value",
     )
-    override val id: CategoryId = id
+    override val entityId: CategoryId = id
 
     @AttributeOverride(
         column = Column(name = "category_title"),

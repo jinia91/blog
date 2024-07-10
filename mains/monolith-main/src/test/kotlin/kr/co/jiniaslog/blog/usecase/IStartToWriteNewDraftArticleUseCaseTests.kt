@@ -48,7 +48,7 @@ class IStartToWriteNewDraftArticleUseCaseTests : TestContainerAbstractSkeleton()
 
         val command =
             IStartToWriteNewDraftArticle.Command(
-                authorId = UserId(user.id.value),
+                authorId = UserId(user.entityId.value),
             )
 
         // when
@@ -68,7 +68,7 @@ class IStartToWriteNewDraftArticleUseCaseTests : TestContainerAbstractSkeleton()
             article.memoRefId.shouldBeNull()
             article.categoryId.shouldBeNull()
             article.status shouldBe Article.Status.DRAFT
-            article.authorId shouldBe UserId(user.id.value)
+            article.authorId shouldBe UserId(user.entityId.value)
             article.articleContents shouldBe ArticleContents.EMPTY
             article.tags.size shouldBe 0
             article.hit shouldBe 0

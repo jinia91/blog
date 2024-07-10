@@ -44,17 +44,17 @@ class ICategorizeArticleUseCasesTests : TestContainerAbstractSkeleton() {
         val child = CategoryTestFixtures.createCategory(parent = parent)
         categoryRepository.save(child)
 
-        val command = ICategorizeArticle.Command(article.id, child.id)
+        val command = ICategorizeArticle.Command(article.entityId, child.entityId)
 
         // when
         val result = sut.handle(command)
 
         // then
-        result.articleId shouldBe article.id
+        result.articleId shouldBe article.entityId
         em.clear()
-        val foundArticle = articleRepository.findById(article.id)
+        val foundArticle = articleRepository.findById(article.entityId)
         foundArticle.shouldNotBeNull()
-        foundArticle.categoryId shouldBe child.id
+        foundArticle.categoryId shouldBe child.entityId
     }
 
     @Test
@@ -66,7 +66,7 @@ class ICategorizeArticleUseCasesTests : TestContainerAbstractSkeleton() {
         val child = CategoryTestFixtures.createCategory(parent = parent)
         categoryRepository.save(child)
 
-        val command = ICategorizeArticle.Command(ArticleId(1L), child.id)
+        val command = ICategorizeArticle.Command(ArticleId(1L), child.entityId)
 
         // when, then
         shouldThrow<IllegalArgumentException> { sut.handle(command) }
@@ -78,7 +78,7 @@ class ICategorizeArticleUseCasesTests : TestContainerAbstractSkeleton() {
         val article = ArticleTestFixtures.createPublishedArticle()
         articleRepository.save(article)
 
-        val command = ICategorizeArticle.Command(article.id, CategoryId(1L))
+        val command = ICategorizeArticle.Command(article.entityId, CategoryId(1L))
 
         // when, then
         shouldThrow<IllegalArgumentException> { sut.handle(command) }

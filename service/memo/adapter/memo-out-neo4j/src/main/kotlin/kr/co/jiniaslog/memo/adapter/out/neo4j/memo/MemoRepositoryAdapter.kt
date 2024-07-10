@@ -22,11 +22,6 @@ internal open class MemoRepositoryAdapter(
         return memoNeo4jRepository.findById(id.value).orElse(null)?.toDomain()
     }
 
-    @Transactional(readOnly = true)
-    override fun findAll(): List<Memo> {
-        return memoNeo4jRepository.findAll().map { it.toDomain() }
-    }
-
     @Transactional
     override fun deleteById(id: MemoId) {
         memoNeo4jRepository.deleteById(id.value)
@@ -34,7 +29,7 @@ internal open class MemoRepositoryAdapter(
 
     @Transactional
     override fun save(entity: Memo): Memo {
-        val pm = memoNeo4jRepository.findById(entity.id.value).getOrNull()
+        val pm = memoNeo4jRepository.findById(entity.entityId.value).getOrNull()
 
         val memoNeo4jEntity =
             if (pm == null) {
@@ -43,14 +38,14 @@ internal open class MemoRepositoryAdapter(
                         memoNeo4jRepository.findById(it.referenceId.value).orElse(null)
                     }.toSet()
 
-                memoNeo4jRepository.deleteParentFolderById(entity.id.value)
+                memoNeo4jRepository.deleteParentFolderById(entity.entityId.value)
                 val parentFolder =
                     entity.parentFolderId?.let {
                         folderNeo4jRepository.findById(it.value).orElse(null)
                     }
 
                 MemoNeo4jEntity(
-                    id = entity.id.value,
+                    id = entity.entityId.value,
                     authorId = entity.authorId.value,
                     title = entity.title.value,
                     content = entity.content.value,

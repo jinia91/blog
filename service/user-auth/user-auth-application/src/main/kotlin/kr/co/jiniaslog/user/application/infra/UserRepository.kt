@@ -7,4 +7,6 @@ import kr.co.jiniaslog.user.domain.user.UserId
 
 interface UserRepository : Repository<User, UserId> {
     fun findByEmail(email: Email): User?
+
+    fun findAll(): List<User>
 }

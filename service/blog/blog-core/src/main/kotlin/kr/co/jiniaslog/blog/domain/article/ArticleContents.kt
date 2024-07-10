@@ -10,11 +10,19 @@ data class ArticleContents(
     val contents: String,
     val thumbnailUrl: String,
 ) : ValueObject, Serializable {
+    val canPublish
+        get() = title.isNotBlank() && contents.isNotBlank() && thumbnailUrl.isNotBlank()
     init {
         validate()
     }
     override fun validate() {
         require(title.length <= 100) { "제목은 100자를 넘을 수 없습니다." }
+    }
+
+    fun validateOnPublish() {
+        require(this.title.isNotBlank()) { "제목은 필수입니다." }
+        require(this.contents.isNotBlank()) { "내용은 필수입니다." }
+        require(this.thumbnailUrl.isNotBlank()) { "썸네일은 필수입니다." }
     }
 
     companion object {

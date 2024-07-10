@@ -18,17 +18,17 @@ processors:
   active: true
   exclude:
     - 'DetektProgressListener'
+#    - 'ProjectComplexityProcessor'
+#    - 'ProjectLLOCProcessor'
+#    - 'ProjectCognitiveComplexityProcessor'
+#    - 'ProjectCLOCProcessor'
+#    - 'ProjectLOCProcessor'
+#    - 'ProjectSLOCProcessor'
   # - 'KtFileCountProcessor'
   # - 'PackageCountProcessor'
   # - 'ClassCountProcessor'
   # - 'FunctionCountProcessor'
   # - 'PropertyCountProcessor'
-  # - 'ProjectComplexityProcessor'
-  # - 'ProjectCognitiveComplexityProcessor'
-  # - 'ProjectLLOCProcessor'
-  # - 'ProjectCLOCProcessor'
-  # - 'ProjectLOCProcessor'
-  # - 'ProjectSLOCProcessor'
   # - 'LicenseHeaderLoaderExtension'
 
 console-reports:

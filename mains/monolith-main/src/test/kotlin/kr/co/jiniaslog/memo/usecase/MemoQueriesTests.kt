@@ -29,22 +29,22 @@ class MemoQueriesTests : TestContainerAbstractSkeleton() {
     fun `특정 메모와 키워드가 있으면 연관 메모만 조회된다`() {
         // given IRecommendRelatedMemo
         val dummyFolder = folderRepository.save(FolderTestFixtures.build())
-        val memo = memoRepository.save(MemoTestFixtures.build(parentFolderId = dummyFolder.id))
-        memoRepository.save(MemoTestFixtures.build(parentFolderId = dummyFolder.id))
-        memoRepository.save(MemoTestFixtures.build(parentFolderId = dummyFolder.id))
-        memoRepository.save(MemoTestFixtures.build(parentFolderId = dummyFolder.id))
-        memoRepository.save(MemoTestFixtures.build(parentFolderId = dummyFolder.id))
-        memoRepository.save(MemoTestFixtures.build(parentFolderId = dummyFolder.id))
+        val memo = memoRepository.save(MemoTestFixtures.build(parentFolderId = dummyFolder.entityId))
+        memoRepository.save(MemoTestFixtures.build(parentFolderId = dummyFolder.entityId))
+        memoRepository.save(MemoTestFixtures.build(parentFolderId = dummyFolder.entityId))
+        memoRepository.save(MemoTestFixtures.build(parentFolderId = dummyFolder.entityId))
+        memoRepository.save(MemoTestFixtures.build(parentFolderId = dummyFolder.entityId))
+        memoRepository.save(MemoTestFixtures.build(parentFolderId = dummyFolder.entityId))
         val relatedMemo = memoRepository.save(
-            MemoTestFixtures.build(parentFolderId = dummyFolder.id, content = MemoContent("test"))
+            MemoTestFixtures.build(parentFolderId = dummyFolder.entityId, content = MemoContent("test"))
         )
 
         // when
-        val result = sut.handle(IRecommendRelatedMemo.Query(thisMemoId = memo.id, rawKeyword = "test"))
+        val result = sut.handle(IRecommendRelatedMemo.Query(thisMemoId = memo.entityId, rawKeyword = "test"))
 
         // then
         result.relatedMemoCandidates.size shouldBe 5
-        result.relatedMemoCandidates[0].first shouldBe relatedMemo.id
+        result.relatedMemoCandidates[0].first shouldBe relatedMemo.entityId
         result.relatedMemoCandidates[0].second shouldBe relatedMemo.title
         result.relatedMemoCandidates[0].third shouldBe relatedMemo.content
     }
@@ -53,26 +53,26 @@ class MemoQueriesTests : TestContainerAbstractSkeleton() {
     fun `메모아이디로 메모를 조회할 수 있다`() {
         // given
         val dummyFolder = folderRepository.save(FolderTestFixtures.build())
-        val dummyMemo = memoRepository.save(MemoTestFixtures.build(parentFolderId = dummyFolder.id))
+        val dummyMemo = memoRepository.save(MemoTestFixtures.build(parentFolderId = dummyFolder.entityId))
 
         // when
-        val result = sut.handle(IGetMemoById.Query(dummyMemo.id))
+        val result = sut.handle(IGetMemoById.Query(dummyMemo.entityId))
 
         // then
-        result.memoId shouldBe dummyMemo.id
+        result.memoId shouldBe dummyMemo.entityId
     }
 
     @Test
     fun `메모가 없다면 메모아이디로 조회할 경우 예외가 발생한다`() {
         // given
         val dummyFolder = folderRepository.save(FolderTestFixtures.build())
-        val dummyMemo = memoRepository.save(MemoTestFixtures.build(parentFolderId = dummyFolder.id))
+        val dummyMemo = memoRepository.save(MemoTestFixtures.build(parentFolderId = dummyFolder.entityId))
 
         // when
-        val result = sut.handle(IGetMemoById.Query(dummyMemo.id))
+        val result = sut.handle(IGetMemoById.Query(dummyMemo.entityId))
 
         // then
-        result.memoId shouldBe dummyMemo.id
+        result.memoId shouldBe dummyMemo.entityId
     }
 
     @Test
@@ -82,13 +82,13 @@ class MemoQueriesTests : TestContainerAbstractSkeleton() {
 
         for (i in 1..10) {
             val dummyFolder = folderRepository.save(FolderTestFixtures.build())
-            val dummyReference = memoRepository.save(MemoTestFixtures.build(parentFolderId = dummyFolder.id))
-            target.addReference(dummyReference.id)
+            val dummyReference = memoRepository.save(MemoTestFixtures.build(parentFolderId = dummyFolder.entityId))
+            target.addReference(dummyReference.entityId)
             memoRepository.save(target)
         }
 
         // when
-        val result = sut.handle(IGetAllReferencesByMemo.Query(memoId = target.id))
+        val result = sut.handle(IGetAllReferencesByMemo.Query(memoId = target.entityId))
 
         // then
         result.references.size shouldBe 10
@@ -101,13 +101,13 @@ class MemoQueriesTests : TestContainerAbstractSkeleton() {
 
         for (i in 1..10) {
             val dummyFolder = folderRepository.save(FolderTestFixtures.build())
-            val dummyReference = memoRepository.save(MemoTestFixtures.build(parentFolderId = dummyFolder.id))
-            dummyReference.addReference(target.id)
+            val dummyReference = memoRepository.save(MemoTestFixtures.build(parentFolderId = dummyFolder.entityId))
+            dummyReference.addReference(target.entityId)
             memoRepository.save(dummyReference)
         }
 
         // when
-        val result = sut.handle(IGetAllReferencedByMemo.Query(memoId = target.id))
+        val result = sut.handle(IGetAllReferencedByMemo.Query(memoId = target.entityId))
 
         // then
         result.referenceds.size shouldBe 10
@@ -119,9 +119,9 @@ class MemoQueriesTests : TestContainerAbstractSkeleton() {
         val target = memoRepository.save(MemoTestFixtures.build())
 
         // when
-        val result = sut.handle(IGetMemoById.Query(target.id))
+        val result = sut.handle(IGetMemoById.Query(target.entityId))
 
         // then
-        result.memoId shouldBe target.id
+        result.memoId shouldBe target.entityId
     }
 }

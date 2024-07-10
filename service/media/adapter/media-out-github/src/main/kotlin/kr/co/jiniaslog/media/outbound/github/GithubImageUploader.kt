@@ -14,12 +14,12 @@ internal class GithubImageUploader(
         val gitHub = GitHubBuilder().withOAuthToken(githubProperty.gitToken).build()
         gitHub.getRepository(githubProperty.gitRepo)
             .createContent()
-            .path("$REPOSITORY_IMAGE_PATH${imageFile.id.value}")
+            .path("$REPOSITORY_IMAGE_PATH${imageFile.entityId.value}")
             .content(imageFile.rawImage.value)
             .message(COMMIT_MESSAGE)
             .branch(BRANCH)
             .commit()
-        return ImageUrl("${githubProperty.rootUrl}${imageFile.id.value}?raw=true")
+        return ImageUrl("${githubProperty.rootUrl}${imageFile.entityId.value}?raw=true")
     }
 
     companion object {

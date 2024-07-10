@@ -20,14 +20,14 @@ internal class FolderUseCasesInteractor(
                 authorId = command.authorId,
             )
         folderRepository.save(newOne)
-        return ICreateNewFolder.Info(newOne.id, newOne.name)
+        return ICreateNewFolder.Info(newOne.entityId, newOne.name)
     }
 
     override fun handle(command: IChangeFolderName.Command): IChangeFolderName.Info {
         val folder = getFolder(command.folderId)
         folder.changeName(command.name)
         folderRepository.save(folder)
-        return IChangeFolderName.Info(folder.id)
+        return IChangeFolderName.Info(folder.entityId)
     }
 
     override fun handle(command: IMakeRelationShipFolderAndFolder.Command): IMakeRelationShipFolderAndFolder.Info {
@@ -35,13 +35,13 @@ internal class FolderUseCasesInteractor(
         val child = getFolder(command.childFolderId)
         child.changeParent(parent)
         folderRepository.save(child)
-        return IMakeRelationShipFolderAndFolder.Info(parent?.id, child.id)
+        return IMakeRelationShipFolderAndFolder.Info(parent?.entityId, child.entityId)
     }
 
     override fun handle(command: IDeleteFoldersRecursively.Command): IDeleteFoldersRecursively.Info {
         val folder = getFolder(command.folderId)
-        folderRepository.deleteById(folder.id)
-        return IDeleteFoldersRecursively.Info(folder.id)
+        folderRepository.deleteById(folder.entityId)
+        return IDeleteFoldersRecursively.Info(folder.entityId)
     }
 
     private fun getFolder(id: FolderId) =

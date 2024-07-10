@@ -13,7 +13,7 @@ class Memo private constructor(
     references: MutableSet<MemoReference>,
     parentFolderId: FolderId?,
 ) : AggregateRoot<MemoId>() {
-    override val id: MemoId = id
+    override val entityId: MemoId = id
 
     val authorId: AuthorId = authorId
 
@@ -46,11 +46,11 @@ class Memo private constructor(
     }
 
     fun addReference(referenceId: MemoId) {
-        this._references.add(MemoReference(this.id, referenceId))
+        this._references.add(MemoReference(this.entityId, referenceId))
     }
 
     fun removeReference(referenceId: MemoId) {
-        this._references.remove(MemoReference(this.id, referenceId))
+        this._references.remove(MemoReference(this.entityId, referenceId))
     }
 
     fun setParentFolder(folderId: FolderId?) {
@@ -58,11 +58,11 @@ class Memo private constructor(
     }
 
     override fun toString(): String {
-        return "Memo(id=$id, authorId=$authorId, title=$title, content=$content, reference=$_references)"
+        return "Memo(id=$entityId, authorId=$authorId, title=$title, content=$content, reference=$_references)"
     }
 
     fun updateReferences(references: Set<MemoId>) {
-        this._references = references.map { MemoReference(this.id, it) }.toMutableSet()
+        this._references = references.map { MemoReference(this.entityId, it) }.toMutableSet()
     }
 
     companion object {

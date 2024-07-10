@@ -5,7 +5,7 @@ import io.mockk.every
 import io.restassured.module.mockmvc.RestAssuredMockMvc
 import kr.co.jiniaslog.RestTestAbstractSkeleton
 import kr.co.jiniaslog.shared.core.domain.vo.Url
-import kr.co.jiniaslog.user.adapter.inbound.http.OAuthLoginRequest
+import kr.co.jiniaslog.user.adapter.inbound.http.dto.OAuthLoginRequest
 import kr.co.jiniaslog.user.application.usecase.IGetOAuthRedirectionUrl
 import kr.co.jiniaslog.user.application.usecase.IRefreshToken
 import kr.co.jiniaslog.user.application.usecase.ISignInOAuthUser
@@ -16,7 +16,6 @@ import kr.co.jiniaslog.user.domain.user.NickName
 import kr.co.jiniaslog.user.domain.user.Role
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
-import org.springframework.test.web.servlet.post
 
 class AuthUserResourceRestTests : RestTestAbstractSkeleton() {
     @Nested
