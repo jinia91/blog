@@ -15,6 +15,7 @@ include(
     "libs:messaging-handler-generator",
     "libs:rdb-kernel",
     "libs:rest-kernel",
+    "libs:websocket-kernel",
     "libs:messaging-kernel",
     "libs:snowflake-id-generator",
 
@@ -23,6 +24,7 @@ include(
     "service:blog:adapter:blog-out-rdb",
     "service:blog:adapter:blog-in-http",
     "service:blog:adapter:blog-in-message",
+    "service:blog:adapter:blog-in-websocket",
     "service:blog:adapter:blog-out-user",
     "service:blog:adapter:blog-out-memo",
 

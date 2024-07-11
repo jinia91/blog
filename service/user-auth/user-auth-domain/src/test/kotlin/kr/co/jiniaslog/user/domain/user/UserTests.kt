@@ -44,5 +44,20 @@ class UserTests : SimpleUnitTestContext() {
             // then
             sut.nickName shouldBe newOne
         }
+
+        @Test
+        fun `유저는 동일 닉네임의 변경 요청을 받아도 예외가 발생하지 않는다`() {
+            val nickName = NickName("12345678901")
+            val email = Email("jinia91@gmail.com")
+
+            val sut =
+                User.newOne(nickName, email)
+
+            // when
+            sut.updateIfNickNameChanged(nickName)
+
+            // then
+            sut.nickName shouldBe nickName
+        }
     }
 }

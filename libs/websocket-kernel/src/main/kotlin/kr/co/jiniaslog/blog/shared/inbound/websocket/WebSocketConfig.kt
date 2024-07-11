@@ -1,4 +1,4 @@
-package kr.co.jiniaslog.memo.adapter.inbound.websocket
+package kr.co.jiniaslog.blog.shared.inbound.websocket
 
 import org.springframework.context.annotation.Configuration
 import org.springframework.messaging.simp.config.MessageBrokerRegistry
@@ -10,13 +10,12 @@ import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerCo
 @EnableWebSocketMessageBroker
 class WebSocketConfig : WebSocketMessageBrokerConfigurer {
     override fun registerStompEndpoints(registry: StompEndpointRegistry) {
-        registry.addEndpoint("/memo")
+        registry.addEndpoint("/ws")
             .setAllowedOriginPatterns("http://localhost:*")
             .withSockJS()
     }
 
     override fun configureMessageBroker(registry: MessageBrokerRegistry) {
-        registry.setApplicationDestinationPrefixes("/app")
         registry.enableSimpleBroker("/topic")
     }
 }
