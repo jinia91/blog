@@ -1,5 +1,5 @@
 plugins {
-    springBootConventions
+    conventions
 }
 
 group = "kr.co.jiniaslog.memo"

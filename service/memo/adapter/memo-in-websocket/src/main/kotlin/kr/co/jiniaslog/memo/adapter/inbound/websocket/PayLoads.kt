@@ -2,8 +2,6 @@ package kr.co.jiniaslog.memo.adapter.inbound.websocket
 
 import com.fasterxml.jackson.annotation.JsonCreator
 import com.fasterxml.jackson.annotation.JsonProperty
-import com.fasterxml.jackson.annotation.JsonSubTypes
-import com.fasterxml.jackson.annotation.JsonTypeInfo
 import jakarta.validation.constraints.NotEmpty
 import kr.co.jiniaslog.memo.domain.memo.MemoContent
 import kr.co.jiniaslog.memo.domain.memo.MemoId
@@ -11,27 +9,14 @@ import kr.co.jiniaslog.memo.domain.memo.MemoTitle
 import kr.co.jiniaslog.memo.usecase.IUpdateMemoContents
 import kr.co.jiniaslog.memo.usecase.IUpdateMemoReferences
 
-@JsonTypeInfo(
-    use = JsonTypeInfo.Id.NAME,
-    include = JsonTypeInfo.As.PROPERTY,
-    property = "type",
-)
-@JsonSubTypes(
-    JsonSubTypes.Type(value = UpdateMemoPayload::class, name = "UpdateMemo"),
-    JsonSubTypes.Type(value = UpdateReferencesPayload::class, name = "UpdateReferences"),
-)
-sealed class PayLoad {
-    abstract val type: String
-}
-
 data class UpdateMemoPayload(
-    override val type: String = "UpdateMemo",
+    val type: String = "UpdateMemo",
     val id: Long,
     @field:NotEmpty
     val content: String,
     @field:NotEmpty
     val title: String,
-) : PayLoad() {
+) {
     fun toCommand(): IUpdateMemoContents.Command {
         return IUpdateMemoContents.Command(
             content = MemoContent(content),
@@ -59,10 +44,10 @@ fun IUpdateMemoContents.Info.toResponse(): UpdateMemoResponse {
 }
 
 data class UpdateReferencesPayload(
-    override val type: String = "UpdateReferences",
+    val type: String = "UpdateReferences",
     val id: Long,
     val references: List<Long>,
-) : PayLoad() {
+) {
     fun toCommand(): IUpdateMemoReferences.Command {
         return IUpdateMemoReferences.Command.UpdateReferences(
             memoId = MemoId(id),

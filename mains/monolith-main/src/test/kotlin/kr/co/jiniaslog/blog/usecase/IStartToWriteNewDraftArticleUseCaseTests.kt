@@ -1,5 +1,6 @@
 package kr.co.jiniaslog.blog.usecase
 
+import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.nulls.shouldBeNull
 import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
@@ -73,5 +74,17 @@ class IStartToWriteNewDraftArticleUseCaseTests : TestContainerAbstractSkeleton()
             article.tags.size shouldBe 0
             article.hit shouldBe 0
         }
+    }
+
+    @Test
+    fun `존재하지 않는 유저가 게시물 작성을 시작하면 실패한다`() {
+        // given
+        val command =
+            IStartToWriteNewDraftArticle.Command(
+                authorId = UserId(1),
+            )
+
+        // when, then
+        shouldThrow<IllegalArgumentException> { sut.handle(command) }
     }
 }

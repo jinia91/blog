@@ -33,8 +33,9 @@ object Modules {
 
             enum class Adaptors(val path: String) {
                 InHttp(":service:blog:adapter:blog-in-http"),
+                InWebsocket(":service:blog:adapter:blog-in-websocket"),
                 OutUser(":service:blog:adapter:blog-out-user"),
-                OutMemo(":service:blog:adapter:blog-out-memo")
+                OutMemo(":service:blog:adapter:blog-out-memo"),
             }
         }
 
@@ -59,6 +60,7 @@ object Modules {
         val SnowflakeIdGenerator = Module(":libs:snowflake-id-generator")
         val CoreKernel = Module(":libs:core-kernel")
         val RdbKernel = Module(":libs:rdb-kernel")
+        val WebsocketKernel = Module(":libs:websocket-kernel")
         val MessagingHandlerGenerator = Module(":libs:messaging-handler-generator")
     }
 }

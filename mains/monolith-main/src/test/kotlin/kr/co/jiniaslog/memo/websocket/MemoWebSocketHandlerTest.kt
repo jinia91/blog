@@ -1,10 +1,10 @@
 package kr.co.jiniaslog.memo.websocket
 
-import com.ninjasquad.springmockk.MockkBean
 import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import io.mockk.every
+import kr.co.jiniaslog.WebSocketTestAbstractSkeleton
 import kr.co.jiniaslog.memo.adapter.inbound.websocket.UpdateMemoPayload
 import kr.co.jiniaslog.memo.adapter.inbound.websocket.UpdateMemoResponse
 import kr.co.jiniaslog.memo.adapter.inbound.websocket.UpdateReferencesPayload
@@ -12,18 +12,13 @@ import kr.co.jiniaslog.memo.adapter.inbound.websocket.UpdateReferencesResponse
 import kr.co.jiniaslog.memo.domain.memo.MemoId
 import kr.co.jiniaslog.memo.usecase.IUpdateMemoContents
 import kr.co.jiniaslog.memo.usecase.IUpdateMemoReferences
-import kr.co.jiniaslog.memo.usecase.MemoUseCasesFacade
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.springframework.beans.factory.annotation.Value
-import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.messaging.converter.MappingJackson2MessageConverter
 import org.springframework.messaging.simp.stomp.StompFrameHandler
 import org.springframework.messaging.simp.stomp.StompHeaders
-import org.springframework.messaging.simp.stomp.StompSession
 import org.springframework.messaging.simp.stomp.StompSessionHandlerAdapter
-import org.springframework.test.context.ActiveProfiles
 import org.springframework.web.socket.WebSocketHttpHeaders
 import org.springframework.web.socket.client.standard.StandardWebSocketClient
 import org.springframework.web.socket.messaging.WebSocketStompClient
@@ -35,26 +30,14 @@ import java.util.concurrent.CompletableFuture
 import java.util.concurrent.TimeUnit
 
 private const val WEBSOCKET_MEMO_UPDATE_TOPIC = "/topic/memoResponse"
-private const val WEBSOCKET_MEMO_UPDATE = "/app/updateMemo"
-
 private const val WEBSOCKET_MEMO_REFERENCE_UPDATE_TOPIC = "/topic/memoResponse/updateReferences"
-private const val WEBSOCKET_MEMO_REFERENCE_UPDATE = "/app/updateReferences"
 
-private const val WEBSOCKET_URL = "ws://localhost:%d/memo"
+private const val WEBSOCKET_MEMO_UPDATE = "/memo/updateMemo"
+private const val WEBSOCKET_MEMO_REFERENCE_UPDATE = "/memo/updateReferences"
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@ActiveProfiles("test")
-class MemoWebSocketHandlerTest {
-    @Value("\${local.server.port}")
-    private val port = 0
+private const val WEBSOCKET_URL = "ws://localhost:%d/ws"
 
-    @MockkBean
-    private lateinit var memoUseCases: MemoUseCasesFacade
-
-    private lateinit var testClient: StompSession
-
-    private lateinit var subscribeFuture: CompletableFuture<Any>
-
+class MemoWebSocketHandlerTest : WebSocketTestAbstractSkeleton() {
     @BeforeEach
     fun init() {
         val url = String.format(WEBSOCKET_URL, port)
@@ -65,14 +48,14 @@ class MemoWebSocketHandlerTest {
                 SockJsClient(listOf<Transport>(WebSocketTransport(StandardWebSocketClient())))
             )
         stompClient.messageConverter = MappingJackson2MessageConverter()
-        this.testClient =
+        this.client =
             stompClient.connect(
                 url, WebSocketHttpHeaders(),
                 object : StompSessionHandlerAdapter() {
                 }
             ).get(2, TimeUnit.SECONDS)
 
-        testClient.subscribe(
+        client.subscribe(
             WEBSOCKET_MEMO_UPDATE_TOPIC,
             object : StompFrameHandler {
                 override fun getPayloadType(headers: StompHeaders): Type {
@@ -87,7 +70,7 @@ class MemoWebSocketHandlerTest {
             }
         )
 
-        testClient.subscribe(
+        client.subscribe(
             WEBSOCKET_MEMO_REFERENCE_UPDATE_TOPIC,
             object : StompFrameHandler {
                 override fun getPayloadType(headers: StompHeaders): Type {
@@ -105,7 +88,7 @@ class MemoWebSocketHandlerTest {
 
     @AfterEach
     fun close() {
-        testClient.disconnect()
+        client.disconnect()
     }
 
     @Test
@@ -121,7 +104,7 @@ class MemoWebSocketHandlerTest {
             content = "content",
             title = "title"
         )
-        testClient.send(WEBSOCKET_MEMO_UPDATE, updateMemoPayload)
+        client.send(WEBSOCKET_MEMO_UPDATE, updateMemoPayload)
 
         // then
         val response = subscribeFuture.get(3, TimeUnit.SECONDS)
@@ -162,7 +145,7 @@ class MemoWebSocketHandlerTest {
         )
 
         // when
-        testClient.send(WEBSOCKET_MEMO_REFERENCE_UPDATE, payload)
+        client.send(WEBSOCKET_MEMO_REFERENCE_UPDATE, payload)
 
         // then
         val response = subscribeFuture.get(3, TimeUnit.SECONDS)

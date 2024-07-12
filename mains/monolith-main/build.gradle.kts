@@ -17,6 +17,7 @@ val shared = mutableListOf(
 val blogService = mutableListOf(
     project(Modules.Service.Blog.Core.path),
     project(Modules.Service.Blog.Adaptors.InHttp.path),
+    project(Modules.Service.Blog.Adaptors.InWebsocket.path),
     project(Modules.Service.Blog.Adaptors.OutUser.path),
     project(Modules.Service.Blog.Adaptors.OutMemo.path),
 )
