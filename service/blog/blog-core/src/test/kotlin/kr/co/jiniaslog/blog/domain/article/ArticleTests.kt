@@ -325,7 +325,7 @@ class ArticleTests : SimpleUnitTestContext() {
 
             // then
             article.categoryId.shouldBeNull()
-            article._tags.size shouldBe 0
+            article.tags.size shouldBe 0
             article.memoRefId.shouldBeNull()
             article.status shouldBe Article.Status.DELETED
         }
@@ -447,8 +447,8 @@ class ArticleTests : SimpleUnitTestContext() {
             article.addTag(tag)
 
             // then
-            article._tags.size shouldBe 2
-            article._tags.first().tagId shouldBe tag.entityId
+            article.tags.size shouldBe 2
+            article.tags.first().id shouldBe tag.entityId
         }
 
         @Test
