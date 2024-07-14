@@ -2,12 +2,10 @@ package kr.co.jiniaslog.blog.domain.tag
 
 import jakarta.persistence.AttributeOverride
 import jakarta.persistence.Column
-import jakarta.persistence.ElementCollection
 import jakarta.persistence.EmbeddedId
 import jakarta.persistence.Entity
 import jakarta.persistence.PrePersist
 import jakarta.persistence.PreUpdate
-import kr.co.jiniaslog.blog.domain.article.Tagging
 import kr.co.jiniaslog.shared.core.domain.AggregateRoot
 import kr.co.jiniaslog.shared.core.domain.IdUtils
 import org.springframework.data.domain.Persistable
@@ -29,9 +27,6 @@ class Tag private constructor(
         name = "value",
     )
     val tagName: TagName = name
-
-    @ElementCollection
-    val tagging: MutableSet<Tagging> = mutableSetOf()
 
     @PreUpdate
     @PrePersist
