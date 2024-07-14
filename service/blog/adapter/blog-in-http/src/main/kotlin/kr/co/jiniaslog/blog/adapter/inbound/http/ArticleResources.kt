@@ -2,8 +2,10 @@ package kr.co.jiniaslog.blog.adapter.inbound.http
 
 import kr.co.jiniaslog.blog.domain.article.ArticleId
 import kr.co.jiniaslog.blog.domain.category.CategoryId
+import kr.co.jiniaslog.blog.domain.tag.TagName
 import kr.co.jiniaslog.blog.domain.user.UserId
 import kr.co.jiniaslog.blog.usecase.article.ArticleUseCasesFacade
+import kr.co.jiniaslog.blog.usecase.article.IAddAnyTagInArticle
 import kr.co.jiniaslog.blog.usecase.article.ICategorizeArticle
 import kr.co.jiniaslog.blog.usecase.article.IDeleteArticle
 import kr.co.jiniaslog.blog.usecase.article.IPublishArticle
@@ -16,6 +18,7 @@ import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.PutMapping
+import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import java.net.URI
@@ -72,5 +75,16 @@ class ArticleResources(private val articleFacade: ArticleUseCasesFacade) {
         val command = ICategorizeArticle.Command(ArticleId(articleId), CategoryId(categoryId))
         val info = articleFacade.handle(command)
         return ResponseEntity.ok(ArticleCategorizeResponse(info.articleId.value))
+    }
+
+    @PutMapping("/{articleId}/tag")
+    @PreAuthorize("hasRole('ADMIN')")
+    fun addTagToArticle(
+        @PathVariable articleId: Long,
+        @RequestBody request: AddTagToArticleRequest,
+    ): ResponseEntity<AddTagToArticleResponse> {
+        val command = IAddAnyTagInArticle.Command(TagName(request.tagName), ArticleId(articleId))
+        val info = articleFacade.handle(command)
+        return ResponseEntity.ok(AddTagToArticleResponse(info.articleId.value))
     }
 }

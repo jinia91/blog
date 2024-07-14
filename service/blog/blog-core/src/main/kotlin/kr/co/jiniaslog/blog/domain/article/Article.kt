@@ -9,6 +9,8 @@ import jakarta.persistence.Entity
 import kr.co.jiniaslog.blog.domain.category.Category
 import kr.co.jiniaslog.blog.domain.category.CategoryId
 import kr.co.jiniaslog.blog.domain.memo.MemoId
+import kr.co.jiniaslog.blog.domain.tag.Tag
+import kr.co.jiniaslog.blog.domain.tag.TagId
 import kr.co.jiniaslog.blog.domain.user.UserId
 import kr.co.jiniaslog.shared.core.domain.AggregateRoot
 import kr.co.jiniaslog.shared.core.domain.IdUtils
@@ -87,8 +89,10 @@ class Article internal constructor(
 
     @ElementCollection
     @Fetch(FetchMode.JOIN)
-    var tags: MutableSet<Tagging> = tags
-        private set
+    private var _tags: MutableSet<Tagging> = tags
+
+    val tags: Set<TagId>
+        get() = _tags.map { it.tagId }.toSet()
 
     /**
      *  초기화시 상태에 따라 게시글의 불변성(Invariant) 검증
@@ -147,7 +151,7 @@ class Article internal constructor(
     fun delete() {
         require(status != Status.DELETED) { "이미 삭제된 게시글입니다." }
         categoryId = null
-        tags.clear()
+        _tags.clear()
         memoRefId = null
         status = Status.DELETED
     }
@@ -197,6 +201,12 @@ class Article internal constructor(
 
             Status.DELETED -> throw IllegalStateException("삭제된 게시글은 수정할 수 없습니다.")
         }
+    }
+
+    fun addTag(tag: Tag) {
+        require(status != Status.DELETED) { "삭제된 게시글은 태그를 추가할 수 없습니다." }
+        val tagging = Tagging(tag.entityId)
+        _tags.add(tagging)
     }
 
     override fun getId(): ArticleId {
