@@ -19,3 +19,11 @@ data class AunDeleteArticleResponse(
 data class ArticleCategorizeResponse(
     val articleId: Long,
 )
+
+data class AddTagToArticleRequest(
+    val tagName: String,
+)
+
+data class AddTagToArticleResponse(
+    val articleId: Long,
+)
