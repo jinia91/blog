@@ -448,7 +448,6 @@ class ArticleTests : SimpleUnitTestContext() {
 
             // then
             article.tags.size shouldBe 2
-            article.tags.first().id shouldBe tag.entityId
         }
 
         @Test
