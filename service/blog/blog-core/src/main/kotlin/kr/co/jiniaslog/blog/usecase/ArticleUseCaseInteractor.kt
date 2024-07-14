@@ -2,11 +2,15 @@ package kr.co.jiniaslog.blog.usecase
 
 import kr.co.jiniaslog.blog.domain.article.Article
 import kr.co.jiniaslog.blog.domain.article.ArticleId
+import kr.co.jiniaslog.blog.domain.tag.QTag.tag
+import kr.co.jiniaslog.blog.domain.tag.Tag
 import kr.co.jiniaslog.blog.outbound.UserService
 import kr.co.jiniaslog.blog.outbound.persistence.ArticleRepository
 import kr.co.jiniaslog.blog.outbound.persistence.BlogTransactionHandler
 import kr.co.jiniaslog.blog.outbound.persistence.CategoryRepository
+import kr.co.jiniaslog.blog.outbound.persistence.TagRepository
 import kr.co.jiniaslog.blog.usecase.article.ArticleUseCasesFacade
+import kr.co.jiniaslog.blog.usecase.article.IAddAnyTagInArticle
 import kr.co.jiniaslog.blog.usecase.article.ICategorizeArticle
 import kr.co.jiniaslog.blog.usecase.article.IDeleteArticle
 import kr.co.jiniaslog.blog.usecase.article.IPublishArticle
@@ -21,6 +25,7 @@ class ArticleUseCaseInteractor(
     private val articleRepository: ArticleRepository,
     private val transactionHandler: BlogTransactionHandler,
     private val categoryRepository: CategoryRepository,
+    private val tagRepository: TagRepository
 ) : ArticleUseCasesFacade {
     override fun handle(command: IStartToWriteNewDraftArticle.Command): IStartToWriteNewDraftArticle.Info {
         command.validate()
@@ -91,6 +96,21 @@ class ArticleUseCaseInteractor(
         }
 
         return IUpdateArticleContents.Info(article.entityId)
+    }
+
+    override fun handle(command: IAddAnyTagInArticle.Command): IAddAnyTagInArticle.Info {
+        val tag = transactionHandler.runInRepeatableReadTransaction {
+            tagRepository.findByName(command.tagName)
+                ?: tagRepository.save(Tag.newOne(command.tagName))
+        }
+
+        val article = transactionHandler.runInRepeatableReadTransaction {
+            val article = getArticle(command.articleId)
+            article.addTag(tag)
+            articleRepository.save(article)
+        }
+
+        return IAddAnyTagInArticle.Info(article.entityId)
     }
 
     private fun getArticle(articleId: ArticleId) = articleRepository.findById(articleId)

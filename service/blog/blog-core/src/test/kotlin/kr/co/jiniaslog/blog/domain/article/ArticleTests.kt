@@ -7,7 +7,9 @@ import kr.co.jiniaslog.blog.domain.ArticleTestFixtures
 import kr.co.jiniaslog.blog.domain.category.Category
 import kr.co.jiniaslog.blog.domain.category.CategoryId
 import kr.co.jiniaslog.blog.domain.category.CategoryTitle
+import kr.co.jiniaslog.blog.domain.tag.Tag
 import kr.co.jiniaslog.blog.domain.tag.TagId
+import kr.co.jiniaslog.blog.domain.tag.TagName
 import kr.co.jiniaslog.blog.domain.user.UserId
 import kr.co.jiniaslog.shared.SimpleUnitTestContext
 import kr.co.jiniaslog.shared.core.domain.IdUtils
@@ -323,7 +325,7 @@ class ArticleTests : SimpleUnitTestContext() {
 
             // then
             article.categoryId.shouldBeNull()
-            article.tags.size shouldBe 0
+            article._tags.size shouldBe 0
             article.memoRefId.shouldBeNull()
             article.status shouldBe Article.Status.DELETED
         }
@@ -429,6 +431,35 @@ class ArticleTests : SimpleUnitTestContext() {
             // when, then
             shouldThrow<IllegalArgumentException> {
                 article.categorize(child)
+            }
+        }
+    }
+
+    @Nested
+    inner class `게시글 태그 추가 테스트`() {
+        @Test
+        fun `기존 게시글에 태그를 추가할 수 있다`() {
+            // given
+            val article = ArticleTestFixtures.createPublishedArticle()
+            val tag = Tag.newOne(TagName("tag"))
+
+            // when
+            article.addTag(tag)
+
+            // then
+            article._tags.size shouldBe 2
+            article._tags.first().tagId shouldBe tag.entityId
+        }
+
+        @Test
+        fun `삭제된 게시글은 태그를 추가할 수 없다`() {
+            // given
+            val article = ArticleTestFixtures.createDeletedArticle()
+            val tag = Tag.newOne(TagName("tag"))
+
+            // when, then
+            shouldThrow<IllegalArgumentException> {
+                article.addTag(tag)
             }
         }
     }
