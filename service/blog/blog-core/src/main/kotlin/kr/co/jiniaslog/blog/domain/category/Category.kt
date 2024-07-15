@@ -9,6 +9,11 @@ import jakarta.persistence.ManyToOne
 import jakarta.persistence.OneToMany
 import kr.co.jiniaslog.shared.core.domain.AggregateRoot
 
+/**
+ * 카테고리 어그리게이트 루트
+ *
+ * - 구현 편의상 부모 카테고리와 자식카테고리 2계층으로만 구현한다
+ */
 @Entity
 class Category(
     id: CategoryId,

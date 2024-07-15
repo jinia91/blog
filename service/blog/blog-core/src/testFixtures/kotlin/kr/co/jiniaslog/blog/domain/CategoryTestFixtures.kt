@@ -3,6 +3,7 @@ package kr.co.jiniaslog.blog.domain
 import kr.co.jiniaslog.blog.domain.category.Category
 import kr.co.jiniaslog.blog.domain.category.CategoryId
 import kr.co.jiniaslog.blog.domain.category.CategoryTitle
+import kr.co.jiniaslog.blog.domain.category.dto.CategoryDto
 import kr.co.jiniaslog.shared.core.domain.IdUtils
 import java.time.LocalDateTime
 
@@ -26,3 +27,11 @@ object CategoryTestFixtures {
         }
     }
 }
+
+fun Category.toDto(): CategoryDto = CategoryDto(
+    id = this.entityId,
+    title = this.categoryTitle,
+    parent = this.parent?.toDto(),
+    children = this.children.map { it.toDto() },
+    sortingPoint = this.sortingPoint
+)
