@@ -53,4 +53,15 @@ class Category(
     init {
         require(sortingPoint >= 0) { "sortingPoint는 0 이상이어야 합니다" }
     }
+
+    fun sync(
+        categoryTitle: CategoryTitle,
+        sortingPoint: Int,
+        parent: Category?
+    ) {
+        require(sortingPoint >= 0) { "sortingPoint는 0 이상이어야 합니다" }
+        this.categoryTitle = categoryTitle
+        this.sortingPoint = sortingPoint
+        this.parent = parent
+    }
 }
