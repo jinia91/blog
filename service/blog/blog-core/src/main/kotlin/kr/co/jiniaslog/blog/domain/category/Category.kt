@@ -19,7 +19,6 @@ class Category(
     id: CategoryId,
     categoryTitle: CategoryTitle,
     sortingPoint: Int,
-    parent: Category?
 ) : AggregateRoot<CategoryId>() {
     @EmbeddedId
     @AttributeOverride(
@@ -37,7 +36,7 @@ class Category(
 
     @ManyToOne
     @JoinColumn(name = "parent_id")
-    var parent: Category? = parent
+    var parent: Category? = null
         private set
 
     @OneToMany(mappedBy = "parent")
@@ -54,10 +53,15 @@ class Category(
         require(sortingPoint >= 0) { "sortingPoint는 0 이상이어야 합니다" }
     }
 
+    fun changeParent(parent: Category?) {
+        this.parent = parent
+        parent?.children?.add(this)
+    }
+
     fun sync(
         categoryTitle: CategoryTitle,
         sortingPoint: Int,
-        parent: Category?
+        parent: Category?,
     ) {
         require(sortingPoint >= 0) { "sortingPoint는 0 이상이어야 합니다" }
         this.categoryTitle = categoryTitle

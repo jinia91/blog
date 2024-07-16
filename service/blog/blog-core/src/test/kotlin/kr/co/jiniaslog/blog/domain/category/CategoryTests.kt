@@ -10,13 +10,11 @@ class CategoryTests {
         // given
         val categoryTitle = CategoryTitle("카테고리")
         val sortingPoint = 0
-        val parent = null
 
         // when
         val category = Category(
             categoryTitle = categoryTitle,
             sortingPoint = sortingPoint,
-            parent = parent,
             id = CategoryId(1)
         )
 
@@ -32,14 +30,12 @@ class CategoryTests {
         // given
         val categoryTitle = CategoryTitle("카테고리")
         val sortingPoint = -1
-        val parent = null
 
         // when, then
         shouldThrow<IllegalArgumentException> {
             Category(
                 categoryTitle = categoryTitle,
                 sortingPoint = sortingPoint,
-                parent = parent,
                 id = CategoryId(1)
             )
         }

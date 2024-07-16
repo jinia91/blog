@@ -22,7 +22,6 @@ import kr.co.jiniaslog.blog.domain.category.CategoryTitle
 data class CategoryDataHolder(
     val categoryId: CategoryId?,
     val categoryName: CategoryTitle,
-    val parent: CategoryDataHolder?,
     val children: List<CategoryDataHolder> = listOf(),
     val sortingPoint: Int,
 ) : Comparable<CategoryDataHolder> {

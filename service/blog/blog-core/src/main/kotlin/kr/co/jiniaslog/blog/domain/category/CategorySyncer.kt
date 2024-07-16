@@ -47,8 +47,9 @@ class CategorySyncer {
         id = this.categoryId ?: CategoryId.newOne(),
         categoryTitle = categoryName,
         sortingPoint = sortingPoint,
-        parent = parent
-    )
+    ).apply {
+        changeParent(parent)
+    }
 
     private fun Category.sync(
         parent: Category?,
