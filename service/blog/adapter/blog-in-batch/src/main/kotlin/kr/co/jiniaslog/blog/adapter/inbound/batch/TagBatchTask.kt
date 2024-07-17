@@ -2,7 +2,9 @@ package kr.co.jiniaslog.blog.adapter.inbound.batch
 
 import kr.co.jiniaslog.blog.usecase.tag.IDeleteUnUsedTags
 import org.springframework.scheduling.annotation.Scheduled
+import org.springframework.stereotype.Component
 
+@Component
 class TagBatchTask(
     private val deleteUnUsedTagsUseCase: IDeleteUnUsedTags
 ) {

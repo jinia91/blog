@@ -376,16 +376,16 @@ class ArticleTests : SimpleUnitTestContext() {
             val article = ArticleTestFixtures.createPublishedArticle()
             val parent = Category(
                 id = CategoryId(IdUtils.generate()),
-                parent = null,
                 categoryTitle = CategoryTitle("parent"),
                 sortingPoint = 0
             )
             val child = Category(
                 id = CategoryId(IdUtils.generate()),
                 categoryTitle = CategoryTitle("child"),
-                parent = parent,
                 sortingPoint = 0
-            )
+            ).apply {
+                changeParent(parent)
+            }
 
             // when
             article.categorize(child)
@@ -400,7 +400,6 @@ class ArticleTests : SimpleUnitTestContext() {
             val article = ArticleTestFixtures.createPublishedArticle()
             val parent = Category(
                 id = CategoryId(IdUtils.generate()),
-                parent = null,
                 categoryTitle = CategoryTitle("parent"),
                 sortingPoint = 0
             )
@@ -417,16 +416,16 @@ class ArticleTests : SimpleUnitTestContext() {
             val article = ArticleTestFixtures.createDeletedArticle()
             val parent = Category(
                 id = CategoryId(IdUtils.generate()),
-                parent = null,
                 categoryTitle = CategoryTitle("parent"),
                 sortingPoint = 0
             )
             val child = Category(
                 id = CategoryId(IdUtils.generate()),
                 categoryTitle = CategoryTitle("child"),
-                parent = parent,
                 sortingPoint = 0
-            )
+            ).apply {
+                changeParent(parent)
+            }
 
             // when, then
             shouldThrow<IllegalArgumentException> {
