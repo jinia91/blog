@@ -3,7 +3,9 @@ package kr.co.jiniaslog
 import com.ninjasquad.springmockk.MockkBean
 import io.restassured.module.mockmvc.RestAssuredMockMvc
 import kr.co.jiniaslog.blog.adapter.inbound.http.ArticleResources
+import kr.co.jiniaslog.blog.adapter.inbound.http.CategoryResources
 import kr.co.jiniaslog.blog.usecase.article.ArticleUseCasesFacade
+import kr.co.jiniaslog.blog.usecase.category.ISyncCategories
 import kr.co.jiniaslog.media.inbound.http.ImageResources
 import kr.co.jiniaslog.media.usecase.ImageUseCasesFacade
 import kr.co.jiniaslog.memo.adapter.inbound.http.FolderResources
@@ -52,7 +54,8 @@ class SecurityTestContextConfig {
         MemoResources::class,
         FolderResources::class,
         AuthUserResources::class,
-        ArticleResources::class
+        ArticleResources::class,
+        CategoryResources::class
     ]
 )
 @Import(value = [SecurityTestContextConfig::class, AccessTokenConfig::class, SecurityConfig::class])
@@ -83,6 +86,9 @@ abstract class RestTestAbstractSkeleton {
 
     @MockkBean
     protected lateinit var articleUseCasesFacade: ArticleUseCasesFacade
+
+    @MockkBean
+    protected lateinit var categoryUseCasesFacade: ISyncCategories
 
     @BeforeEach
     fun setup() {
