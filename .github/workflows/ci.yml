@@ -60,31 +60,19 @@ jobs:
               });
             }
 
+      - name: Install Pandoc
+        run: sudo apt-get install -y pandoc
+
+      - name: coverage report 생성
+        run: |
+          pandoc mains/monolith-main/build/reports/kover/html/index.html -f html -t gfm | \
+          sed -n '/# Jinias Log: 전체 커버리지 요약/,/## Coverage Breakdown/p' | \
+          grep -v '## Coverage Breakdown' >> $GITHUB_STEP_SUMMARY
+
       - name: kover coverage report
         uses: actions/github-script@v5
         with:
           script: |
-            const fs = require('fs');
-            const cheerio = require('cheerio');
-
-            const htmlContent = fs.readFileSync('mains/monolith-main/build/reports/kover/html/index', 'utf8');
-            const $ = cheerio.load(htmlContent);
-
-            let summary = "";
-            let capture = false;
-            $('h1, h2, p').each(function () {
-              const text = $(this).text();
-              if (text.includes('foo-bar-service: Overall Coverage Summary')) {
-                capture = true;
-              }
-              if (text.includes('Coverage Breakdown')) {
-                capture = false;
-              }
-              if (capture) {
-                summary += text + '\n';
-              }
-            });
-            
             const comments = await github.rest.issues.listComments({
               issue_number: context.issue.number,
               owner: context.repo.owner,
@@ -98,13 +86,13 @@ jobs:
                 owner: context.repo.owner,
                 repo: context.repo.repo,
                 comment_id: existingComment.id,
-                body: 'kover 커버리지 결과\n' + summary,
+                body: 'kover 커버리지 결과\n' + require('fs').readFileSync('$GITHUB_STEP_SUMMARY', 'utf8'),
               });
             } else {
               await github.rest.issues.createComment({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
                 issue_number: context.issue.number,
-                body: 'kover 커버리지 결과\n' + summary,
+                body: 'kover 커버리지 결과\n' + require('fs').readFileSync('$GITHUB_STEP_SUMMARY', 'utf8'),
               });
             }
