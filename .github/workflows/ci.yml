@@ -65,9 +65,9 @@ jobs:
 
       - name: coverage report 생성
         run: |
-          pandoc mains/monolith-main/build/reports/kover/html/index.html -f html -t gfm | \
-          sed -n '/# monolith-main: Overall Coverage Summary/,/# Coverage Breakdown/p' | \
-          grep -v '# Coverage Breakdown' >> $GITHUB_STEP_SUMMARY
+          pandoc mains/monolith-main/build/reports/kover/html/index.html -f html -t gfm -o output.md
+          CONTENT=$(sed -n '/# monolith-main: Overall Coverage Summary/,/# Coverage Breakdown/p' output.md | grep -v '# Coverage Breakdown')
+          echo "COVERAGE_SUMMARY=$CONTENT" >> $GITHUB_ENV
 
       - name: kover coverage report
         uses: actions/github-script@v5
@@ -86,13 +86,13 @@ jobs:
                 owner: context.repo.owner,
                 repo: context.repo.repo,
                 comment_id: existingComment.id,
-                body: 'kover 커버리지 결과\n' + require('fs').readFileSync('$GITHUB_STEP_SUMMARY', 'utf8'),
+                body: 'kover 커버리지 결과\n' + require('fs').readFileSync(env.COVERAGE_SUMMARY, 'utf8'),
               });
             } else {
               await github.rest.issues.createComment({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
                 issue_number: context.issue.number,
-                body: 'kover 커버리지 결과\n' + require('fs').readFileSync('$GITHUB_STEP_SUMMARY', 'utf8'),
+                body: 'kover 커버리지 결과\n' + require('fs').readFileSync(env.COVERAGE_SUMMARY, 'utf8'),
               });
             }
