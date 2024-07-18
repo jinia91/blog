@@ -28,3 +28,35 @@ jobs:
 
       - name: gradle 빌드
         run: ./gradlew build -Pprofile=ci
+
+      - name: detekt 정적 분석
+        run: ./gradlew detekt
+
+      - name: detekt 리포트
+        uses: actions/github-script@5
+        with:
+          script: |
+            // 기존 댓글이 존재한다면 업데이트
+            const comments = await github.rest.issues.listComments({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+            });
+            
+            const existingComment = comments.data.find(comment => comment.body.includes('Detekt 정적 분석 결과'));
+            
+            if (existingComment) {
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: existingComment.id,
+                body: 'Detekt 정적 분석 결과\n```' + require('fs').readFileSync('build/reports/detekt/detekt.md', 'utf8') + '```',
+              });
+            } else {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body: 'Detekt 정적 분석 결과\n```' + require('fs').readFileSync('build/reports/detekt/detekt.md', 'utf8') + '```',
+              });
+            }
