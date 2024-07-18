@@ -66,8 +66,8 @@ jobs:
       - name: coverage report 생성
         run: |
           pandoc mains/monolith-main/build/reports/kover/html/index.html -f html -t gfm | \
-          sed -n '/# Jinias Log: 전체 커버리지 요약/,/## Coverage Breakdown/p' | \
-          grep -v '## Coverage Breakdown' >> $GITHUB_STEP_SUMMARY
+          sed -n '/# monolith-main: Overall Coverage Summary/,/# Coverage Breakdown/p' | \
+          grep -v '# Coverage Breakdown' >> $GITHUB_STEP_SUMMARY
 
       - name: kover coverage report
         uses: actions/github-script@v5
