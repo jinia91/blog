@@ -50,13 +50,13 @@ jobs:
                 owner: context.repo.owner,
                 repo: context.repo.repo,
                 comment_id: existingComment.id,
-                body: 'Detekt 정적 분석 결과\n```' + require('fs').readFileSync('build/reports/detekt/detekt.md', 'utf8') + '```',
+                body: 'Detekt 정적 분석 결과\n' + require('fs').readFileSync('build/reports/detekt/detekt.md', 'utf8'),
               });
             } else {
               await github.rest.issues.createComment({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
                 issue_number: context.issue.number,
-                body: 'Detekt 정적 분석 결과\n```' + require('fs').readFileSync('build/reports/detekt/detekt.md', 'utf8') + '```',
+                body: 'Detekt 정적 분석 결과\n' + require('fs').readFileSync('build/reports/detekt/detekt.md', 'utf8'),
               });
             }
