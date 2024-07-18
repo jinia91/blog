@@ -33,7 +33,7 @@ jobs:
         run: ./gradlew detekt
 
       - name: detekt 리포트
-        uses: actions/github-script@5
+        uses: actions/github-script@v5
         with:
           script: |
             // 기존 댓글이 존재한다면 업데이트
