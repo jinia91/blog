@@ -63,16 +63,20 @@ jobs:
       - name: Install Pandoc
         run: sudo apt-get install -y pandoc
 
-      - name: coverage report 생성
+      - name: kover 커버리지 리포트 변환
         run: |
           pandoc mains/monolith-main/build/reports/kover/html/index.html -f html -t gfm -o output.md
-          CONTENT=$(sed -n '/# monolith-main: Overall Coverage Summary/,/# Coverage Breakdown/p' output.md | grep -v '# Coverage Breakdown')
-          echo "COVERAGE_SUMMARY=$CONTENT" >> $GITHUB_ENV
+          sed -n '/# monolith-main: Overall Coverage Summary/,/# Coverage Breakdown/p' output.md | grep -v '# Coverage Breakdown' > coverage-summary.md
+          echo "COVERAGE_SUMMARY_PATH=$(pwd)/coverage-summary.md" >> $GITHUB_ENV
 
       - name: kover coverage report
         uses: actions/github-script@v5
         with:
           script: |
+            const fs = require('fs');
+            const path = process.env.COVERAGE_SUMMARY_PATH;
+            const coverageData = fs.readFileSync(path, 'utf8');
+            
             const comments = await github.rest.issues.listComments({
               issue_number: context.issue.number,
               owner: context.repo.owner,
@@ -86,13 +90,13 @@ jobs:
                 owner: context.repo.owner,
                 repo: context.repo.repo,
                 comment_id: existingComment.id,
-                body: 'kover 커버리지 결과\n' + require('fs').readFileSync(env.COVERAGE_SUMMARY, 'utf8'),
+                body: 'kover 커버리지 결과\n' + coverageData,
               });
             } else {
               await github.rest.issues.createComment({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
                 issue_number: context.issue.number,
-                body: 'kover 커버리지 결과\n' + require('fs').readFileSync(env.COVERAGE_SUMMARY, 'utf8'),
+                body: 'kover 커버리지 결과\n' + coverageData,
               });
             }
