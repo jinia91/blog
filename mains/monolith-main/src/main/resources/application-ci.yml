@@ -1,0 +1,50 @@
+decorator:
+  datasource:
+    p6spy:
+      enable-logging: true
+
+spring:
+  h2:
+    console:
+      enabled: false
+      path: /h2-console
+  datasource:
+    user:
+      driver-class-name: org.h2.Driver
+      jdbc-url: jdbc:h2:mem:jiniaslog_user
+      username: sa
+      password:
+    blog:
+      driver-class-name: org.h2.Driver
+      jdbc-url: jdbc:h2:file:./h2/jiniaslog_blog
+      username: sa
+      password:
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: update
+  neo4j:
+    uri: bolt://localhost:7687
+    authentication:
+      username: neo4j
+      password: password
+
+api:
+  github:
+    gitToken: test-token
+    git-repo: test-repo
+    root-url: http://loclahost:7778
+
+jwt:
+  secret-key: JiniaslogLocalJwtSecretKey1234567890
+  token-valid-duration: 3600000
+  refresh-token-valid-duration: 604800000
+
+oauth:
+  google:
+    client-id: test-client-id
+    client-secret: test-client-secret
+    redirect-url: http://localhost:3000/login/oauth2/code/google
+    token-url: http://localhost:7780/oauth2/token
+    user-info-url: http://localhost:7780/oauth2/v3/userinfo
+
