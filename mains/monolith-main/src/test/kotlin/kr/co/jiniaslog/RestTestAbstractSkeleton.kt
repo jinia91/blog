@@ -7,7 +7,7 @@ import kr.co.jiniaslog.blog.adapter.inbound.http.CategoryResources
 import kr.co.jiniaslog.blog.usecase.article.ArticleUseCasesFacade
 import kr.co.jiniaslog.blog.usecase.category.ISyncCategories
 import kr.co.jiniaslog.media.inbound.http.ImageResources
-import kr.co.jiniaslog.media.usecase.ImageUseCasesFacade
+import kr.co.jiniaslog.media.usecase.image.ImageUseCasesFacade
 import kr.co.jiniaslog.memo.adapter.inbound.http.FolderResources
 import kr.co.jiniaslog.memo.adapter.inbound.http.MemoResources
 import kr.co.jiniaslog.memo.queries.FolderQueriesFacade

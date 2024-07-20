@@ -3,8 +3,8 @@ package kr.co.jiniaslog.memo.rest
 import io.mockk.every
 import io.restassured.module.mockmvc.RestAssuredMockMvc
 import kr.co.jiniaslog.RestTestAbstractSkeleton
-import kr.co.jiniaslog.memo.adapter.inbound.http.viewmodel.AddParentFolderRequest
-import kr.co.jiniaslog.memo.adapter.inbound.http.viewmodel.InitMemoRequest
+import kr.co.jiniaslog.memo.adapter.inbound.http.dto.AddParentFolderRequest
+import kr.co.jiniaslog.memo.adapter.inbound.http.dto.InitMemoRequest
 import kr.co.jiniaslog.memo.domain.folder.FolderId
 import kr.co.jiniaslog.memo.domain.memo.MemoContent
 import kr.co.jiniaslog.memo.domain.memo.MemoId

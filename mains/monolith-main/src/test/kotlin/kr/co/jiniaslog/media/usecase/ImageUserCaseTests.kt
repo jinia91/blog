@@ -6,6 +6,8 @@ import kr.co.jiniaslog.TestContainerAbstractSkeleton
 import kr.co.jiniaslog.media.domain.ImageUrl
 import kr.co.jiniaslog.media.domain.RawImage
 import kr.co.jiniaslog.media.outbound.ImageUploader
+import kr.co.jiniaslog.media.usecase.image.IUploadImage
+import kr.co.jiniaslog.media.usecase.image.ImageUseCasesFacade
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 

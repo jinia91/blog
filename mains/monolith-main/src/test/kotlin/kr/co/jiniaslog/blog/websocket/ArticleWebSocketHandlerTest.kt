@@ -4,8 +4,8 @@ import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.shouldBeTypeOf
 import io.mockk.every
 import kr.co.jiniaslog.WebSocketTestAbstractSkeleton
-import kr.co.jiniaslog.blog.adapter.inbound.websocket.UpdateArticlePayload
-import kr.co.jiniaslog.blog.adapter.inbound.websocket.UpdateArticleResponse
+import kr.co.jiniaslog.blog.adapter.inbound.websocket.payload.UpdateArticlePayload
+import kr.co.jiniaslog.blog.adapter.inbound.websocket.payload.UpdateArticleResponse
 import kr.co.jiniaslog.blog.domain.article.ArticleId
 import kr.co.jiniaslog.blog.usecase.article.IUpdateArticleContents
 import org.junit.jupiter.api.AfterEach

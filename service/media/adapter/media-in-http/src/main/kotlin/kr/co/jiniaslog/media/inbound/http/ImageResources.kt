@@ -1,6 +1,8 @@
 package kr.co.jiniaslog.media.inbound.http
 
-import kr.co.jiniaslog.media.usecase.ImageUseCasesFacade
+import kr.co.jiniaslog.media.inbound.http.dto.UploadImageRequest
+import kr.co.jiniaslog.media.inbound.http.dto.UploadImageResponse
+import kr.co.jiniaslog.media.usecase.image.ImageUseCasesFacade
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.CrossOrigin
@@ -18,10 +20,10 @@ class ImageResources(
 ) {
     @PostMapping()
     @CrossOrigin(origins = ["http://localhost:3000"])
-    fun uploadImage(@ModelAttribute request: ImgUploadRequest): ResponseEntity<ImgUploadResponse> {
+    fun uploadImage(@ModelAttribute request: UploadImageRequest): ResponseEntity<UploadImageResponse> {
         val command = request.toCommand()
         val info = imageUseCases.uploadImage(command)
         return ResponseEntity.created(URI.create(info.url.value))
-            .body(ImgUploadResponse(info.url.value))
+            .body(UploadImageResponse(info.url.value))
     }
 }

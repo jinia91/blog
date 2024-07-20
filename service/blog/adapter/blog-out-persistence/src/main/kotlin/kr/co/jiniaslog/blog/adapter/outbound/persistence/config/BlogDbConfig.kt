@@ -1,4 +1,4 @@
-package kr.co.jiniaslog.blog.adapter.outbound.persistence
+package kr.co.jiniaslog.blog.adapter.outbound.persistence.config
 
 import jakarta.persistence.EntityManagerFactory
 import kr.co.jiniaslog.shared.adapter.out.rdb.JpaAutoDdlProperty

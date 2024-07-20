@@ -16,7 +16,7 @@ spring:
       password:
     blog:
       driver-class-name: org.h2.Driver
-      jdbc-url: jdbc:h2:file:./h2/jiniaslog_blog
+      jdbc-url: jdbc:h2:mem:jiniaslog_blog
       username: sa
       password:
   jpa:

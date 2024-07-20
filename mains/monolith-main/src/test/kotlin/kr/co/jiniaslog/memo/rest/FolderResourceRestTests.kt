@@ -4,7 +4,7 @@ import io.mockk.every
 import io.mockk.mockk
 import io.restassured.module.mockmvc.RestAssuredMockMvc
 import kr.co.jiniaslog.RestTestAbstractSkeleton
-import kr.co.jiniaslog.memo.adapter.inbound.http.ChangeFolderNameRequest
+import kr.co.jiniaslog.memo.adapter.inbound.http.dto.ChangeFolderNameRequest
 import kr.co.jiniaslog.memo.domain.folder.FolderId
 import kr.co.jiniaslog.memo.domain.folder.FolderName
 import kr.co.jiniaslog.memo.queries.IGetFoldersAllInHierirchy

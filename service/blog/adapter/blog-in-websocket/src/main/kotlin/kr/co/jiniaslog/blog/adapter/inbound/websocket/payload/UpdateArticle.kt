@@ -1,4 +1,4 @@
-package kr.co.jiniaslog.blog.adapter.inbound.websocket
+package kr.co.jiniaslog.blog.adapter.inbound.websocket.payload
 
 import com.fasterxml.jackson.annotation.JsonCreator
 import com.fasterxml.jackson.annotation.JsonProperty

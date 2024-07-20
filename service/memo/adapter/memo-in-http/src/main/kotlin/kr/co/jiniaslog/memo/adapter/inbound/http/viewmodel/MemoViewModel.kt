@@ -7,11 +7,3 @@ data class MemoViewModel(
     val title: String,
     val content: String,
 )
-
-data class InitMemoRequest(
-    val parentFolderId: Long?,
-)
-
-data class InitMemoResponse(
-    val memoId: Long,
-)
