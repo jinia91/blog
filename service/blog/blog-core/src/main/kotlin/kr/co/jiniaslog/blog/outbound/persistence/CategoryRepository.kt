@@ -1,9 +1,8 @@
 package kr.co.jiniaslog.blog.outbound.persistence
 
-import com.querydsl.jpa.impl.JPAQueryFactory
+import jakarta.persistence.EntityManager
 import kr.co.jiniaslog.blog.domain.category.Category
 import kr.co.jiniaslog.blog.domain.category.CategoryId
-import kr.co.jiniaslog.blog.domain.category.QCategory.category
 import kr.co.jiniaslog.shared.core.domain.Repository
 import org.springframework.data.jpa.repository.JpaRepository
 
@@ -12,7 +11,7 @@ interface CategoryRepository : Repository<Category, CategoryId> {
 
     fun deleteAll(list: List<Category>)
 
-    fun saveAll(list: List<Category>): List<Category>
+    fun saveAll(list: List<Category>)
 }
 
 interface CategoryJpaRepository : JpaRepository<Category, CategoryId>
@@ -20,7 +19,7 @@ interface CategoryJpaRepository : JpaRepository<Category, CategoryId>
 @org.springframework.stereotype.Repository
 class CategoryRepositoryAdapter(
     private val categoryJpaRepository: CategoryJpaRepository,
-    private val jpaQueryFactory: JPAQueryFactory
+    private val entityManager: EntityManager
 ) : CategoryRepository {
     override fun save(entity: Category): Category {
         return categoryJpaRepository.save(entity)
@@ -31,14 +30,14 @@ class CategoryRepositoryAdapter(
     }
 
     override fun deleteAll(list: List<Category>) {
-//        return categoryJpaRepository.deleteAll(list)
-        list.forEach {
-            deleteById(it.entityId)
-        }
+        return categoryJpaRepository.deleteAll(list)
     }
 
-    override fun saveAll(list: List<Category>): List<Category> {
-        return categoryJpaRepository.saveAll(list)
+    override fun saveAll(list: List<Category>) {
+        // persistable isNew의 동작 문제로 연관관계 매핑된 객체 저장시 cascade 만 이용하여 저장하도록 조절
+        // 최상위 부모만 저장하고 나머지는 cascade로 저장토록 한다
+        val target = list.filter { it.parent == null }
+        categoryJpaRepository.saveAll(target)
     }
 
     override fun findById(id: CategoryId): Category? {
@@ -46,9 +45,6 @@ class CategoryRepositoryAdapter(
     }
 
     override fun deleteById(id: CategoryId) {
-//        categoryJpaRepository.deleteById(id)
-        jpaQueryFactory.delete(category)
-            .where(category.entityId.eq(id))
-            .execute()
+        categoryJpaRepository.deleteById(id)
     }
 }

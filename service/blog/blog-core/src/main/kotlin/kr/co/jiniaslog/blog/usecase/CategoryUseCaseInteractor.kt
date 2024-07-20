@@ -19,7 +19,8 @@ class CategoryUseCaseInteractor(
                 asIs = asIsCategories,
                 toBe = command.toBeSyncCategories
             )
-            categoryRepository.saveAll(result.toBeUpsert)
+            categoryRepository.saveAll(result.toBeInsert)
+            categoryRepository.saveAll(result.toBeUpdate)
             categoryRepository.deleteAll(result.toBeDelete)
         }
         return ISyncCategories.Info()

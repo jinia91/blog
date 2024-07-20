@@ -2,6 +2,7 @@ package kr.co.jiniaslog.blog.usecase
 
 import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
+import jakarta.persistence.EntityManager
 import kr.co.jiniaslog.TestContainerAbstractSkeleton
 import kr.co.jiniaslog.blog.domain.category.Category
 import kr.co.jiniaslog.blog.domain.category.CategoryId
@@ -25,10 +26,15 @@ class ISyncCategoriesUseCaseTests : TestContainerAbstractSkeleton() {
     @Autowired
     private lateinit var transactionHandler: BlogTransactionHandler
 
+    @Autowired
+    private lateinit var em: EntityManager
+
     @Test
     fun `기존 카테고리가 존재하고 새로운 카테고리가 추가되면 동기화가 이루어진다`() {
         // given
-        val (parent1, parent2) = asIsPersistedCategories()
+        val (parent1, parent2) = transactionHandler.run {
+            asIsPersistedCategories()
+        }
 
         val parent1Vo = parent1.toDto()
         var parent2Vo = parent2.toDto()
@@ -236,5 +242,64 @@ class ISyncCategoriesUseCaseTests : TestContainerAbstractSkeleton() {
             )
         categoryRepository.save(parent2)
         return Pair(parent1, parent2)
+    }
+
+    @Test
+    fun `새로운 카테고리들이 연관관계를 가지고 있어도 정상 저장된다`() {
+        // given
+        val parent1 = CategoryDataHolder(
+            categoryId = null,
+            categoryName = CategoryTitle("parent1"),
+            sortingPoint = 0,
+            children = listOf(
+                CategoryDataHolder(
+                    categoryId = null,
+                    categoryName = CategoryTitle("child1"),
+                    sortingPoint = 1,
+                    children = listOf(
+                        CategoryDataHolder(
+                            categoryId = null,
+                            categoryName = CategoryTitle("child2"),
+                            sortingPoint = 2,
+                        )
+                    )
+                )
+            )
+        )
+
+        val parent2 = CategoryDataHolder(
+            categoryId = null,
+            categoryName = CategoryTitle("parent2"),
+            sortingPoint = 0,
+            children = listOf(
+                CategoryDataHolder(
+                    categoryId = null,
+                    categoryName = CategoryTitle("child1"),
+                    sortingPoint = 1,
+                    children = listOf(
+                        CategoryDataHolder(
+                            categoryId = null,
+                            categoryName = CategoryTitle("child2"),
+                            sortingPoint = 2,
+                        )
+                    )
+                )
+            )
+        )
+
+        // when
+        sut.handle(
+            ISyncCategories.Command(
+                listOf(
+                    parent1,
+                    parent2,
+                )
+            )
+        )
+
+        // then
+        em.clear()
+        val all = categoryRepository.findAll()
+        all.size shouldBe 6
     }
 }

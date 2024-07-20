@@ -6,15 +6,14 @@ import jakarta.persistence.EmbeddedId
 import jakarta.persistence.Entity
 import jakarta.persistence.PrePersist
 import jakarta.persistence.PreUpdate
-import kr.co.jiniaslog.shared.core.domain.AggregateRoot
+import kr.co.jiniaslog.shared.adapter.out.rdb.JpaAggregate
 import kr.co.jiniaslog.shared.core.domain.IdUtils
-import org.springframework.data.domain.Persistable
 
 @Entity
 class Tag private constructor(
     id: TagId,
     name: TagName,
-) : AggregateRoot<TagId>(), Persistable<TagId> {
+) : JpaAggregate<TagId>() {
     @EmbeddedId
     @AttributeOverride(
         column = Column(name = "tag_id"),
@@ -36,13 +35,5 @@ class Tag private constructor(
         fun newOne(name: TagName): Tag {
             return Tag(TagId(IdUtils.generate()), name)
         }
-    }
-
-    override fun getId(): TagId {
-        return entityId
-    }
-
-    override fun isNew(): Boolean {
-        return isPersisted.not()
     }
 }

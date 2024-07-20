@@ -1,6 +1,7 @@
 package kr.co.jiniaslog.blog.domain.user
 
 import io.kotest.assertions.throwables.shouldThrow
+import kr.co.jiniaslog.blog.domain.UserId
 import org.junit.jupiter.api.Test
 
 class UserVoFragmentsTests {

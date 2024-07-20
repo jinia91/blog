@@ -7,9 +7,9 @@ import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import jakarta.persistence.EntityManager
 import kr.co.jiniaslog.TestContainerAbstractSkeleton
+import kr.co.jiniaslog.blog.domain.UserId
 import kr.co.jiniaslog.blog.domain.article.Article
 import kr.co.jiniaslog.blog.domain.article.ArticleContents
-import kr.co.jiniaslog.blog.domain.user.UserId
 import kr.co.jiniaslog.blog.outbound.persistence.ArticleRepository
 import kr.co.jiniaslog.blog.outbound.persistence.BlogTransactionHandler
 import kr.co.jiniaslog.blog.usecase.article.IStartToWriteNewDraftArticle

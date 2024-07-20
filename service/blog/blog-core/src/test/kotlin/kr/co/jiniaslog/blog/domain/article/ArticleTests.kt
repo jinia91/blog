@@ -4,13 +4,13 @@ import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.nulls.shouldBeNull
 import io.kotest.matchers.shouldBe
 import kr.co.jiniaslog.blog.domain.ArticleTestFixtures
+import kr.co.jiniaslog.blog.domain.UserId
 import kr.co.jiniaslog.blog.domain.category.Category
 import kr.co.jiniaslog.blog.domain.category.CategoryId
 import kr.co.jiniaslog.blog.domain.category.CategoryTitle
 import kr.co.jiniaslog.blog.domain.tag.Tag
 import kr.co.jiniaslog.blog.domain.tag.TagId
 import kr.co.jiniaslog.blog.domain.tag.TagName
-import kr.co.jiniaslog.blog.domain.user.UserId
 import kr.co.jiniaslog.shared.SimpleUnitTestContext
 import kr.co.jiniaslog.shared.core.domain.IdUtils
 import org.junit.jupiter.api.Nested

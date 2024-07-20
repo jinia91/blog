@@ -64,8 +64,10 @@ class CategorySyncerTest : SimpleUnitTestContext() {
 
         // then
         result.toBeDelete.isEmpty() shouldBe true
-        result.toBeUpsert.isNotEmpty() shouldBe true
-        result.toBeUpsert.size shouldBe 5
+        result.toBeInsert.isNotEmpty() shouldBe true
+        result.toBeInsert.size shouldBe 1
+        result.toBeUpdate.isNotEmpty() shouldBe true
+        result.toBeUpdate.size shouldBe 4
     }
 
     @Test
@@ -146,8 +148,11 @@ class CategorySyncerTest : SimpleUnitTestContext() {
 
         // then
         result.toBeDelete.isEmpty() shouldBe true
-        result.toBeUpsert.isNotEmpty() shouldBe true
-        result.toBeUpsert.size shouldBe 6
+        result.toBeUpdate.isNotEmpty() shouldBe true
+        result.toBeInsert.isNotEmpty() shouldBe true
+
+        result.toBeInsert.size shouldBe 2
+        result.toBeUpdate.size shouldBe 4
     }
 
     @Test
@@ -229,9 +234,12 @@ class CategorySyncerTest : SimpleUnitTestContext() {
 
         // then
         result.toBeDelete.isEmpty() shouldBe true
-        result.toBeUpsert.isNotEmpty() shouldBe true
-        result.toBeUpsert.size shouldBe 6
-        result.toBeUpsert.first { it.entityId == parent2.entityId }.categoryTitle.value shouldBe "수정"
+        result.toBeUpdate.isNotEmpty() shouldBe true
+        result.toBeUpdate.size shouldBe 4
+        result.toBeUpdate.first { it.entityId == parent2.entityId }.categoryTitle.value shouldBe "수정"
+
+        result.toBeInsert.isNotEmpty() shouldBe true
+        result.toBeInsert.size shouldBe 2
     }
 
     @Test
@@ -312,9 +320,11 @@ class CategorySyncerTest : SimpleUnitTestContext() {
 
         // then
         result.toBeDelete.isNotEmpty() shouldBe true
-        result.toBeUpsert.isNotEmpty() shouldBe true
         result.toBeDelete.size shouldBe 3
-        result.toBeUpsert.size shouldBe 3
-        result.toBeUpsert.first { it.entityId == parent2.entityId }.categoryTitle.value shouldBe "수정"
+        result.toBeUpdate.isNotEmpty() shouldBe true
+        result.toBeUpdate.size shouldBe 1
+        result.toBeInsert.isNotEmpty() shouldBe true
+        result.toBeInsert.size shouldBe 2
+        result.toBeUpdate.first { it.entityId == parent2.entityId }.categoryTitle.value shouldBe "수정"
     }
 }

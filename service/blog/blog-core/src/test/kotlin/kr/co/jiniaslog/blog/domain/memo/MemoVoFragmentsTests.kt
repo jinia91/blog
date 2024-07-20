@@ -1,6 +1,7 @@
 package kr.co.jiniaslog.blog.domain.memo
 
 import io.kotest.assertions.throwables.shouldThrow
+import kr.co.jiniaslog.blog.domain.MemoId
 import org.junit.jupiter.api.Test
 
 class MemoVoFragmentsTests {

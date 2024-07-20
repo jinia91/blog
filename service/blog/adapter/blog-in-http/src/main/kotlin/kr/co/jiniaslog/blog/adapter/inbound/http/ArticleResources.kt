@@ -1,9 +1,9 @@
 package kr.co.jiniaslog.blog.adapter.inbound.http
 
+import kr.co.jiniaslog.blog.domain.UserId
 import kr.co.jiniaslog.blog.domain.article.ArticleId
 import kr.co.jiniaslog.blog.domain.category.CategoryId
 import kr.co.jiniaslog.blog.domain.tag.TagName
-import kr.co.jiniaslog.blog.domain.user.UserId
 import kr.co.jiniaslog.blog.usecase.article.ArticleUseCasesFacade
 import kr.co.jiniaslog.blog.usecase.article.IAddAnyTagInArticle
 import kr.co.jiniaslog.blog.usecase.article.ICategorizeArticle
