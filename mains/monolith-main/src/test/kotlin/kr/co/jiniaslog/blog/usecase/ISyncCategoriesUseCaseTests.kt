@@ -245,153 +245,57 @@ class ISyncCategoriesUseCaseTests : TestContainerAbstractSkeleton() {
     }
 
     @Test
-    fun `새로 생성되는 카테고리들이 연관관계를 가지고 있을때 정상 저장이 된다`() {
+    fun `새로운 카테고리들이 연관관계를 가지고 있어도 정상 저장된다`() {
         // given
-        val parent1 = Category(
-            CategoryId(IdUtils.generate()),
-            CategoryTitle("parent1"),
-            0,
+        val parent1 = CategoryDataHolder(
+            categoryId = null,
+            categoryName = CategoryTitle("parent1"),
+            sortingPoint = 0,
+            children = listOf(
+                CategoryDataHolder(
+                    categoryId = null,
+                    categoryName = CategoryTitle("child1"),
+                    sortingPoint = 1,
+                    children = listOf(
+                        CategoryDataHolder(
+                            categoryId = null,
+                            categoryName = CategoryTitle("child2"),
+                            sortingPoint = 2,
+                        )
+                    )
+                )
+            )
         )
 
-        val child1OfParent1 = Category(
-            CategoryId(IdUtils.generate()),
-            CategoryTitle("child1"),
-            1,
-        ).apply {
-            changeParent(parent1)
-        }
-
-        val child2OfParent1 = Category(
-            CategoryId(IdUtils.generate()),
-            CategoryTitle("child2"),
-            1,
-        ).apply {
-            changeParent(parent1)
-        }
-
-        val parent2 = Category(
-            CategoryId(IdUtils.generate()),
-            CategoryTitle("parent2"),
-            0,
+        val parent2 = CategoryDataHolder(
+            categoryId = null,
+            categoryName = CategoryTitle("parent2"),
+            sortingPoint = 0,
+            children = listOf(
+                CategoryDataHolder(
+                    categoryId = null,
+                    categoryName = CategoryTitle("child1"),
+                    sortingPoint = 1,
+                    children = listOf(
+                        CategoryDataHolder(
+                            categoryId = null,
+                            categoryName = CategoryTitle("child2"),
+                            sortingPoint = 2,
+                        )
+                    )
+                )
+            )
         )
-
-        val child1OfParent2 = Category(
-            CategoryId(IdUtils.generate()),
-            CategoryTitle("child1"),
-            1,
-        ).apply {
-            changeParent(parent2)
-        }
-
-        val child2OfParent2 = Category(
-            CategoryId(IdUtils.generate()),
-            CategoryTitle("child2"),
-            1,
-        ).apply {
-            changeParent(parent2)
-        }
-
-        val parent3 = Category(
-            CategoryId(IdUtils.generate()),
-            CategoryTitle("parent3"),
-            0,
-        )
-
-        val child1OfParent3 = Category(
-            CategoryId(IdUtils.generate()),
-            CategoryTitle("child1"),
-            1,
-        ).apply {
-            changeParent(parent3)
-        }
-
-        val child2OfParent3 = Category(
-            CategoryId(IdUtils.generate()),
-            CategoryTitle("child2"),
-            1,
-        ).apply {
-            changeParent(parent3)
-        }
-
-        val asIsList = listOf(
-            parent1,
-            child1OfParent1,
-            child2OfParent1,
-            parent2,
-            child1OfParent2,
-            child2OfParent2,
-            parent3,
-            child1OfParent3,
-            child2OfParent3,
-        ).map { it.toDto() }
 
         // when
-        sut.handle(ISyncCategories.Command(asIsList))
-
-        // then
-        em.clear()
-        val result = categoryRepository.findAll()
-        result.size shouldBe 9
-    }
-
-    @Test
-    fun `카테고리의 뎁스가 깊어져도 정상 저장된다`() {
-        // given
-        val parent1 = Category(
-            CategoryId(IdUtils.generate()),
-            CategoryTitle("parent1"),
-            0,
+        sut.handle(
+            ISyncCategories.Command(
+                listOf(
+                    parent1,
+                    parent2,
+                )
+            )
         )
-
-        val child1OfParent1 = Category(
-            CategoryId(IdUtils.generate()),
-            CategoryTitle("child1"),
-            1,
-        ).apply {
-            changeParent(parent1)
-        }
-
-        val child1OfC1P1 = Category(
-            CategoryId(IdUtils.generate()),
-            CategoryTitle("child2"),
-            1,
-        ).apply {
-            changeParent(child1OfParent1)
-        }
-
-        val parent2 = Category(
-            CategoryId(IdUtils.generate()),
-            CategoryTitle("parent2"),
-            0,
-        )
-
-        val child1OfParent2 = Category(
-            CategoryId(IdUtils.generate()),
-            CategoryTitle("child1"),
-            1,
-        ).apply {
-            changeParent(parent2)
-        }
-
-        val child2OC1P2 = Category(
-            CategoryId(IdUtils.generate()),
-            CategoryTitle("child2"),
-            1,
-        ).apply {
-            changeParent(child1OfParent2)
-        }
-
-        val asIsList = listOf(
-            parent1,
-            child1OfParent1,
-            child1OfC1P1,
-            parent2,
-            child1OfParent2,
-            child2OC1P2,
-        ).map { it.toDto() }
-
-        // when
-        sut.handle(ISyncCategories.Command(asIsList))
 
         // then
         em.clear()
