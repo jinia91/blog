@@ -18,7 +18,7 @@ internal class MemoTests : CustomBehaviorSpec() {
                     sutMemo.authorId shouldBe authorId
                 }
                 Then("persist 되지 않은상태여야한다") {
-                    sutMemo.isPersisted shouldBe false
+                    sutMemo.createdAt shouldBe null
                 }
             }
         }
