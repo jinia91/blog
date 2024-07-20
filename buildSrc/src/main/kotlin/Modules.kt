@@ -36,6 +36,7 @@ object Modules {
                 InWebsocket(":service:blog:adapter:blog-in-websocket"),
                 OutUser(":service:blog:adapter:blog-out-user"),
                 OutMemo(":service:blog:adapter:blog-out-memo"),
+                OutPersistence(":service:blog:adapter:blog-out-persistence")
             }
         }
 

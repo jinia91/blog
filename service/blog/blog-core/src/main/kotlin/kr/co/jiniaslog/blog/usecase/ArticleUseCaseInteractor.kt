@@ -2,13 +2,12 @@ package kr.co.jiniaslog.blog.usecase
 
 import kr.co.jiniaslog.blog.domain.article.Article
 import kr.co.jiniaslog.blog.domain.article.ArticleId
-import kr.co.jiniaslog.blog.domain.tag.QTag.tag
 import kr.co.jiniaslog.blog.domain.tag.Tag
+import kr.co.jiniaslog.blog.outbound.ArticleRepository
+import kr.co.jiniaslog.blog.outbound.BlogTransactionHandler
+import kr.co.jiniaslog.blog.outbound.CategoryRepository
+import kr.co.jiniaslog.blog.outbound.TagRepository
 import kr.co.jiniaslog.blog.outbound.UserService
-import kr.co.jiniaslog.blog.outbound.persistence.ArticleRepository
-import kr.co.jiniaslog.blog.outbound.persistence.BlogTransactionHandler
-import kr.co.jiniaslog.blog.outbound.persistence.CategoryRepository
-import kr.co.jiniaslog.blog.outbound.persistence.TagRepository
 import kr.co.jiniaslog.blog.usecase.article.ArticleUseCasesFacade
 import kr.co.jiniaslog.blog.usecase.article.IAddAnyTagInArticle
 import kr.co.jiniaslog.blog.usecase.article.ICategorizeArticle

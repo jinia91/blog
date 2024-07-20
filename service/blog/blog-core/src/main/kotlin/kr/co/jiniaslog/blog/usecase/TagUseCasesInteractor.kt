@@ -1,8 +1,8 @@
 package kr.co.jiniaslog.blog.usecase
 
 import kr.co.jiniaslog.blog.domain.tag.dto.TagDto
-import kr.co.jiniaslog.blog.outbound.persistence.BlogTransactionHandler
-import kr.co.jiniaslog.blog.outbound.persistence.TagRepository
+import kr.co.jiniaslog.blog.outbound.BlogTransactionHandler
+import kr.co.jiniaslog.blog.outbound.TagRepository
 import kr.co.jiniaslog.blog.usecase.tag.IDeleteUnUsedTags
 import kr.co.jiniaslog.shared.core.annotation.UseCaseInteractor
 

@@ -1,4 +1,4 @@
-package kr.co.jiniaslog.blog.outbound.persistence
+package kr.co.jiniaslog.blog.adapter.outbound.persistence
 
 import com.querydsl.jpa.impl.JPAQueryFactory
 import jakarta.persistence.EntityManager

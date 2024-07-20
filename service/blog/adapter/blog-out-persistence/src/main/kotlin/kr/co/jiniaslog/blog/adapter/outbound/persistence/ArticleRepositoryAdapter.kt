@@ -1,11 +1,9 @@
-package kr.co.jiniaslog.blog.outbound.persistence
+package kr.co.jiniaslog.blog.adapter.outbound.persistence
 
 import kr.co.jiniaslog.blog.domain.article.Article
 import kr.co.jiniaslog.blog.domain.article.ArticleId
-import kr.co.jiniaslog.shared.core.domain.Repository
+import kr.co.jiniaslog.blog.outbound.ArticleRepository
 import org.springframework.data.jpa.repository.JpaRepository
-
-interface ArticleRepository : Repository<Article, ArticleId>
 
 interface ArticleJpaRepository : JpaRepository<Article, ArticleId>
 

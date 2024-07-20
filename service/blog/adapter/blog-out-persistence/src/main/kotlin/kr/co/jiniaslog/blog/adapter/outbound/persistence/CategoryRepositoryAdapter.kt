@@ -1,25 +1,15 @@
-package kr.co.jiniaslog.blog.outbound.persistence
+package kr.co.jiniaslog.blog.adapter.outbound.persistence
 
-import jakarta.persistence.EntityManager
 import kr.co.jiniaslog.blog.domain.category.Category
 import kr.co.jiniaslog.blog.domain.category.CategoryId
-import kr.co.jiniaslog.shared.core.domain.Repository
+import kr.co.jiniaslog.blog.outbound.CategoryRepository
 import org.springframework.data.jpa.repository.JpaRepository
-
-interface CategoryRepository : Repository<Category, CategoryId> {
-    fun findAll(): List<Category>
-
-    fun deleteAll(list: List<Category>)
-
-    fun saveAll(list: List<Category>)
-}
 
 interface CategoryJpaRepository : JpaRepository<Category, CategoryId>
 
 @org.springframework.stereotype.Repository
 class CategoryRepositoryAdapter(
     private val categoryJpaRepository: CategoryJpaRepository,
-    private val entityManager: EntityManager
 ) : CategoryRepository {
     override fun save(entity: Category): Category {
         return categoryJpaRepository.save(entity)

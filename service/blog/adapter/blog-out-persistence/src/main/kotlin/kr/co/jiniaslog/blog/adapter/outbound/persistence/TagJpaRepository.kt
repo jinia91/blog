@@ -1,4 +1,4 @@
-package kr.co.jiniaslog.blog.outbound.persistence
+package kr.co.jiniaslog.blog.adapter.outbound.persistence
 
 import com.querydsl.jpa.JPAExpressions
 import com.querydsl.jpa.impl.JPAQueryFactory
@@ -8,17 +8,11 @@ import kr.co.jiniaslog.blog.domain.tag.QTag.tag
 import kr.co.jiniaslog.blog.domain.tag.Tag
 import kr.co.jiniaslog.blog.domain.tag.TagId
 import kr.co.jiniaslog.blog.domain.tag.TagName
-import kr.co.jiniaslog.shared.core.domain.Repository
+import kr.co.jiniaslog.blog.outbound.TagRepository
 import org.springframework.data.jpa.repository.JpaRepository
 
 interface TagJpaRepository : JpaRepository<Tag, TagId> {
     fun findByTagName(tagName: TagName): Tag?
-}
-
-interface TagRepository : Repository<Tag, TagId> {
-    fun findByName(tagName: TagName): Tag?
-
-    fun findUnUsedTags(): List<Tag>
 }
 
 @org.springframework.stereotype.Repository
