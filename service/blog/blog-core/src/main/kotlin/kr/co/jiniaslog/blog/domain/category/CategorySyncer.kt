@@ -1,5 +1,6 @@
 package kr.co.jiniaslog.blog.domain.category
 
+import kr.co.jiniaslog.blog.domain.category.QCategory.category
 import kr.co.jiniaslog.blog.domain.category.dto.CategoryDataHolder
 import kr.co.jiniaslog.shared.core.annotation.DomainService
 
@@ -20,19 +21,28 @@ class CategorySyncer {
         toBe: List<CategoryDataHolder>,
     ): SyncResult {
         val asIsMap = asIs.associateBy { it.entityId }
-        val toBeUpsert = toBe.extractToBeUpsert(asIsMap)
-        val toBeDelete = extractToBeDeleted(asIsMap, toBeUpsert.associateBy { it.entityId })
-        return SyncResult(toBeDelete, toBeUpsert)
+        val (toBeInsert, toBeUpdate) = toBe.extractToBeUpsert(asIsMap)
+        val toBeDelete = extractToBeDeleted(asIsMap, (toBeInsert + toBeUpdate).associateBy { it.entityId })
+        return SyncResult(
+            toBeInsert = toBeInsert,
+            toBeUpdate = toBeUpdate,
+            toBeDelete = toBeDelete
+        )
     }
 
-    private fun List<CategoryDataHolder>.extractToBeUpsert(asIsMap: Map<CategoryId, Category>): List<Category> {
-        val result = mutableListOf<Category>()
+    private fun List<CategoryDataHolder>.extractToBeUpsert(asIsMap: Map<CategoryId, Category>): Pair<MutableList<Category>, MutableList<Category>> {
+        val toBeUpdate = mutableListOf<Category>()
+        val toBeInsert = mutableListOf<Category>()
 
         fun refineAndTransformRecursively(categoryDto: CategoryDataHolder, parent: Category?) {
             val category = asIsMap[categoryDto.categoryId]?.also {
                 it.sync(parent, categoryDto)
-            } ?: categoryDto.toDomainEntity(parent)
-            result.add(category)
+                toBeUpdate.add(it)
+            } ?: let {
+                val newOne = categoryDto.toNewDomain(parent)
+                toBeInsert.add(newOne)
+                newOne
+            }
             categoryDto.children.sortedBy { it.sortingPoint }
                 .forEach { refineAndTransformRecursively(it, category) }
         }
@@ -40,10 +50,10 @@ class CategorySyncer {
         this.sortedBy { it.sortingPoint }
             .forEach { refineAndTransformRecursively(it, null) }
 
-        return result
+        return Pair(toBeInsert, toBeUpdate)
     }
 
-    private fun CategoryDataHolder.toDomainEntity(parent: Category?): Category = Category(
+    private fun CategoryDataHolder.toNewDomain(parent: Category?): Category = Category(
         id = this.categoryId ?: CategoryId.newOne(),
         categoryTitle = categoryName,
         sortingPoint = sortingPoint,
@@ -74,6 +84,7 @@ class CategorySyncer {
 }
 
 data class SyncResult(
+    val toBeInsert: List<Category>,
+    val toBeUpdate: List<Category>,
     val toBeDelete: List<Category>,
-    val toBeUpsert: List<Category>,
 )

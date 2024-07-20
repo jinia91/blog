@@ -5,9 +5,7 @@ import kr.co.jiniaslog.blog.domain.article.ArticleContents
 import kr.co.jiniaslog.blog.domain.article.ArticleId
 import kr.co.jiniaslog.blog.domain.article.Tagging
 import kr.co.jiniaslog.blog.domain.category.CategoryId
-import kr.co.jiniaslog.blog.domain.memo.MemoId
 import kr.co.jiniaslog.blog.domain.tag.TagId
-import kr.co.jiniaslog.blog.domain.user.UserId
 import kr.co.jiniaslog.shared.core.domain.IdUtils
 import java.time.LocalDateTime
 

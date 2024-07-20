@@ -1,9 +1,7 @@
 package kr.co.jiniaslog.blog.outbound.persistence
 
-import com.querydsl.jpa.impl.JPAQueryFactory
 import kr.co.jiniaslog.blog.domain.category.Category
 import kr.co.jiniaslog.blog.domain.category.CategoryId
-import kr.co.jiniaslog.blog.domain.category.QCategory.category
 import kr.co.jiniaslog.shared.core.domain.Repository
 import org.springframework.data.jpa.repository.JpaRepository
 
@@ -19,8 +17,7 @@ interface CategoryJpaRepository : JpaRepository<Category, CategoryId>
 
 @org.springframework.stereotype.Repository
 class CategoryRepositoryAdapter(
-    private val categoryJpaRepository: CategoryJpaRepository,
-    private val jpaQueryFactory: JPAQueryFactory
+    private val categoryJpaRepository: CategoryJpaRepository
 ) : CategoryRepository {
     override fun save(entity: Category): Category {
         return categoryJpaRepository.save(entity)
@@ -31,10 +28,7 @@ class CategoryRepositoryAdapter(
     }
 
     override fun deleteAll(list: List<Category>) {
-//        return categoryJpaRepository.deleteAll(list)
-        list.forEach {
-            deleteById(it.entityId)
-        }
+        return categoryJpaRepository.deleteAll(list)
     }
 
     override fun saveAll(list: List<Category>): List<Category> {
@@ -46,9 +40,6 @@ class CategoryRepositoryAdapter(
     }
 
     override fun deleteById(id: CategoryId) {
-//        categoryJpaRepository.deleteById(id)
-        jpaQueryFactory.delete(category)
-            .where(category.entityId.eq(id))
-            .execute()
+        categoryJpaRepository.deleteById(id)
     }
 }

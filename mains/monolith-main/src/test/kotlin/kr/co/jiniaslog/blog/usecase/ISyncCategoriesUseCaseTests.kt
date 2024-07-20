@@ -28,7 +28,9 @@ class ISyncCategoriesUseCaseTests : TestContainerAbstractSkeleton() {
     @Test
     fun `기존 카테고리가 존재하고 새로운 카테고리가 추가되면 동기화가 이루어진다`() {
         // given
-        val (parent1, parent2) = asIsPersistedCategories()
+        val (parent1, parent2) = transactionHandler.run {
+            asIsPersistedCategories()
+        }
 
         val parent1Vo = parent1.toDto()
         var parent2Vo = parent2.toDto()

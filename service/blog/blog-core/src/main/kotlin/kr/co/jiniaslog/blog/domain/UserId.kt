@@ -1,4 +1,4 @@
-package kr.co.jiniaslog.blog.domain.user
+package kr.co.jiniaslog.blog.domain
 
 import jakarta.persistence.Embeddable
 import kr.co.jiniaslog.shared.core.domain.vo.ValueObject

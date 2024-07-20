@@ -6,17 +6,16 @@ import jakarta.persistence.Column
 import jakarta.persistence.ElementCollection
 import jakarta.persistence.EmbeddedId
 import jakarta.persistence.Entity
+import kr.co.jiniaslog.blog.domain.MemoId
+import kr.co.jiniaslog.blog.domain.UserId
 import kr.co.jiniaslog.blog.domain.category.Category
 import kr.co.jiniaslog.blog.domain.category.CategoryId
-import kr.co.jiniaslog.blog.domain.memo.MemoId
 import kr.co.jiniaslog.blog.domain.tag.Tag
 import kr.co.jiniaslog.blog.domain.tag.TagId
-import kr.co.jiniaslog.blog.domain.user.UserId
-import kr.co.jiniaslog.shared.core.domain.AggregateRoot
+import kr.co.jiniaslog.shared.adapter.out.rdb.JpaAggregate
 import kr.co.jiniaslog.shared.core.domain.IdUtils
 import org.hibernate.annotations.Fetch
 import org.hibernate.annotations.FetchMode
-import org.springframework.data.domain.Persistable
 
 /**
  * 블로그 게시글
@@ -46,7 +45,7 @@ class Article internal constructor(
     tags: MutableSet<Tagging>,
     categoryId: CategoryId?,
     hit: Int,
-) : AggregateRoot<ArticleId>(), Persistable<ArticleId> {
+) : JpaAggregate<ArticleId>() {
 
     /**
      * 게시글 상태
@@ -57,13 +56,13 @@ class Article internal constructor(
     enum class Status { DRAFT, PUBLISHED, DELETED }
 
     @EmbeddedId
-    @AttributeOverride(column = Column(name = "article_id"), name = "value")
+    @AttributeOverride(column = Column(name = "id"), name = "value")
     override val entityId: ArticleId = id
 
     @AttributeOverride(column = Column(name = "author_id"), name = "value")
     val authorId: UserId = authorId
 
-    @Column(name = "article_status")
+    @Column(name = "status")
     var status: Status = status
         private set
 
@@ -207,14 +206,6 @@ class Article internal constructor(
         require(status != Status.DELETED) { "삭제된 게시글은 태그를 추가할 수 없습니다." }
         val tagging = Tagging(tag.entityId)
         _tags.add(tagging)
-    }
-
-    override fun getId(): ArticleId {
-        return entityId
-    }
-
-    override fun isNew(): Boolean {
-        return isPersisted.not()
     }
 
     companion object {
