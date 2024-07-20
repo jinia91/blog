@@ -2,6 +2,7 @@ package kr.co.jiniaslog.blog.usecase
 
 import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
+import jakarta.persistence.EntityManager
 import kr.co.jiniaslog.TestContainerAbstractSkeleton
 import kr.co.jiniaslog.blog.domain.category.Category
 import kr.co.jiniaslog.blog.domain.category.CategoryId
@@ -24,6 +25,9 @@ class ISyncCategoriesUseCaseTests : TestContainerAbstractSkeleton() {
 
     @Autowired
     private lateinit var transactionHandler: BlogTransactionHandler
+
+    @Autowired
+    private lateinit var em: EntityManager
 
     @Test
     fun `기존 카테고리가 존재하고 새로운 카테고리가 추가되면 동기화가 이루어진다`() {
@@ -238,5 +242,160 @@ class ISyncCategoriesUseCaseTests : TestContainerAbstractSkeleton() {
             )
         categoryRepository.save(parent2)
         return Pair(parent1, parent2)
+    }
+
+    @Test
+    fun `새로 생성되는 카테고리들이 연관관계를 가지고 있을때 정상 저장이 된다`() {
+        // given
+        val parent1 = Category(
+            CategoryId(IdUtils.generate()),
+            CategoryTitle("parent1"),
+            0,
+        )
+
+        val child1OfParent1 = Category(
+            CategoryId(IdUtils.generate()),
+            CategoryTitle("child1"),
+            1,
+        ).apply {
+            changeParent(parent1)
+        }
+
+        val child2OfParent1 = Category(
+            CategoryId(IdUtils.generate()),
+            CategoryTitle("child2"),
+            1,
+        ).apply {
+            changeParent(parent1)
+        }
+
+        val parent2 = Category(
+            CategoryId(IdUtils.generate()),
+            CategoryTitle("parent2"),
+            0,
+        )
+
+        val child1OfParent2 = Category(
+            CategoryId(IdUtils.generate()),
+            CategoryTitle("child1"),
+            1,
+        ).apply {
+            changeParent(parent2)
+        }
+
+        val child2OfParent2 = Category(
+            CategoryId(IdUtils.generate()),
+            CategoryTitle("child2"),
+            1,
+        ).apply {
+            changeParent(parent2)
+        }
+
+        val parent3 = Category(
+            CategoryId(IdUtils.generate()),
+            CategoryTitle("parent3"),
+            0,
+        )
+
+        val child1OfParent3 = Category(
+            CategoryId(IdUtils.generate()),
+            CategoryTitle("child1"),
+            1,
+        ).apply {
+            changeParent(parent3)
+        }
+
+        val child2OfParent3 = Category(
+            CategoryId(IdUtils.generate()),
+            CategoryTitle("child2"),
+            1,
+        ).apply {
+            changeParent(parent3)
+        }
+
+        val asIsList = listOf(
+            parent1,
+            child1OfParent1,
+            child2OfParent1,
+            parent2,
+            child1OfParent2,
+            child2OfParent2,
+            parent3,
+            child1OfParent3,
+            child2OfParent3,
+        ).map { it.toDto() }
+
+        // when
+        sut.handle(ISyncCategories.Command(asIsList))
+
+        // then
+        em.clear()
+        val result = categoryRepository.findAll()
+        result.size shouldBe 9
+    }
+
+    @Test
+    fun `카테고리의 뎁스가 깊어져도 정상 저장된다`() {
+        // given
+        val parent1 = Category(
+            CategoryId(IdUtils.generate()),
+            CategoryTitle("parent1"),
+            0,
+        )
+
+        val child1OfParent1 = Category(
+            CategoryId(IdUtils.generate()),
+            CategoryTitle("child1"),
+            1,
+        ).apply {
+            changeParent(parent1)
+        }
+
+        val child1OfC1P1 = Category(
+            CategoryId(IdUtils.generate()),
+            CategoryTitle("child2"),
+            1,
+        ).apply {
+            changeParent(child1OfParent1)
+        }
+
+        val parent2 = Category(
+            CategoryId(IdUtils.generate()),
+            CategoryTitle("parent2"),
+            0,
+        )
+
+        val child1OfParent2 = Category(
+            CategoryId(IdUtils.generate()),
+            CategoryTitle("child1"),
+            1,
+        ).apply {
+            changeParent(parent2)
+        }
+
+        val child2OC1P2 = Category(
+            CategoryId(IdUtils.generate()),
+            CategoryTitle("child2"),
+            1,
+        ).apply {
+            changeParent(child1OfParent2)
+        }
+
+        val asIsList = listOf(
+            parent1,
+            child1OfParent1,
+            child1OfC1P1,
+            parent2,
+            child1OfParent2,
+            child2OC1P2,
+        ).map { it.toDto() }
+
+        // when
+        sut.handle(ISyncCategories.Command(asIsList))
+
+        // then
+        em.clear()
+        val all = categoryRepository.findAll()
+        all.size shouldBe 6
     }
 }

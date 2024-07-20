@@ -1,6 +1,7 @@
 package kr.co.jiniaslog.blog.domain.category
 
 import jakarta.persistence.AttributeOverride
+import jakarta.persistence.CascadeType
 import jakarta.persistence.Column
 import jakarta.persistence.EmbeddedId
 import jakarta.persistence.Entity
@@ -40,7 +41,7 @@ class Category(
     var parent: Category? = null
         private set
 
-    @OneToMany(mappedBy = "parent", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "parent", fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
     var children: MutableList<Category> = mutableListOf()
         private set
 
