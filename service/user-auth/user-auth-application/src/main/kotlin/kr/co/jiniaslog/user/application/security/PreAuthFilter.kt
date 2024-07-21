@@ -19,6 +19,10 @@ class PreAuthFilter(
         setAuthenticationManager(ProviderManager(authenticationProvider))
     }
 
+    fun retrieveAuthPrincipal(request: HttpServletRequest): UserPrincipal? {
+        return getPreAuthenticatedPrincipal(request) as UserPrincipal?
+    }
+
     override fun getPreAuthenticatedPrincipal(httpServletRequest: HttpServletRequest): Any? {
         val token = resolveAccessToken(httpServletRequest)
         if (!isValidTokenFormat(token)) {
