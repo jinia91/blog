@@ -1,15 +1,13 @@
 package kr.co.jiniaslog.memo.adapter.inbound.http.dto
 
-import kr.co.jiniaslog.memo.adapter.inbound.http.viewmodel.FolderViewModel
-import kr.co.jiniaslog.memo.adapter.inbound.http.viewmodel.toVm
 import kr.co.jiniaslog.memo.queries.IGetFoldersAllInHierirchy
 
 data class GetFolderAndMemoResponse(
-    val folderInfos: List<FolderViewModel>,
+    val folderInfos: List<IGetFoldersAllInHierirchy.FolderInfo>,
 )
 
 fun IGetFoldersAllInHierirchy.Info.toResponse(): GetFolderAndMemoResponse {
     return GetFolderAndMemoResponse(
-        folderInfos = this.folderInfos.map { it.toVm() }
+        folderInfos = this.folderInfos,
     )
 }
