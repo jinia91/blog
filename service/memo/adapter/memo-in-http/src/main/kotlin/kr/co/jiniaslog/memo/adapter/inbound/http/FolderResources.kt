@@ -5,6 +5,7 @@ import kr.co.jiniaslog.memo.adapter.inbound.http.dto.ChangeFolderNameResponse
 import kr.co.jiniaslog.memo.adapter.inbound.http.dto.CreateNewFolderResponse
 import kr.co.jiniaslog.memo.adapter.inbound.http.dto.DeleteFolderResponse
 import kr.co.jiniaslog.memo.adapter.inbound.http.dto.GetFolderAndMemoResponse
+import kr.co.jiniaslog.memo.adapter.inbound.http.dto.MakeFolderRelationshipRequest
 import kr.co.jiniaslog.memo.adapter.inbound.http.dto.MakeFolderRelationshipResponse
 import kr.co.jiniaslog.memo.adapter.inbound.http.dto.toResponse
 import kr.co.jiniaslog.memo.adapter.inbound.http.viewmodel.FolderViewModel
@@ -69,16 +70,17 @@ class FolderResources(
         return ResponseEntity.ok(ChangeFolderNameResponse(info.folderId.value))
     }
 
-    @PutMapping("/{folderId}/parent/{parentFolderId}")
+    @PutMapping("/{folderId}/parent")
     @CrossOrigin(origins = ["http://localhost:3000"])
     fun makeRelationshipWithFolders(
         @PathVariable folderId: Long,
-        @PathVariable parentFolderId: Long?,
+        @RequestBody request: MakeFolderRelationshipRequest,
     ): ResponseEntity<MakeFolderRelationshipResponse> {
+        val parentId = request.parentId?.let { FolderId(request.parentId) }
         val info =
             folderUseCases.handle(
                 IMakeRelationShipFolderAndFolder.Command(
-                    parentFolderId?.let { FolderId(parentFolderId) },
+                    parentId,
                     FolderId(folderId),
                 ),
             )

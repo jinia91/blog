@@ -5,10 +5,10 @@ import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import io.mockk.every
 import kr.co.jiniaslog.WebSocketTestAbstractSkeleton
-import kr.co.jiniaslog.memo.adapter.inbound.websocket.UpdateMemoPayload
-import kr.co.jiniaslog.memo.adapter.inbound.websocket.UpdateMemoResponse
-import kr.co.jiniaslog.memo.adapter.inbound.websocket.UpdateReferencesPayload
-import kr.co.jiniaslog.memo.adapter.inbound.websocket.UpdateReferencesResponse
+import kr.co.jiniaslog.memo.adapter.inbound.websocket.payload.UpdateMemoPayload
+import kr.co.jiniaslog.memo.adapter.inbound.websocket.payload.UpdateMemoResponse
+import kr.co.jiniaslog.memo.adapter.inbound.websocket.payload.UpdateReferencesPayload
+import kr.co.jiniaslog.memo.adapter.inbound.websocket.payload.UpdateReferencesResponse
 import kr.co.jiniaslog.memo.domain.memo.MemoId
 import kr.co.jiniaslog.memo.usecase.IUpdateMemoContents
 import kr.co.jiniaslog.memo.usecase.IUpdateMemoReferences
