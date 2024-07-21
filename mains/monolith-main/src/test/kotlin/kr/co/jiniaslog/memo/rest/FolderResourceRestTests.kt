@@ -5,6 +5,7 @@ import io.mockk.mockk
 import io.restassured.module.mockmvc.RestAssuredMockMvc
 import kr.co.jiniaslog.RestTestAbstractSkeleton
 import kr.co.jiniaslog.memo.adapter.inbound.http.dto.ChangeFolderNameRequest
+import kr.co.jiniaslog.memo.adapter.inbound.http.dto.MakeFolderRelationshipRequest
 import kr.co.jiniaslog.memo.domain.folder.FolderId
 import kr.co.jiniaslog.memo.domain.folder.FolderName
 import kr.co.jiniaslog.memo.queries.IGetFoldersAllInHierirchy
@@ -188,7 +189,9 @@ class FolderResourceRestTests : RestTestAbstractSkeleton() {
             // when, then
             RestAssuredMockMvc.given()
                 .cookies(PreAuthFilter.ACCESS_TOKEN_HEADER, getTestAdminUserToken())
-                .put("/api/v1/folders/1/parent/2")
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(MakeFolderRelationshipRequest(2))
+                .put("/api/v1/folders/1/parent")
                 .then()
                 .statusCode(200)
         }
