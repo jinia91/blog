@@ -12,4 +12,5 @@ dependencies {
     implementation(project(Modules.Service.Memo.Application.path))
     implementation(project(Modules.Libs.CoreKernel.path))
     implementation(project(Modules.Libs.WebsocketKernel.path))
+    implementation("org.springframework.security:spring-security-messaging")
 }
