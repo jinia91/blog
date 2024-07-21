@@ -7,6 +7,7 @@ import kr.co.jiniaslog.memo.adapter.inbound.http.dto.DeleteFolderResponse
 import kr.co.jiniaslog.memo.adapter.inbound.http.dto.GetFolderAndMemoResponse
 import kr.co.jiniaslog.memo.adapter.inbound.http.dto.MakeFolderRelationshipResponse
 import kr.co.jiniaslog.memo.adapter.inbound.http.dto.toResponse
+import kr.co.jiniaslog.memo.adapter.inbound.http.viewmodel.FolderViewModel
 import kr.co.jiniaslog.memo.domain.folder.FolderId
 import kr.co.jiniaslog.memo.domain.memo.AuthorId
 import kr.co.jiniaslog.memo.queries.FolderQueriesFacade
@@ -45,7 +46,17 @@ class FolderResources(
             folderUseCases.handle(ICreateNewFolder.Command(AuthorId(userId!!)))
         return ResponseEntity.created(
             java.net.URI("/api/v1/folders/${info.id.value}"),
-        ).body(CreateNewFolderResponse(info.id.value, info.folderName.value))
+        ).body(
+            CreateNewFolderResponse(
+                FolderViewModel(
+                    id = info.id.value,
+                    name = info.folderName.value,
+                    parent = null,
+                    children = mutableListOf(),
+                    memos = mutableListOf()
+                )
+            )
+        )
     }
 
     @PutMapping("/{folderId}/name")

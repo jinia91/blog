@@ -75,6 +75,18 @@ class FolderResourceRestTests : RestTestAbstractSkeleton() {
                 .post("/api/v1/folders")
                 .then()
                 .statusCode(201)
+                .body(
+                    "folder",
+                    equalTo(
+                        mapOf(
+                            "id" to 1,
+                            "name" to "name",
+                            "parent" to null,
+                            "children" to emptyList<Any>(),
+                            "memos" to emptyList<Any>()
+                        )
+                    )
+                )
         }
 
         @Test
