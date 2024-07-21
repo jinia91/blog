@@ -3,7 +3,7 @@ package kr.co.jiniaslog.blog.rest
 import io.mockk.every
 import io.restassured.module.mockmvc.RestAssuredMockMvc
 import kr.co.jiniaslog.RestTestAbstractSkeleton
-import kr.co.jiniaslog.blog.adapter.inbound.http.AddTagToArticleRequest
+import kr.co.jiniaslog.blog.adapter.inbound.http.dto.AddTagToArticleRequest
 import kr.co.jiniaslog.blog.domain.article.ArticleId
 import kr.co.jiniaslog.blog.usecase.article.IAddAnyTagInArticle
 import kr.co.jiniaslog.blog.usecase.article.ICategorizeArticle

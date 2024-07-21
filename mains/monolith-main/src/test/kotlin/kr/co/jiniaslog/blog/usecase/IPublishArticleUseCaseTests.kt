@@ -8,7 +8,7 @@ import kr.co.jiniaslog.TestContainerAbstractSkeleton
 import kr.co.jiniaslog.blog.domain.ArticleTestFixtures
 import kr.co.jiniaslog.blog.domain.article.Article
 import kr.co.jiniaslog.blog.domain.article.ArticleId
-import kr.co.jiniaslog.blog.outbound.persistence.ArticleRepository
+import kr.co.jiniaslog.blog.outbound.ArticleRepository
 import kr.co.jiniaslog.blog.usecase.article.IPublishArticle
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired

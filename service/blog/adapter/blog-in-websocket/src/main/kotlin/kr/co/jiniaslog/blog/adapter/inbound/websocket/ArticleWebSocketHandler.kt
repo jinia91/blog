@@ -1,6 +1,8 @@
 package kr.co.jiniaslog.blog.adapter.inbound.websocket
 
 import jakarta.validation.Valid
+import kr.co.jiniaslog.blog.adapter.inbound.websocket.payload.UpdateArticlePayload
+import kr.co.jiniaslog.blog.adapter.inbound.websocket.payload.UpdateArticleResponse
 import kr.co.jiniaslog.blog.usecase.article.ArticleUseCasesFacade
 import kr.co.jiniaslog.blog.usecase.article.IUpdateArticleContents
 import org.springframework.messaging.handler.annotation.MessageMapping

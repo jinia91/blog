@@ -1,13 +1,14 @@
 package kr.co.jiniaslog.memo.adapter.inbound.http
 
-import kr.co.jiniaslog.memo.adapter.inbound.http.viewmodel.AddParentFolderRequest
-import kr.co.jiniaslog.memo.adapter.inbound.http.viewmodel.GetAllReferencedByMemoResponse
-import kr.co.jiniaslog.memo.adapter.inbound.http.viewmodel.GetAllReferencesByMemoResponse
-import kr.co.jiniaslog.memo.adapter.inbound.http.viewmodel.GetMemoByIdResponse
-import kr.co.jiniaslog.memo.adapter.inbound.http.viewmodel.InitMemoRequest
-import kr.co.jiniaslog.memo.adapter.inbound.http.viewmodel.InitMemoResponse
-import kr.co.jiniaslog.memo.adapter.inbound.http.viewmodel.RecommendRelatedMemoResponse
-import kr.co.jiniaslog.memo.adapter.inbound.http.viewmodel.toResponse
+import kr.co.jiniaslog.memo.adapter.inbound.http.dto.AddParentFolderRequest
+import kr.co.jiniaslog.memo.adapter.inbound.http.dto.AddParentFolderResponse
+import kr.co.jiniaslog.memo.adapter.inbound.http.dto.CreateEmptyMemoResponse
+import kr.co.jiniaslog.memo.adapter.inbound.http.dto.GetAllReferencedByMemoResponse
+import kr.co.jiniaslog.memo.adapter.inbound.http.dto.GetAllReferencesByMemoResponse
+import kr.co.jiniaslog.memo.adapter.inbound.http.dto.GetMemoByIdResponse
+import kr.co.jiniaslog.memo.adapter.inbound.http.dto.InitMemoRequest
+import kr.co.jiniaslog.memo.adapter.inbound.http.dto.RecommendRelatedMemoResponse
+import kr.co.jiniaslog.memo.adapter.inbound.http.dto.toResponse
 import kr.co.jiniaslog.memo.domain.folder.FolderId
 import kr.co.jiniaslog.memo.domain.memo.AuthorId
 import kr.co.jiniaslog.memo.domain.memo.MemoId
@@ -45,7 +46,7 @@ class MemoResources(
     fun createEmptyMemo(
         @AuthUserId userId: Long?,
         @RequestBody request: InitMemoRequest,
-    ): ResponseEntity<InitMemoResponse> {
+    ): ResponseEntity<CreateEmptyMemoResponse> {
         val command = IInitMemo.Command(
             authorId = AuthorId(userId!!),
             parentFolderId = request.parentFolderId?.let { FolderId(it) },
@@ -53,7 +54,7 @@ class MemoResources(
         val info = memoUseCases.handle(command)
         return ResponseEntity
             .created(URI("/api/v1/memos/${info.id.value}"))
-            .body(InitMemoResponse(info.id.value))
+            .body(CreateEmptyMemoResponse(info.id.value))
     }
 
     @DeleteMapping("/{id}")

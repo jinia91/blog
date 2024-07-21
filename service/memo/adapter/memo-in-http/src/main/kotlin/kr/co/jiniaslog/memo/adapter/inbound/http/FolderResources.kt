@@ -1,5 +1,14 @@
 package kr.co.jiniaslog.memo.adapter.inbound.http
 
+import kr.co.jiniaslog.memo.adapter.inbound.http.dto.ChangeFolderNameRequest
+import kr.co.jiniaslog.memo.adapter.inbound.http.dto.ChangeFolderNameResponse
+import kr.co.jiniaslog.memo.adapter.inbound.http.dto.CreateNewFolderResponse
+import kr.co.jiniaslog.memo.adapter.inbound.http.dto.DeleteFolderResponse
+import kr.co.jiniaslog.memo.adapter.inbound.http.dto.GetFolderAndMemoResponse
+import kr.co.jiniaslog.memo.adapter.inbound.http.dto.MakeFolderRelationshipRequest
+import kr.co.jiniaslog.memo.adapter.inbound.http.dto.MakeFolderRelationshipResponse
+import kr.co.jiniaslog.memo.adapter.inbound.http.dto.toResponse
+import kr.co.jiniaslog.memo.adapter.inbound.http.viewmodel.FolderViewModel
 import kr.co.jiniaslog.memo.domain.folder.FolderId
 import kr.co.jiniaslog.memo.domain.memo.AuthorId
 import kr.co.jiniaslog.memo.queries.FolderQueriesFacade
@@ -33,12 +42,22 @@ class FolderResources(
     @CrossOrigin(origins = ["http://localhost:3000"])
     fun createNewFolder(
         @AuthUserId userId: Long?,
-    ): ResponseEntity<InitFolderResponse> {
+    ): ResponseEntity<CreateNewFolderResponse> {
         val info =
             folderUseCases.handle(ICreateNewFolder.Command(AuthorId(userId!!)))
         return ResponseEntity.created(
             java.net.URI("/api/v1/folders/${info.id.value}"),
-        ).body(InitFolderResponse(info.id.value, info.folderName.value))
+        ).body(
+            CreateNewFolderResponse(
+                FolderViewModel(
+                    id = info.id.value,
+                    name = info.folderName.value,
+                    parent = null,
+                    children = mutableListOf(),
+                    memos = mutableListOf()
+                )
+            )
+        )
     }
 
     @PutMapping("/{folderId}/name")
@@ -51,16 +70,17 @@ class FolderResources(
         return ResponseEntity.ok(ChangeFolderNameResponse(info.folderId.value))
     }
 
-    @PutMapping("/{folderId}/parent/{parentFolderId}")
+    @PutMapping("/{folderId}/parent")
     @CrossOrigin(origins = ["http://localhost:3000"])
     fun makeRelationshipWithFolders(
         @PathVariable folderId: Long,
-        @PathVariable parentFolderId: Long?,
+        @RequestBody request: MakeFolderRelationshipRequest,
     ): ResponseEntity<MakeFolderRelationshipResponse> {
+        val parentId = request.parentId?.let { FolderId(request.parentId) }
         val info =
             folderUseCases.handle(
                 IMakeRelationShipFolderAndFolder.Command(
-                    parentFolderId?.let { FolderId(parentFolderId) },
+                    parentId,
                     FolderId(folderId),
                 ),
             )
@@ -77,11 +97,11 @@ class FolderResources(
         return ResponseEntity.ok(DeleteFolderResponse(info.folderId.value))
     }
 
-    @GetMapping()
+    @GetMapping
     @CrossOrigin(origins = ["http://localhost:3000"])
     fun getFoldersAndMemoAll(
         @RequestParam(required = false) query: String?,
-    ): ResponseEntity<FolderAndMemoResponse> {
+    ): ResponseEntity<GetFolderAndMemoResponse> {
         return ResponseEntity.ok(
             folderQueries.handle(IGetFoldersAllInHierirchy.Query(query)).toResponse()
         )

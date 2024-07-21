@@ -10,8 +10,8 @@ import kr.co.jiniaslog.blog.domain.article.Article
 import kr.co.jiniaslog.blog.domain.article.ArticleId
 import kr.co.jiniaslog.blog.domain.tag.Tag
 import kr.co.jiniaslog.blog.domain.tag.TagName
-import kr.co.jiniaslog.blog.outbound.persistence.ArticleRepository
-import kr.co.jiniaslog.blog.outbound.persistence.TagRepository
+import kr.co.jiniaslog.blog.outbound.ArticleRepository
+import kr.co.jiniaslog.blog.outbound.TagRepository
 import kr.co.jiniaslog.blog.usecase.article.IDeleteArticle
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired

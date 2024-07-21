@@ -28,6 +28,7 @@ include(
     "service:blog:adapter:blog-in-websocket",
     "service:blog:adapter:blog-out-user",
     "service:blog:adapter:blog-out-memo",
+    "service:blog:adapter:blog-out-persistence",
 
     // memo
     "service:memo:memo-domain",

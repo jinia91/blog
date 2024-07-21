@@ -1,6 +1,11 @@
 package kr.co.jiniaslog.memo.adapter.inbound.websocket
 
 import jakarta.validation.Valid
+import kr.co.jiniaslog.memo.adapter.inbound.websocket.payload.UpdateMemoPayload
+import kr.co.jiniaslog.memo.adapter.inbound.websocket.payload.UpdateMemoResponse
+import kr.co.jiniaslog.memo.adapter.inbound.websocket.payload.UpdateReferencesPayload
+import kr.co.jiniaslog.memo.adapter.inbound.websocket.payload.UpdateReferencesResponse
+import kr.co.jiniaslog.memo.adapter.inbound.websocket.payload.toResponse
 import kr.co.jiniaslog.memo.usecase.IUpdateMemoContents
 import kr.co.jiniaslog.memo.usecase.IUpdateMemoReferences
 import kr.co.jiniaslog.memo.usecase.MemoUseCasesFacade

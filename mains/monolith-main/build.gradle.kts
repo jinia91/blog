@@ -20,6 +20,7 @@ val blogService = mutableListOf(
     project(Modules.Service.Blog.Adaptors.InWebsocket.path),
     project(Modules.Service.Blog.Adaptors.OutUser.path),
     project(Modules.Service.Blog.Adaptors.OutMemo.path),
+    project(Modules.Service.Blog.Adaptors.OutPersistence.path),
 )
 
 val memoService = mutableListOf(

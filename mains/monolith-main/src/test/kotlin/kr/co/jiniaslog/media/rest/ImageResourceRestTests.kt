@@ -4,7 +4,7 @@ import io.mockk.every
 import io.restassured.module.mockmvc.RestAssuredMockMvc
 import kr.co.jiniaslog.RestTestAbstractSkeleton
 import kr.co.jiniaslog.media.domain.ImageUrl
-import kr.co.jiniaslog.media.usecase.IUploadImage
+import kr.co.jiniaslog.media.usecase.image.IUploadImage
 import kr.co.jiniaslog.user.application.security.PreAuthFilter
 import org.junit.jupiter.api.Test
 import org.springframework.http.MediaType

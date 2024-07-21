@@ -10,8 +10,8 @@ import kr.co.jiniaslog.TestContainerAbstractSkeleton
 import kr.co.jiniaslog.blog.domain.UserId
 import kr.co.jiniaslog.blog.domain.article.Article
 import kr.co.jiniaslog.blog.domain.article.ArticleContents
-import kr.co.jiniaslog.blog.outbound.persistence.ArticleRepository
-import kr.co.jiniaslog.blog.outbound.persistence.BlogTransactionHandler
+import kr.co.jiniaslog.blog.outbound.ArticleRepository
+import kr.co.jiniaslog.blog.outbound.BlogTransactionHandler
 import kr.co.jiniaslog.blog.usecase.article.IStartToWriteNewDraftArticle
 import kr.co.jiniaslog.user.application.infra.UserRepository
 import kr.co.jiniaslog.user.domain.user.Email

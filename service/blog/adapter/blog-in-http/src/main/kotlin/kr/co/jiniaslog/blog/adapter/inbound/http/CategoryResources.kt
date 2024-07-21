@@ -1,5 +1,6 @@
 package kr.co.jiniaslog.blog.adapter.inbound.http
 
+import kr.co.jiniaslog.blog.adapter.inbound.http.dto.SyncCategoriesRequest
 import kr.co.jiniaslog.blog.usecase.category.ISyncCategories
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
