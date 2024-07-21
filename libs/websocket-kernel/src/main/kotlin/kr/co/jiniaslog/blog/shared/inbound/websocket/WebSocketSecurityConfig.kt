@@ -15,8 +15,8 @@ class WebSocketSecurityConfig {
     @Bean
     fun authorizationManager(
         messages: MessageMatcherDelegatingAuthorizationManager.Builder
-    ): AuthorizationManager<org.springframework.messaging.Message<*>> {
-        messages.anyMessage().permitAll()
+    ): AuthorizationManager<Message<*>> {
+        messages.anyMessage().hasRole("ADMIN")
         return messages.build()
     }
 }

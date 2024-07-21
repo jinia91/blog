@@ -11,14 +11,20 @@ import org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource
 import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker
 import org.springframework.web.socket.config.annotation.StompEndpointRegistry
 import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer
+import org.springframework.web.socket.server.HandshakeInterceptor
+
+private val log = mu.KotlinLogging.logger { }
 
 @Configuration
 @EnableWebSocketMessageBroker
 @EnableWebSocketSecurity
-class WebSocketConfig : WebSocketMessageBrokerConfigurer {
+class WebSocketConfig(
+    private val websocketPreAuthInterceptor: WebsocketSecurityPreAuthInterceptor
+) : WebSocketMessageBrokerConfigurer {
     override fun registerStompEndpoints(registry: StompEndpointRegistry) {
         registry.addEndpoint("/ws")
             .setAllowedOriginPatterns("http://localhost:*")
+            .addInterceptors(websocketPreAuthInterceptor)
             .withSockJS()
     }
 
@@ -42,3 +48,5 @@ class WebSocketConfig : WebSocketMessageBrokerConfigurer {
         return object : ChannelInterceptor {}
     }
 }
+
+interface WebsocketSecurityPreAuthInterceptor : HandshakeInterceptor
