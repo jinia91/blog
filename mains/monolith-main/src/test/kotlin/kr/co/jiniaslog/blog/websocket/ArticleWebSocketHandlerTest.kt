@@ -8,6 +8,7 @@ import kr.co.jiniaslog.blog.adapter.inbound.websocket.UpdateArticlePayload
 import kr.co.jiniaslog.blog.adapter.inbound.websocket.UpdateArticleResponse
 import kr.co.jiniaslog.blog.domain.article.ArticleId
 import kr.co.jiniaslog.blog.usecase.article.IUpdateArticleContents
+import kr.co.jiniaslog.user.application.security.PreAuthFilter
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -42,9 +43,12 @@ class ArticleWebSocketHandlerTest : WebSocketTestAbstractSkeleton() {
                 SockJsClient(listOf<Transport>(WebSocketTransport(StandardWebSocketClient())))
             )
         stompClient.messageConverter = MappingJackson2MessageConverter()
+        val headers = WebSocketHttpHeaders()
+        headers.add("Cookie", "${PreAuthFilter.ACCESS_TOKEN_HEADER}=${getTestAdminUserToken()}")
+
         this.client =
             stompClient.connect(
-                url, WebSocketHttpHeaders(),
+                url, headers,
                 object : StompSessionHandlerAdapter() {
                 }
             ).get(2, TimeUnit.SECONDS)

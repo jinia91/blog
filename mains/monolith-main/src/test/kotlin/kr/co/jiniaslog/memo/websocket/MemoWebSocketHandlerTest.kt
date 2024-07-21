@@ -12,6 +12,7 @@ import kr.co.jiniaslog.memo.adapter.inbound.websocket.UpdateReferencesResponse
 import kr.co.jiniaslog.memo.domain.memo.MemoId
 import kr.co.jiniaslog.memo.usecase.IUpdateMemoContents
 import kr.co.jiniaslog.memo.usecase.IUpdateMemoReferences
+import kr.co.jiniaslog.user.application.security.PreAuthFilter
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -29,13 +30,13 @@ import java.lang.reflect.Type
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.TimeUnit
 
-private const val WEBSOCKET_MEMO_UPDATE_TOPIC = "/topic/memoResponse"
-private const val WEBSOCKET_MEMO_REFERENCE_UPDATE_TOPIC = "/topic/memoResponse/updateReferences"
+const val WEBSOCKET_MEMO_UPDATE_TOPIC = "/topic/memoResponse"
+const val WEBSOCKET_MEMO_REFERENCE_UPDATE_TOPIC = "/topic/memoResponse/updateReferences"
 
-private const val WEBSOCKET_MEMO_UPDATE = "/memo/updateMemo"
-private const val WEBSOCKET_MEMO_REFERENCE_UPDATE = "/memo/updateReferences"
+const val WEBSOCKET_MEMO_UPDATE = "/memo/updateMemo"
+const val WEBSOCKET_MEMO_REFERENCE_UPDATE = "/memo/updateReferences"
 
-private const val WEBSOCKET_URL = "ws://localhost:%d/ws"
+const val WEBSOCKET_URL = "ws://localhost:%d/ws"
 
 class MemoWebSocketHandlerTest : WebSocketTestAbstractSkeleton() {
     @BeforeEach
@@ -48,9 +49,12 @@ class MemoWebSocketHandlerTest : WebSocketTestAbstractSkeleton() {
                 SockJsClient(listOf<Transport>(WebSocketTransport(StandardWebSocketClient())))
             )
         stompClient.messageConverter = MappingJackson2MessageConverter()
+        val headers = WebSocketHttpHeaders()
+        headers.add("Cookie", "${PreAuthFilter.ACCESS_TOKEN_HEADER}=${getTestAdminUserToken()}")
+
         this.client =
             stompClient.connect(
-                url, WebSocketHttpHeaders(),
+                url, headers,
                 object : StompSessionHandlerAdapter() {
                 }
             ).get(2, TimeUnit.SECONDS)
