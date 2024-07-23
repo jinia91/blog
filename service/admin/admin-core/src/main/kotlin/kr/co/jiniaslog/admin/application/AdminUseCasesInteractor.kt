@@ -12,13 +12,18 @@ import org.springframework.context.annotation.Profile
 class AdminUseCasesInteractor(
     private val userRepository: UserRepository
 ) : AdminUseCases {
-    override fun handle(command: CreateMockUser.Command): CreateMockUser.Info {
-        userRepository.save(
-            User.newOne(
-                nickName = NickName("Test User"),
-                email = Email("test@Test.com")
-            )
+    override fun handle(command: CreateAndLoginMockUser.Command): CreateAndLoginMockUser.Info {
+        val user = User.from(
+            id = command.userId,
+            nickName = NickName("Test User"),
+            email = Email("test${command.userId.value}@Test.com"),
+            roles = setOf(command.role),
+            createdAt = null,
+            updatedAt = null
         )
-        return CreateMockUser.Info()
+        userRepository.save(
+            user
+        )
+        return CreateAndLoginMockUser.Info(user.entityId, user.roles.first())
     }
 }
