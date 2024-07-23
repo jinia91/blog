@@ -18,6 +18,8 @@ tasks.withType<Detekt>().configureEach {
         "**/resources/**",
         // fixme https://github.com/detekt/detekt/issues/7005 버그로 제외
         "**/**FragmentsTests",
+        "**/test/**",
+        "**/testFixtures/**",
     )
 }
 
