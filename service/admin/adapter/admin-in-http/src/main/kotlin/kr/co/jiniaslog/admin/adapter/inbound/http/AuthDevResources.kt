@@ -2,7 +2,7 @@ package kr.co.jiniaslog.admin.adapter.inbound.http
 
 import kr.co.jiniaslog.admin.adapter.inbound.http.dto.AdminCreateUserRequest
 import kr.co.jiniaslog.admin.adapter.inbound.http.dto.AdminCreateUserResponse
-import kr.co.jiniaslog.admin.application.AdminUseCases
+import kr.co.jiniaslog.admin.application.AdminUseCaseFacade
 import kr.co.jiniaslog.admin.application.CreateAndLoginMockUser
 import kr.co.jiniaslog.user.adapter.inbound.http.ACCESS_TOKEN_COOKIE_NAME
 import kr.co.jiniaslog.user.domain.auth.token.TokenManger
@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 @RequestMapping("api/dev/auth")
 class AuthDevResources(
-    private val adminUseCases: AdminUseCases,
+    private val adminUseCases: AdminUseCaseFacade,
     private val tokenManager: TokenManger
 ) {
     @PostMapping("/users/login")

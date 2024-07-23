@@ -1,4 +1,4 @@
 package kr.co.jiniaslog.admin.application
 
-interface AdminUseCases :
+interface AdminUseCaseFacade :
     CreateAndLoginMockUser

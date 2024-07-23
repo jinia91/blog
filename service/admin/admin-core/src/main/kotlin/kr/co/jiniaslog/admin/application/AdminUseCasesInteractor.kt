@@ -11,7 +11,7 @@ import org.springframework.context.annotation.Profile
 @Profile("!prod")
 class AdminUseCasesInteractor(
     private val userRepository: UserRepository
-) : AdminUseCases {
+) : AdminUseCaseFacade {
     override fun handle(command: CreateAndLoginMockUser.Command): CreateAndLoginMockUser.Info {
         val user = User.from(
             id = command.userId,
