@@ -53,6 +53,14 @@ object Modules {
             }
         }
 
+        object Admin {
+            val Core = Module(":service:admin:admin-core")
+
+            enum class Adaptors(val path: String) {
+                InHttp(":service:admin:adapter:admin-in-http")
+            }
+        }
+
         val MessageNexus = Module(":service:message-nexus")
     }
 

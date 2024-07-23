@@ -1,16 +1,16 @@
-package kr.co.jiniaslog.blog.adapter.inbound.http
+package kr.co.jiniaslog.user.adapter.inbound.http
 
 import org.springdoc.core.models.GroupedOpenApi
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 
 @Configuration
-class BlogSwaggerConfig {
+class UserAuthSwaggerConfig {
     @Bean
-    fun blogApi(): GroupedOpenApi {
+    fun usrAuthApi(): GroupedOpenApi {
         return GroupedOpenApi.builder()
-            .group("Blog Resource")
-            .packagesToScan("kr.co.jiniaslog.blog.adapter.inbound.http")
+            .group("UserAuth Resource")
+            .packagesToScan("kr.co.jiniaslog.user.adapter.inbound.http")
             .build()
     }
 }

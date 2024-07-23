@@ -12,9 +12,4 @@ dependencies {
     implementation(project(Modules.Libs.CoreKernel.path))
     implementation(project(Modules.Libs.WebsocketKernel.path))
     implementation("org.springframework.security:spring-security-messaging")
-
-    testImplementation(testFixtures(project(Modules.Libs.CoreKernel.path)))
-    testImplementation(testFixtures(project(Modules.Service.AuthUser.Application.path)))
-
-    testFixturesApi(project(Modules.Libs.CoreKernel.path))
 }
