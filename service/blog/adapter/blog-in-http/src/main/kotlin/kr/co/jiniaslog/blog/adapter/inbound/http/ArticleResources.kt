@@ -1,5 +1,12 @@
 package kr.co.jiniaslog.blog.adapter.inbound.http
 
+import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.media.Content
+import io.swagger.v3.oas.annotations.media.Schema
+import io.swagger.v3.oas.annotations.responses.ApiResponse
+import io.swagger.v3.oas.annotations.responses.ApiResponses
+import io.swagger.v3.oas.annotations.security.SecurityRequirement
+import io.swagger.v3.oas.annotations.tags.Tag
 import kr.co.jiniaslog.blog.adapter.inbound.http.dto.AddTagToArticleRequest
 import kr.co.jiniaslog.blog.adapter.inbound.http.dto.AddTagToArticleResponse
 import kr.co.jiniaslog.blog.adapter.inbound.http.dto.CategorizeArticleResponse
@@ -32,9 +39,40 @@ import java.net.URI
 
 @RestController
 @RequestMapping("/api/v1/articles")
+@Tag(name = "게시글 API", description = "게시글 생명주기 관련")
 class ArticleResources(private val articleFacade: ArticleUseCasesFacade) {
     @PostMapping("")
     @PreAuthorize("hasRole('ADMIN')")
+    @Operation(
+        summary = "새로운 게시글 작성 시작",
+        description = "게시글 초안 상태로 새로운 게시글 작성을 시작한다.",
+        method = "POST",
+        security = [SecurityRequirement(name = "access token", scopes = ["ADMIN"])]
+    )
+    @ApiResponses(
+        value = [
+            ApiResponse(
+                responseCode = "201",
+                description = "게시글 생성 성공",
+                content = [
+                    Content(
+                        mediaType = "application/json",
+                        schema = Schema(implementation = StartNewArticleResponse::class)
+                    )
+                ]
+            ),
+            ApiResponse(
+                responseCode = "401",
+                description = "인증 실패",
+                content = [Content(schema = Schema())]
+            ),
+            ApiResponse(
+                responseCode = "403",
+                description = "인가 되지 없음",
+                content = [Content(schema = Schema())]
+            ),
+        ]
+    )
     fun startNewArticle(@AuthUserId userId: Long?): ResponseEntity<StartNewArticleResponse> {
         val command = IStartToWriteNewDraftArticle.Command(UserId(userId!!))
         val info = articleFacade.handle(command)
@@ -45,6 +83,7 @@ class ArticleResources(private val articleFacade: ArticleUseCasesFacade) {
 
     @PutMapping("/{articleId}/publish")
     @PreAuthorize("hasRole('ADMIN')")
+    @Operation(summary = "게시글 게시", description = "게시글을 공개상태로 게시한다", security = [SecurityRequirement(name = "bearer")])
     fun publishArticle(
         @PathVariable articleId: Long,
     ): ResponseEntity<PublishArticleResponse> {

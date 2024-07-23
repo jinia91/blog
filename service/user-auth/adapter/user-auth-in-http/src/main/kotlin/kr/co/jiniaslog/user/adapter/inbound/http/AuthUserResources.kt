@@ -72,7 +72,7 @@ class AuthUserResources(
 
     @PostMapping("/refresh")
     fun refresh(
-        @CookieValue("jiniaslog_refresh") refreshToken: String,
+        @CookieValue(REFRESH_TOKEN_COOKIE_NAME) refreshToken: String,
     ): ResponseEntity<Void> {
         val command = IRefreshToken.Command(RefreshToken(refreshToken))
         val info = usecases.handle(command)
@@ -85,21 +85,21 @@ class AuthUserResources(
     }
 
     private fun buildCookieWithAccessToken(accessToken: AccessToken): ResponseCookie =
-        ResponseCookie.from("jiniaslog_access", accessToken.value)
+        ResponseCookie.from(ACCESS_TOKEN_COOKIE_NAME, accessToken.value)
             .domain("localhost")
             .path("/")
             .httpOnly(true)
-            .maxAge(60 * 60)
+            .maxAge(ACCESS_TOKEN_COOKIE_MAX_AGE)
             .secure(true)
             .sameSite("Strict")
             .build()
 
     private fun buildCookieWithRefreshToken(refreshToken: RefreshToken): ResponseCookie =
-        ResponseCookie.from("jiniaslog_refresh", refreshToken.value)
+        ResponseCookie.from(REFRESH_TOKEN_COOKIE_NAME, refreshToken.value)
             .domain("localhost")
             .path("/api/v1/auth/refresh")
             .httpOnly(true)
-            .maxAge(60 * 60 * 24 * 7)
+            .maxAge(REFRESH_TOKEN_COOKIE_MAX_AGE)
             .secure(true)
             .sameSite("Strict")
             .build()

@@ -55,6 +55,10 @@ include(
     "service:user-auth:adapter:user-auth-out-h2",
     "service:user-auth:adapter:user-auth-out-cache",
 
+    // admin
+    "service:admin:admin-core",
+    "service:admin:adapter:admin-in-http",
+
     "service:comment",
     "service:seo",
     "service:message-nexus",
