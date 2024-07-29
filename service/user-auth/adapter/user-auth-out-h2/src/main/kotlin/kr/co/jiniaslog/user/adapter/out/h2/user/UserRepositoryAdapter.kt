@@ -27,23 +27,18 @@ internal class UserRepositoryAdapter(
     }
 
     override fun save(entity: User): User {
-        val pm = userJpaRepository.findById(entity.entityId.value).orElse(null)
-
-        val userJpaEntity =
-            pm?.apply {
-                email = entity.email.value
-                nickName = entity.nickName.value
-                roles = entity.roles.joinToString(separator = ",") { it.name }
-            } ?: UserJpaEntity(
-                id = entity.entityId.value,
-                email = entity.email.value,
-                nickName = entity.nickName.value,
-                roles = entity.roles.joinToString(separator = ",") { it.name },
-                createdAt = entity.createdAt,
-                updatedAt = entity.updatedAt,
-            )
-
-        return userJpaRepository.save(userJpaEntity)
-            .toDomain()
+        return userJpaRepository.save(entity.toJpaEntity()).toDomain()
     }
+}
+
+private fun User.toJpaEntity(): UserJpaEntity {
+    return UserJpaEntity(
+        id = this.entityId.value,
+        email = this.email.value,
+        nickName = this.nickName.value,
+        roles = this.roles.joinToString(",") { it.name },
+        picUrl = this.picUrl?.value,
+        createdAt = this.createdAt,
+        updatedAt = this.updatedAt,
+    )
 }

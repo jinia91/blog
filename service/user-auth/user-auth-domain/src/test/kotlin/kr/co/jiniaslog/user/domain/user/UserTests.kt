@@ -3,6 +3,7 @@ package kr.co.jiniaslog.user.domain.user
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import kr.co.jiniaslog.shared.SimpleUnitTestContext
+import kr.co.jiniaslog.shared.core.domain.vo.Url
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 
@@ -17,7 +18,7 @@ class UserTests : SimpleUnitTestContext() {
 
             // when
             val sut =
-                User.newOne(nickName, email)
+                User.newOne(nickName, email, null)
 
             // then
             sut shouldNotBe null
@@ -35,11 +36,11 @@ class UserTests : SimpleUnitTestContext() {
             val email = Email("jinia91@gmail.com")
 
             val sut =
-                User.newOne(nickName, email)
+                User.newOne(nickName, email, null)
 
             val newOne = NickName("12345678902")
             // when
-            sut.updateIfNickNameChanged(newOne)
+            sut.update(newOne, null)
 
             // then
             sut.nickName shouldBe newOne
@@ -51,13 +52,30 @@ class UserTests : SimpleUnitTestContext() {
             val email = Email("jinia91@gmail.com")
 
             val sut =
-                User.newOne(nickName, email)
+                User.newOne(nickName, email, null)
 
             // when
-            sut.updateIfNickNameChanged(nickName)
+            sut.update(nickName, null)
 
             // then
             sut.nickName shouldBe nickName
+        }
+
+        @Test
+        fun `유저는 프로필 사진을 변경할 수 있다`() {
+            // given
+            val nickName = NickName("12345678901")
+            val email = Email("jinia91@gmail.com")
+            val url = Url("http://jinia91.com")
+            val sut =
+                User.newOne(nickName, email, url)
+
+            val newUrl = Url("http://jinia92.com")
+            // when
+            sut.update(nickName, newUrl)
+
+            // then
+            sut.picUrl shouldBe newUrl
         }
     }
 }

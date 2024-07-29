@@ -65,6 +65,9 @@ class UserUseCasesTests : TestContainerAbstractSkeleton() {
         @Autowired
         lateinit var tokenStore: TokenStore
 
+        @Autowired
+        lateinit var userRepository: UserRepository
+
         @Test
         fun `포멧이 유효하지 않은 리프레시 토큰으로 갱신 요청을 하면 실패한다`() {
             // given
@@ -98,12 +101,13 @@ class UserUseCasesTests : TestContainerAbstractSkeleton() {
         @Test
         fun `저장된 리프레시 토큰이 존재하고, 캐시 유효기간 이내에 이전 리프레시 토큰으로 재발급 요청시 캐싱데이터를 사용한다`() {
             // given context
-            val userId = UserId(1L)
-            val accessToken = tokenManger.generateAccessToken(userId, setOf(Role.USER))
-            val tempRefreshToken = tokenManger.generateRefreshToken(userId, setOf(Role.USER))
-            tokenStore.save(userId, accessToken, tempRefreshToken)
-            val newRefreshToken = tokenManger.generateRefreshToken(userId, setOf(Role.USER))
-            tokenStore.save(userId, accessToken, newRefreshToken)
+            val user = userRepository.save(User.newOne(NickName("test"), Email("jinia@test.com"), null))
+
+            val accessToken = tokenManger.generateAccessToken(user.entityId, setOf(Role.USER))
+            val tempRefreshToken = tokenManger.generateRefreshToken(user.entityId, setOf(Role.USER))
+            tokenStore.save(user.entityId, accessToken, tempRefreshToken)
+            val newRefreshToken = tokenManger.generateRefreshToken(user.entityId, setOf(Role.USER))
+            tokenStore.save(user.entityId, accessToken, newRefreshToken)
 
             val command =
                 IRefreshToken.Command(
@@ -123,14 +127,15 @@ class UserUseCasesTests : TestContainerAbstractSkeleton() {
             info.refreshToken.value shouldNotBe tempRefreshToken.value
 
             // tearDown
-            tokenStore.delete(userId)
+            tokenStore.delete(user.entityId)
         }
 
         @Test
         @Ci("테스트 시간이 오래걸려서 ci에서만 확인")
         fun `저장된 리프레시 토큰이 존재하고, 캐시 유효기간 이후 리프레시토큰으로 재발급 요청시 재발급한다`() {
             // given context
-            val userId = UserId(1L)
+            val user = userRepository.save(User.newOne(NickName("test"), Email("jinia@test.com"), null))
+            val userId = user.entityId
             val accessToken = tokenManger.generateAccessToken(userId, setOf(Role.USER))
             val refreshToken = tokenManger.generateRefreshToken(userId, setOf(Role.USER))
             tokenStore.save(userId, accessToken, refreshToken)
@@ -161,7 +166,8 @@ class UserUseCasesTests : TestContainerAbstractSkeleton() {
         @Ci("테스트 시간이 오래걸려서 ci에서만 확인")
         fun `동일 유저아이디에 대한 동시성 요청시, 후속 요청은 캐싱을 사용한다`() {
             // given
-            val userId = UserId(1L)
+            val user = userRepository.save(User.newOne(NickName("test"), Email("jinia@test.com"), null))
+            val userId = user.entityId
             val accessToken = tokenManger.generateAccessToken(userId, setOf(Role.USER))
             val refreshToken = tokenManger.generateRefreshToken(userId, setOf(Role.USER))
             tokenStore.save(userId, accessToken, refreshToken)
@@ -236,7 +242,7 @@ class UserUseCasesTests : TestContainerAbstractSkeleton() {
                     code = AuthorizationCode("authCode"),
                 )
             val email = Email("testUser@google.com")
-            userRepository.save(User.newOne(nickName = NickName("test"), email = email))
+            userRepository.save(User.newOne(nickName = NickName("test"), email = email, null))
 
             // when
             val result = sut.handle(command)

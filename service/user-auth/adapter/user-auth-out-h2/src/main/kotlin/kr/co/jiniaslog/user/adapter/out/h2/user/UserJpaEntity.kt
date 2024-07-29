@@ -5,6 +5,7 @@ import jakarta.persistence.Entity
 import jakarta.persistence.Id
 import jakarta.persistence.Table
 import kr.co.jiniaslog.shared.adapter.out.rdb.AbstractPersistenceModel
+import kr.co.jiniaslog.shared.core.domain.vo.Url
 import kr.co.jiniaslog.user.domain.user.Email
 import kr.co.jiniaslog.user.domain.user.NickName
 import kr.co.jiniaslog.user.domain.user.Role
@@ -24,6 +25,8 @@ class UserJpaEntity(
     var nickName: String,
     @Column(name = "roles", nullable = false)
     var roles: String,
+    @Column(name = "picUrl", nullable = true)
+    var picUrl: String?,
     createdAt: LocalDateTime?,
     updatedAt: LocalDateTime?,
 ) : AbstractPersistenceModel<Long>(createdAt, updatedAt) {
@@ -33,6 +36,7 @@ class UserJpaEntity(
             nickName = NickName(this.nickName),
             roles = this.roles.split(",").map { Role.valueOf(it.trim()) }.toSet(),
             email = Email(this.email),
+            picUrl = this.picUrl?.let { Url(it) },
             createdAt = this.createdAt,
             updatedAt = this.updatedAt,
         )

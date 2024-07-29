@@ -4,7 +4,6 @@ import kr.co.jiniaslog.admin.adapter.inbound.http.dto.AdminCreateUserRequest
 import kr.co.jiniaslog.admin.adapter.inbound.http.dto.AdminCreateUserResponse
 import kr.co.jiniaslog.admin.application.AdminUseCaseFacade
 import kr.co.jiniaslog.admin.application.CreateAndLoginMockUser
-import kr.co.jiniaslog.user.adapter.inbound.http.ACCESS_TOKEN_COOKIE_NAME
 import kr.co.jiniaslog.user.domain.auth.token.TokenManger
 import kr.co.jiniaslog.user.domain.user.Role
 import kr.co.jiniaslog.user.domain.user.UserId
@@ -16,6 +15,8 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
+
+const val ACCESS_TOKEN_COOKIE_NAME = "jiniaslog_access"
 
 @Profile("!prod")
 @RestController

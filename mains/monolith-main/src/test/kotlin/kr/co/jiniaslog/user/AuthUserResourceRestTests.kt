@@ -61,10 +61,10 @@ class AuthUserResourceRestTests : RestTestAbstractSkeleton() {
         fun `유효한 외부인증 코드로 로그인을 시도하면 로그인에 성공한다`() {
             // given
             every { userUseCases.handle(any(ISignInOAuthUser.Command::class)) } returns ISignInOAuthUser.Info(
-                nickName = NickName.UNKNOWN,
-                email = Email("test@Test.com"),
                 accessToken = AccessToken("test"),
                 refreshToken = RefreshToken("test"),
+                nickName = NickName.UNKNOWN,
+                email = Email("test@Test.com"),
                 roles = setOf(Role.USER),
                 picUrl = null
             )
@@ -90,7 +90,11 @@ class AuthUserResourceRestTests : RestTestAbstractSkeleton() {
             // given
             every { userUseCases.handle(any(IRefreshToken.Command::class)) } returns IRefreshToken.Info(
                 AccessToken("test2"),
-                RefreshToken("test2")
+                RefreshToken("test2"),
+                nickName = NickName.UNKNOWN,
+                email = Email("test@Test.com"),
+                roles = setOf(Role.USER),
+                picUrl = null
             )
 
             // when

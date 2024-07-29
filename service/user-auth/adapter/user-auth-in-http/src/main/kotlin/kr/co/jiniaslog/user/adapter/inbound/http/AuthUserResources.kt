@@ -22,6 +22,8 @@ import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
+private val log = mu.KotlinLogging.logger {}
+
 @RestController
 @RequestMapping("api/v1/auth")
 class AuthUserResources(
@@ -61,7 +63,6 @@ class AuthUserResources(
             )
 
         val accessCookie = buildCookieWithAccessToken(info.accessToken)
-
         val refreshCookie = buildCookieWithRefreshToken(info.refreshToken)
 
         return ResponseEntity.ok()
@@ -73,15 +74,25 @@ class AuthUserResources(
     @PostMapping("/refresh")
     fun refresh(
         @CookieValue(REFRESH_TOKEN_COOKIE_NAME) refreshToken: String,
-    ): ResponseEntity<Void> {
+    ): ResponseEntity<OAuthLoginResponse> {
+        log.info { "refresh token: $refreshToken" }
         val command = IRefreshToken.Command(RefreshToken(refreshToken))
         val info = usecases.handle(command)
+        val response =
+            OAuthLoginResponse(
+                nickName = info.nickName.value,
+                email = info.email.value,
+                roles = info.roles.map { it.toString() }.toSet(),
+                picUrl = info.picUrl?.value,
+            )
+
         val accessCookie = buildCookieWithAccessToken(info.accessToken)
         val refreshCookie = buildCookieWithRefreshToken(info.refreshToken)
+
         return ResponseEntity.ok()
             .header(SET_COOKIE, accessCookie.toString())
             .header(SET_COOKIE, refreshCookie.toString())
-            .body(null)
+            .body(response)
     }
 
     private fun buildCookieWithAccessToken(accessToken: AccessToken): ResponseCookie =

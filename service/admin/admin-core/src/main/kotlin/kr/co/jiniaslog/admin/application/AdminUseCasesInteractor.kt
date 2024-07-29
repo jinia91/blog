@@ -18,6 +18,7 @@ class AdminUseCasesInteractor(
             nickName = NickName("Test User"),
             email = Email("test${command.userId.value}@Test.com"),
             roles = setOf(command.role),
+            picUrl = null,
             createdAt = null,
             updatedAt = null
         )
