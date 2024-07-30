@@ -11,9 +11,11 @@ import kr.co.jiniaslog.annotation.Ci
 import kr.co.jiniaslog.user.application.infra.TokenStore
 import kr.co.jiniaslog.user.application.infra.UserRepository
 import kr.co.jiniaslog.user.application.usecase.IGetOAuthRedirectionUrl
+import kr.co.jiniaslog.user.application.usecase.ILogOut
 import kr.co.jiniaslog.user.application.usecase.IRefreshToken
 import kr.co.jiniaslog.user.application.usecase.ISignInOAuthUser
 import kr.co.jiniaslog.user.domain.auth.provider.Provider
+import kr.co.jiniaslog.user.domain.auth.token.AccessToken
 import kr.co.jiniaslog.user.domain.auth.token.AuthorizationCode
 import kr.co.jiniaslog.user.domain.auth.token.RefreshToken
 import kr.co.jiniaslog.user.domain.auth.token.TokenManger
@@ -252,6 +254,28 @@ class UserUseCasesTests : TestContainerAbstractSkeleton() {
             userList.size shouldBe 1
             result.nickName shouldBe NickName("testUser")
             result.email shouldBe email
+        }
+    }
+
+    @Nested
+    inner class `로그아웃 테스트` {
+        @Autowired
+        lateinit var sut: ILogOut
+
+        @Autowired
+        lateinit var tokenStore: TokenStore
+
+        @Test
+        fun `로그아웃 요청시 성공한다`() {
+            // given
+            val userId = UserId(1L)
+            tokenStore.save(userId, AccessToken("accessToken"), RefreshToken("refresh"))
+
+            // when
+            val info = sut.handle(ILogOut.Command(userId))
+
+            // then
+            tokenStore.findByUserId(userId) shouldBe null
         }
     }
 

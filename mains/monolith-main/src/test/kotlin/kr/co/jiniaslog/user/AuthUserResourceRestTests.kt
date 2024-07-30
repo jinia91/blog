@@ -7,6 +7,7 @@ import kr.co.jiniaslog.RestTestAbstractSkeleton
 import kr.co.jiniaslog.shared.core.domain.vo.Url
 import kr.co.jiniaslog.user.adapter.inbound.http.dto.OAuthLoginRequest
 import kr.co.jiniaslog.user.application.usecase.IGetOAuthRedirectionUrl
+import kr.co.jiniaslog.user.application.usecase.ILogOut
 import kr.co.jiniaslog.user.application.usecase.IRefreshToken
 import kr.co.jiniaslog.user.application.usecase.ISignInOAuthUser
 import kr.co.jiniaslog.user.domain.auth.token.AccessToken
@@ -109,6 +110,45 @@ class AuthUserResourceRestTests : RestTestAbstractSkeleton() {
                 .let { cookies ->
                     cookies["jiniaslog_access"] shouldBe "test2"
                 }
+        }
+    }
+
+    @Nested
+    inner class `유저 로그아웃 테스트` {
+        @Test
+        fun `유효한 유저가 로그아웃을 요청하면 200을 반환한다`() {
+            // given
+            every { userUseCases.handle(any(ILogOut.Command::class)) } returns ILogOut.Info()
+
+            // when
+            RestAssuredMockMvc.given()
+                .cookie("jiniaslog_access", getTestUserToken())
+                .cookie("jiniaslog_refresh", getTestUserToken())
+                .post("/api/v1/auth/logout")
+                // then
+                .then()
+                .statusCode(200)
+                .extract()
+                .cookies()
+                .let { cookies ->
+                    cookies["jiniaslog_access"] shouldBe ""
+                    cookies["jiniaslog_refresh"] shouldBe ""
+                }
+        }
+
+        @Test
+        fun `유효하지 않은 유저가 로그아웃을 요청하면 401을 반환한다`() {
+            // given
+            every { userUseCases.handle(any(ILogOut.Command::class)) } returns ILogOut.Info()
+
+            // when
+            RestAssuredMockMvc.given()
+                .cookie("jiniaslog_access", "INVALID")
+                .cookie("jiniaslog_refresh", "INVALID")
+                .post("/api/v1/auth/logout")
+                // then
+                .then()
+                .statusCode(401)
         }
     }
 }
