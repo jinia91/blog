@@ -383,4 +383,37 @@ class MemoUseCaseTests : TestContainerAbstractSkeleton() {
         foundedMemo shouldNotBe null
         foundedMemo!!.parentFolderId shouldBe folder2.entityId
     }
+
+    @Test
+    fun `A를 참조하는 B 메모를 A메모가 참조하려하면 순환참조 예외가 발생한다`() {
+        // given
+        val rootMemo =
+            memoRepository.save(
+                Memo.init(
+                    authorId = AuthorId(1),
+                    parentFolderId = null,
+                ),
+            )
+        val referenceTarget =
+            memoRepository.save(
+                Memo.init(
+                    authorId = AuthorId(1),
+                    parentFolderId = null,
+                ),
+            )
+        rootMemo.addReference(referenceTarget.entityId)
+        memoRepository.save(rootMemo)
+
+        val command =
+            IUpdateMemoReferences.Command.UpdateReferences(
+                memoId = referenceTarget.entityId,
+                references = setOf(rootMemo.entityId),
+            )
+
+        // when
+        // then
+        shouldThrow<IllegalArgumentException> {
+            sut.handle(command)
+        }
+    }
 }

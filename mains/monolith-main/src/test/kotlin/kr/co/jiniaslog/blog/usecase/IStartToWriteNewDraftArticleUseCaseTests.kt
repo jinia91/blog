@@ -44,6 +44,7 @@ class IStartToWriteNewDraftArticleUseCaseTests : TestContainerAbstractSkeleton()
                 User.newOne(
                     NickName("jinia"),
                     Email("jinia@google.com"),
+                    null
                 ),
             )
 

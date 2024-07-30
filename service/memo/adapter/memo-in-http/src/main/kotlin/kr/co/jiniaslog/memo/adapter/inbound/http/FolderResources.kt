@@ -31,6 +31,8 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 
+private val log = mu.KotlinLogging.logger {}
+
 @RestController
 @RequestMapping("/api/v1/folders")
 @PreAuthorize("hasRole('ADMIN')")
@@ -102,6 +104,7 @@ class FolderResources(
     fun getFoldersAndMemoAll(
         @RequestParam(required = false) query: String?,
     ): ResponseEntity<GetFolderAndMemoResponse> {
+        log.info { "query: $query" }
         return ResponseEntity.ok(
             folderQueries.handle(IGetFoldersAllInHierirchy.Query(query)).toResponse()
         )

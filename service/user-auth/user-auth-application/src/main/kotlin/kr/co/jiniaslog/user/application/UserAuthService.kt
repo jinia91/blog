@@ -9,6 +9,7 @@ import kr.co.jiniaslog.user.application.infra.UserAuthTransactionHandler
 import kr.co.jiniaslog.user.application.infra.UserRepository
 import kr.co.jiniaslog.user.application.usecase.ICheckUserExisted
 import kr.co.jiniaslog.user.application.usecase.IGetOAuthRedirectionUrl
+import kr.co.jiniaslog.user.application.usecase.ILogOut
 import kr.co.jiniaslog.user.application.usecase.IRefreshToken
 import kr.co.jiniaslog.user.application.usecase.ISignInOAuthUser
 import kr.co.jiniaslog.user.application.usecase.UseCasesUserAuthFacade
@@ -16,7 +17,6 @@ import kr.co.jiniaslog.user.domain.auth.provider.ProviderUserInfo
 import kr.co.jiniaslog.user.domain.auth.token.RefreshToken
 import kr.co.jiniaslog.user.domain.auth.token.TokenManger
 import kr.co.jiniaslog.user.domain.user.User
-import kr.co.jiniaslog.user.domain.user.UserId
 import mu.KotlinLogging
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
@@ -66,26 +66,32 @@ class UserAuthService(
 
     private fun getOrCreateUser(providerUserInfo: ProviderUserInfo): User =
         userRepository.findByEmail(providerUserInfo.email)?.let {
-            it.updateIfNickNameChanged(providerUserInfo.nickName)
+            it.update(providerUserInfo.nickName, providerUserInfo.picture)
             userRepository.save(it)
         } ?: let {
-            val newUser = User.newOne(providerUserInfo.nickName, providerUserInfo.email)
+            val newUser = User.newOne(providerUserInfo.nickName, providerUserInfo.email, providerUserInfo.picture)
             userRepository.save(newUser)
         }
 
     override fun handle(command: IRefreshToken.Command): IRefreshToken.Info =
         with(command) {
-            require(tokenManger.validateToken(refreshToken)) { "invalid refresh token" }
+            require(tokenManger.validateToken(refreshToken)) { "리프레시 토큰이 유효하지 않습니다" }
             val userId = tokenManger.extractUserId(refreshToken)
             val storedAuthToken = tokenStore.findByUserId(userId)
             validateRefreshToken(storedAuthToken, refreshToken)
+            val user = userRepository.findById(userId)
+                ?: throw IllegalStateException("유저가 존재하지 않습니다. userId: $userId")
 
             val isRecentlyIssued = storedAuthToken.oldRefreshToken == refreshToken
             if (isRecentlyIssued) {
-                log.info { "recently issued refresh token. userId: $userId" }
+                log.info { "이미 발급된 토큰이 있습니다. userId: $userId" }
                 return IRefreshToken.Info(
                     accessToken = storedAuthToken.accessToken,
                     refreshToken = storedAuthToken.newRefreshToken,
+                    nickName = user.nickName,
+                    email = user.email,
+                    roles = user.roles,
+                    picUrl = user.picUrl,
                 )
             }
 
@@ -93,55 +99,58 @@ class UserAuthService(
                 userId = userId,
                 timeOutSeconds = 10,
                 block = {
-                    generateNewAuthTokens(refreshToken, userId)
+                    generateNewAuthTokens(refreshToken, user)
                         .also { log.info { "refreshed auth tokens. userId: $userId" } }
                 },
                 forIdempotencyFallback = {
                     log.warn {
                         """
-                            |already has lock. userId: $userId
+                            |이미 락이 있습니다. userId: $userId
                             |refreshToken: $refreshToken
-                            |should suspect duplicate request!
+                            |중복 요청이 의심됩니다!
                         """.trimMargin()
                     }
-                    reTryGetAuthTokensInCache(refreshToken, userId)
+                    reTryGetAuthTokensInCache(refreshToken, user)
                 },
             )
         }
 
-    override fun handle(command: ICheckUserExisted.Command): Boolean {
-        val user = userRepository.findById(command.id)
-        return user != null
+    private fun generateNewAuthTokens(
+        refreshToken: RefreshToken,
+        user: User,
+    ): IRefreshToken.Info {
+        val foundAuthTokens = tokenStore.findByUserId(user.entityId)
+        validateRefreshToken(foundAuthTokens, refreshToken)
+        val roles = tokenManger.getRole(refreshToken)
+        val newAccessToken = tokenManger.generateAccessToken(user.entityId, roles)
+        val newRefreshToken = tokenManger.generateRefreshToken(user.entityId, roles)
+        transactionHandler.runInRepeatableReadTransaction {
+            tokenStore.save(user.entityId, newAccessToken, newRefreshToken)
+        }
+        return IRefreshToken.Info(
+            accessToken = newAccessToken,
+            refreshToken = newRefreshToken,
+            nickName = user.nickName,
+            email = user.email,
+            roles = user.roles,
+            picUrl = user.picUrl,
+        )
     }
 
     private fun reTryGetAuthTokensInCache(
         refreshToken: RefreshToken,
-        userId: UserId,
+        user: User,
     ): IRefreshToken.Info {
-        val tokens = tokenStore.findByUserId(userId)
+        val tokens = tokenStore.findByUserId(user.entityId)
         validateRefreshToken(tokens, refreshToken)
 
         return IRefreshToken.Info(
             accessToken = tokens.accessToken,
             refreshToken = tokens.newRefreshToken,
-        )
-    }
-
-    private fun generateNewAuthTokens(
-        refreshToken: RefreshToken,
-        userId: UserId,
-    ): IRefreshToken.Info {
-        val foundAuthTokens = tokenStore.findByUserId(userId)
-        validateRefreshToken(foundAuthTokens, refreshToken)
-        val roles = tokenManger.getRole(refreshToken)
-        val newAccessToken = tokenManger.generateAccessToken(userId, roles)
-        val newRefreshToken = tokenManger.generateRefreshToken(userId, roles)
-        transactionHandler.runInRepeatableReadTransaction {
-            tokenStore.save(userId, newAccessToken, newRefreshToken)
-        }
-        return IRefreshToken.Info(
-            accessToken = newAccessToken,
-            refreshToken = newRefreshToken,
+            nickName = user.nickName,
+            email = user.email,
+            roles = user.roles,
+            picUrl = user.picUrl,
         )
     }
 
@@ -156,5 +165,15 @@ class UserAuthService(
             foundAuthTokens.newRefreshToken == refreshToken ||
                 foundAuthTokens.oldRefreshToken == refreshToken,
         ) { "invalid refresh token" }
+    }
+
+    override fun handle(command: ICheckUserExisted.Command): Boolean {
+        val user = userRepository.findById(command.id)
+        return user != null
+    }
+
+    override fun handle(command: ILogOut.Command): ILogOut.Info {
+        tokenStore.delete(command.userId)
+        return ILogOut.Info()
     }
 }

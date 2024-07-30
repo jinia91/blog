@@ -4,4 +4,5 @@ interface UseCasesUserAuthFacade :
     IGetOAuthRedirectionUrl,
     ISignInOAuthUser,
     IRefreshToken,
-    ICheckUserExisted
+    ICheckUserExisted,
+    ILogOut

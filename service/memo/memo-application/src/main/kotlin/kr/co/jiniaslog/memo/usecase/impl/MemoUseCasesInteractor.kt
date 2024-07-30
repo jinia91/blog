@@ -66,13 +66,22 @@ internal class MemoUseCasesInteractor(
             }
 
             is IUpdateMemoReferences.Command.UpdateReferences -> {
-                command.references.forEach { validateMemoExistence(it) }
+                command.references.forEach { validateCircularDependency(it, memo) }
                 memo.updateReferences(command.references)
             }
         }
 
         memoRepository.save(memo)
         return IUpdateMemoReferences.Info(memo.entityId)
+    }
+
+    private fun validateCircularDependency(id: MemoId, targetMemo: Memo) {
+        val memo = getMemo(id)
+        memo.references.forEach {
+            if (it.referenceId == targetMemo.entityId) {
+                throw IllegalArgumentException("순환참조가 발생합니다")
+            }
+        }
     }
 
     private fun getFolder(id: FolderId) =
