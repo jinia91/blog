@@ -9,6 +9,7 @@ import kr.co.jiniaslog.user.application.infra.UserAuthTransactionHandler
 import kr.co.jiniaslog.user.application.infra.UserRepository
 import kr.co.jiniaslog.user.application.usecase.ICheckUserExisted
 import kr.co.jiniaslog.user.application.usecase.IGetOAuthRedirectionUrl
+import kr.co.jiniaslog.user.application.usecase.ILogOut
 import kr.co.jiniaslog.user.application.usecase.IRefreshToken
 import kr.co.jiniaslog.user.application.usecase.ISignInOAuthUser
 import kr.co.jiniaslog.user.application.usecase.UseCasesUserAuthFacade
@@ -114,28 +115,6 @@ class UserAuthService(
             )
         }
 
-    override fun handle(command: ICheckUserExisted.Command): Boolean {
-        val user = userRepository.findById(command.id)
-        return user != null
-    }
-
-    private fun reTryGetAuthTokensInCache(
-        refreshToken: RefreshToken,
-        user: User,
-    ): IRefreshToken.Info {
-        val tokens = tokenStore.findByUserId(user.entityId)
-        validateRefreshToken(tokens, refreshToken)
-
-        return IRefreshToken.Info(
-            accessToken = tokens.accessToken,
-            refreshToken = tokens.newRefreshToken,
-            nickName = user.nickName,
-            email = user.email,
-            roles = user.roles,
-            picUrl = user.picUrl,
-        )
-    }
-
     private fun generateNewAuthTokens(
         refreshToken: RefreshToken,
         user: User,
@@ -158,6 +137,23 @@ class UserAuthService(
         )
     }
 
+    private fun reTryGetAuthTokensInCache(
+        refreshToken: RefreshToken,
+        user: User,
+    ): IRefreshToken.Info {
+        val tokens = tokenStore.findByUserId(user.entityId)
+        validateRefreshToken(tokens, refreshToken)
+
+        return IRefreshToken.Info(
+            accessToken = tokens.accessToken,
+            refreshToken = tokens.newRefreshToken,
+            nickName = user.nickName,
+            email = user.email,
+            roles = user.roles,
+            picUrl = user.picUrl,
+        )
+    }
+
     @OptIn(ExperimentalContracts::class)
     private fun validateRefreshToken(
         foundAuthTokens: AuthTokenInfo?,
@@ -169,5 +165,15 @@ class UserAuthService(
             foundAuthTokens.newRefreshToken == refreshToken ||
                 foundAuthTokens.oldRefreshToken == refreshToken,
         ) { "invalid refresh token" }
+    }
+
+    override fun handle(command: ICheckUserExisted.Command): Boolean {
+        val user = userRepository.findById(command.id)
+        return user != null
+    }
+
+    override fun handle(command: ILogOut.Command): ILogOut.Info {
+        tokenStore.delete(command.userId)
+        return ILogOut.Info()
     }
 }
