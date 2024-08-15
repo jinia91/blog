@@ -8,10 +8,11 @@ import kr.co.jiniaslog.shared.core.domain.IdUtils
 import java.time.LocalDateTime
 
 object FolderTestFixtures {
+    val defaultAuthorId = AuthorId(1L)
     fun build(
         id: FolderId = FolderId(IdUtils.generate()),
         name: FolderName = FolderName("test folder"),
-        authorId: AuthorId = AuthorId(IdUtils.generate()),
+        authorId: AuthorId = defaultAuthorId,
         parent: FolderId? = null,
         createdAt: LocalDateTime? = null,
         updatedAt: LocalDateTime? = null,

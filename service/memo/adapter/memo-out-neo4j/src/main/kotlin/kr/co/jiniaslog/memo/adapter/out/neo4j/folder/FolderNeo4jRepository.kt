@@ -22,4 +22,6 @@ DETACH DELETE parentFolder, childFolder, memo1, memo2
     fun deleteRelationshipContainsById(
         @Param("folderId") folderId: Long,
     )
+
+    fun findAllByAuthorId(authorId: Long): List<FolderNeo4jEntity>
 }

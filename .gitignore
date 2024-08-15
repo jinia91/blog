@@ -49,3 +49,5 @@ src/main/resources/application-dev.yml
 
 ### h2 db ###
 /h2/
+
+.DS_Store

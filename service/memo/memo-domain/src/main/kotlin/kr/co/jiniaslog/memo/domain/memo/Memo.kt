@@ -31,6 +31,10 @@ class Memo private constructor(
     var parentFolderId: FolderId? = parentFolderId
         private set
 
+    fun validateOwnership(requesterId: AuthorId) {
+        require(this.authorId == requesterId) { "요청자가 작성자가 아닙니다." }
+    }
+
     fun update(
         title: MemoTitle? = null,
         content: MemoContent? = null,

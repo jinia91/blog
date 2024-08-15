@@ -4,6 +4,7 @@ import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import kr.co.jiniaslog.TestContainerAbstractSkeleton
+import kr.co.jiniaslog.memo.domain.FolderTestFixtures
 import kr.co.jiniaslog.memo.domain.folder.Folder
 import kr.co.jiniaslog.memo.domain.folder.FolderId
 import kr.co.jiniaslog.memo.domain.folder.FolderName
@@ -48,6 +49,7 @@ class FolderUseCaseTests : TestContainerAbstractSkeleton() {
             IChangeFolderName.Command(
                 folderId = folder.entityId,
                 name = FolderName("name"),
+                requesterId = FolderTestFixtures.defaultAuthorId,
             )
         // when
         val info = sut.handle(command)
@@ -68,6 +70,7 @@ class FolderUseCaseTests : TestContainerAbstractSkeleton() {
         val command =
             IDeleteFoldersRecursively.Command(
                 folderId = folder.entityId,
+                requesterId = FolderTestFixtures.defaultAuthorId,
             )
         // when
         val info = sut.handle(command)
@@ -95,6 +98,7 @@ class FolderUseCaseTests : TestContainerAbstractSkeleton() {
             IMakeRelationShipFolderAndFolder.Command(
                 parentFolderId = folder1.entityId,
                 childFolderId = folder2.entityId,
+                requesterId = FolderTestFixtures.defaultAuthorId,
             )
         // when
         val info = sut.handle(command)
@@ -114,6 +118,28 @@ class FolderUseCaseTests : TestContainerAbstractSkeleton() {
             IChangeFolderName.Command(
                 folderId = FolderId(1),
                 name = FolderName("name"),
+                requesterId = FolderTestFixtures.defaultAuthorId,
+            )
+        // when & then
+        shouldThrow<IllegalArgumentException> {
+            sut.handle(command)
+        }
+    }
+
+    @Test
+    fun `폴더 이름 변경 요청자가 폴더 작성자와 다르면 예외가 발생한다`() {
+        // given
+        val folder =
+            folderRepository.save(
+                Folder.init(
+                    authorId = AuthorId(1),
+                ),
+            )
+        val command =
+            IChangeFolderName.Command(
+                folderId = folder.entityId,
+                name = FolderName("name"),
+                requesterId = AuthorId(2),
             )
         // when & then
         shouldThrow<IllegalArgumentException> {

@@ -56,7 +56,7 @@ class MemoQueriesTests : TestContainerAbstractSkeleton() {
         val dummyMemo = memoRepository.save(MemoTestFixtures.build(parentFolderId = dummyFolder.entityId))
 
         // when
-        val result = sut.handle(IGetMemoById.Query(dummyMemo.entityId))
+        val result = sut.handle(IGetMemoById.Query(dummyMemo.entityId, dummyMemo.authorId))
 
         // then
         result.memoId shouldBe dummyMemo.entityId
@@ -69,7 +69,7 @@ class MemoQueriesTests : TestContainerAbstractSkeleton() {
         val dummyMemo = memoRepository.save(MemoTestFixtures.build(parentFolderId = dummyFolder.entityId))
 
         // when
-        val result = sut.handle(IGetMemoById.Query(dummyMemo.entityId))
+        val result = sut.handle(IGetMemoById.Query(dummyMemo.entityId, dummyMemo.authorId))
 
         // then
         result.memoId shouldBe dummyMemo.entityId
@@ -119,7 +119,7 @@ class MemoQueriesTests : TestContainerAbstractSkeleton() {
         val target = memoRepository.save(MemoTestFixtures.build())
 
         // when
-        val result = sut.handle(IGetMemoById.Query(target.entityId))
+        val result = sut.handle(IGetMemoById.Query(target.entityId, MemoTestFixtures.defaultAuthorId))
 
         // then
         result.memoId shouldBe target.entityId

@@ -9,7 +9,7 @@ import kr.co.jiniaslog.memo.domain.memo.MemoTitle
 import kr.co.jiniaslog.memo.outbound.FolderRepository
 import kr.co.jiniaslog.memo.outbound.MemoRepository
 import kr.co.jiniaslog.memo.queries.FolderQueriesFacade
-import kr.co.jiniaslog.memo.queries.IGetFoldersAllInHierirchy
+import kr.co.jiniaslog.memo.queries.IGetFoldersAllInHierirchyByAuthorId
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 
@@ -38,7 +38,7 @@ class FolderQueriesTests : TestContainerAbstractSkeleton() {
             (1..10).map {
                 memoRepository.save(
                     MemoTestFixtures.build(
-                        parentFolderId = dummyParentFolder.entityId
+                        parentFolderId = dummyParentFolder.entityId,
                     )
                 )
             }
@@ -53,7 +53,7 @@ class FolderQueriesTests : TestContainerAbstractSkeleton() {
         }
 
         // when
-        val result = sut.handle(IGetFoldersAllInHierirchy.Query(null))
+        val result = sut.handle(IGetFoldersAllInHierirchyByAuthorId.Query(null, MemoTestFixtures.defaultAuthorId))
 
         // then
         result.folderInfos.size shouldBe 2
@@ -98,7 +98,7 @@ class FolderQueriesTests : TestContainerAbstractSkeleton() {
         }
 
         // when
-        val result = sut.handle(IGetFoldersAllInHierirchy.Query("검색"))
+        val result = sut.handle(IGetFoldersAllInHierirchyByAuthorId.Query("검색", MemoTestFixtures.defaultAuthorId))
 
         // then
         result.folderInfos.size shouldBe 1

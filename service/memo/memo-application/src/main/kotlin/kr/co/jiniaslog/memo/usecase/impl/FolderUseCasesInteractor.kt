@@ -15,24 +15,25 @@ internal class FolderUseCasesInteractor(
     private val folderRepository: FolderRepository,
 ) : FolderUseCasesFacade {
     override fun handle(command: ICreateNewFolder.Command): ICreateNewFolder.Info {
-        val newOne =
-            Folder.init(
-                authorId = command.authorId,
-            )
+        val newOne = Folder.init(authorId = command.authorId)
         folderRepository.save(newOne)
         return ICreateNewFolder.Info(newOne.entityId, newOne.name)
     }
 
     override fun handle(command: IChangeFolderName.Command): IChangeFolderName.Info {
         val folder = getFolder(command.folderId)
-        folder.changeName(command.name)
+        folder.validateOwnership(command.requesterId)
+        folder.changeName(command.name,)
         folderRepository.save(folder)
         return IChangeFolderName.Info(folder.entityId)
     }
 
     override fun handle(command: IMakeRelationShipFolderAndFolder.Command): IMakeRelationShipFolderAndFolder.Info {
-        val parent = command.parentFolderId?.let { getFolder(it) }
+        val parent = command.parentFolderId?.let {
+            getFolder(it).also { folder -> folder.validateOwnership(command.requesterId) }
+        }
         val child = getFolder(command.childFolderId)
+        child.validateOwnership(command.requesterId)
         child.changeParent(parent)
         folderRepository.save(child)
         return IMakeRelationShipFolderAndFolder.Info(parent?.entityId, child.entityId)
@@ -40,6 +41,7 @@ internal class FolderUseCasesInteractor(
 
     override fun handle(command: IDeleteFoldersRecursively.Command): IDeleteFoldersRecursively.Info {
         val folder = getFolder(command.folderId)
+        folder.validateOwnership(command.requesterId)
         folderRepository.deleteById(folder.entityId)
         return IDeleteFoldersRecursively.Info(folder.entityId)
     }

@@ -2,14 +2,17 @@ package kr.co.jiniaslog.memo.queries
 
 import kr.co.jiniaslog.memo.domain.folder.FolderId
 import kr.co.jiniaslog.memo.domain.folder.FolderName
+import kr.co.jiniaslog.memo.domain.memo.AuthorId
 import kr.co.jiniaslog.memo.domain.memo.MemoId
 import kr.co.jiniaslog.memo.domain.memo.MemoTitle
 
-interface IGetFoldersAllInHierirchy {
+interface IGetFoldersAllInHierirchyByAuthorId {
     fun handle(query: Query): Info
 
-    @JvmInline
-    value class Query(val value: String?)
+    data class Query(
+        val value: String?,
+        val requesterId: AuthorId,
+    )
 
     data class Info(val folderInfos: List<FolderInfo>)
 
