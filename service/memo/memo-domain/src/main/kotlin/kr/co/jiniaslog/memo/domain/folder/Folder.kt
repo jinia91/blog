@@ -21,6 +21,10 @@ class Folder private constructor(
     var parent: FolderId? = parent
         private set
 
+    fun validateOwnership(authorId: AuthorId) {
+        require(this.authorId == authorId) { "폴더의 소유자가 아닙니다." }
+    }
+
     fun changeName(name: FolderName) {
         this.name = name
     }

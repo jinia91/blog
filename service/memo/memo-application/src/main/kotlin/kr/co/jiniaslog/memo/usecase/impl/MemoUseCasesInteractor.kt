@@ -41,14 +41,17 @@ internal class MemoUseCasesInteractor(
 
     override fun handle(command: IDeleteMemo.Command): IDeleteMemo.Info {
         val memo = getMemo(command.id)
-
+        memo.validateOwnership(command.requesterId)
         memoRepository.deleteById(memo.entityId)
         return IDeleteMemo.Info()
     }
 
     override fun handle(command: IMakeRelationShipFolderAndMemo.Command): IMakeRelationShipFolderAndMemo.Info {
-        val folder = command.folderId?.let { getFolder(it) }
+        val folder = command.folderId?.let {
+            getFolder(it).also { it.validateOwnership(command.requesterId) }
+        }
         val memo = getMemo(command.memoId)
+        memo.validateOwnership(command.requesterId)
 
         memo.setParentFolder(folder?.entityId)
 

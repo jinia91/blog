@@ -25,23 +25,6 @@ class MemoResourceRestTests : RestTestAbstractSkeleton() {
 
     @Nested
     inner class `메모 리소스 인증 인가` {
-
-        @Test
-        fun `인가가 되지 않은 사용자가 메모 생성 요청시 401을 받는다`() {
-            // given
-            every { memoService.handle(any(IInitMemo.Command::class)) } returns IInitMemo.Info(MemoId(1L))
-
-            RestAssuredMockMvc.given()
-                .cookies(PreAuthFilter.ACCESS_TOKEN_HEADER, getTestUserToken())
-                .contentType(MediaType.APPLICATION_JSON)
-                .body(InitMemoRequest(null))
-                // when
-                .post("/api/v1/memos")
-                // then
-                .then()
-                .statusCode(403)
-        }
-
         @Test
         fun `인증이 없는 사용자가 메모 생성 요청시 401을 받는다`() {
             // given

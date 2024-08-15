@@ -27,7 +27,6 @@ internal class MemoNeo4jEntity(
     var content: String,
     @Relationship(type = "REFERENCE", direction = Relationship.Direction.OUTGOING)
     var references: MutableSet<MemoNeo4jEntity>,
-    @Property("parentFolder")
     @Relationship(type = "CONTAINS_MEMO", direction = Relationship.Direction.INCOMING)
     var parentFolder: FolderNeo4jEntity?,
     createdAt: LocalDateTime?,

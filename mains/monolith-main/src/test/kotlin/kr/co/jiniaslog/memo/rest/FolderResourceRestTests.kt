@@ -8,7 +8,7 @@ import kr.co.jiniaslog.memo.adapter.inbound.http.dto.ChangeFolderNameRequest
 import kr.co.jiniaslog.memo.adapter.inbound.http.dto.MakeFolderRelationshipRequest
 import kr.co.jiniaslog.memo.domain.folder.FolderId
 import kr.co.jiniaslog.memo.domain.folder.FolderName
-import kr.co.jiniaslog.memo.queries.IGetFoldersAllInHierirchy
+import kr.co.jiniaslog.memo.queries.IGetFoldersAllInHierirchyByAuthorId
 import kr.co.jiniaslog.memo.usecase.IChangeFolderName
 import kr.co.jiniaslog.memo.usecase.ICreateNewFolder
 import kr.co.jiniaslog.memo.usecase.IDeleteFoldersRecursively
@@ -38,25 +38,6 @@ class FolderResourceRestTests : RestTestAbstractSkeleton() {
                 .post("/api/v1/folders")
                 .then()
                 .statusCode(401)
-        }
-
-        @Test
-        fun `인가가 되지 않은 사용자가 폴더 생성 요청시 403을 받는다`() {
-            // given
-            every { folderService.handle(any(ICreateNewFolder.Command::class)) } returns ICreateNewFolder.Info(
-                FolderId(
-                    1L
-                ),
-                FolderName("name")
-            )
-
-            // when, then
-            RestAssuredMockMvc.given()
-                .cookies(PreAuthFilter.ACCESS_TOKEN_HEADER, getTestUserToken())
-                .contentType(MediaType.APPLICATION_JSON)
-                .post("/api/v1/folders")
-                .then()
-                .statusCode(403)
         }
 
         @Test
@@ -202,7 +183,7 @@ class FolderResourceRestTests : RestTestAbstractSkeleton() {
         @Test
         fun `유효한 폴더 메모 조회 요청시 200을 받는다`() {
             // given
-            every { folderQueries.handle(any(IGetFoldersAllInHierirchy.Query::class)) } returns mockk(relaxed = true)
+            every { folderQueries.handle(any(IGetFoldersAllInHierirchyByAuthorId.Query::class)) } returns mockk(relaxed = true)
 
             // when, then
             RestAssuredMockMvc.given()

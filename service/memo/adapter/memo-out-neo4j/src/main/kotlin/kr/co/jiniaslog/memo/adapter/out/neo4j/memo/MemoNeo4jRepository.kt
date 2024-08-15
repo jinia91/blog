@@ -55,4 +55,6 @@ internal interface MemoNeo4jRepository : Neo4jRepository<MemoNeo4jEntity, Long> 
 
     @Query("MATCH (referencingMemo:memo)-[r:REFERENCE]->(m:memo) WHERE m.id = ${'$'}memoId RETURN referencingMemo")
     fun findReferencingMemos(memoId: Long): List<MemoNeo4jEntity>
+
+    fun findAllByAuthorId(authorId: Long): List<MemoNeo4jEntity>
 }

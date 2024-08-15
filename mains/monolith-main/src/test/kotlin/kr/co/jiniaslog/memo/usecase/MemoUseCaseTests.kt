@@ -246,6 +246,7 @@ class MemoUseCaseTests : TestContainerAbstractSkeleton() {
         val command =
             IDeleteMemo.Command(
                 id = memo.entityId,
+                requesterId = AuthorId(1),
             )
 
         // when
@@ -275,6 +276,7 @@ class MemoUseCaseTests : TestContainerAbstractSkeleton() {
             IMakeRelationShipFolderAndMemo.Command(
                 memoId = memo.entityId,
                 folderId = folder.entityId,
+                requesterId = AuthorId(1),
             )
 
         // when
@@ -309,6 +311,7 @@ class MemoUseCaseTests : TestContainerAbstractSkeleton() {
             IMakeRelationShipFolderAndMemo.Command(
                 memoId = memo.entityId,
                 folderId = null,
+                requesterId = AuthorId(1),
             )
 
         // when
@@ -335,6 +338,7 @@ class MemoUseCaseTests : TestContainerAbstractSkeleton() {
             IMakeRelationShipFolderAndMemo.Command(
                 memoId = memo.entityId,
                 folderId = FolderId(1),
+                requesterId = AuthorId(1),
             )
 
         // when
@@ -370,6 +374,7 @@ class MemoUseCaseTests : TestContainerAbstractSkeleton() {
             IMakeRelationShipFolderAndMemo.Command(
                 memoId = memo.entityId,
                 folderId = folder2.entityId,
+                requesterId = AuthorId(1),
             )
 
         // when

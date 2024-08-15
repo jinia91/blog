@@ -11,9 +11,10 @@ import kr.co.jiniaslog.shared.core.domain.IdUtils
 import java.time.LocalDateTime
 
 object MemoTestFixtures {
+    val defaultAuthorId = AuthorId(1L)
     fun build(
         id: MemoId = MemoId(IdUtils.generate()),
-        authorId: AuthorId = AuthorId(IdUtils.generate()),
+        authorId: AuthorId = defaultAuthorId,
         content: MemoContent = MemoContent("test content"),
         title: MemoTitle = MemoTitle("test title"),
         references: MutableSet<MemoReference> = mutableSetOf(),

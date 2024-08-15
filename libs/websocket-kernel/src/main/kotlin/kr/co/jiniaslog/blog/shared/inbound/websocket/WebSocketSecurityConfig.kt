@@ -16,7 +16,7 @@ class WebSocketSecurityConfig {
     fun authorizationManager(
         messages: MessageMatcherDelegatingAuthorizationManager.Builder
     ): AuthorizationManager<Message<*>> {
-        messages.anyMessage().hasRole("ADMIN")
+        messages.anyMessage().authenticated()
         return messages.build()
     }
 }
