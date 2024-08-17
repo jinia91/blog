@@ -1,5 +1,6 @@
 package kr.co.jiniaslog.memo.queries
 
+import kr.co.jiniaslog.memo.domain.memo.AuthorId
 import kr.co.jiniaslog.memo.domain.memo.MemoContent
 import kr.co.jiniaslog.memo.domain.memo.MemoId
 import kr.co.jiniaslog.memo.domain.memo.MemoTitle
@@ -10,6 +11,7 @@ interface IRecommendRelatedMemo {
     class Query(
         rawKeyword: String,
         val thisMemoId: MemoId,
+        val requesterId: AuthorId,
     ) {
         val keyword: String = rawKeyword.also {
             require(it.isNotBlank()) { "keyword should not be blank" }
