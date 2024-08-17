@@ -18,7 +18,6 @@ include(
     "libs:websocket-kernel",
     "libs:messaging-kernel",
     "libs:snowflake-id-generator",
-    "libs:global-logging",
 
     // blog
     "service:blog:blog-core",
