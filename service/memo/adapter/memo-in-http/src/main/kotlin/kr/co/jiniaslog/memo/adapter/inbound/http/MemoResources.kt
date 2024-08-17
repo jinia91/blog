@@ -9,6 +9,7 @@ import kr.co.jiniaslog.memo.adapter.inbound.http.dto.GetMemoByIdResponse
 import kr.co.jiniaslog.memo.adapter.inbound.http.dto.InitMemoRequest
 import kr.co.jiniaslog.memo.adapter.inbound.http.dto.RecommendRelatedMemoResponse
 import kr.co.jiniaslog.memo.adapter.inbound.http.dto.toResponse
+import kr.co.jiniaslog.memo.domain.exception.NotOwnershipException
 import kr.co.jiniaslog.memo.domain.folder.FolderId
 import kr.co.jiniaslog.memo.domain.memo.AuthorId
 import kr.co.jiniaslog.memo.domain.memo.MemoId
@@ -24,6 +25,7 @@ import kr.co.jiniaslog.memo.usecase.MemoUseCasesFacade
 import kr.cojiniaslog.shared.adapter.inbound.http.AuthUserId
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.DeleteMapping
+import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
@@ -32,6 +34,7 @@ import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
+import java.awt.SystemColor.info
 import java.net.URI
 
 @RestController
@@ -40,6 +43,11 @@ class MemoResources(
     private val memoUseCases: MemoUseCasesFacade,
     private val memoQueries: MemoQueriesFacade,
 ) {
+    @ExceptionHandler(value = [NotOwnershipException::class])
+    fun notOwnershipExceptionHandler(e: NotOwnershipException): ResponseEntity<Any> {
+        return ResponseEntity.status(403).body(e.message)
+    }
+
     @PostMapping
     fun createEmptyMemo(
         @AuthUserId userId: Long?,
@@ -98,7 +106,7 @@ class MemoResources(
         @RequestParam keyword: String,
         @AuthUserId userId: Long?,
     ): ResponseEntity<RecommendRelatedMemoResponse> {
-        val query = IRecommendRelatedMemo.Query(keyword, MemoId(id))
+        val query = IRecommendRelatedMemo.Query(keyword, MemoId(id), AuthorId(userId!!))
         val info = memoQueries.handle(query)
         return ResponseEntity.ok(info.toResponse())
     }
@@ -108,7 +116,7 @@ class MemoResources(
         @PathVariable id: Long,
         @AuthUserId userId: Long?,
     ): ResponseEntity<GetAllReferencesByMemoResponse> {
-        val query = IGetAllReferencesByMemo.Query(MemoId(id))
+        val query = IGetAllReferencesByMemo.Query(MemoId(id), AuthorId(userId!!))
         val info = memoQueries.handle(query)
         return ResponseEntity.ok(info.toResponse())
     }
@@ -118,7 +126,7 @@ class MemoResources(
         @PathVariable id: Long,
         @AuthUserId userId: Long?,
     ): ResponseEntity<GetAllReferencedByMemoResponse> {
-        val query = IGetAllReferencedByMemo.Query(MemoId(id))
+        val query = IGetAllReferencedByMemo.Query(MemoId(id), AuthorId(userId!!))
         val info = memoQueries.handle(query)
         return ResponseEntity.ok(info.toResponse())
     }

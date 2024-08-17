@@ -1,5 +1,6 @@
 package kr.co.jiniaslog.memo.domain.memo
 
+import kr.co.jiniaslog.memo.domain.exception.NotOwnershipException
 import kr.co.jiniaslog.memo.domain.folder.FolderId
 import kr.co.jiniaslog.shared.core.domain.AggregateRoot
 import kr.co.jiniaslog.shared.core.domain.IdUtils
@@ -32,7 +33,7 @@ class Memo private constructor(
         private set
 
     fun validateOwnership(requesterId: AuthorId) {
-        require(this.authorId == requesterId) { "요청자가 작성자가 아닙니다." }
+        require(this.authorId == requesterId) { throw NotOwnershipException() }
     }
 
     fun update(

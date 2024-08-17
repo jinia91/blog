@@ -13,11 +13,6 @@ internal open class MemoRepositoryAdapter(
     private val memoNeo4jRepository: MemoNeo4jRepository,
     private val folderNeo4jRepository: FolderNeo4jRepository,
 ) : MemoRepository {
-    @Transactional(readOnly = true)
-    override fun findByRelatedMemo(keyword: String): List<Memo> {
-        return memoNeo4jRepository.findByKeywordFullTextSearchingLimit6(keyword).map { it.toDomain() }
-    }
-
     override fun findById(id: MemoId): Memo? {
         return memoNeo4jRepository.findById(id.value).orElse(null)?.toDomain()
     }

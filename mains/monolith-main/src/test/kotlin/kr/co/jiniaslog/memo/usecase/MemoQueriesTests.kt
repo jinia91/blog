@@ -40,7 +40,9 @@ class MemoQueriesTests : TestContainerAbstractSkeleton() {
         )
 
         // when
-        val result = sut.handle(IRecommendRelatedMemo.Query(thisMemoId = memo.entityId, rawKeyword = "test"))
+        val result = sut.handle(
+            IRecommendRelatedMemo.Query(thisMemoId = memo.entityId, rawKeyword = "test", requesterId = memo.authorId)
+        )
 
         // then
         result.relatedMemoCandidates.size shouldBe 5
@@ -88,7 +90,7 @@ class MemoQueriesTests : TestContainerAbstractSkeleton() {
         }
 
         // when
-        val result = sut.handle(IGetAllReferencesByMemo.Query(memoId = target.entityId))
+        val result = sut.handle(IGetAllReferencesByMemo.Query(memoId = target.entityId, requesterId = target.authorId))
 
         // then
         result.references.size shouldBe 10
@@ -107,7 +109,7 @@ class MemoQueriesTests : TestContainerAbstractSkeleton() {
         }
 
         // when
-        val result = sut.handle(IGetAllReferencedByMemo.Query(memoId = target.entityId))
+        val result = sut.handle(IGetAllReferencedByMemo.Query(memoId = target.entityId, requesterId = target.authorId))
 
         // then
         result.referenceds.size shouldBe 10

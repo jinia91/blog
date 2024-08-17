@@ -4,6 +4,7 @@ import kr.co.jiniaslog.memo.adapter.out.neo4j.folder.FolderNeo4jEntity
 import kr.co.jiniaslog.memo.adapter.out.neo4j.folder.FolderNeo4jRepository
 import kr.co.jiniaslog.memo.adapter.out.neo4j.memo.MemoNeo4jEntity
 import kr.co.jiniaslog.memo.adapter.out.neo4j.memo.MemoNeo4jRepository
+import kr.co.jiniaslog.memo.domain.exception.NotOwnershipException
 import kr.co.jiniaslog.memo.domain.folder.FolderId
 import kr.co.jiniaslog.memo.domain.folder.FolderName
 import kr.co.jiniaslog.memo.domain.memo.AuthorId
@@ -31,7 +32,7 @@ internal open class MemoFolderImplQueries(
 
     override fun handle(query: IRecommendRelatedMemo.Query): IRecommendRelatedMemo.Info {
         val relatedMemoCandidates =
-            memoNeo4jRepository.findByKeywordFullTextSearchingLimit6(query.keyword)
+            memoNeo4jRepository.findByKeywordFullTextSearchingLimit6ByAuthorId(query.keyword, query.requesterId.value)
                 .filterNot { it.id == query.thisMemoId.value }
                 .take(5)
                 .map { Triple(it.id, it.title, it.content) }
@@ -52,7 +53,7 @@ internal open class MemoFolderImplQueries(
         val memo =
             memoNeo4jRepository.findById(query.memoId.value).getOrNull()
                 ?: throw IllegalArgumentException("memo not found")
-        require(memo.authorId == query.requesterId.value)
+        require(memo.authorId == query.requesterId.value) { throw NotOwnershipException() }
         return IGetMemoById.Info(
             memoId = MemoId(memo.id),
             title = MemoTitle(memo.title),
@@ -72,6 +73,7 @@ internal open class MemoFolderImplQueries(
         val memo =
             memoNeo4jRepository.findById(query.memoId.value).getOrNull()
                 ?: throw IllegalArgumentException("memo not found")
+        require(memo.authorId == query.requesterId.value) { throw NotOwnershipException() }
         return IGetAllReferencesByMemo.Info(
             references =
             memo.references.map {
@@ -85,6 +87,9 @@ internal open class MemoFolderImplQueries(
 
     override fun handle(query: IGetAllReferencedByMemo.Query): IGetAllReferencedByMemo.Info {
         val result = memoNeo4jRepository.findReferencingMemos(query.memoId.value)
+        result.forEach {
+            require(it.authorId == query.requesterId.value) { throw NotOwnershipException() }
+        }
         return IGetAllReferencedByMemo.Info(
             referenceds =
             result.map {
@@ -131,7 +136,7 @@ internal open class MemoFolderImplQueries(
     }
 
     private fun findByKeyword(query: IGetFoldersAllInHierirchyByAuthorId.Query): IGetFoldersAllInHierirchyByAuthorId.Info {
-        val memos = memoNeo4jRepository.findByKeywordFullTextSearching(query.value!!)
+        val memos = memoNeo4jRepository.findByKeywordFullTextSearching(query.value!!, query.requesterId.value)
         return IGetFoldersAllInHierirchyByAuthorId.Info(
             listOf(
                 IGetFoldersAllInHierirchyByAuthorId.FolderInfo(

@@ -66,6 +66,7 @@ val bootLib = mutableListOf(
     libs.spring.boot.starter.security,
     libs.spring.boot.starter.web,
     libs.spring.boot.starter.data.neo4j,
+    libs.spring.boot.starter.actuator,
     libs.h2,
 )
 

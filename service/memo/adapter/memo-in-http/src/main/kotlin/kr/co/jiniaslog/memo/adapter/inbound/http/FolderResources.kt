@@ -9,6 +9,7 @@ import kr.co.jiniaslog.memo.adapter.inbound.http.dto.MakeFolderRelationshipReque
 import kr.co.jiniaslog.memo.adapter.inbound.http.dto.MakeFolderRelationshipResponse
 import kr.co.jiniaslog.memo.adapter.inbound.http.dto.toResponse
 import kr.co.jiniaslog.memo.adapter.inbound.http.viewmodel.FolderViewModel
+import kr.co.jiniaslog.memo.domain.exception.NotOwnershipException
 import kr.co.jiniaslog.memo.domain.folder.FolderId
 import kr.co.jiniaslog.memo.domain.memo.AuthorId
 import kr.co.jiniaslog.memo.queries.FolderQueriesFacade
@@ -21,6 +22,7 @@ import kr.cojiniaslog.shared.adapter.inbound.http.AuthUserId
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.CrossOrigin
 import org.springframework.web.bind.annotation.DeleteMapping
+import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
@@ -38,6 +40,11 @@ class FolderResources(
     private val folderUseCases: FolderUseCasesFacade,
     private val folderQueries: FolderQueriesFacade,
 ) {
+    @ExceptionHandler(value = [NotOwnershipException::class])
+    fun notOwnershipExceptionHandler(e: NotOwnershipException): ResponseEntity<Any> {
+        return ResponseEntity.status(403).body(e.message)
+    }
+
     @PostMapping()
     @CrossOrigin(origins = ["http://localhost:3000"])
     fun createNewFolder(
@@ -105,7 +112,6 @@ class FolderResources(
         @RequestParam(required = false) query: String?,
         @AuthUserId userId: Long?,
     ): ResponseEntity<GetFolderAndMemoResponse> {
-        log.info { "query: $query" }
         return ResponseEntity.ok(
             folderQueries.handle(IGetFoldersAllInHierirchyByAuthorId.Query(query, AuthorId(userId!!))).toResponse()
         )

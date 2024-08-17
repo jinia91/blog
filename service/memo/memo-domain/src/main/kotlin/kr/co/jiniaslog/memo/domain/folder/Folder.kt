@@ -1,5 +1,6 @@
 package kr.co.jiniaslog.memo.domain.folder
 
+import kr.co.jiniaslog.memo.domain.exception.NotOwnershipException
 import kr.co.jiniaslog.memo.domain.memo.AuthorId
 import kr.co.jiniaslog.shared.core.domain.AggregateRoot
 import kr.co.jiniaslog.shared.core.domain.IdUtils
@@ -22,7 +23,7 @@ class Folder private constructor(
         private set
 
     fun validateOwnership(authorId: AuthorId) {
-        require(this.authorId == authorId) { "폴더의 소유자가 아닙니다." }
+        require(this.authorId == authorId) { throw NotOwnershipException() }
     }
 
     fun changeName(name: FolderName) {

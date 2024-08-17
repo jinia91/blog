@@ -5,6 +5,7 @@ import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import kr.co.jiniaslog.TestContainerAbstractSkeleton
 import kr.co.jiniaslog.memo.domain.FolderTestFixtures
+import kr.co.jiniaslog.memo.domain.exception.NotOwnershipException
 import kr.co.jiniaslog.memo.domain.folder.Folder
 import kr.co.jiniaslog.memo.domain.folder.FolderId
 import kr.co.jiniaslog.memo.domain.folder.FolderName
@@ -142,7 +143,7 @@ class FolderUseCaseTests : TestContainerAbstractSkeleton() {
                 requesterId = AuthorId(2),
             )
         // when & then
-        shouldThrow<IllegalArgumentException> {
+        shouldThrow<NotOwnershipException> {
             sut.handle(command)
         }
     }

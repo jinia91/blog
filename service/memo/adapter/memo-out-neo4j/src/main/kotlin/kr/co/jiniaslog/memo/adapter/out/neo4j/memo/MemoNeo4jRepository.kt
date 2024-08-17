@@ -9,6 +9,7 @@ internal interface MemoNeo4jRepository : Neo4jRepository<MemoNeo4jEntity, Long> 
         """
         CALL db.index.fulltext.queryNodes("memo_full_text_index", ${'$'}keyword)
         YIELD node, score
+        WHERE node.authorId = ${'$'}authorId
         OPTIONAL MATCH (node)-[:REFERENCE]->(other)
         WITH node, score, count(other) AS referencesCount
         ORDER BY referencesCount DESC, score DESC
@@ -23,14 +24,16 @@ internal interface MemoNeo4jRepository : Neo4jRepository<MemoNeo4jEntity, Long> 
         LIMIT 6
     """,
     )
-    fun findByKeywordFullTextSearchingLimit6(
+    fun findByKeywordFullTextSearchingLimit6ByAuthorId(
         @Param("keyword") keyword: String,
+        @Param("authorId") authorId: Long,
     ): List<MemoNeo4jEntity>
 
     @Query(
         """
         CALL db.index.fulltext.queryNodes("memo_full_text_index", ${'$'}keyword)
         YIELD node, score
+        WHERE node.authorId = ${'$'}authorId
         OPTIONAL MATCH (node)-[:REFERENCE]->(other)
         WITH node, score, count(other) AS referencesCount
         ORDER BY referencesCount DESC, score DESC
@@ -46,6 +49,7 @@ internal interface MemoNeo4jRepository : Neo4jRepository<MemoNeo4jEntity, Long> 
     )
     fun findByKeywordFullTextSearching(
         @Param("keyword") keyword: String,
+        @Param("authorId") authorId: Long,
     ): List<MemoNeo4jEntity>
 
     @Query("MATCH (parent:memo)-[r:REFERENCE]->(child:memo) WHERE child.id = ${'$'}memoId detach DELETE r")
