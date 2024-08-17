@@ -1,0 +1,52 @@
+version: "3"
+services:
+  monolith-main:
+    ports:
+      - "7777:7777"
+      - "7778:7778"
+
+    environment:
+      JAVA_TOOL_OPTIONS: -Dcom.sun.management.jmxremote=true -Dcom.sun.management.jmxremote.port=7778 -Dcom.sun.management.jmxremote.rmi.port=7778 -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Djava.rmi.server.hostname=${HOST_IP:-$DEFAULT_IP} -Xms2G -Xmx2G
+      SPRING_APPLICATION_JSON: '{
+  "spring": {
+    "neo4j": {
+      "uri": "bolt://host.docker.internal:7687",
+      "authentication": {
+        "username": "neo4j",
+        "password": "password"
+      }
+    }
+  }
+}'
+    container_name: jinias_log_monolith_main
+    build:
+      dockerfile: Dockerfile
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    depends_on:
+      jinia_rdb:
+        condition: service_healthy
+    restart: always
+    networks:
+      - internal-network
+    deploy:
+      resources:
+        limits:
+          cpus: "1"
+
+  jinia_neo4j:
+    image: neo4j:5.5
+    ports:
+      - "7687:7687"
+    environment:
+      NEO4J_AUTH: neo4j/password
+    networks:
+      - internal-network
+    healthcheck:
+      test: ["CMD", "neo4j", "ping"]
+      interval: 5s
+      retries: 5
+
+networks:
+  internal-network:
+    driver: bridge

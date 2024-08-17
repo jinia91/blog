@@ -45,3 +45,10 @@ src/main/resources/application.yml
 src/main/resources/application-dev.yml
 /logs/
 /src/logback.xml
+**/application.yml
+**/application-otel.yml
+
+### h2 db ###
+/h2/
+
+.DS_Store

@@ -1,0 +1,91 @@
+[versions]
+# Kotlin
+kotlin = "1.9.24"
+kotlin-logging = "3.0.5"
+jackson-module-kotlin = "2.17.1"
+mockk = "1.13.8"
+
+# Spring
+spring-boot = "3.3.0"
+spring-dependency-management = "1.1.5"
+
+# db
+h2 = "2.2.224"
+
+# testcontainers
+testcontainers = "1.19.8"
+
+# querydsl
+querydsl = "5.1.0:jakarta"
+
+[libraries]
+# Kotlin 의존성
+kotlin-reflect = { module = "org.jetbrains.kotlin:kotlin-reflect", version.ref = "kotlin" }
+kotlin-logging = { module = "io.github.microutils:kotlin-logging-jvm", version.ref = "kotlin-logging" }
+kotlin-jackson = { module = "com.fasterxml.jackson.module:jackson-module-kotlin", version.ref = "jackson-module-kotlin" }
+kotlin-jackson-binding = { module = "com.fasterxml.jackson.core:jackson-databind" }
+
+# Spring Boot 의존성
+spring-boot-starter-core = { module = "org.springframework.boot:spring-boot-starter" }
+spring-boot-starter-web = { module = "org.springframework.boot:spring-boot-starter-web" }
+spring-boot-starter-websocket = { module = "org.springframework.boot:spring-boot-starter-websocket" }
+spring-boot-starter-test = { module = "org.springframework.boot:spring-boot-starter-test" }
+spring-boot-starter-security = { module = "org.springframework.boot:spring-boot-starter-security" }
+spring-boot-starter-actuator = { module = "org.springframework.boot:spring-boot-starter-actuator" }
+spring-boot-starter-data-jpa = { module = "org.springframework.boot:spring-boot-starter-data-jpa" }
+spring-boot-starter-data-neo4j = { module = "org.springframework.boot:spring-boot-starter-data-neo4j" }
+spring-boot-starter-validation = { module = "org.springframework.boot:spring-boot-starter-validation" }
+spring-boot-starter-integration = {module = "org.springframework.boot:spring-boot-starter-integration"}
+spring-boot-configuration = { module = "org.springframework.boot:spring-boot-configuration-processor" }
+
+# 캐시
+spring-boot-starter-redisson = { module = "org.redisson:redisson-spring-boot-starter", version = "3.17.7" }
+caffeine = { module = "com.github.ben-manes.caffeine:caffeine", version = "3.1.8" }
+
+# springdoc
+springdoc-openapi-ui = { module = "org.springdoc:springdoc-openapi-starter-webmvc-ui", version = "2.3.0" }
+
+# spring spy
+spring-boot-starter-spy = { module = "com.github.gavlyukovskiy:p6spy-spring-boot-starter", version = "1.9.0" }
+
+# h2 의존성
+h2 = { module = "com.h2database:h2", version.ref = "h2" }
+
+# logback
+logback-classic = { module = "ch.qos.logback:logback-classic", version = "1.4.12" }
+
+# Test 관련 라이브러리
+kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test" }
+kotest-runner-junit5 = { module = "io.kotest:kotest-runner-junit5", version = "5.8.0" }
+kotest-assertion = { module = "io.kotest:kotest-assertions-core", version = "5.8.0" }
+junit-param = { module = "org.junit.jupiter:junit-jupiter-params", version = "5.10.1" }
+mockk = { module = "io.mockk:mockk", version.ref = "mockk" }
+testcontainers = { module = "org.testcontainers:testcontainers", version.ref = "testcontainers" }
+testcontainers-junit5 = { module = "org.testcontainers:junit-jupiter", version.ref = "testcontainers"}
+testcontainers-neo4j = { module = "org.testcontainers:neo4j", version.ref = "testcontainers" }
+restassured = {module = "io.rest-assured:spring-mock-mvc" , version = "5.4.0"}
+wiremock = {module = "org.springframework.cloud:spring-cloud-contract-wiremock", version = "4.1.0"}
+mockkbean = {module = "com.ninja-squad:springmockk", version = "4.0.2"}
+
+### 그레이들 플러그인 의존성 ###
+# 코틀린
+kotlin-gradle = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
+kotlin-allopen = { module = "org.jetbrains.kotlin:kotlin-allopen", version.ref = "kotlin" }
+kotlin-noarg = { module = "org.jetbrains.kotlin:kotlin-noarg", version.ref = "kotlin" }
+kotlin-compiler-embedded = { module = "org.jetbrains.kotlin:kotlin-compiler-embeddable", version.ref = "kotlin" }
+
+# Spring 플러그인
+kotlin-spring = { module = "org.jetbrains.kotlin.plugin.spring:org.jetbrains.kotlin.plugin.spring.gradle.plugin", version.ref = "kotlin" }
+spring-boot-gradle = { module = "org.springframework.boot:spring-boot-gradle-plugin", version.ref = "spring-boot" }
+spring-dependency-management = { module = "io.spring.gradle:dependency-management-plugin", version.ref = "spring-dependency-management" }
+
+# kover 플러그인
+kover-plugin = { module = "org.jetbrains.kotlinx:kover-gradle-plugin", version = "0.7.6" }
+
+# kapt 플러그인
+kapt-plugin = { module = "org.jetbrains.kotlin.kapt:org.jetbrains.kotlin.kapt.gradle.plugin", version.ref = "kotlin" }
+
+[bundles]
+kotlin-plugins = ["kotlin-gradle", "kotlin-noarg", "kotlin-allopen"]
+kotlin-dependencies = ["kotlin-compiler-embedded", "kotlin-reflect", "kotlin-logging"]
+spring-plugins = ["kotlin-spring", "spring-boot-gradle", "spring-dependency-management"]
