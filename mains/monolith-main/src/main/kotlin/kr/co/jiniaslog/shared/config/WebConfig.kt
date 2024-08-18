@@ -12,7 +12,7 @@ class WebConfig : WebMvcConfigurer {
             .addMapping("/**")
             .allowCredentials(true)
             // fixme 주입하게하자
-            .allowedOrigins("https://blog-front-black.vercel.app")
+            .allowedOrigins("https://www.jiniaslog.co.kr")
             .allowedMethods("GET", "POST", "PUT", "DELETE")
             .maxAge(3600)
     }
