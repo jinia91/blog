@@ -101,7 +101,8 @@ class AuthUserResources(
 
     private fun buildCookieWithAccessToken(accessToken: AccessToken): ResponseCookie =
         ResponseCookie.from(ACCESS_TOKEN_COOKIE_NAME, accessToken.value)
-            .domain("localhost")
+            // fixme : domain도 주입하게 변경하기
+            .domain("https://jiniaslog-backend.p-e.kr")
             .path("/")
             .httpOnly(true)
             .maxAge(ACCESS_TOKEN_COOKIE_MAX_AGE)
@@ -111,7 +112,7 @@ class AuthUserResources(
 
     private fun buildCookieWithRefreshToken(refreshToken: RefreshToken): ResponseCookie =
         ResponseCookie.from(REFRESH_TOKEN_COOKIE_NAME, refreshToken.value)
-            .domain("localhost")
+            .domain("https://jiniaslog-backend.p-e.kr")
             .path("/api/v1/auth/refresh")
             .httpOnly(true)
             .maxAge(REFRESH_TOKEN_COOKIE_MAX_AGE)
