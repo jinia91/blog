@@ -11,7 +11,8 @@ class WebConfig : WebMvcConfigurer {
         registry
             .addMapping("/**")
             .allowCredentials(true)
-            .allowedOrigins("http://localhost:3000")
+            // fixme 주입하게하자
+            .allowedOrigins("https://blog-front-black.vercel.app")
             .allowedMethods("GET", "POST", "PUT", "DELETE")
             .maxAge(3600)
     }
