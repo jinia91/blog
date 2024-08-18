@@ -107,8 +107,9 @@ class FolderResources(
         @AuthUserId userId: Long?,
     ): ResponseEntity<GetFolderAndMemoResponse> {
         log.info { "getFoldersAndMemoAll 쿼리 호출: $query" }
-        return ResponseEntity.ok(
-            folderQueries.handle(IGetFoldersAllInHierirchyByAuthorId.Query(query, AuthorId(userId!!))).toResponse()
-        )
+        val response = folderQueries.handle(IGetFoldersAllInHierirchyByAuthorId.Query(query, AuthorId(userId!!)))
+            .toResponse()
+        log.info { "getFoldersAndMemoAll 쿼리 결과: $response" }
+        return ResponseEntity.ok(response)
     }
 }
