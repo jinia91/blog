@@ -128,6 +128,7 @@ class AuthUserResourceRestTests : RestTestAbstractSkeleton() {
                 // then
                 .then()
                 .statusCode(200)
+                .extract()
                 .cookies()
                 .let { cookies ->
                     cookies["jiniaslog_access"] shouldBe ""
