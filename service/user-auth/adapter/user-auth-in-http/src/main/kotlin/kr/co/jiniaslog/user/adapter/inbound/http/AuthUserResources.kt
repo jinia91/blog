@@ -14,6 +14,7 @@ import kr.co.jiniaslog.user.domain.auth.token.AuthorizationCode
 import kr.co.jiniaslog.user.domain.auth.token.RefreshToken
 import kr.co.jiniaslog.user.domain.user.UserId
 import kr.cojiniaslog.shared.adapter.inbound.http.AuthUserId
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpHeaders.SET_COOKIE
 import org.springframework.http.ResponseCookie
 import org.springframework.http.ResponseEntity
@@ -33,6 +34,9 @@ private val log = mu.KotlinLogging.logger {}
 class AuthUserResources(
     private val usecases: UseCasesUserAuthFacade,
 ) {
+    @Value("\${host.domain}")
+    private lateinit var domain: String
+
     @GetMapping("/{provider}/url")
     fun getRedirectUrl(
         @PathVariable provider: String,

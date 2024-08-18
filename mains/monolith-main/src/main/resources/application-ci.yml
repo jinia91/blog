@@ -3,6 +3,9 @@ decorator:
     p6spy:
       enable-logging: true
 
+host:
+  domain: http://localhost:7777
+
 spring:
   h2:
     console:
