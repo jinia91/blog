@@ -129,7 +129,7 @@ class AuthUserResources(
         val command = ILogOut.Command(UserId(userId))
         usecases.handle(command)
         val accessCookie = ResponseCookie.from(ACCESS_TOKEN_COOKIE_NAME, "")
-            .domain("localhost")
+            .domain("https://jiniaslog-backend.p-e.kr")
             .path("/")
             .maxAge(0)
             .secure(true)
@@ -137,7 +137,7 @@ class AuthUserResources(
             .build()
 
         val refreshCookie = ResponseCookie.from(REFRESH_TOKEN_COOKIE_NAME, "")
-            .domain("localhost")
+            .domain("https://jiniaslog-backend.p-e.kr")
             .path("/api/v1/auth/refresh")
             .maxAge(0)
             .secure(true)
