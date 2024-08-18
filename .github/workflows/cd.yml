@@ -1,0 +1,108 @@
+name: 백엔드 서버 배포 파이프라인
+run-name: 배포 - ${{ github.ref_name }}
+
+on:
+  workflow_dispatch:
+
+jobs:
+  docker-build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 체크아웃으로 소스코드 가져오기
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref_name }}
+
+      - name: jdk 17 설치
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: 그레이들 권한
+        run: chmod 777 gradlew
+
+      - name: 그레이들 빌드
+        run: ./gradlew build
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: 도커 로그인
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: 도커 이미지 빌드 및 도커허브에 이미지 올리기
+        uses: docker/build-push-action@v5.1.0
+        with:
+          context: ./mains/monolith-main
+          push: true
+          tags: ${{ secrets.DOCKER_USERNAME }}/blog-backend:${{ github.sha }}
+
+  deploy:
+    needs: docker-build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 블루 그린 배포
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.NCP_HOST }}
+          username: ${{ secrets.NCP_USERNAME }}
+          password: ${{ secrets.NCP_PASSWORD }}
+          port: ${{ secrets.NCP_PORT }}
+          script: |
+            sudo docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
+            
+            # 현재 실행 중인 컨테이너 확인
+            CURRENT_PORT=$(sudo docker ps --format "{{.Ports}}" | grep -oP '(\d+)->7777' | grep -oP '^\d+')
+            if [ "${CURRENT_PORT}" == "7776" ]; then
+              NEW_PORT=7777
+              echo "현재 실행중인 포트는 7776 이고 7777로 실행할거임"
+            else
+              NEW_PORT=7776
+              echo "현재 실행중인 포트는 7777 이고 7776로 실행할거임"
+            fi
+            
+            # 새로운 이미지로 컨테이너 실행
+            sudo docker run -d --name blog-backend-${NEW_PORT} -p ${NEW_PORT}:7777 \
+            -v ~/blog/application.yml:/app/config/application.yml \
+            jinia91/blog-backend:${{ github.sha }} java -jar blog-backend.jar --spring.config.location=file:/app/config/application.yml
+            
+            # 새로운 컨테이너의 Health Check
+            success=false
+            for i in {1..100}; do
+              if curl -s http://localhost:${NEW_PORT}/actuator/health | grep 'UP'; then
+                echo "새로운 인스턴스를 ${NEW_PORT} 에서 실행하고 헬스 체크 완료"
+                success=true
+                break
+              fi
+              echo "새로운 인스턴스 ${NEW_PORT} 헬스체크 기다리는중"
+              sleep 3
+            done        
+            
+            if [ "$success" = true ]; then
+              echo "배포 성공. NGINX 리로드 및 이전 버전 리소스 정리 중..."
+              
+              # NGINX 설정 변경 및 리로드
+              sudo sed -i "s/localhost:${CURRENT_PORT}/localhost:${NEW_PORT}/" /etc/nginx/sites-available/default
+              sudo nginx -s reload
+            
+              # 이전 컨테이너 중지 및 제거
+              PREVIOUS_CONTAINER="blog-backend-${CURRENT_PORT}"
+              sudo docker stop ${PREVIOUS_CONTAINER}
+              sudo docker rm ${PREVIOUS_CONTAINER}
+            else
+              echo "배포 실패. 새로운 컨테이너 제거 및 기존 상태 유지 중..."
+              # 실패 시 새 컨테이너 제거
+              sudo docker stop ${CONTAINER_NAME}
+              sudo docker rm ${CONTAINER_NAME}
+            fi
+            
+            # 도커 이미지 청소
+            sudo docker image prune -f
