@@ -4,7 +4,7 @@ decorator:
       enable-logging: true
 
 host:
-  domain: http://localhost:7777
+  domain: localhost
 
 spring:
   h2:
