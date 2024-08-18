@@ -72,7 +72,7 @@ jobs:
             # 새로운 이미지로 컨테이너 실행
             sudo docker run -d --name blog-backend-${NEW_PORT} -p ${NEW_PORT}:7777 \
             -v ~/blog/application.yml:/app/config/application.yml \
-            -v ~/blog/h2:/app/h2 \
+            -v ~/blog/h2:/h2 \
             jinia91/blog-backend:${{ github.sha }} java -jar blog-backend.jar --spring.config.location=file:/app/config/application.yml
             
             # 새로운 컨테이너의 Health Check
