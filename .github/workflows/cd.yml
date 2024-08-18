@@ -40,7 +40,7 @@ jobs:
       - name: 도커 이미지 빌드 및 도커허브에 이미지 올리기
         uses: docker/build-push-action@v5.1.0
         with:
-          context: .
+          context: ./mains/monolith-main
           push: true
           tags: ${{ secrets.DOCKER_USERNAME }}/blog-backend:${{ github.sha }}
 
