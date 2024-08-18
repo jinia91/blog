@@ -18,7 +18,6 @@ internal interface MemoNeo4jRepository : Neo4jRepository<MemoNeo4jEntity, Long> 
             node.authorId AS authorId, 
             node.title AS title, 
             node.content AS content, 
-            node.state AS state, 
             node.createdAt AS createdAt, 
             node.updatedAt AS updatedAt
         LIMIT 6
@@ -42,7 +41,6 @@ internal interface MemoNeo4jRepository : Neo4jRepository<MemoNeo4jEntity, Long> 
             node.authorId AS authorId, 
             node.title AS title, 
             node.content AS content, 
-            node.state AS state, 
             node.createdAt AS createdAt, 
             node.updatedAt AS updatedAt
     """,
