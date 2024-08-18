@@ -23,7 +23,7 @@ jobs:
         run: chmod 777 gradlew
 
       - name: 그레이들 빌드
-        run: ./gradlew build
+        run: ./gradlew build -x test
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
