@@ -11,6 +11,7 @@ spring-dependency-management = "1.1.5"
 
 # db
 h2 = "2.2.224"
+mysql-connector-j = "8.3.0"
 
 # testcontainers
 testcontainers = "1.19.8"
@@ -48,8 +49,10 @@ springdoc-openapi-ui = { module = "org.springdoc:springdoc-openapi-starter-webmv
 # spring spy
 spring-boot-starter-spy = { module = "com.github.gavlyukovskiy:p6spy-spring-boot-starter", version = "1.9.0" }
 
-# h2 의존성
+# db 의존성
 h2 = { module = "com.h2database:h2", version.ref = "h2" }
+mysql-connector-j = { module = "com.mysql:mysql-connector-j", version.ref = "mysql-connector-j" }
+
 
 # logback
 logback-classic = { module = "ch.qos.logback:logback-classic", version = "1.4.12" }
@@ -63,6 +66,7 @@ mockk = { module = "io.mockk:mockk", version.ref = "mockk" }
 testcontainers = { module = "org.testcontainers:testcontainers", version.ref = "testcontainers" }
 testcontainers-junit5 = { module = "org.testcontainers:junit-jupiter", version.ref = "testcontainers"}
 testcontainers-neo4j = { module = "org.testcontainers:neo4j", version.ref = "testcontainers" }
+testcontainers-mysql = { module = "org.testcontainers:mysql", version.ref = "testcontainers" }
 restassured = {module = "io.rest-assured:spring-mock-mvc" , version = "5.4.0"}
 wiremock = {module = "org.springframework.cloud:spring-cloud-contract-wiremock", version = "4.1.0"}
 mockkbean = {module = "com.ninja-squad:springmockk", version = "4.0.2"}

@@ -20,7 +20,7 @@ val blogService = mutableListOf(
     project(Modules.Service.Blog.Adaptors.InWebsocket.path),
     project(Modules.Service.Blog.Adaptors.OutUser.path),
     project(Modules.Service.Blog.Adaptors.OutMemo.path),
-    project(Modules.Service.Blog.Adaptors.OutPersistence.path),
+    project(Modules.Service.Blog.Adaptors.OutMySql.path),
 )
 
 val memoService = mutableListOf(
@@ -44,7 +44,7 @@ val authUserService = mutableListOf(
     project(Modules.Service.AuthUser.Adaptors.OutGoogle.path),
     project(Modules.Service.AuthUser.Adaptors.InHttp.path),
     project(Modules.Service.AuthUser.Adaptors.OutCache.path),
-    project(Modules.Service.AuthUser.Adaptors.OutH2.path),
+    project(Modules.Service.AuthUser.Adaptors.OutMySql.path),
 )
 
 val admin = mutableListOf(
@@ -67,13 +67,15 @@ val bootLib = mutableListOf(
     libs.spring.boot.starter.web,
     libs.spring.boot.starter.data.neo4j,
     libs.spring.boot.starter.actuator,
-    libs.h2,
+    libs.mysql.connector.j,
+    libs.h2
 )
 
 var integrationTestLib = mutableListOf(
     libs.testcontainers,
     libs.testcontainers.junit5,
     libs.testcontainers.neo4j,
+    libs.testcontainers.mysql,
     libs.restassured,
     libs.wiremock,
     libs.mockkbean,

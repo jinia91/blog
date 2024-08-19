@@ -28,7 +28,7 @@ include(
     "service:blog:adapter:blog-in-websocket",
     "service:blog:adapter:blog-out-user",
     "service:blog:adapter:blog-out-memo",
-    "service:blog:adapter:blog-out-persistence",
+    "service:blog:adapter:blog-out-mysql",
 
     // memo
     "service:memo:memo-domain",
@@ -52,7 +52,7 @@ include(
     "service:user-auth:adapter:user-auth-in-http",
     "service:user-auth:adapter:user-auth-in-acl",
     "service:user-auth:adapter:user-auth-out-google",
-    "service:user-auth:adapter:user-auth-out-h2",
+    "service:user-auth:adapter:user-auth-out-mysql",
     "service:user-auth:adapter:user-auth-out-cache",
 
     // admin
