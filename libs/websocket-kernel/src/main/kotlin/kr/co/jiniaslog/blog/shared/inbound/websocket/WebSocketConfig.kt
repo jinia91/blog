@@ -23,7 +23,7 @@ class WebSocketConfig(
 ) : WebSocketMessageBrokerConfigurer {
     override fun registerStompEndpoints(registry: StompEndpointRegistry) {
         registry.addEndpoint("/ws")
-            .setAllowedOriginPatterns("https://www.jiniaslog.co.kr")
+            .setAllowedOriginPatterns("https://www.jiniaslog.co.kr", "http://localhost:3000")
             .addInterceptors(websocketPreAuthInterceptor)
             .withSockJS()
     }

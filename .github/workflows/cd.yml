@@ -98,9 +98,12 @@ jobs:
               PREVIOUS_CONTAINER="blog-backend-${CURRENT_PORT}"
               sudo docker stop ${PREVIOUS_CONTAINER}
               sudo docker rm ${PREVIOUS_CONTAINER}
+            
+              CURRENT_IMAGE=$(sudo docker images jinia91/blog-backend:${{ github.sha }} --format "{{.ID}}")
+              PREVIOUS_IMAGE=$(sudo docker images jinia91/blog-backend --format "{{.ID}}" | sed -n '2p')
+              sudo docker images --format "{{.Repository}}:{{.Tag}} {{.ID}}" | grep 'jinia91/blog-backend' | grep -v "${CURRENT_IMAGE}\|${PREVIOUS_IMAGE}" | awk '{print $2}' | xargs -r sudo docker rmi -f      
             else
               echo "배포 실패. 새로운 컨테이너 제거 및 기존 상태 유지 중..."
-              # 실패 시 새 컨테이너 제거
               sudo docker stop ${CONTAINER_NAME}
               sudo docker rm ${CONTAINER_NAME}
             fi

@@ -12,7 +12,7 @@ class WebConfig : WebMvcConfigurer {
             .addMapping("/**")
             .allowCredentials(true)
             // fixme 주입하게하자
-            .allowedOrigins("https://www.jiniaslog.co.kr")
+            .allowedOrigins("https://www.jiniaslog.co.kr", "http://localhost:3000")
             .allowedMethods("GET", "POST", "PUT", "DELETE")
             .maxAge(3600)
     }
