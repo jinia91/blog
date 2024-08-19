@@ -20,7 +20,6 @@ import kr.co.jiniaslog.memo.usecase.IDeleteFoldersRecursively
 import kr.co.jiniaslog.memo.usecase.IMakeRelationShipFolderAndFolder
 import kr.cojiniaslog.shared.adapter.inbound.http.AuthUserId
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.CrossOrigin
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.GetMapping
@@ -46,7 +45,6 @@ class FolderResources(
     }
 
     @PostMapping()
-    @CrossOrigin(origins = ["http://localhost:3000"])
     fun createNewFolder(
         @AuthUserId userId: Long?,
     ): ResponseEntity<CreateNewFolderResponse> {
@@ -67,7 +65,6 @@ class FolderResources(
     }
 
     @PutMapping("/{folderId}/name")
-    @CrossOrigin(origins = ["http://localhost:3000"])
     fun changeFolderName(
         @AuthUserId userId: Long?,
         @RequestBody request: ChangeFolderNameRequest,
@@ -77,7 +74,6 @@ class FolderResources(
     }
 
     @PutMapping("/{folderId}/parent")
-    @CrossOrigin(origins = ["http://localhost:3000"])
     fun makeRelationshipWithFolders(
         @PathVariable folderId: Long,
         @AuthUserId userId: Long?,
@@ -96,7 +92,6 @@ class FolderResources(
     }
 
     @DeleteMapping("/{folderId}")
-    @CrossOrigin(origins = ["http://localhost:3000"])
     fun deleteFolder(
         @AuthUserId userId: Long?,
         @PathVariable folderId: Long,
@@ -107,13 +102,14 @@ class FolderResources(
     }
 
     @GetMapping
-    @CrossOrigin(origins = ["http://localhost:3000"])
     fun getFoldersAndMemoAll(
         @RequestParam(required = false) query: String?,
         @AuthUserId userId: Long?,
     ): ResponseEntity<GetFolderAndMemoResponse> {
-        return ResponseEntity.ok(
-            folderQueries.handle(IGetFoldersAllInHierirchyByAuthorId.Query(query, AuthorId(userId!!))).toResponse()
-        )
+        log.info { "getFoldersAndMemoAll 쿼리 호출: $query" }
+        val response = folderQueries.handle(IGetFoldersAllInHierirchyByAuthorId.Query(query, AuthorId(userId!!)))
+            .toResponse()
+        log.info { "getFoldersAndMemoAll 쿼리 결과: $response" }
+        return ResponseEntity.ok(response)
     }
 }

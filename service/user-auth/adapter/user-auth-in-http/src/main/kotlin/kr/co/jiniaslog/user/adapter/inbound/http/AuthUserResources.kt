@@ -14,6 +14,7 @@ import kr.co.jiniaslog.user.domain.auth.token.AuthorizationCode
 import kr.co.jiniaslog.user.domain.auth.token.RefreshToken
 import kr.co.jiniaslog.user.domain.user.UserId
 import kr.cojiniaslog.shared.adapter.inbound.http.AuthUserId
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpHeaders.SET_COOKIE
 import org.springframework.http.ResponseCookie
 import org.springframework.http.ResponseEntity
@@ -33,6 +34,9 @@ private val log = mu.KotlinLogging.logger {}
 class AuthUserResources(
     private val usecases: UseCasesUserAuthFacade,
 ) {
+    @Value("\${host.domain}")
+    private lateinit var domain: String
+
     @GetMapping("/{provider}/url")
     fun getRedirectUrl(
         @PathVariable provider: String,
@@ -101,7 +105,8 @@ class AuthUserResources(
 
     private fun buildCookieWithAccessToken(accessToken: AccessToken): ResponseCookie =
         ResponseCookie.from(ACCESS_TOKEN_COOKIE_NAME, accessToken.value)
-            .domain("localhost")
+            // fixme : domain도 주입하게 변경하기
+            .domain(domain)
             .path("/")
             .httpOnly(true)
             .maxAge(ACCESS_TOKEN_COOKIE_MAX_AGE)
@@ -111,7 +116,7 @@ class AuthUserResources(
 
     private fun buildCookieWithRefreshToken(refreshToken: RefreshToken): ResponseCookie =
         ResponseCookie.from(REFRESH_TOKEN_COOKIE_NAME, refreshToken.value)
-            .domain("localhost")
+            .domain(domain)
             .path("/api/v1/auth/refresh")
             .httpOnly(true)
             .maxAge(REFRESH_TOKEN_COOKIE_MAX_AGE)
@@ -128,7 +133,7 @@ class AuthUserResources(
         val command = ILogOut.Command(UserId(userId))
         usecases.handle(command)
         val accessCookie = ResponseCookie.from(ACCESS_TOKEN_COOKIE_NAME, "")
-            .domain("localhost")
+            .domain(domain)
             .path("/")
             .maxAge(0)
             .secure(true)
@@ -136,7 +141,7 @@ class AuthUserResources(
             .build()
 
         val refreshCookie = ResponseCookie.from(REFRESH_TOKEN_COOKIE_NAME, "")
-            .domain("localhost")
+            .domain(domain)
             .path("/api/v1/auth/refresh")
             .maxAge(0)
             .secure(true)

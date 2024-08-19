@@ -37,6 +37,8 @@ import org.springframework.web.bind.annotation.RestController
 import java.awt.SystemColor.info
 import java.net.URI
 
+private val log = mu.KotlinLogging.logger {}
+
 @RestController
 @RequestMapping("/api/v1/memos")
 class MemoResources(
@@ -95,6 +97,7 @@ class MemoResources(
         @PathVariable id: Long,
         @AuthUserId userId: Long?,
     ): ResponseEntity<GetMemoByIdResponse> {
+        log.info { "getMemoById 쿼리 호출: $id" }
         val query = IGetMemoById.Query(MemoId(id), AuthorId(userId!!))
         val info = memoQueries.handle(query)
         return ResponseEntity.ok(info.toResponse())

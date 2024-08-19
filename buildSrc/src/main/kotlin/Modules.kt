@@ -36,7 +36,7 @@ object Modules {
                 InWebsocket(":service:blog:adapter:blog-in-websocket"),
                 OutUser(":service:blog:adapter:blog-out-user"),
                 OutMemo(":service:blog:adapter:blog-out-memo"),
-                OutPersistence(":service:blog:adapter:blog-out-persistence")
+                OutMySql(":service:blog:adapter:blog-out-mysql")
             }
         }
 
@@ -48,7 +48,7 @@ object Modules {
                 InAcl(":service:user-auth:adapter:user-auth-in-acl"),
                 InHttp(":service:user-auth:adapter:user-auth-in-http"),
                 OutGoogle(":service:user-auth:adapter:user-auth-out-google"),
-                OutH2(":service:user-auth:adapter:user-auth-out-h2"),
+                OutMySql(":service:user-auth:adapter:user-auth-out-mysql"),
                 OutCache(":service:user-auth:adapter:user-auth-out-cache")
             }
         }
