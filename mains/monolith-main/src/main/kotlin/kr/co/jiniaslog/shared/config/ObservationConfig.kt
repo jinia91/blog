@@ -11,14 +11,9 @@ class ObservationConfig(
 ) {
     @Bean
     fun spanExportingPredicate(): SpanExportingPredicate = SpanExportingPredicate { span ->
-        if (span.tags["filtered"] == "true") {
-            return@SpanExportingPredicate false
-        }
-
         span.tags["http.url"]?.let {
-            val shouldFilter = it.startsWith("/actuator") || it.startsWith("/ws")
+            val shouldFilter = it.startsWith("/actuator")
             if (shouldFilter) {
-                span.tags["filtered"] = "true"
                 return@SpanExportingPredicate false
             }
         }

@@ -89,7 +89,7 @@ jobs:
             if [ "$success" = true ]; then
               echo "배포 성공. NGINX 리로드 및 이전 버전 리소스 정리 중..."
               
-              # NGINX 설정 변경 및 리로드
+              echo "NGINX 설정 변경 중: 포트 ${CURRENT_PORT}에서 ${NEW_PORT}로 변경"
               sudo sed -i "s/localhost:${CURRENT_PORT}/localhost:${NEW_PORT}/" /etc/nginx/sites-available/default
               sudo nginx -s reload
             
