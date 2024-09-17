@@ -9,3 +9,6 @@ val PluginDependenciesSpec.springBootConventions: PluginDependencySpec
 
 val PluginDependenciesSpec.koverReport: PluginDependencySpec
     get() = id("kover-features")
+
+val PluginDependenciesSpec.observability: PluginDependencySpec
+    get() = id("observability")

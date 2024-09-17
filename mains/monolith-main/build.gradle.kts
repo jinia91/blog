@@ -1,6 +1,7 @@
 plugins {
     springBootConventions
     koverReport
+    observability
 }
 
 /**
