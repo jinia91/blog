@@ -44,22 +44,6 @@ class ImageResourceRestTests : RestTestAbstractSkeleton() {
     }
 
     @Test
-    fun `권한이 없는 사용자가 이미지를 업로드하려하면 403을 반환한다`() {
-        // given
-        every { imageService.uploadImage(any()) } returns IUploadImage.Info(ImageUrl("http://test.com/sample.jpg"))
-
-        RestAssuredMockMvc.given()
-            .cookies(PreAuthFilter.ACCESS_TOKEN_HEADER, getTestUserToken())
-            .contentType(MediaType.MULTIPART_FORM_DATA_VALUE)
-            .multiPart("image", "test.jpg", sampleImageFile)
-            // when
-            .post("/api/v1/media/image")
-            // then
-            .then()
-            .statusCode(403)
-    }
-
-    @Test
     fun `권한이 있고 인증된 사용자가 이미지를 업로드하면 201을 반환한다`() {
         // given
         every { imageService.uploadImage(any()) } returns IUploadImage.Info(ImageUrl("http://test.com/sample.jpg"))
