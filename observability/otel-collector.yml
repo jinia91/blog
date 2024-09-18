@@ -74,24 +74,17 @@ exporters:
       job: true
     tls:
       insecure: true
-  otlp/jaeger:
-    endpoint: jaeger:4317
-    tls:
-      insecure: true
 
 extensions:
   health_check:
-  pprof:
-  zpages:
-    endpoint: "0.0.0.0:55679"
 
 service:
-  extensions: [ health_check, pprof, zpages ]
+  extensions: [ health_check ]
   pipelines:
     traces:
       receivers: [ otlp ]
       processors: [ batch, tail_sampling ]
-      exporters: [ otlp/tempo, otlp/jaeger, logging ]
+      exporters: [ otlp/tempo, logging ]
     metrics:
       receivers: [ otlp ]
       processors: [ batch ]

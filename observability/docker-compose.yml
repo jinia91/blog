@@ -48,7 +48,7 @@ services:
       - GF_AUTH_DISABLE_LOGIN_FORM=true
       - GF_FEATURE_TOGGLES_ENABLE=traceqlEditor
     ports:
-      - "3000:3000"
+      - "3001:3000"
     depends_on:
       - otel-collector
       - tempo
@@ -56,5 +56,6 @@ services:
       - loki
 
 networks:
-  internal-network:
-    driver: bridge
+  default:
+    name: observability-network
+    external: true
