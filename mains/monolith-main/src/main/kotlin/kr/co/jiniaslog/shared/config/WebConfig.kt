@@ -16,8 +16,7 @@ class WebConfig : WebMvcConfigurer {
         registry
             .addMapping("/**")
             .allowCredentials(true)
-            // fixme 주입하게하자
-            .allowedOrigins("http://$domain:3000", "https://$domain")
+            .allowedOrigins("http://$domain:3000", "https://$domain", "https://www$domain")
             .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTION")
             .maxAge(3600)
     }
