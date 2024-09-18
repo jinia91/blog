@@ -6,7 +6,7 @@ services:
       - "7778:7778"
 
     environment:
-      JAVA_TOOL_OPTIONS: -Dcom.sun.management.jmxremote=true -Dcom.sun.management.jmxremote.port=7778 -Dcom.sun.management.jmxremote.rmi.port=7778 -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Djava.rmi.server.hostname=${HOST_IP:-$DEFAULT_IP} -Xms2G -Xmx2G
+      JAVA_TOOL_OPTIONS: -Dcom.sun.management.jmxremote=true -Dcom.sun.management.jmxremote.port=7778 -Dcom.sun.management.jmxremote.rmi.port=7778 -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Xms2G -Xmx2G
       SPRING_APPLICATION_JSON: '{
   "spring": {
     "neo4j": {
@@ -14,6 +14,20 @@ services:
       "authentication": {
         "username": "neo4j",
         "password": "password"
+      }
+    },
+    "datasource": {
+      "user": {
+        "driver-class-name": "com.mysql.cj.jdbc.Driver",
+        "jdbc-url": "jdbc:mysql://jiniaslog-db/jiniaslog_user?useSSL=false&serverTimezone=UTC&characterEncoding=UTF-8",
+        "username": "root",
+        "password": ""
+      },
+      "blog": {
+        "driver-class-name": "com.mysql.cj.jdbc.Driver",
+        "jdbc-url": "jdbc:mysql://jiniaslog-db/jiniaslog_blog?useSSL=false&serverTimezone=UTC&characterEncoding=UTF-8",
+        "username": "root",
+        "password": ""
       }
     }
   }
@@ -24,7 +38,7 @@ services:
     extra_hosts:
       - "host.docker.internal:host-gateway"
     depends_on:
-      jinia_rdb:
+      jiniaslog-db:
         condition: service_healthy
     restart: always
     networks:
@@ -34,6 +48,22 @@ services:
         limits:
           cpus: "1"
 
+  jiniaslog-db:
+    image: mysql:8.0.39
+    restart: always
+    networks:
+      - internal-network
+    environment:
+      MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+      MYSQL_DATABASE: jiniaslog_blog
+    volumes:
+      - ./sql/initdb.d:/docker-entrypoint-initdb.d
+      - ./mysql_data:/var/lib/mysql
+    healthcheck:
+      test: "mysqladmin ping --silent"
+      interval: 1s
+      retries: 120
+
   jinia_neo4j:
     image: neo4j:5.5
     ports:
@@ -42,8 +72,13 @@ services:
       NEO4J_AUTH: neo4j/password
     networks:
       - internal-network
+    volumes:
+      - ./neo4j_data:/data
+      - ./neo4j_logs:/logs
+      - ./neo4j_import:/import
+      - ./neo4j_plugins:/plugins
     healthcheck:
-      test: ["CMD", "neo4j", "ping"]
+      test: [ "CMD", "neo4j", "ping" ]
       interval: 5s
       retries: 5
 

@@ -48,7 +48,12 @@ src/main/resources/application-dev.yml
 **/application.yml
 **/application-otel.yml
 
-### h2 db ###
-/h2/
-
 .DS_Store
+
+### db ###
+/h2/
+**/neo4j_data/
+**/neo4j_import/
+**/neo4j_logs/
+**/neo4j_plugins/
+**/mysql_data
