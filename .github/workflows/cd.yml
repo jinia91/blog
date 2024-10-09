@@ -70,7 +70,7 @@ jobs:
             fi
             
             # 새로운 이미지로 컨테이너 실행
-            sudo docker run -d --name blog-backend-${NEW_PORT} -p ${NEW_PORT}:7777 --network my-network \
+            sudo docker run -d --name blog-backend-${NEW_PORT} -p ${NEW_PORT}:7777 --network my-local-network \
             -v ~/blog/application.yml:/app/config/application.yml \
             jinia91/blog-backend:${{ github.sha }} java -jar blog-backend.jar --spring.config.location=file:/app/config/application.yml
             
