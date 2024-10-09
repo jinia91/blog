@@ -105,6 +105,7 @@ jobs:
               echo "배포 실패. 새로운 컨테이너 제거 및 기존 상태 유지 중..."
               sudo docker stop ${CONTAINER_NAME}
               sudo docker rm ${CONTAINER_NAME}
+              exit 1
             fi
             
             # 도커 이미지 청소
