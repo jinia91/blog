@@ -6,7 +6,7 @@ plugins {
 dependencyManagement {
     imports {
         mavenBom("io.opentelemetry:opentelemetry-bom:1.34.1")
-        mavenBom("io.opentelemetry.instrumentation:opentelemetry-instrumentation-bom:2.6.0")
+        mavenBom("io.opentelemetry.instrumentation:opentelemetry-instrumentation-bom:2.8.0")
     }
 }
 
