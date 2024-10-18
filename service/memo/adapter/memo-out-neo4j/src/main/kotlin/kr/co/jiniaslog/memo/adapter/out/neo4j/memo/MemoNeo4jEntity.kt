@@ -9,6 +9,7 @@ import kr.co.jiniaslog.memo.domain.memo.MemoContent
 import kr.co.jiniaslog.memo.domain.memo.MemoId
 import kr.co.jiniaslog.memo.domain.memo.MemoReference
 import kr.co.jiniaslog.memo.domain.memo.MemoTitle
+import org.springframework.data.annotation.PersistenceCreator
 import org.springframework.data.neo4j.core.schema.Id
 import org.springframework.data.neo4j.core.schema.Node
 import org.springframework.data.neo4j.core.schema.Property
@@ -27,11 +28,23 @@ internal class MemoNeo4jEntity(
     var content: String,
     @Relationship(type = "REFERENCE", direction = Relationship.Direction.OUTGOING)
     var references: MutableSet<MemoNeo4jEntity>,
+    @Relationship(type = "REFERENCE", direction = Relationship.Direction.INCOMING)
+    var referencedBy: MutableSet<MemoNeo4jEntity> = mutableSetOf(),
     @Relationship(type = "CONTAINS_MEMO", direction = Relationship.Direction.INCOMING)
     var parentFolder: FolderNeo4jEntity?,
     createdAt: LocalDateTime?,
     updatedAt: LocalDateTime?,
 ) : Neo4jAbstractBaseNode(createdAt, updatedAt) {
+    @PersistenceCreator
+    constructor(
+        id: Long,
+        authorId: Long,
+        title: String,
+        content: String,
+        createdAt: LocalDateTime?,
+        updatedAt: LocalDateTime?,
+    ) : this(id, authorId, title, content, mutableSetOf(), mutableSetOf(), null, createdAt, updatedAt)
+
     fun toDomain(): Memo {
         return Memo.from(
             id = MemoId(this.id),
