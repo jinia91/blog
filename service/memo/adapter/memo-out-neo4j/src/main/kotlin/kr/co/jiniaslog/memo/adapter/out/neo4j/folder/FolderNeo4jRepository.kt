@@ -30,7 +30,7 @@ DETACH DELETE parentFolder, childFolder, memo1, memo2
     WITH f, f2, a
     OPTIONAL MATCH (f)-[b:CONTAINS_MEMO]->(m:memo)
     OPTIONAL MATCH (m)-[c:REFERENCE]->(ref:memo)
-RETURN f, collect(f2) AS children, collect(m) AS memos, collect(ref) AS references, collect(DISTINCT a) AS contains, collect(DISTINCT b) AS containsMemo, collect(DISTINCT c) AS reference"""
+RETURN f, collect(f2) AS children, collect(m) AS memos, collect(ref) AS references, collect(a) AS contains, collect(b) AS containsMemo, collect(c) AS reference"""
     )
     fun findAllByAuthorId(@Param("authorId") authorId: Long): List<FolderNeo4jEntity>
 }
