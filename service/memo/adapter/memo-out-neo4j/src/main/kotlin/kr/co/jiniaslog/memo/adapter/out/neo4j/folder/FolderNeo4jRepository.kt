@@ -23,5 +23,14 @@ DETACH DELETE parentFolder, childFolder, memo1, memo2
         @Param("folderId") folderId: Long,
     )
 
-    fun findAllByAuthorId(authorId: Long): List<FolderNeo4jEntity>
+    @Query(
+        """
+    MATCH (f:folder)-[a:CONTAINS*0..]->(f2:folder)
+    WHERE f.authorId = ${'$'}authorId
+    WITH f, f2, a
+    OPTIONAL MATCH (f)-[b:CONTAINS_MEMO]->(m:memo)
+    OPTIONAL MATCH (m)-[c:REFERENCE]->(ref:memo)
+RETURN f, collect(f2) AS children, collect(m) AS memos, collect(ref) AS references, collect(DISTINCT a) AS contains, collect(DISTINCT b) AS containsMemo, collect(DISTINCT c) AS reference"""
+    )
+    fun findAllByAuthorId(@Param("authorId") authorId: Long): List<FolderNeo4jEntity>
 }

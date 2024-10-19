@@ -115,12 +115,12 @@ internal open class MemoFolderImplQueries(
     private fun findAllByAuthorId(authorId: AuthorId): IGetFoldersAllInHierirchyByAuthorId.Info {
         val foldersWithDepth = folderNeo4jRepository.findAllByAuthorId(authorId.value).toList()
         val folderMap = foldersWithDepth.associate { it.id to it.toFolderInfo() }
-        val memos = memoNeo4jRepository.findAllByAuthorId(authorId.value).groupBy { it.parentFolder?.id }
+        val orphansMemo = memoNeo4jRepository.findAllByAuthorIdAndParentFolderIsNull(authorId.value)
+            .filter { it.parentFolder == null }
 
         foldersWithDepth.forEach { folder ->
             val folderInfo = folderMap[folder.id]
             folderInfo?.children = folderMap.values.filter { it.parent?.id == folderInfo?.id }
-            folderInfo?.memos = memos[folderInfo?.id?.value]?.map { it.toMemoInfo() } ?: emptyList()
         }
 
         return IGetFoldersAllInHierirchyByAuthorId.Info(
@@ -130,7 +130,7 @@ internal open class MemoFolderImplQueries(
                     name = FolderName("Uncategorized"),
                     parent = null,
                     children = emptyList(),
-                    memos = memos[null]?.map { it.toMemoInfo() } ?: emptyList(),
+                    memos = orphansMemo.map { it.toMemoInfo() },
                 ),
         )
     }
@@ -156,7 +156,7 @@ internal open class MemoFolderImplQueries(
             name = FolderName(this.name),
             parent = this.parent?.toFolderInfo(),
             children = listOf(),
-            memos = listOf(),
+            memos = this.memos.map { it.toMemoInfo() },
         )
     }
 
