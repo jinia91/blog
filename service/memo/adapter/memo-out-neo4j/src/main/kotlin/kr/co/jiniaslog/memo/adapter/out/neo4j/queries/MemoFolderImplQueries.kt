@@ -21,6 +21,7 @@ import kr.co.jiniaslog.memo.queries.IRecommendRelatedMemo
 import kr.co.jiniaslog.memo.queries.MemoQueriesFacade
 import kr.co.jiniaslog.shared.core.annotation.PersistenceAdapter
 import org.springframework.transaction.annotation.Transactional
+import java.util.concurrent.CompletableFuture
 import kotlin.jvm.optionals.getOrNull
 
 @PersistenceAdapter
@@ -113,16 +114,22 @@ internal open class MemoFolderImplQueries(
     }
 
     private fun findAllByAuthorId(authorId: AuthorId): IGetFoldersAllInHierirchyByAuthorId.Info {
-        val foldersWithDepth = folderNeo4jRepository.findAllByAuthorId(authorId.value).toList()
-        val folderMap = foldersWithDepth.associate { it.id to it.toFolderInfo() }
-        val memos = memoNeo4jRepository.findAllByAuthorId(authorId.value).groupBy { it.parentFolder?.id }
+        val foldersWithAllJob = CompletableFuture.supplyAsync {
+            folderNeo4jRepository.findAllByAuthorId(authorId.value)
+        }
+        val orphansMemoJob = CompletableFuture.supplyAsync {
+            memoNeo4jRepository.findAllByAuthorIdAndParentFolderIsNull(authorId.value)
+                .filter { it.parentFolder == null }
+        }
+        val foldersWithAll = foldersWithAllJob.join()
+        val folderMap = foldersWithAll.associate { it.id to it.toFolderInfo() }
 
-        foldersWithDepth.forEach { folder ->
+        foldersWithAll.forEach { folder ->
             val folderInfo = folderMap[folder.id]
             folderInfo?.children = folderMap.values.filter { it.parent?.id == folderInfo?.id }
-            folderInfo?.memos = memos[folderInfo?.id?.value]?.map { it.toMemoInfo() } ?: emptyList()
         }
 
+        val orphansMemo = orphansMemoJob.join()
         return IGetFoldersAllInHierirchyByAuthorId.Info(
             folderMap.values.filter { it.parent == null } +
                 IGetFoldersAllInHierirchyByAuthorId.FolderInfo(
@@ -130,7 +137,7 @@ internal open class MemoFolderImplQueries(
                     name = FolderName("Uncategorized"),
                     parent = null,
                     children = emptyList(),
-                    memos = memos[null]?.map { it.toMemoInfo() } ?: emptyList(),
+                    memos = orphansMemo.map { it.toMemoInfo() },
                 ),
         )
     }
@@ -156,7 +163,7 @@ internal open class MemoFolderImplQueries(
             name = FolderName(this.name),
             parent = this.parent?.toFolderInfo(),
             children = listOf(),
-            memos = listOf(),
+            memos = this.memos.map { it.toMemoInfo() },
         )
     }
 
