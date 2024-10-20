@@ -11,6 +11,10 @@ import kotlin.jvm.optionals.getOrNull
 internal open class FolderRepositoryAdapter(
     private val folderNeo4jRepository: FolderNeo4jRepository,
 ) : FolderRepository {
+    override fun count(): Long {
+        return folderNeo4jRepository.count()
+    }
+
     @Transactional(readOnly = true)
     override fun findById(id: FolderId): Folder? {
         return folderNeo4jRepository.findById(id.value).orElse(null)?.toDomain()

@@ -19,6 +19,7 @@ internal class MemoUseCasesInteractor(
     private val folderRepository: FolderRepository,
 ) : MemoUseCasesFacade {
     override fun handle(command: IInitMemo.Command): IInitMemo.Info {
+        ensureMemoCountIsUnderLimit()
         val newOne =
             Memo.init(
                 authorId = command.authorId,
@@ -26,6 +27,13 @@ internal class MemoUseCasesInteractor(
             )
         memoRepository.save(newOne)
         return IInitMemo.Info(newOne.entityId)
+    }
+
+    private fun ensureMemoCountIsUnderLimit() {
+        val totalCountOfMemo = memoRepository.count()
+        if (totalCountOfMemo >= 1000) {
+            throw IllegalArgumentException("메모 개수가 1000개를 초과했습니다.")
+        }
     }
 
     override fun handle(command: IUpdateMemoContents.Command): IUpdateMemoContents.Info {

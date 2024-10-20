@@ -15,9 +15,17 @@ internal class FolderUseCasesInteractor(
     private val folderRepository: FolderRepository,
 ) : FolderUseCasesFacade {
     override fun handle(command: ICreateNewFolder.Command): ICreateNewFolder.Info {
+        ensureFolderCountIsUnderLimit()
         val newOne = Folder.init(authorId = command.authorId)
         folderRepository.save(newOne)
         return ICreateNewFolder.Info(newOne.entityId, newOne.name)
+    }
+
+    private fun ensureFolderCountIsUnderLimit() {
+        val totalCountOfFolder = folderRepository.count()
+        if (totalCountOfFolder >= 100) {
+            throw IllegalArgumentException("폴더 개수가 100개를 초과했습니다.")
+        }
     }
 
     override fun handle(command: IChangeFolderName.Command): IChangeFolderName.Info {
