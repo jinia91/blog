@@ -4,4 +4,6 @@ import kr.co.jiniaslog.memo.domain.memo.Memo
 import kr.co.jiniaslog.memo.domain.memo.MemoId
 import kr.co.jiniaslog.shared.core.domain.Repository
 
-interface MemoRepository : Repository<Memo, MemoId>
+interface MemoRepository : Repository<Memo, MemoId> {
+    fun count(): Long
+}

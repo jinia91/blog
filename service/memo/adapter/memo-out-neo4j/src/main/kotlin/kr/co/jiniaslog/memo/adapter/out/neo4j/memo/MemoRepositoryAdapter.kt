@@ -13,6 +13,10 @@ internal open class MemoRepositoryAdapter(
     private val memoNeo4jRepository: MemoNeo4jRepository,
     private val folderNeo4jRepository: FolderNeo4jRepository,
 ) : MemoRepository {
+    override fun count(): Long {
+        return memoNeo4jRepository.count()
+    }
+
     override fun findById(id: MemoId): Memo? {
         return memoNeo4jRepository.findById(id.value).orElse(null)?.toDomain()
     }
