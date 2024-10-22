@@ -31,6 +31,7 @@ include(
     "service:blog:adapter:blog-out-mysql",
 
     // memo
+    "service:memo:memo-core",
     "service:memo:memo-domain",
     "service:memo:memo-application",
     "service:memo:adapter:memo-in-http",
