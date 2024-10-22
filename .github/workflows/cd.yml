@@ -61,7 +61,7 @@ jobs:
             sudo docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
             
             # 현재 실행 중인 컨테이너 확인
-            CURRENT_PORT=$(sudo docker ps --format "{{.Ports}}" | grep -oP '(\d+)->7777' | grep -oP '^\d+')
+            CURRENT_PORT=$(sudo docker ps --format "{{.Ports}}" | grep -oP '(\d+)->7777' | grep -oP '^\d+' | sort -u)
             if [ "${CURRENT_PORT}" == "7776" ]; then
               NEW_PORT=7777
               echo "현재 실행중인 포트는 7776 이고 7777로 실행할거임"
