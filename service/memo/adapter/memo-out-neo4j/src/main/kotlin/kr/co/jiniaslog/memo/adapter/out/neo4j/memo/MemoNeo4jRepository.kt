@@ -58,14 +58,5 @@ internal interface MemoNeo4jRepository : Neo4jRepository<MemoNeo4jEntity, Long> 
     @Query("MATCH (referencingMemo:memo)-[r:REFERENCE]->(m:memo) WHERE m.id = ${'$'}memoId RETURN referencingMemo")
     fun findReferencingMemos(memoId: Long): List<MemoNeo4jEntity>
 
-    @Query(
-        """
-MATCH (m:memo)
-WHERE m.authorId = ${'$'}authorId 
-  AND NOT (()-[:CONTAINS_MEMO]->(m))
-OPTIONAL MATCH (m)-[r:REFERENCE]->(referencedMemo:memo)
-RETURN m, collect(r), collect(referencedMemo)
-"""
-    )
-    fun findAllByAuthorIdAndParentFolderIsNull(authorId: Long): List<MemoNeo4jEntity>
+    fun findAllByAuthorId(authorId: Long): List<MemoNeo4jEntity>
 }
