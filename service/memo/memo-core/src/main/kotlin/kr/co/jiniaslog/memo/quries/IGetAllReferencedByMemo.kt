@@ -1,0 +1,23 @@
+package kr.co.jiniaslog.memo.quries
+
+import kr.co.jiniaslog.memo.domain.memo.AuthorId
+import kr.co.jiniaslog.memo.domain.memo.MemoId
+import kr.co.jiniaslog.memo.domain.memo.MemoTitle
+
+interface IGetAllReferencedByMemo {
+    fun handle(query: Query): Info
+
+    data class Query(
+        val memoId: MemoId,
+        val requesterId: AuthorId,
+    )
+
+    data class Info(
+        val referenceds: Set<ReferencedInfo>,
+    )
+
+    data class ReferencedInfo(
+        val id: MemoId,
+        val title: MemoTitle,
+    )
+}
