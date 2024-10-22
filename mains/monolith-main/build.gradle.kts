@@ -25,11 +25,9 @@ val blogService = mutableListOf(
 )
 
 val memoService = mutableListOf(
-    project(Modules.Service.Memo.Domain.path),
-    project(Modules.Service.Memo.Application.path),
+    project(Modules.Service.Memo.Core.path),
     project(Modules.Service.Memo.Adaptors.InHttp.path),
     project(Modules.Service.Memo.Adaptors.InWebsocket.path),
-    project(Modules.Service.Memo.Adaptors.OutNeo4j.path),
 )
 
 val mediaService = mutableListOf(
@@ -90,8 +88,7 @@ dependencies {
         kover(it)
     }
 
-    testImplementation(testFixtures(project(Modules.Service.Memo.Adaptors.OutNeo4j.path)))
-    testImplementation(testFixtures(project(Modules.Service.Memo.Domain.path)))
+    testImplementation(testFixtures(project(Modules.Service.Memo.Core.path)))
     testImplementation(testFixtures(project(Modules.Service.AuthUser.Application.path)))
     testImplementation(testFixtures(project(Modules.Service.Blog.Core.path)))
 

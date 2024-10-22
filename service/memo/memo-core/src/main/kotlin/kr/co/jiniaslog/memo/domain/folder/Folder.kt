@@ -1,24 +1,38 @@
 package kr.co.jiniaslog.memo.domain.folder
 
+import jakarta.persistence.AttributeOverride
+import jakarta.persistence.Column
+import jakarta.persistence.Embedded
+import jakarta.persistence.EmbeddedId
+import jakarta.persistence.Entity
+import jakarta.persistence.JoinColumn
 import kr.co.jiniaslog.memo.domain.exception.NotOwnershipException
 import kr.co.jiniaslog.memo.domain.memo.AuthorId
-import kr.co.jiniaslog.shared.core.domain.AggregateRoot
+import kr.co.jiniaslog.shared.adapter.out.rdb.JpaAggregate
 import kr.co.jiniaslog.shared.core.domain.IdUtils
 import java.time.LocalDateTime
 
-class Folder private constructor(
+@Entity
+class Folder internal constructor(
     id: FolderId,
     name: FolderName,
     authorId: AuthorId,
     parent: FolderId?,
-) : AggregateRoot<FolderId>() {
+) : JpaAggregate<FolderId>() {
+    @EmbeddedId
     override val entityId: FolderId = id
 
+    @Embedded
+    @Column(name = "name")
     var name: FolderName = name
         private set
 
+    @Embedded
+    @AttributeOverride(column = Column(name = "author_id"), name = "value")
     val authorId: AuthorId = authorId
 
+    @Column(name = "parent_id")
+    @JoinColumn(name = "id")
     var parent: FolderId? = parent
         private set
 

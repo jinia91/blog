@@ -1,9 +1,10 @@
 package kr.co.jiniaslog.memo.domain.memo
 
+import jakarta.persistence.Embeddable
 import kr.co.jiniaslog.shared.core.domain.vo.ValueObject
 
-@JvmInline
-value class AuthorId(val value: Long) : ValueObject {
+@Embeddable
+data class AuthorId(val value: Long) : ValueObject {
     init {
         validate()
     }

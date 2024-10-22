@@ -1,5 +1,5 @@
 plugins {
-    conventions
+    springBootConventions
     `kotlin-jpa`
     `kotlin-kapt`
 }

@@ -88,7 +88,7 @@ internal class MemoUseCasesInteractor(
 
     private fun validateCircularDependency(id: MemoId, targetMemo: Memo) {
         val memo = getMemo(id)
-        memo.references.forEach {
+        memo.getReferences().forEach {
             if (it.referenceId == targetMemo.entityId) {
                 throw IllegalArgumentException("순환참조가 발생합니다")
             }

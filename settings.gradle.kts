@@ -32,14 +32,11 @@ include(
 
     // memo
     "service:memo:memo-core",
-    "service:memo:memo-domain",
-    "service:memo:memo-application",
     "service:memo:adapter:memo-in-http",
     "service:memo:adapter:memo-in-acl",
     "service:memo:adapter:memo-in-websocket",
     "service:memo:adapter:memo-in-message",
     "service:memo:adapter:memo-in-batch",
-    "service:memo:adapter:memo-out-neo4j",
 
     // media
     "service:media:media-domain",

@@ -1,9 +1,10 @@
 package kr.co.jiniaslog.memo.domain.memo
 
+import jakarta.persistence.Embeddable
 import kr.co.jiniaslog.shared.core.domain.vo.ValueObject
 
-@JvmInline
-value class MemoContent(val value: String) : ValueObject {
+@Embeddable
+data class MemoContent(val value: String) : ValueObject {
     init {
         validate()
     }

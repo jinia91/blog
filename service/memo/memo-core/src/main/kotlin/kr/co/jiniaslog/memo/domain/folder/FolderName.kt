@@ -1,9 +1,11 @@
 package kr.co.jiniaslog.memo.domain.folder
 
+import jakarta.persistence.Embeddable
 import kr.co.jiniaslog.shared.core.domain.vo.ValueObject
+import java.io.Serializable
 
-@JvmInline
-value class FolderName(val value: String) : ValueObject {
+@Embeddable
+data class FolderName(val value: String) : ValueObject, Serializable {
     init {
         validate()
     }
@@ -13,6 +15,6 @@ value class FolderName(val value: String) : ValueObject {
     }
 
     override fun validate() {
-        require(value.isNotBlank()) { "FolderName must not be blank" }
+        require(value.isNotBlank()) { "FolderName 은 빈 문자열일 수 없습니다." }
     }
 }

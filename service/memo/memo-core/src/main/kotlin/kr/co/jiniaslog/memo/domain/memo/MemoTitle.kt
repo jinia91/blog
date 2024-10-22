@@ -2,8 +2,7 @@ package kr.co.jiniaslog.memo.domain.memo
 
 import kr.co.jiniaslog.shared.core.domain.vo.ValueObject
 
-@JvmInline
-value class MemoTitle(val value: String) : ValueObject {
+data class MemoTitle(val value: String) : ValueObject {
     init {
         validate()
     }

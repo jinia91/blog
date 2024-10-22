@@ -1,9 +1,11 @@
 package kr.co.jiniaslog.memo.domain.memo
 
+import jakarta.persistence.Embeddable
 import kr.co.jiniaslog.shared.core.domain.vo.ValueObject
+import java.io.Serializable
 
-@JvmInline
-value class MemoId(val value: Long) : ValueObject {
+@Embeddable
+data class MemoId(val value: Long) : ValueObject, Serializable {
     init {
         validate()
     }
