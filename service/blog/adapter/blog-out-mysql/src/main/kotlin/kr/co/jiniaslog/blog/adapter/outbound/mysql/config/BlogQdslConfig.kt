@@ -7,12 +7,12 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 
 @Configuration
-class QdslConfig {
-    @PersistenceContext
-    lateinit var entityManager: EntityManager
+class BlogQdslConfig {
+    @PersistenceContext(name = "blogEntityManager")
+    lateinit var blogEntityManager: EntityManager
 
     @Bean
-    fun jpaQueryFactory(): JPAQueryFactory {
-        return JPAQueryFactory(entityManager)
+    fun blogJpaQueryFactory(): JPAQueryFactory {
+        return JPAQueryFactory(blogEntityManager)
     }
 }

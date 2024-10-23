@@ -3,9 +3,9 @@ package kr.co.jiniaslog.memo.adapter.outbound.mysql
 import kr.co.jiniaslog.memo.domain.folder.Folder
 import kr.co.jiniaslog.memo.domain.folder.FolderId
 import kr.co.jiniaslog.memo.domain.folder.FolderRepository
-import org.springframework.stereotype.Repository
+import kr.co.jiniaslog.shared.core.annotation.PersistenceAdapter
 
-@Repository
+@PersistenceAdapter
 internal class FolderRepositoryAdapter(
     private val folderJpaRepository: FolderJpaRepository
 ) : FolderRepository {

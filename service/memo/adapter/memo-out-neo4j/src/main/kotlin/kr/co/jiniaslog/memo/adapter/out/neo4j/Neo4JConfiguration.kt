@@ -4,7 +4,6 @@ import org.neo4j.cypherdsl.core.renderer.Configuration
 import org.neo4j.cypherdsl.core.renderer.Dialect
 import org.neo4j.driver.Driver
 import org.springframework.context.annotation.Bean
-import org.springframework.context.annotation.Primary
 import org.springframework.data.neo4j.config.EnableNeo4jAuditing
 import org.springframework.data.neo4j.core.transaction.Neo4jTransactionManager
 import org.springframework.data.neo4j.repository.config.EnableNeo4jRepositories
@@ -23,7 +22,6 @@ class Neo4JConfiguration {
     }
 
     @Bean(name = ["transactionManager"])
-    @Primary
     fun neo4jTransactionManager(driver: Driver): PlatformTransactionManager {
         return Neo4jTransactionManager(driver)
     }

@@ -3,9 +3,9 @@ package kr.co.jiniaslog.memo.adapter.outbound.mysql
 import kr.co.jiniaslog.memo.domain.memo.Memo
 import kr.co.jiniaslog.memo.domain.memo.MemoId
 import kr.co.jiniaslog.memo.domain.memo.MemoRepository
-import org.springframework.stereotype.Repository
+import kr.co.jiniaslog.shared.core.annotation.PersistenceAdapter
 
-@Repository
+@PersistenceAdapter
 internal class MemoRepositoryAdapter(
     private val memoJpaRepository: MemoJpaRepository,
 ) : MemoRepository {

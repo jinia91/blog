@@ -5,18 +5,14 @@ import kr.co.jiniaslog.memo.adapter.out.neo4j.folder.FolderNeo4jRepository
 import kr.co.jiniaslog.memo.adapter.out.neo4j.memo.MemoNeo4jEntity
 import kr.co.jiniaslog.memo.adapter.out.neo4j.memo.MemoNeo4jRepository
 import kr.co.jiniaslog.memo.domain.exception.NotOwnershipException
-import kr.co.jiniaslog.memo.domain.folder.FolderId
-import kr.co.jiniaslog.memo.domain.folder.FolderName
 import kr.co.jiniaslog.memo.domain.memo.AuthorId
 import kr.co.jiniaslog.memo.domain.memo.MemoContent
 import kr.co.jiniaslog.memo.domain.memo.MemoId
 import kr.co.jiniaslog.memo.domain.memo.MemoTitle
 import kr.co.jiniaslog.memo.queries.FolderQueriesFacade
-import kr.co.jiniaslog.memo.queries.ICheckMemoExisted
 import kr.co.jiniaslog.memo.queries.IGetAllReferencedByMemo
 import kr.co.jiniaslog.memo.queries.IGetAllReferencesByMemo
 import kr.co.jiniaslog.memo.queries.IGetFoldersAllInHierirchyByAuthorId
-import kr.co.jiniaslog.memo.queries.IGetMemoById
 import kr.co.jiniaslog.memo.queries.IRecommendRelatedMemo
 import kr.co.jiniaslog.memo.queries.MemoQueriesFacade
 import kr.co.jiniaslog.shared.core.annotation.PersistenceAdapter
@@ -29,46 +25,6 @@ internal open class MemoFolderImplQueries(
     private val memoNeo4jRepository: MemoNeo4jRepository,
     private val folderNeo4jRepository: FolderNeo4jRepository,
 ) : MemoQueriesFacade, FolderQueriesFacade {
-
-    override fun handle(query: IRecommendRelatedMemo.Query): IRecommendRelatedMemo.Info {
-        val relatedMemoCandidates =
-            memoNeo4jRepository.findByKeywordFullTextSearchingLimit6ByAuthorId(query.keyword, query.requesterId.value)
-                .filterNot { it.id == query.thisMemoId.value }
-                .take(5)
-                .map { Triple(it.id, it.title, it.content) }
-
-        return IRecommendRelatedMemo.Info(
-            relatedMemoCandidates =
-            relatedMemoCandidates.map {
-                Triple(
-                    MemoId(it.first),
-                    MemoTitle(it.second),
-                    MemoContent(it.third),
-                )
-            },
-        )
-    }
-
-    override fun handle(query: IGetMemoById.Query): IGetMemoById.Info {
-        val memo =
-            memoNeo4jRepository.findById(query.memoId.value).getOrNull()
-                ?: throw IllegalArgumentException("memo not found")
-        require(memo.authorId == query.requesterId.value) { throw NotOwnershipException() }
-        return IGetMemoById.Info(
-            memoId = MemoId(memo.id),
-            title = MemoTitle(memo.title),
-            content = MemoContent(memo.content),
-            references =
-            memo.references.map {
-                IGetMemoById.Info.ReferenceInfo(
-                    rootId = MemoId(it.id),
-                    referenceId = MemoId(it.id),
-                )
-            }.toSet(),
-        )
-    }
-
-    // todo : 위의 유즈케이스와 분리하여 더 최적화하도록 고려
     override fun handle(query: IGetAllReferencesByMemo.Query): IGetAllReferencesByMemo.Info {
         val memo =
             memoNeo4jRepository.findById(query.memoId.value).getOrNull()
@@ -101,8 +57,23 @@ internal open class MemoFolderImplQueries(
         )
     }
 
-    override fun handle(query: ICheckMemoExisted.Query): Boolean {
-        return memoNeo4jRepository.existsById(query.memoId.value)
+    override fun handle(query: IRecommendRelatedMemo.Query): IRecommendRelatedMemo.Info {
+        val relatedMemoCandidates =
+            memoNeo4jRepository.findByKeywordFullTextSearchingLimit6ByAuthorId(query.keyword, query.requesterId.value)
+                .filterNot { it.id == query.thisMemoId.value }
+                .take(5)
+                .map { Triple(it.id, it.title, it.content) }
+
+        return IRecommendRelatedMemo.Info(
+            relatedMemoCandidates =
+            relatedMemoCandidates.map {
+                Triple(
+                    MemoId(it.first),
+                    MemoTitle(it.second),
+                    MemoContent(it.third),
+                )
+            },
+        )
     }
 
     override fun handle(query: IGetFoldersAllInHierirchyByAuthorId.Query): IGetFoldersAllInHierirchyByAuthorId.Info {
@@ -120,14 +91,14 @@ internal open class MemoFolderImplQueries(
         foldersWithDepth.forEach { folder ->
             val folderInfo = folderMap[folder.id]
             folderInfo?.children = folderMap.values.filter { it.parent?.id == folderInfo?.id }
-            folderInfo?.memos = memos[folderInfo?.id?.value]?.map { it.toMemoInfo() } ?: emptyList()
+            folderInfo?.memos = memos[folderInfo?.id]?.map { it.toMemoInfo() } ?: emptyList()
         }
 
         return IGetFoldersAllInHierirchyByAuthorId.Info(
             folderMap.values.filter { it.parent == null } +
                 IGetFoldersAllInHierirchyByAuthorId.FolderInfo(
                     id = null,
-                    name = FolderName("Uncategorized"),
+                    name = "Uncategorized",
                     parent = null,
                     children = emptyList(),
                     memos = memos[null]?.map { it.toMemoInfo() } ?: emptyList(),
@@ -141,7 +112,7 @@ internal open class MemoFolderImplQueries(
             listOf(
                 IGetFoldersAllInHierirchyByAuthorId.FolderInfo(
                     id = null,
-                    name = FolderName("검색 결과"),
+                    name = "검색 결과",
                     parent = null,
                     children = emptyList(),
                     memos = memos.map { it.toMemoInfo() },
@@ -152,8 +123,8 @@ internal open class MemoFolderImplQueries(
 
     private fun FolderNeo4jEntity.toFolderInfo(): IGetFoldersAllInHierirchyByAuthorId.FolderInfo {
         return IGetFoldersAllInHierirchyByAuthorId.FolderInfo(
-            id = FolderId(this.id),
-            name = FolderName(this.name),
+            id = this.id,
+            name = this.name,
             parent = this.parent?.toFolderInfo(),
             children = listOf(),
             memos = listOf(),
@@ -162,12 +133,12 @@ internal open class MemoFolderImplQueries(
 
     private fun MemoNeo4jEntity.toMemoInfo(): IGetFoldersAllInHierirchyByAuthorId.MemoInfo {
         return IGetFoldersAllInHierirchyByAuthorId.MemoInfo(
-            id = MemoId(this.id),
-            title = MemoTitle(this.title),
+            id = this.id,
+            title = this.title,
             references = this.references.map {
                 IGetFoldersAllInHierirchyByAuthorId.MemoReferenceInfo(
-                    MemoId(it.id),
-                    MemoTitle(it.title)
+                    it.id,
+                    it.title
                 )
             },
         )
