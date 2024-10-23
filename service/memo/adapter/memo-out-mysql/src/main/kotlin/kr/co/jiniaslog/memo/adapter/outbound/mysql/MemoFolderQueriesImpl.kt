@@ -29,8 +29,8 @@ internal class MemoFolderQueriesImpl(
     override fun handle(query: IRecommendRelatedMemo.Query): IRecommendRelatedMemo.Info {
         val result = memoJpaQueryFactory.selectFrom(memo)
             .where(
-                memo.title.value.contains(query.keyword)
-                    .or(memo.content.value.contains(query.keyword))
+                memo.entityId.value.ne(query.requesterId.value)
+                    .and(memo.title.value.contains(query.keyword).or(memo.content.value.contains(query.keyword)))
             )
             .fetch()
         return IRecommendRelatedMemo.Info(
@@ -119,11 +119,17 @@ internal class MemoFolderQueriesImpl(
             return IGetFoldersAllInHierirchyByAuthorId.Info(
                 folderInfos = result.map {
                     IGetFoldersAllInHierirchyByAuthorId.FolderInfo(
-                        id = it.entityId.value,
-                        name = it.title.value,
+                        id = null,
+                        name = "검색 결과",
                         parent = null,
                         children = mutableListOf(),
-                        memos = mutableListOf()
+                        memos = mutableListOf(
+                            IGetFoldersAllInHierirchyByAuthorId.MemoInfo(
+                                id = it.entityId.value,
+                                title = it.title.value,
+                                references = mutableListOf()
+                            )
+                        )
                     )
                 }
             )
