@@ -98,7 +98,7 @@ internal class MemoFolderQueriesImpl(
 
         val folderMapWithParent = allFolders.groupBy { it.parent?.value }
         val memoMapWithFolder = allMemoes.groupBy { it.parentFolderId?.value }
-        val memoMap = allMemoes.groupBy { it.parentFolderId?.value }
+        val memoMap = allMemoes.associateBy { it.entityId.value }
 
         fun createMemoInfo(memo: Memo): IGetFoldersAllInHierirchyByAuthorId.MemoInfo {
             return IGetFoldersAllInHierirchyByAuthorId.MemoInfo(
@@ -107,9 +107,9 @@ internal class MemoFolderQueriesImpl(
                 references = memo.getReferences().map { reference ->
                     IGetFoldersAllInHierirchyByAuthorId.MemoReferenceInfo(
                         id = reference.referenceId.value,
-                        title = memoMap[reference.referenceId.value]?.firstOrNull()?.title?.value!!
+                        title = memoMap[reference.referenceId.value]?.title?.value!!
                     )
-                }.toMutableList()
+                }
             )
         }
 
@@ -118,7 +118,7 @@ internal class MemoFolderQueriesImpl(
             parent: IGetFoldersAllInHierirchyByAuthorId.FolderInfo?,
         ): IGetFoldersAllInHierirchyByAuthorId.FolderInfo {
             val memos =
-                memoMapWithFolder[folder.entityId.value]?.map { createMemoInfo(it) }?.toMutableList() ?: mutableListOf()
+                memoMapWithFolder[folder.entityId.value]?.map { createMemoInfo(it) } ?: mutableListOf()
             return IGetFoldersAllInHierirchyByAuthorId.FolderInfo(
                 id = folder.entityId.value,
                 name = folder.name.value,
@@ -128,27 +128,30 @@ internal class MemoFolderQueriesImpl(
             )
         }
 
-        fun getFolderTree(result: MutableList<IGetFoldersAllInHierirchyByAuthorId.FolderInfo>): MutableList<IGetFoldersAllInHierirchyByAuthorId.FolderInfo> {
-            result.forEach { parent ->
-                parent.children = folderMapWithParent[parent.parent?.id]?.map { child ->
+        fun getFolderTree(result: List<IGetFoldersAllInHierirchyByAuthorId.FolderInfo>): List<IGetFoldersAllInHierirchyByAuthorId.FolderInfo> {
+            if (result.isEmpty()) return result
+            for (parent in result) {
+                val children = folderMapWithParent[parent.id]?.map { child ->
                     createFolderInfo(child, parent)
-                }?.toMutableList() ?: mutableListOf()
+                } ?: listOf()
+                parent.children = children
+                getFolderTree(children)
             }
             return result
         }
 
+        val rootFolders = folderMapWithParent[null]?.map { it ->
+            createFolderInfo(it, null)
+        } ?: mutableListOf()
+        val uncategorized = IGetFoldersAllInHierirchyByAuthorId.FolderInfo(
+            id = null,
+            name = "Uncategorized",
+            parent = null,
+            children = mutableListOf(),
+            memos = memoMapWithFolder[null]?.map { createMemoInfo(it) }?.toMutableList() ?: mutableListOf()
+        )
         return IGetFoldersAllInHierirchyByAuthorId.Info(
-            folderInfos = getFolderTree(
-                folderMapWithParent[null]?.map { it ->
-                    createFolderInfo(it, null)
-                }?.toMutableList() ?: mutableListOf()
-            ) + IGetFoldersAllInHierirchyByAuthorId.FolderInfo(
-                id = null,
-                name = "Uncategorized",
-                parent = null,
-                children = mutableListOf(),
-                memos = memoMapWithFolder[null]?.map { createMemoInfo(it) }?.toMutableList() ?: mutableListOf()
-            )
+            folderInfos = getFolderTree(rootFolders) + uncategorized
         )
     }
 }

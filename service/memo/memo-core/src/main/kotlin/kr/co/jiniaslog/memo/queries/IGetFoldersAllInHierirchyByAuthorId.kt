@@ -10,22 +10,21 @@ interface IGetFoldersAllInHierirchyByAuthorId {
         val requesterId: AuthorId,
     )
 
-    data class Info(val folderInfos: List<FolderInfo>)
+    class Info(val folderInfos: List<FolderInfo>)
 
-    data class FolderInfo(
+    class FolderInfo(
         val id: Long?,
         val name: String?,
         val parent: FolderInfo?,
         var children: List<FolderInfo>,
         var memos: List<MemoInfo>,
     )
-
     data class MemoReferenceInfo(
         val id: Long,
         val title: String,
     )
 
-    class MemoInfo(
+    data class MemoInfo(
         val id: Long,
         val title: String,
         val references: List<MemoReferenceInfo>,
