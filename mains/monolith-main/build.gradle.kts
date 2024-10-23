@@ -28,6 +28,7 @@ val memoService = mutableListOf(
     project(Modules.Service.Memo.Core.path),
     project(Modules.Service.Memo.Adaptors.InHttp.path),
     project(Modules.Service.Memo.Adaptors.InWebsocket.path),
+    project(Modules.Service.Memo.Adaptors.OutMySql.path),
 )
 
 val mediaService = mutableListOf(

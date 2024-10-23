@@ -6,12 +6,12 @@ import io.kotest.matchers.shouldNotBe
 import kr.co.jiniaslog.TestContainerAbstractSkeleton
 import kr.co.jiniaslog.memo.domain.folder.Folder
 import kr.co.jiniaslog.memo.domain.folder.FolderId
+import kr.co.jiniaslog.memo.domain.folder.FolderRepository
 import kr.co.jiniaslog.memo.domain.memo.AuthorId
 import kr.co.jiniaslog.memo.domain.memo.Memo
 import kr.co.jiniaslog.memo.domain.memo.MemoContent
+import kr.co.jiniaslog.memo.domain.memo.MemoRepository
 import kr.co.jiniaslog.memo.domain.memo.MemoTitle
-import kr.co.jiniaslog.memo.outbound.FolderRepository
-import kr.co.jiniaslog.memo.outbound.MemoRepository
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 
@@ -125,9 +125,9 @@ class MemoUseCaseTests : TestContainerAbstractSkeleton() {
         info.id shouldNotBe null
         val foundTarget = memoRepository.findById(info.id)
         foundTarget shouldNotBe null
-        foundTarget!!.references.size shouldBe 1
-        foundTarget.references.first().referenceId shouldBe referenceTarget.entityId
-        foundTarget.references.first().rootId shouldBe rootMemo.entityId
+        foundTarget!!.getReferences().size shouldBe 1
+        foundTarget.getReferences().first().referenceId shouldBe referenceTarget.entityId
+        foundTarget.getReferences().first().rootId shouldBe rootMemo.entityId
     }
 
     @Test
@@ -170,7 +170,7 @@ class MemoUseCaseTests : TestContainerAbstractSkeleton() {
         info.id shouldNotBe null
         val foundTarget = memoRepository.findById(info.id)
         foundTarget shouldNotBe null
-        foundTarget!!.references.size shouldBe 2
+        foundTarget!!.getReferences().size shouldBe 2
     }
 
     @Test
@@ -206,7 +206,7 @@ class MemoUseCaseTests : TestContainerAbstractSkeleton() {
         info.id shouldNotBe null
         val foundTarget = memoRepository.findById(info.id)
         foundTarget shouldNotBe null
-        foundTarget!!.references.size shouldBe 0
+        foundTarget!!.getReferences().size shouldBe 0
     }
 
     @Test

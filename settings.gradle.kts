@@ -37,6 +37,7 @@ include(
     "service:memo:adapter:memo-in-websocket",
     "service:memo:adapter:memo-in-message",
     "service:memo:adapter:memo-in-batch",
+    "service:memo:adapter:memo-out-mysql",
 
     // media
     "service:media:media-domain",

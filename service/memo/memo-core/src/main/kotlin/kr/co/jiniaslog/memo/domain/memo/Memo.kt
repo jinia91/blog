@@ -1,16 +1,16 @@
 package kr.co.jiniaslog.memo.domain.memo
 
 import jakarta.persistence.AttributeOverride
-import jakarta.persistence.AttributeOverrides
 import jakarta.persistence.Column
 import jakarta.persistence.ElementCollection
-import jakarta.persistence.Embedded
 import jakarta.persistence.EmbeddedId
 import jakarta.persistence.Entity
 import kr.co.jiniaslog.memo.domain.exception.NotOwnershipException
 import kr.co.jiniaslog.memo.domain.folder.FolderId
 import kr.co.jiniaslog.shared.adapter.out.rdb.JpaAggregate
 import kr.co.jiniaslog.shared.core.domain.IdUtils
+import org.hibernate.annotations.Fetch
+import org.hibernate.annotations.FetchMode
 import java.time.LocalDateTime
 
 @Entity
@@ -23,30 +23,24 @@ class Memo private constructor(
     parentFolderId: FolderId?,
 ) : JpaAggregate<MemoId>() {
     @EmbeddedId
+    @AttributeOverride(column = Column(name = "id"), name = "value")
     override val entityId: MemoId = id
 
-    @Embedded
-    @Column(name = "author_id")
+    @AttributeOverride(column = Column(name = "author_id"), name = "value")
     val authorId: AuthorId = authorId
 
-    @Embedded
     @AttributeOverride(column = Column(name = "title"), name = "value")
     var title: MemoTitle = title
         private set
 
-    @Embedded
     @AttributeOverride(column = Column(name = "content"), name = "value")
     var content: MemoContent = content
         private set
 
     @ElementCollection
-    @AttributeOverrides(
-        AttributeOverride(column = Column(name = "memo_id"), name = "memoId"),
-        AttributeOverride(column = Column(name = "reference_id"), name = "referenceId"),
-    )
+    @Fetch(FetchMode.JOIN)
     private var _references: MutableSet<MemoReference> = references
 
-    @Embedded
     @AttributeOverride(column = Column(name = "parent_folder_id"), name = "value")
     var parentFolderId: FolderId? = parentFolderId
         private set

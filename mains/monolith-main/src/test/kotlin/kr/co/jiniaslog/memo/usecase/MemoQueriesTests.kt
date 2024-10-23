@@ -4,9 +4,9 @@ import io.kotest.matchers.shouldBe
 import kr.co.jiniaslog.TestContainerAbstractSkeleton
 import kr.co.jiniaslog.memo.domain.FolderTestFixtures
 import kr.co.jiniaslog.memo.domain.MemoTestFixtures
+import kr.co.jiniaslog.memo.domain.folder.FolderRepository
 import kr.co.jiniaslog.memo.domain.memo.MemoContent
-import kr.co.jiniaslog.memo.outbound.FolderRepository
-import kr.co.jiniaslog.memo.outbound.MemoRepository
+import kr.co.jiniaslog.memo.domain.memo.MemoRepository
 import kr.co.jiniaslog.memo.queries.IGetAllReferencedByMemo
 import kr.co.jiniaslog.memo.queries.IGetAllReferencesByMemo
 import kr.co.jiniaslog.memo.queries.IGetMemoById

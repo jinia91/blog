@@ -1,7 +1,9 @@
 package kr.co.jiniaslog.memo.domain.memo
 
+import jakarta.persistence.Embeddable
 import kr.co.jiniaslog.shared.core.domain.vo.ValueObject
 
+@Embeddable
 data class MemoTitle(val value: String) : ValueObject {
     init {
         validate()
