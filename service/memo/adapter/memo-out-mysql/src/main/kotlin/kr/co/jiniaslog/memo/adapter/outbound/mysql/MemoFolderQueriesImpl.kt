@@ -1,5 +1,6 @@
 package kr.co.jiniaslog.memo.adapter.outbound.mysql
 
+import com.querydsl.core.types.ExpressionUtils.any
 import com.querydsl.jpa.impl.JPAQueryFactory
 import kr.co.jiniaslog.memo.domain.folder.Folder
 import kr.co.jiniaslog.memo.domain.memo.Memo
@@ -14,6 +15,7 @@ import kr.co.jiniaslog.memo.queries.IGetMemoById
 import kr.co.jiniaslog.memo.queries.IRecommendRelatedMemo
 import kr.co.jiniaslog.memo.queries.MemoQueriesFacade
 import kr.co.jiniaslog.shared.core.annotation.PersistenceAdapter
+import org.springframework.data.jpa.domain.Specification.where
 import org.springframework.transaction.annotation.Transactional
 import kotlin.jvm.optionals.getOrElse
 
@@ -25,7 +27,21 @@ internal class MemoFolderQueriesImpl(
     private val folderRepository: FolderJpaRepository,
 ) : MemoQueriesFacade, FolderQueriesFacade {
     override fun handle(query: IRecommendRelatedMemo.Query): IRecommendRelatedMemo.Info {
-        TODO("Not yet implemented")
+        val result = memoJpaQueryFactory.selectFrom(memo)
+            .where(
+                memo.title.value.contains(query.keyword)
+                    .or(memo.content.value.contains(query.keyword))
+            )
+            .fetch()
+        return IRecommendRelatedMemo.Info(
+            result.map { memo ->
+                Triple(
+                    memo.entityId,
+                    memo.title,
+                    memo.content
+                )
+            }
+        )
     }
 
     override fun handle(query: IGetMemoById.Query): IGetMemoById.Info {
@@ -48,13 +64,13 @@ internal class MemoFolderQueriesImpl(
 
     override fun handle(query: IGetAllReferencesByMemo.Query): IGetAllReferencesByMemo.Info {
         val memo = memoJpaQueryFactory.selectFrom(memo)
-            .where(memo.entityId.eq(query.memoId))
+            .where(memo.entityId.value.eq(query.memoId.value))
             .fetchOne()
         val references = memo?.getReferences()?.map {
-            it.referenceId
+            it.referenceId.value
         }
         val referencesMemo = memoJpaQueryFactory.selectFrom(QMemo.memo)
-            .where(QMemo.memo.entityId.`in`(references))
+            .where(QMemo.memo.entityId.value.`in`(references))
             .fetch()
 
         return IGetAllReferencesByMemo.Info(
@@ -69,11 +85,11 @@ internal class MemoFolderQueriesImpl(
 
     override fun handle(query: IGetAllReferencedByMemo.Query): IGetAllReferencedByMemo.Info {
         val memo = memoJpaQueryFactory.selectFrom(memo)
-            .where(memo.entityId.eq(query.memoId))
+            .where(memo.entityId.value.eq(query.memoId.value))
             .fetchOne()
 
         val referencingMemo = memoJpaQueryFactory.selectFrom(QMemo.memo)
-            .where(QMemo.memo._references.any().referenceId.eq(query.memoId))
+            .where(QMemo.memo._references.any().referenceId.value.eq(query.memoId.value))
             .fetch()
 
         return IGetAllReferencedByMemo.Info(
@@ -88,11 +104,30 @@ internal class MemoFolderQueriesImpl(
 
     override fun handle(query: ICheckMemoExisted.Query): Boolean {
         return memoJpaQueryFactory.selectFrom(memo)
-            .where(memo.entityId.eq(query.memoId))
+            .where(memo.entityId.value.eq(query.memoId.value))
             .fetchCount() > 0
     }
 
     override fun handle(query: IGetFoldersAllInHierirchyByAuthorId.Query): IGetFoldersAllInHierirchyByAuthorId.Info {
+        if (query.value != null && query.value!!.isNotEmpty()) {
+            val result = memoJpaQueryFactory.selectFrom(memo)
+                .where(
+                    memo.title.value.contains(query.value)
+                        .or(memo.content.value.contains(query.value))
+                )
+                .fetch()
+            return IGetFoldersAllInHierirchyByAuthorId.Info(
+                folderInfos = result.map {
+                    IGetFoldersAllInHierirchyByAuthorId.FolderInfo(
+                        id = it.entityId.value,
+                        name = it.title.value,
+                        parent = null,
+                        children = mutableListOf(),
+                        memos = mutableListOf()
+                    )
+                }
+            )
+        }
         val allFolders = folderRepository.findAllByAuthorId(query.requesterId)
         val allMemoes = memoRepository.findAllByAuthorId(query.requesterId)
 
@@ -132,7 +167,7 @@ internal class MemoFolderQueriesImpl(
             if (result.isEmpty()) return result
             for (parent in result) {
                 val children = folderMapWithParent[parent.id]?.map { child ->
-                    createFolderInfo(child, parent)
+                    createFolderInfo(child, parent.copy())
                 } ?: listOf()
                 parent.children = children
                 getFolderTree(children)

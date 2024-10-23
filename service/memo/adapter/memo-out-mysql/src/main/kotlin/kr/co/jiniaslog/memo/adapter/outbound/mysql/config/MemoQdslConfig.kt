@@ -1,18 +1,20 @@
 package kr.co.jiniaslog.memo.adapter.outbound.mysql.config
 
 import com.querydsl.jpa.impl.JPAQueryFactory
-import jakarta.persistence.EntityManager
-import jakarta.persistence.PersistenceContext
+import jakarta.persistence.EntityManagerFactory
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 
 @Configuration
 class MemoQdslConfig {
-    @PersistenceContext(name = "memoEntityManager")
-    lateinit var memoEntityManager: EntityManager
+    @Autowired
+    @Qualifier(MemoDb.ENTITY_MANAGER_FACTORY)
+    lateinit var memoEntityManagerFactory: EntityManagerFactory
 
     @Bean
     fun memoJpaQueryFactory(): JPAQueryFactory {
-        return JPAQueryFactory(memoEntityManager)
+        return JPAQueryFactory(memoEntityManagerFactory.createEntityManager())
     }
 }
