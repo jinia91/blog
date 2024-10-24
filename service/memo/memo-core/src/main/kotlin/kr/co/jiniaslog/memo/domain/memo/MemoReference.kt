@@ -17,6 +17,6 @@ data class MemoReference(
     }
 
     override fun validate() {
-        require(rootId != referenceId) { "rootId and referenceId must be different" }
+        require(rootId != referenceId) { "참조 메모는 자기 자신이 될 수 없습니다." }
     }
 }
