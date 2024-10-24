@@ -1,6 +1,7 @@
 package kr.co.jiniaslog.memo.domain.memo
 
 import jakarta.persistence.AttributeOverride
+import jakarta.persistence.CollectionTable
 import jakarta.persistence.Column
 import jakarta.persistence.ElementCollection
 import jakarta.persistence.EmbeddedId
@@ -47,6 +48,7 @@ class Memo private constructor(
         private set
 
     @ElementCollection
+    @CollectionTable(name = "memo_reference")
     @Fetch(FetchMode.JOIN)
     private var _references: MutableSet<MemoReference> = references
 
