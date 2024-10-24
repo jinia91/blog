@@ -56,7 +56,6 @@ class MemoUseCaseTests : TestContainerAbstractSkeleton() {
         // given
         val capedMemoCount = Memo.INIT_LIMIT.toInt()
         val jdbcTemplate = JdbcTemplate(datasource)
-        jdbcTemplate.dataSource
         val dateTime = LocalDateTime.now()
         jdbcTemplate.batchUpdate(
             "INSERT INTO memo (id, author_id, content, title, parent_folder_id, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?,?)",

@@ -55,6 +55,28 @@ class MemoQueriesTests : TestContainerAbstractSkeleton() {
     }
 
     @Test
+    fun `연관 메모 조회시 자기자신은 조회되지 않는다`() {
+        // given
+        val dummyFolder = folderRepository.save(FolderTestFixtures.build())
+        val memo = memoRepository.save(
+            MemoTestFixtures.build(parentFolderId = dummyFolder.entityId, content = MemoContent("특정"))
+        )
+
+        // when
+        val result = sut.handle(
+            IRecommendRelatedMemo.Query(
+                thisMemoId = memo.entityId,
+                rawKeyword =
+                "특정",
+                requesterId = memo.authorId
+            )
+        )
+
+        // then
+        result.relatedMemoCandidates.size shouldBe 0
+    }
+
+    @Test
     fun `메모아이디로 메모를 조회할 수 있다`() {
         // given
         val dummyFolder = folderRepository.save(FolderTestFixtures.build())

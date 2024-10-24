@@ -43,7 +43,10 @@ class Memo private constructor(
     var title: MemoTitle = title
         private set
 
-    @AttributeOverride(column = Column(name = "content"), name = "value")
+    @AttributeOverride(
+        column = Column(name = "content", columnDefinition = "TEXT"),
+        name = "value"
+    )
     var content: MemoContent = content
         private set
 

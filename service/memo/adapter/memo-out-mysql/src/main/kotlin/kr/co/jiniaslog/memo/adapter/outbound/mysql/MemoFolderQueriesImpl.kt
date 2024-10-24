@@ -15,8 +15,6 @@ import kr.co.jiniaslog.memo.queries.IGetMemoById
 import kr.co.jiniaslog.memo.queries.IRecommendRelatedMemo
 import kr.co.jiniaslog.memo.queries.MemoQueriesFacade
 import kr.co.jiniaslog.shared.core.annotation.PersistenceAdapter
-import org.springframework.data.jpa.domain.AbstractPersistable_.id
-import org.springframework.data.jpa.domain.Specification.where
 import org.springframework.transaction.annotation.Transactional
 import kotlin.jvm.optionals.getOrElse
 
@@ -30,7 +28,7 @@ internal class MemoFolderQueriesImpl(
     override fun handle(query: IRecommendRelatedMemo.Query): IRecommendRelatedMemo.Info {
         val result = memoJpaQueryFactory.selectFrom(memo)
             .where(
-                memo.entityId.value.ne(query.requesterId.value)
+                memo.entityId.value.ne(query.thisMemoId.value)
                     .and(memo.title.value.contains(query.keyword).or(memo.content.value.contains(query.keyword)))
             )
             .fetch()
