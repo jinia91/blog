@@ -4,6 +4,7 @@ import jakarta.persistence.AttributeOverride
 import jakarta.persistence.Column
 import jakarta.persistence.EmbeddedId
 import jakarta.persistence.Entity
+import jakarta.persistence.Index
 import jakarta.persistence.Table
 import kr.co.jiniaslog.memo.domain.exception.NotOwnershipException
 import kr.co.jiniaslog.memo.domain.memo.AuthorId
@@ -12,7 +13,12 @@ import kr.co.jiniaslog.shared.core.domain.IdUtils
 import java.time.LocalDateTime
 
 @Entity
-@Table(name = "folder")
+@Table(
+    name = "folder",
+    indexes = [
+        Index(name = "idx_folder_author_id", columnList = "author_id"),
+    ]
+)
 class Folder internal constructor(
     id: FolderId,
     name: FolderName,

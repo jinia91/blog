@@ -5,6 +5,7 @@ import jakarta.persistence.Column
 import jakarta.persistence.ElementCollection
 import jakarta.persistence.EmbeddedId
 import jakarta.persistence.Entity
+import jakarta.persistence.Index
 import jakarta.persistence.Table
 import kr.co.jiniaslog.memo.domain.exception.NotOwnershipException
 import kr.co.jiniaslog.memo.domain.folder.FolderId
@@ -15,7 +16,13 @@ import org.hibernate.annotations.FetchMode
 import java.time.LocalDateTime
 
 @Entity
-@Table(name = "memo")
+@Table(
+    name = "memo",
+    indexes = [
+        Index(name = "idx_memo_author_id", columnList = "author_id"),
+        Index(name = "idx_memo_parent_folder_id", columnList = "parent_folder_id"),
+    ]
+)
 class Memo private constructor(
     id: MemoId,
     authorId: AuthorId,
