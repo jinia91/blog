@@ -4,12 +4,9 @@ import io.mockk.mockk
 import io.restassured.RestAssured
 import kr.co.jiniaslog.media.outbound.ImageUploader
 import kr.co.jiniaslog.utils.MySqlRdbCleaner
-import kr.co.jiniaslog.utils.Neo4jDbCleaner
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.neo4j.driver.AuthTokens
-import org.neo4j.driver.GraphDatabase
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.context.TestConfiguration
@@ -19,7 +16,6 @@ import org.springframework.context.annotation.Primary
 import org.springframework.test.context.DynamicPropertyRegistry
 import org.springframework.test.context.DynamicPropertySource
 import org.testcontainers.containers.MySQLContainer
-import org.testcontainers.containers.Neo4jContainer
 import org.testcontainers.junit.jupiter.Testcontainers
 
 @TestConfiguration
@@ -53,9 +49,6 @@ abstract class TestContainerAbstractSkeleton {
     protected var port: Int = 0
 
     @Autowired
-    protected lateinit var neo4jDbCleaner: Neo4jDbCleaner
-
-    @Autowired
     protected lateinit var mySqlRdbCleaner: MySqlRdbCleaner
 
     @BeforeEach
@@ -65,7 +58,6 @@ abstract class TestContainerAbstractSkeleton {
 
     @AfterEach
     fun tearDown() {
-        neo4jDbCleaner.tearDownAll()
         mySqlRdbCleaner.tearDownAll()
     }
 
@@ -77,9 +69,6 @@ abstract class TestContainerAbstractSkeleton {
         private const val RDB_CHARSET = "--character-set-server=utf8mb4"
         private const val RDB_COLLATION = "--collation-server=utf8mb4_unicode_ci"
         private const val RDB_INIT_SQL = "SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci"
-
-        @JvmStatic
-        val neo4j: Neo4jContainer<*> = CustomNeo4jContainer()
 
         @JvmStatic
         val userDb: MySQLContainer<*> = MySQLContainer("mysql:8.0")
@@ -94,20 +83,22 @@ abstract class TestContainerAbstractSkeleton {
                 .withDatabaseName("jiniaslog_blog")
                 .withReuse(true)
 
+        @JvmStatic
+        val memoDb: MySQLContainer<*> =
+            MySQLContainer("mysql:8.0")
+                .withCommand(RDB_CHARSET, RDB_COLLATION)
+                .withDatabaseName("jiniaslog_memo")
+                .withReuse(true)
+
         init {
-            neo4j.start()
             userDb.start()
             blogDb.start()
+            memoDb.start()
         }
 
         @DynamicPropertySource
         @JvmStatic
         fun testProperty(registry: DynamicPropertyRegistry) {
-            // neo4j
-            registry.add("spring.neo4j.uri") { neo4j.boltUrl }
-            registry.add("spring.neo4j.authentication.username") { "neo4j" }
-            registry.add("spring.neo4j.authentication.password") { "password" }
-
             // user db
             registry.add("spring.datasource.user.jdbc-url") { userDb.jdbcUrl }
             registry.add("spring.datasource.user.username") { userDb.username }
@@ -121,32 +112,13 @@ abstract class TestContainerAbstractSkeleton {
             registry.add("spring.datasource.blog.password") { blogDb.password }
             registry.add("spring.datasource.blog.driver-class-name") { blogDb.driverClassName }
             registry.add("spring.datasource.blog.connection-init-sql") { RDB_INIT_SQL }
-        }
-    }
-}
 
-class CustomNeo4jContainer : Neo4jContainer<CustomNeo4jContainer>("neo4j:5") {
-    init {
-        withReuse(true)
-    }
-
-    override fun start() {
-        super.start()
-        setupIndexes()
-    }
-
-    private fun setupIndexes() {
-        val driver = GraphDatabase.driver(boltUrl, AuthTokens.basic("neo4j", "password"))
-        driver.session().use { session ->
-            session.writeTransaction { tx ->
-                val indexExists = tx.run("SHOW INDEXES").list().any {
-                    it.get("name").asString() == "memo_full_text_index"
-                }
-                if (!indexExists) {
-                    tx.run("""CREATE FULLTEXT INDEX memo_full_text_index FOR (n:memo) ON EACH [n.title, n.content]""")
-                }
-                tx.commit()
-            }
+            // memo db
+            registry.add("spring.datasource.memo.jdbc-url") { memoDb.jdbcUrl }
+            registry.add("spring.datasource.memo.username") { memoDb.username }
+            registry.add("spring.datasource.memo.password") { memoDb.password }
+            registry.add("spring.datasource.memo.driver-class-name") { memoDb.driverClassName }
+            registry.add("spring.datasource.memo.connection-init-sql") { RDB_INIT_SQL }
         }
     }
 }

@@ -28,7 +28,12 @@ services:
         "jdbc-url": "jdbc:mysql://jiniaslog-db/jiniaslog_blog?useSSL=false&serverTimezone=UTC&characterEncoding=UTF-8",
         "username": "root",
         "password": ""
-      }
+      },
+      "memo": {
+        "driver-class-name": "com.mysql.cj.jdbc.Driver",
+        "jdbc-url": "jdbc:mysql://jiniaslog-db/jiniaslog_memo?useSSL=false&serverTimezone=UTC&characterEncoding=UTF-8",
+        "username: "root",
+        "password": ""
     }
   }
 }'
@@ -63,24 +68,6 @@ services:
       test: "mysqladmin ping --silent"
       interval: 1s
       retries: 120
-
-  jinia_neo4j:
-    image: neo4j:5.5
-    ports:
-      - "7687:7687"
-    environment:
-      NEO4J_AUTH: neo4j/password
-    networks:
-      - internal-network
-    volumes:
-      - ./neo4j_data:/data
-      - ./neo4j_logs:/logs
-      - ./neo4j_import:/import
-      - ./neo4j_plugins:/plugins
-    healthcheck:
-      test: [ "CMD", "neo4j", "ping" ]
-      interval: 5s
-      retries: 5
 
 networks:
   internal-network:

@@ -25,11 +25,10 @@ val blogService = mutableListOf(
 )
 
 val memoService = mutableListOf(
-    project(Modules.Service.Memo.Domain.path),
-    project(Modules.Service.Memo.Application.path),
+    project(Modules.Service.Memo.Core.path),
     project(Modules.Service.Memo.Adaptors.InHttp.path),
     project(Modules.Service.Memo.Adaptors.InWebsocket.path),
-    project(Modules.Service.Memo.Adaptors.OutNeo4j.path),
+    project(Modules.Service.Memo.Adaptors.OutMySql.path),
 )
 
 val mediaService = mutableListOf(
@@ -66,7 +65,6 @@ var moduleBlocks = mutableListOf<Project>()
 val bootLib = mutableListOf(
     libs.spring.boot.starter.security,
     libs.spring.boot.starter.web,
-    libs.spring.boot.starter.data.neo4j,
     libs.spring.boot.starter.actuator,
     libs.mysql.connector.j,
     libs.h2
@@ -75,7 +73,6 @@ val bootLib = mutableListOf(
 var integrationTestLib = mutableListOf(
     libs.testcontainers,
     libs.testcontainers.junit5,
-    libs.testcontainers.neo4j,
     libs.testcontainers.mysql,
     libs.restassured,
     libs.wiremock,
@@ -90,8 +87,7 @@ dependencies {
         kover(it)
     }
 
-    testImplementation(testFixtures(project(Modules.Service.Memo.Adaptors.OutNeo4j.path)))
-    testImplementation(testFixtures(project(Modules.Service.Memo.Domain.path)))
+    testImplementation(testFixtures(project(Modules.Service.Memo.Core.path)))
     testImplementation(testFixtures(project(Modules.Service.AuthUser.Application.path)))
     testImplementation(testFixtures(project(Modules.Service.Blog.Core.path)))
 
@@ -123,6 +119,7 @@ koverReport {
                     "kr.co.jiniaslog.AppKt",
                     "*.Q*", // 어노테이션, 패키지 필터가 적용이 안되서 q 파일 임시로 제외
                     "*.*TestFixtures",
+                    "**.*log*",
                 )
             }
         }
@@ -134,6 +131,7 @@ koverReport {
                 "kr.co.jiniaslog.AppKt",
                 "*.Q*",
                 "*.*TestFixtures",
+                "**.log*",
             )
         }
     }

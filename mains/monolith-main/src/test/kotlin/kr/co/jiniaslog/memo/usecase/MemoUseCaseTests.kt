@@ -4,20 +4,29 @@ import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import kr.co.jiniaslog.TestContainerAbstractSkeleton
+import kr.co.jiniaslog.memo.adapter.outbound.mysql.config.MemoDb
 import kr.co.jiniaslog.memo.domain.folder.Folder
 import kr.co.jiniaslog.memo.domain.folder.FolderId
+import kr.co.jiniaslog.memo.domain.folder.FolderRepository
 import kr.co.jiniaslog.memo.domain.memo.AuthorId
 import kr.co.jiniaslog.memo.domain.memo.Memo
 import kr.co.jiniaslog.memo.domain.memo.MemoContent
+import kr.co.jiniaslog.memo.domain.memo.MemoRepository
 import kr.co.jiniaslog.memo.domain.memo.MemoTitle
-import kr.co.jiniaslog.memo.outbound.FolderRepository
-import kr.co.jiniaslog.memo.outbound.MemoRepository
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.beans.factory.annotation.Qualifier
+import org.springframework.jdbc.core.JdbcTemplate
+import java.time.LocalDateTime
+import javax.sql.DataSource
 
 class MemoUseCaseTests : TestContainerAbstractSkeleton() {
     @Autowired
     lateinit var memoRepository: MemoRepository
+
+    @Autowired
+    @Qualifier(MemoDb.DATASOURCE)
+    lateinit var datasource: DataSource
 
     @Autowired
     lateinit var folderRepository: FolderRepository
@@ -26,7 +35,7 @@ class MemoUseCaseTests : TestContainerAbstractSkeleton() {
     lateinit var sut: MemoUseCasesFacade
 
     @Test
-    fun `유효한 폴더 초기화 요청시 폴더는 초기화 된다`() {
+    fun `유효한 메모 초기화 요청시 메모는 초기화 된다`() {
         // given
         val command =
             IInitMemo.Command(
@@ -40,6 +49,24 @@ class MemoUseCaseTests : TestContainerAbstractSkeleton() {
         // then
         info.id shouldNotBe null
         memoRepository.findById(info.id) shouldNotBe null
+    }
+
+    @Test
+    fun `메모 초기화시 메모 개수가 제한을 초과하면 실패한다`() {
+        // given
+        val capedMemoCount = Memo.INIT_LIMIT.toInt()
+        val jdbcTemplate = JdbcTemplate(datasource)
+        val dateTime = LocalDateTime.now()
+        jdbcTemplate.batchUpdate(
+            "INSERT INTO memo (id, author_id, content, title, parent_folder_id, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?,?)",
+            (1..capedMemoCount).map { i ->
+                arrayOf(i.toLong(), 1, "content", "title", null, dateTime, dateTime)
+            }
+        )
+        // when
+        shouldThrow<IllegalArgumentException> {
+            sut.handle(IInitMemo.Command(AuthorId(1), null))
+        }
     }
 
     @Test
@@ -125,9 +152,9 @@ class MemoUseCaseTests : TestContainerAbstractSkeleton() {
         info.id shouldNotBe null
         val foundTarget = memoRepository.findById(info.id)
         foundTarget shouldNotBe null
-        foundTarget!!.references.size shouldBe 1
-        foundTarget.references.first().referenceId shouldBe referenceTarget.entityId
-        foundTarget.references.first().rootId shouldBe rootMemo.entityId
+        foundTarget!!.getReferences().size shouldBe 1
+        foundTarget.getReferences().first().referenceId shouldBe referenceTarget.entityId
+        foundTarget.getReferences().first().rootId shouldBe rootMemo.entityId
     }
 
     @Test
@@ -170,7 +197,7 @@ class MemoUseCaseTests : TestContainerAbstractSkeleton() {
         info.id shouldNotBe null
         val foundTarget = memoRepository.findById(info.id)
         foundTarget shouldNotBe null
-        foundTarget!!.references.size shouldBe 2
+        foundTarget!!.getReferences().size shouldBe 2
     }
 
     @Test
@@ -206,7 +233,7 @@ class MemoUseCaseTests : TestContainerAbstractSkeleton() {
         info.id shouldNotBe null
         val foundTarget = memoRepository.findById(info.id)
         foundTarget shouldNotBe null
-        foundTarget!!.references.size shouldBe 0
+        foundTarget!!.getReferences().size shouldBe 0
     }
 
     @Test
