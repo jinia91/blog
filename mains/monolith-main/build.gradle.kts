@@ -119,6 +119,7 @@ koverReport {
                     "kr.co.jiniaslog.AppKt",
                     "*.Q*", // 어노테이션, 패키지 필터가 적용이 안되서 q 파일 임시로 제외
                     "*.*TestFixtures",
+                    "**.*log*",
                 )
             }
         }
@@ -130,6 +131,7 @@ koverReport {
                 "kr.co.jiniaslog.AppKt",
                 "*.Q*",
                 "*.*TestFixtures",
+                "**.log*",
             )
         }
     }
