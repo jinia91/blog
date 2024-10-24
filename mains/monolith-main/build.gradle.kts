@@ -65,7 +65,6 @@ var moduleBlocks = mutableListOf<Project>()
 val bootLib = mutableListOf(
     libs.spring.boot.starter.security,
     libs.spring.boot.starter.web,
-    libs.spring.boot.starter.data.neo4j,
     libs.spring.boot.starter.actuator,
     libs.mysql.connector.j,
     libs.h2
@@ -74,7 +73,6 @@ val bootLib = mutableListOf(
 var integrationTestLib = mutableListOf(
     libs.testcontainers,
     libs.testcontainers.junit5,
-    libs.testcontainers.neo4j,
     libs.testcontainers.mysql,
     libs.restassured,
     libs.wiremock,

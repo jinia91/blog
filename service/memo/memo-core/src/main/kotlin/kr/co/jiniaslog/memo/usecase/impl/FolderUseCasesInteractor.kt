@@ -23,8 +23,8 @@ internal class FolderUseCasesInteractor(
 
     private fun ensureFolderCountIsUnderLimit() {
         val totalCountOfFolder = folderRepository.count()
-        if (totalCountOfFolder >= 100) {
-            throw IllegalArgumentException("폴더 개수가 100개를 초과했습니다.")
+        if (totalCountOfFolder >= Folder.INIT_LIMIT) {
+            throw IllegalArgumentException("폴더 개수가 ${Folder.INIT_LIMIT}개를 초과했습니다.")
         }
     }
 

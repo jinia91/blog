@@ -31,8 +31,8 @@ internal class MemoUseCasesInteractor(
 
     private fun ensureMemoCountIsUnderLimit() {
         val totalCountOfMemo = memoRepository.count()
-        if (totalCountOfMemo >= 1000) {
-            throw IllegalArgumentException("메모 개수가 1000개를 초과했습니다.")
+        if (totalCountOfMemo >= Memo.INIT_LIMIT) {
+            throw IllegalArgumentException("메모 개수가 ${Memo.INIT_LIMIT}개를 초과했습니다.")
         }
     }
 

@@ -14,7 +14,6 @@ object Modules {
                 InHttp(":service:memo:adapter:memo-in-http"),
                 InWebsocket(":service:memo:adapter:memo-in-websocket"),
                 OutMySql(":service:memo:adapter:memo-out-mysql"),
-                OutNeo4j(":service:memo:adapter:memo-out-neo4j")
             }
         }
 

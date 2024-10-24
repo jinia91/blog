@@ -58,7 +58,7 @@ class FolderQueriesTests : TestContainerAbstractSkeleton() {
         // then
         result.folderInfos.size shouldBe 2
         result.folderInfos.find {
-            it.id == dummyParentFolder.entityId
+            it.id == dummyParentFolder.entityId.value
         }?.let { parentFolderInfo ->
             parentFolderInfo.children.size shouldBe 1
             parentFolderInfo.memos.size shouldBe 10

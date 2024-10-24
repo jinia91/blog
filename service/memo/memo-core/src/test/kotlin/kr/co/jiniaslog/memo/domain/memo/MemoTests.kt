@@ -77,7 +77,7 @@ internal class MemoTests : CustomBehaviorSpec() {
                     sutMemo.authorId shouldBe authorId
                     sutMemo.title shouldBe title
                     sutMemo.content shouldBe content
-                    sutMemo.references shouldBe reference
+                    sutMemo.getReferences() shouldBe reference
                     sutMemo.parentFolderId shouldBe parentFolderId
                     sutMemo.createdAt shouldBe createdAt
                     sutMemo.updatedAt shouldBe updatedAt

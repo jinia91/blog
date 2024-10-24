@@ -4,6 +4,7 @@ import jakarta.persistence.AttributeOverride
 import jakarta.persistence.Column
 import jakarta.persistence.EmbeddedId
 import jakarta.persistence.Entity
+import jakarta.persistence.Table
 import kr.co.jiniaslog.memo.domain.exception.NotOwnershipException
 import kr.co.jiniaslog.memo.domain.memo.AuthorId
 import kr.co.jiniaslog.shared.adapter.out.rdb.JpaAggregate
@@ -11,6 +12,7 @@ import kr.co.jiniaslog.shared.core.domain.IdUtils
 import java.time.LocalDateTime
 
 @Entity
+@Table(name = "folder")
 class Folder internal constructor(
     id: FolderId,
     name: FolderName,
@@ -47,6 +49,7 @@ class Folder internal constructor(
     }
 
     companion object {
+        const val INIT_LIMIT = 100L
         fun init(
             authorId: AuthorId,
             parent: FolderId? = null,

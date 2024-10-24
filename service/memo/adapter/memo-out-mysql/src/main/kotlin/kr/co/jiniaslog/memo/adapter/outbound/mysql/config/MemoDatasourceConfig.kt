@@ -50,6 +50,13 @@ class MemoDatasourceConfig(private val jpaDdlAutoProperty: JpaAutoDdlProperty) {
             .properties(mapOf(jpaDdlAutoProperty.key to jpaDdlAutoProperty.ddlAuto))
             .build()
     }
+//
+//    @Bean(name = [MemoDb.PERSISTENT_UNIT])
+//    fun memoEntityManager(
+//        @Qualifier(MemoDb.ENTITY_MANAGER_FACTORY) entityManagerFactory: EntityManagerFactory,
+//    ): EntityManager {
+//        return entityManagerFactory.createEntityManager()
+//    }
 
     @Bean(name = [TRANSACTION_MANAGER])
     fun memoTransactionManager(

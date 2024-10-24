@@ -5,6 +5,7 @@ import jakarta.persistence.Column
 import jakarta.persistence.ElementCollection
 import jakarta.persistence.EmbeddedId
 import jakarta.persistence.Entity
+import jakarta.persistence.Table
 import kr.co.jiniaslog.memo.domain.exception.NotOwnershipException
 import kr.co.jiniaslog.memo.domain.folder.FolderId
 import kr.co.jiniaslog.shared.adapter.out.rdb.JpaAggregate
@@ -14,6 +15,7 @@ import org.hibernate.annotations.FetchMode
 import java.time.LocalDateTime
 
 @Entity
+@Table(name = "memo")
 class Memo private constructor(
     id: MemoId,
     authorId: AuthorId,
@@ -88,6 +90,7 @@ class Memo private constructor(
     }
 
     companion object {
+        const val INIT_LIMIT = 1000L
         fun init(
             authorId: AuthorId,
             parentFolderId: FolderId?,

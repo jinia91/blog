@@ -1,12 +1,15 @@
 package kr.co.jiniaslog.memo.usecase
 
+import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.shouldBe
 import kr.co.jiniaslog.TestContainerAbstractSkeleton
 import kr.co.jiniaslog.memo.domain.FolderTestFixtures
 import kr.co.jiniaslog.memo.domain.MemoTestFixtures
 import kr.co.jiniaslog.memo.domain.folder.FolderRepository
 import kr.co.jiniaslog.memo.domain.memo.MemoContent
+import kr.co.jiniaslog.memo.domain.memo.MemoId
 import kr.co.jiniaslog.memo.domain.memo.MemoRepository
+import kr.co.jiniaslog.memo.queries.ICheckMemoExisted
 import kr.co.jiniaslog.memo.queries.IGetAllReferencedByMemo
 import kr.co.jiniaslog.memo.queries.IGetAllReferencesByMemo
 import kr.co.jiniaslog.memo.queries.IGetMemoById
@@ -36,16 +39,16 @@ class MemoQueriesTests : TestContainerAbstractSkeleton() {
         memoRepository.save(MemoTestFixtures.build(parentFolderId = dummyFolder.entityId))
         memoRepository.save(MemoTestFixtures.build(parentFolderId = dummyFolder.entityId))
         val relatedMemo = memoRepository.save(
-            MemoTestFixtures.build(parentFolderId = dummyFolder.entityId, content = MemoContent("test"))
+            MemoTestFixtures.build(parentFolderId = dummyFolder.entityId, content = MemoContent("특정"))
         )
 
         // when
         val result = sut.handle(
-            IRecommendRelatedMemo.Query(thisMemoId = memo.entityId, rawKeyword = "test", requesterId = memo.authorId)
+            IRecommendRelatedMemo.Query(thisMemoId = memo.entityId, rawKeyword = "특정", requesterId = memo.authorId)
         )
 
         // then
-        result.relatedMemoCandidates.size shouldBe 5
+        result.relatedMemoCandidates.size shouldBe 1
         result.relatedMemoCandidates[0].first shouldBe relatedMemo.entityId
         result.relatedMemoCandidates[0].second shouldBe relatedMemo.title
         result.relatedMemoCandidates[0].third shouldBe relatedMemo.content
@@ -67,14 +70,10 @@ class MemoQueriesTests : TestContainerAbstractSkeleton() {
     @Test
     fun `메모가 없다면 메모아이디로 조회할 경우 예외가 발생한다`() {
         // given
-        val dummyFolder = folderRepository.save(FolderTestFixtures.build())
-        val dummyMemo = memoRepository.save(MemoTestFixtures.build(parentFolderId = dummyFolder.entityId))
-
-        // when
-        val result = sut.handle(IGetMemoById.Query(dummyMemo.entityId, dummyMemo.authorId))
-
-        // then
-        result.memoId shouldBe dummyMemo.entityId
+        // when, then
+        shouldThrow<IllegalArgumentException> {
+            sut.handle(IGetMemoById.Query(MemoId(5), MemoTestFixtures.defaultAuthorId))
+        }
     }
 
     @Test
@@ -121,9 +120,19 @@ class MemoQueriesTests : TestContainerAbstractSkeleton() {
         val target = memoRepository.save(MemoTestFixtures.build())
 
         // when
-        val result = sut.handle(IGetMemoById.Query(target.entityId, MemoTestFixtures.defaultAuthorId))
+        val result = sut.handle(ICheckMemoExisted.Query(target.entityId))
 
         // then
-        result.memoId shouldBe target.entityId
+        result shouldBe true
+    }
+
+    @Test
+    fun `메모가 존재하지 않는지 확인할 수 있다`() {
+        // given
+        // when
+        val result = sut.handle(ICheckMemoExisted.Query(MemoId(5)))
+
+        // then
+        result shouldBe false
     }
 }

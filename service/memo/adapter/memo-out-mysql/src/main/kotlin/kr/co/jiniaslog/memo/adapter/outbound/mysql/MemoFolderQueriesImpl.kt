@@ -15,6 +15,7 @@ import kr.co.jiniaslog.memo.queries.IGetMemoById
 import kr.co.jiniaslog.memo.queries.IRecommendRelatedMemo
 import kr.co.jiniaslog.memo.queries.MemoQueriesFacade
 import kr.co.jiniaslog.shared.core.annotation.PersistenceAdapter
+import org.springframework.data.jpa.domain.AbstractPersistable_.id
 import org.springframework.data.jpa.domain.Specification.where
 import org.springframework.transaction.annotation.Transactional
 import kotlin.jvm.optionals.getOrElse
@@ -114,26 +115,27 @@ internal class MemoFolderQueriesImpl(
                 .where(
                     memo.title.value.contains(query.value)
                         .or(memo.content.value.contains(query.value))
-                )
-                .fetch()
+                ).fetch()
+
             return IGetFoldersAllInHierirchyByAuthorId.Info(
-                folderInfos = result.map {
+                folderInfos = listOf(
                     IGetFoldersAllInHierirchyByAuthorId.FolderInfo(
                         id = null,
                         name = "검색 결과",
                         parent = null,
                         children = mutableListOf(),
-                        memos = mutableListOf(
+                        memos = result.map {
                             IGetFoldersAllInHierirchyByAuthorId.MemoInfo(
                                 id = it.entityId.value,
                                 title = it.title.value,
                                 references = mutableListOf()
                             )
-                        )
+                        }
                     )
-                }
+                )
             )
         }
+
         val allFolders = folderRepository.findAllByAuthorId(query.requesterId)
         val allMemoes = memoRepository.findAllByAuthorId(query.requesterId)
 

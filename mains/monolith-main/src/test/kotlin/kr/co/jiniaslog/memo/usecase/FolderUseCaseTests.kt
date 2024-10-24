@@ -4,6 +4,7 @@ import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import kr.co.jiniaslog.TestContainerAbstractSkeleton
+import kr.co.jiniaslog.memo.adapter.outbound.mysql.config.MemoDb
 import kr.co.jiniaslog.memo.domain.FolderTestFixtures
 import kr.co.jiniaslog.memo.domain.exception.NotOwnershipException
 import kr.co.jiniaslog.memo.domain.folder.Folder
@@ -13,10 +14,18 @@ import kr.co.jiniaslog.memo.domain.folder.FolderRepository
 import kr.co.jiniaslog.memo.domain.memo.AuthorId
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.beans.factory.annotation.Qualifier
+import org.springframework.jdbc.core.JdbcTemplate
+import java.time.LocalDateTime
+import javax.sql.DataSource
 
 class FolderUseCaseTests : TestContainerAbstractSkeleton() {
     @Autowired
     lateinit var folderRepository: FolderRepository
+
+    @Autowired
+    @Qualifier(MemoDb.DATASOURCE)
+    lateinit var dataSource: DataSource
 
     @Autowired
     lateinit var sut: FolderUseCasesFacade
@@ -35,6 +44,28 @@ class FolderUseCaseTests : TestContainerAbstractSkeleton() {
         // then
         info.id shouldNotBe null
         folderRepository.findById(info.id) shouldNotBe null
+    }
+
+    @Test
+    fun `제한 폴더수 이상 폴더 초기화 요청시 예외가 발생한다`() {
+        // given
+        val jdbcTemplate = JdbcTemplate(dataSource)
+        val dateTime = LocalDateTime.now()
+        jdbcTemplate.batchUpdate(
+            "INSERT INTO folder (id, name, author_id, parent_id, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?)",
+            (1..Folder.INIT_LIMIT).map {
+                arrayOf(it, "name", 1, null, dateTime, dateTime)
+            }
+        )
+        val command =
+            ICreateNewFolder.Command(
+                authorId = AuthorId(1),
+            )
+
+        // when & then
+        shouldThrow<IllegalArgumentException> {
+            sut.handle(command)
+        }
     }
 
     @Test
