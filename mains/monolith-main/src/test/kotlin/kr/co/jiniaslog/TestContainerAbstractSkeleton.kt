@@ -4,6 +4,7 @@ import com.redis.testcontainers.RedisContainer
 import io.mockk.mockk
 import io.restassured.RestAssured
 import kr.co.jiniaslog.media.outbound.ImageUploader
+import kr.co.jiniaslog.utils.CacheCleaner
 import kr.co.jiniaslog.utils.MySqlRdbCleaner
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
@@ -52,6 +53,9 @@ abstract class TestContainerAbstractSkeleton {
     @Autowired
     protected lateinit var mySqlRdbCleaner: MySqlRdbCleaner
 
+    @Autowired
+    protected lateinit var cacheCleaner: CacheCleaner
+
     @BeforeEach
     fun setUp() {
         RestAssured.port = port
@@ -60,6 +64,7 @@ abstract class TestContainerAbstractSkeleton {
     @AfterEach
     fun tearDown() {
         mySqlRdbCleaner.tearDownAll()
+        cacheCleaner.burst()
     }
 
     @Test
