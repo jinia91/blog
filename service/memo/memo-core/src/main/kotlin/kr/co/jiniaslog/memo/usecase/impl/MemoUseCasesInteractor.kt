@@ -2,6 +2,7 @@ package kr.co.jiniaslog.memo.usecase.impl
 
 import kr.co.jiniaslog.memo.domain.folder.FolderId
 import kr.co.jiniaslog.memo.domain.folder.FolderRepository
+import kr.co.jiniaslog.memo.domain.memo.AuthorId
 import kr.co.jiniaslog.memo.domain.memo.Memo
 import kr.co.jiniaslog.memo.domain.memo.MemoId
 import kr.co.jiniaslog.memo.domain.memo.MemoRepository
@@ -21,7 +22,7 @@ internal class MemoUseCasesInteractor(
 ) : MemoUseCasesFacade {
     @CacheEvict(value = ["folders"], allEntries = true)
     override fun handle(command: IInitMemo.Command): IInitMemo.Info {
-        ensureMemoCountIsUnderLimit()
+        ensureMemoCountIsUnderLimit(authorId = command.authorId)
         val newOne =
             Memo.init(
                 authorId = command.authorId,
@@ -31,8 +32,8 @@ internal class MemoUseCasesInteractor(
         return IInitMemo.Info(newOne.entityId)
     }
 
-    private fun ensureMemoCountIsUnderLimit() {
-        val totalCountOfMemo = memoRepository.count()
+    private fun ensureMemoCountIsUnderLimit(authorId: AuthorId) {
+        val totalCountOfMemo = memoRepository.countByAuthorId(authorId)
         if (totalCountOfMemo >= Memo.INIT_LIMIT) {
             throw IllegalArgumentException("메모 개수가 ${Memo.INIT_LIMIT}개를 초과했습니다.")
         }

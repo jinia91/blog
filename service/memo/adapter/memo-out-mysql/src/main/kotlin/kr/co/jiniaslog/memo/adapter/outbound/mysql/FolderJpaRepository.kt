@@ -7,4 +7,6 @@ import org.springframework.data.jpa.repository.JpaRepository
 
 interface FolderJpaRepository : JpaRepository<Folder, FolderId> {
     fun findAllByAuthorId(authorId: AuthorId): List<Folder>
+
+    fun countByAuthorId(authorId: AuthorId): Long
 }

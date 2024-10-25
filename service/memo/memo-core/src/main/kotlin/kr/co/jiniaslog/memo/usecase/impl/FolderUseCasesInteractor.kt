@@ -3,6 +3,7 @@ package kr.co.jiniaslog.memo.usecase.impl
 import kr.co.jiniaslog.memo.domain.folder.Folder
 import kr.co.jiniaslog.memo.domain.folder.FolderId
 import kr.co.jiniaslog.memo.domain.folder.FolderRepository
+import kr.co.jiniaslog.memo.domain.memo.AuthorId
 import kr.co.jiniaslog.memo.usecase.FolderUseCasesFacade
 import kr.co.jiniaslog.memo.usecase.IChangeFolderName
 import kr.co.jiniaslog.memo.usecase.ICreateNewFolder
@@ -17,14 +18,14 @@ internal class FolderUseCasesInteractor(
 ) : FolderUseCasesFacade {
     @CacheEvict(value = ["folders"], allEntries = true)
     override fun handle(command: ICreateNewFolder.Command): ICreateNewFolder.Info {
-        ensureFolderCountIsUnderLimit()
+        ensureFolderCountIsUnderLimit(authorId = command.authorId)
         val newOne = Folder.init(authorId = command.authorId)
         folderRepository.save(newOne)
         return ICreateNewFolder.Info(newOne.entityId, newOne.name)
     }
 
-    private fun ensureFolderCountIsUnderLimit() {
-        val totalCountOfFolder = folderRepository.count()
+    private fun ensureFolderCountIsUnderLimit(authorId: AuthorId) {
+        val totalCountOfFolder = folderRepository.countByAuthorId(authorId)
         if (totalCountOfFolder >= Folder.INIT_LIMIT) {
             throw IllegalArgumentException("폴더 개수가 ${Folder.INIT_LIMIT}개를 초과했습니다.")
         }

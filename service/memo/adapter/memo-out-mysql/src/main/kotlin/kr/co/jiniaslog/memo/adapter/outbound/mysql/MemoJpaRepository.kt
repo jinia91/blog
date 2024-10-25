@@ -7,4 +7,6 @@ import org.springframework.data.jpa.repository.JpaRepository
 
 interface MemoJpaRepository : JpaRepository<Memo, MemoId> {
     fun findAllByAuthorId(authorId: AuthorId): List<Memo>
+
+    fun countByAuthorId(authorId: AuthorId): Long
 }
