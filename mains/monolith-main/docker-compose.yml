@@ -69,6 +69,16 @@ services:
       interval: 1s
       retries: 120
 
+  redis:
+    image: redis:7.0
+    container_name: redis
+    networks:
+      - internal-network
+    ports:
+      - "8882:6379"
+    command: ["bash", "-c", "echo never > /sys/kernel/mm/transparent_hugepage/enabled && redis-server"]
+    privileged: true
+
 networks:
   internal-network:
     driver: bridge

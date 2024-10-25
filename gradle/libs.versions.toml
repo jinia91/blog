@@ -38,6 +38,7 @@ spring-boot-starter-data-neo4j = { module = "org.springframework.boot:spring-boo
 spring-boot-starter-validation = { module = "org.springframework.boot:spring-boot-starter-validation" }
 spring-boot-starter-integration = {module = "org.springframework.boot:spring-boot-starter-integration"}
 spring-boot-configuration = { module = "org.springframework.boot:spring-boot-configuration-processor" }
+spring-data-redis = { module = "org.springframework.boot:spring-boot-starter-data-redis" }
 
 # 캐시
 spring-boot-starter-redisson = { module = "org.redisson:redisson-spring-boot-starter", version = "3.17.7" }

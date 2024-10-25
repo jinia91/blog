@@ -9,11 +9,13 @@ import kr.co.jiniaslog.memo.usecase.ICreateNewFolder
 import kr.co.jiniaslog.memo.usecase.IDeleteFoldersRecursively
 import kr.co.jiniaslog.memo.usecase.IMakeRelationShipFolderAndFolder
 import kr.co.jiniaslog.shared.core.annotation.UseCaseInteractor
+import org.springframework.cache.annotation.CacheEvict
 
 @UseCaseInteractor
 internal class FolderUseCasesInteractor(
     private val folderRepository: FolderRepository,
 ) : FolderUseCasesFacade {
+    @CacheEvict(value = ["folders"], allEntries = true)
     override fun handle(command: ICreateNewFolder.Command): ICreateNewFolder.Info {
         ensureFolderCountIsUnderLimit()
         val newOne = Folder.init(authorId = command.authorId)
@@ -28,6 +30,7 @@ internal class FolderUseCasesInteractor(
         }
     }
 
+    @CacheEvict(value = ["folders"], allEntries = true)
     override fun handle(command: IChangeFolderName.Command): IChangeFolderName.Info {
         val folder = getFolder(command.folderId)
         folder.validateOwnership(command.requesterId)
@@ -36,6 +39,7 @@ internal class FolderUseCasesInteractor(
         return IChangeFolderName.Info(folder.entityId)
     }
 
+    @CacheEvict(value = ["folders"], allEntries = true)
     override fun handle(command: IMakeRelationShipFolderAndFolder.Command): IMakeRelationShipFolderAndFolder.Info {
         val parent = command.parentFolderId?.let {
             getFolder(it).also { folder -> folder.validateOwnership(command.requesterId) }
@@ -47,6 +51,7 @@ internal class FolderUseCasesInteractor(
         return IMakeRelationShipFolderAndFolder.Info(parent?.entityId, child.entityId)
     }
 
+    @CacheEvict(value = ["folders"], allEntries = true)
     override fun handle(command: IDeleteFoldersRecursively.Command): IDeleteFoldersRecursively.Info {
         val folder = getFolder(command.folderId)
         folder.validateOwnership(command.requesterId)

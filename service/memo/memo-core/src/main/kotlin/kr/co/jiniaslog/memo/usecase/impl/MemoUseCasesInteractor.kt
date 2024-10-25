@@ -12,12 +12,14 @@ import kr.co.jiniaslog.memo.usecase.IUpdateMemoContents
 import kr.co.jiniaslog.memo.usecase.IUpdateMemoReferences
 import kr.co.jiniaslog.memo.usecase.MemoUseCasesFacade
 import kr.co.jiniaslog.shared.core.annotation.UseCaseInteractor
+import org.springframework.cache.annotation.CacheEvict
 
 @UseCaseInteractor
 internal class MemoUseCasesInteractor(
     private val memoRepository: MemoRepository,
     private val folderRepository: FolderRepository,
 ) : MemoUseCasesFacade {
+    @CacheEvict(value = ["folders"], allEntries = true)
     override fun handle(command: IInitMemo.Command): IInitMemo.Info {
         ensureMemoCountIsUnderLimit()
         val newOne =
@@ -47,6 +49,7 @@ internal class MemoUseCasesInteractor(
         getMemo(id)
     }
 
+    @CacheEvict(value = ["folders"], allEntries = true)
     override fun handle(command: IDeleteMemo.Command): IDeleteMemo.Info {
         val memo = getMemo(command.id)
         memo.validateOwnership(command.requesterId)
@@ -54,6 +57,7 @@ internal class MemoUseCasesInteractor(
         return IDeleteMemo.Info()
     }
 
+    @CacheEvict(value = ["folders"], allEntries = true)
     override fun handle(command: IMakeRelationShipFolderAndMemo.Command): IMakeRelationShipFolderAndMemo.Info {
         val folder = command.folderId?.let {
             getFolder(it).also { it.validateOwnership(command.requesterId) }
@@ -67,6 +71,7 @@ internal class MemoUseCasesInteractor(
         return IMakeRelationShipFolderAndMemo.Info(memo.entityId, command.folderId)
     }
 
+    @CacheEvict(value = ["folders"], allEntries = true)
     override fun handle(command: IUpdateMemoReferences.Command): IUpdateMemoReferences.Info {
         val memo = getMemo(command.memoId)
 
