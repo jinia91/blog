@@ -132,8 +132,8 @@ abstract class TestContainerAbstractSkeleton {
             registry.add("spring.datasource.memo.connection-init-sql") { RDB_INIT_SQL }
 
             // redis
-            registry.add("spring.redis.host") { redis.host }
-            registry.add("spring.redis.port") { redis.redisPort }
+            registry.add("spring.data.redis.host") { redis.host }
+            registry.add("spring.data.redis.port") { redis.redisPort }
         }
     }
 }
