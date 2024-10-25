@@ -68,6 +68,7 @@ testcontainers = { module = "org.testcontainers:testcontainers", version.ref = "
 testcontainers-junit5 = { module = "org.testcontainers:junit-jupiter", version.ref = "testcontainers"}
 testcontainers-neo4j = { module = "org.testcontainers:neo4j", version.ref = "testcontainers" }
 testcontainers-mysql = { module = "org.testcontainers:mysql", version.ref = "testcontainers" }
+testcontainers-redis = { module = "com.redis:testcontainers-redis", version = "2.2.2" }
 restassured = {module = "io.rest-assured:spring-mock-mvc" , version = "5.4.0"}
 wiremock = {module = "org.springframework.cloud:spring-cloud-contract-wiremock", version = "4.1.0"}
 mockkbean = {module = "com.ninja-squad:springmockk", version = "4.0.2"}

@@ -1,5 +1,6 @@
 package kr.co.jiniaslog
 
+import com.redis.testcontainers.RedisContainer
 import io.mockk.mockk
 import io.restassured.RestAssured
 import kr.co.jiniaslog.media.outbound.ImageUploader
@@ -90,10 +91,15 @@ abstract class TestContainerAbstractSkeleton {
                 .withDatabaseName("jiniaslog_memo")
                 .withReuse(true)
 
+        @JvmStatic
+        val redis: RedisContainer = RedisContainer("redis:7.0")
+            .withReuse(true)
+
         init {
             userDb.start()
             blogDb.start()
             memoDb.start()
+            redis.start()
         }
 
         @DynamicPropertySource
@@ -119,6 +125,10 @@ abstract class TestContainerAbstractSkeleton {
             registry.add("spring.datasource.memo.password") { memoDb.password }
             registry.add("spring.datasource.memo.driver-class-name") { memoDb.driverClassName }
             registry.add("spring.datasource.memo.connection-init-sql") { RDB_INIT_SQL }
+
+            // redis
+            registry.add("spring.redis.host") { redis.host }
+            registry.add("spring.redis.port") { redis.redisPort }
         }
     }
 }
