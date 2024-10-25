@@ -5,9 +5,9 @@ import io.kotest.matchers.shouldBe
 import kr.co.jiniaslog.TestContainerAbstractSkeleton
 import kr.co.jiniaslog.memo.domain.FolderTestFixtures
 import kr.co.jiniaslog.memo.domain.MemoTestFixtures
+import kr.co.jiniaslog.memo.domain.folder.FolderRepository
+import kr.co.jiniaslog.memo.domain.memo.MemoRepository
 import kr.co.jiniaslog.memo.domain.memo.MemoTitle
-import kr.co.jiniaslog.memo.outbound.FolderRepository
-import kr.co.jiniaslog.memo.outbound.MemoRepository
 import kr.co.jiniaslog.memo.queries.FolderQueriesFacade
 import kr.co.jiniaslog.memo.queries.IGetFoldersAllInHierirchyByAuthorId
 import org.junit.jupiter.api.Test
@@ -58,7 +58,7 @@ class FolderQueriesTests : TestContainerAbstractSkeleton() {
         // then
         result.folderInfos.size shouldBe 2
         result.folderInfos.find {
-            it.id == dummyParentFolder.entityId
+            it.id == dummyParentFolder.entityId.value
         }?.let { parentFolderInfo ->
             parentFolderInfo.children.size shouldBe 1
             parentFolderInfo.memos.size shouldBe 10

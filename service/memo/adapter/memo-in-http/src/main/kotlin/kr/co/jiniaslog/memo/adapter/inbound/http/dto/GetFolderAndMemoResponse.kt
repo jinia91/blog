@@ -2,7 +2,7 @@ package kr.co.jiniaslog.memo.adapter.inbound.http.dto
 
 import kr.co.jiniaslog.memo.queries.IGetFoldersAllInHierirchyByAuthorId
 
-data class GetFolderAndMemoResponse(
+class GetFolderAndMemoResponse(
     val folderInfos: List<IGetFoldersAllInHierirchyByAuthorId.FolderInfo>,
 )
 

@@ -54,6 +54,7 @@ class BlogDatasourceConfig(private val jpaDdlAutoProperty: JpaAutoDdlProperty) {
     }
 
     @Bean
+    @Primary
     fun blogTransactionManager(
         @Qualifier(BlogDb.ENTITY_MANAGER_FACTORY) entityManagerFactory: EntityManagerFactory,
     ): PlatformTransactionManager {

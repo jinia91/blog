@@ -7,14 +7,13 @@ object Modules {
 
     object Service {
         object Memo {
-            val Domain = Module(":service:memo:memo-domain")
-            val Application = Module(":service:memo:memo-application")
+            val Core = Module(":service:memo:memo-core")
 
             enum class Adaptors(val path: String) {
                 InAcl(":service:memo:adapter:memo-in-acl"),
                 InHttp(":service:memo:adapter:memo-in-http"),
                 InWebsocket(":service:memo:adapter:memo-in-websocket"),
-                OutNeo4j(":service:memo:adapter:memo-out-neo4j"),
+                OutMySql(":service:memo:adapter:memo-out-mysql"),
             }
         }
 

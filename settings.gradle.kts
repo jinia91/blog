@@ -31,14 +31,13 @@ include(
     "service:blog:adapter:blog-out-mysql",
 
     // memo
-    "service:memo:memo-domain",
-    "service:memo:memo-application",
+    "service:memo:memo-core",
     "service:memo:adapter:memo-in-http",
     "service:memo:adapter:memo-in-acl",
     "service:memo:adapter:memo-in-websocket",
     "service:memo:adapter:memo-in-message",
     "service:memo:adapter:memo-in-batch",
-    "service:memo:adapter:memo-out-neo4j",
+    "service:memo:adapter:memo-out-mysql",
 
     // media
     "service:media:media-domain",

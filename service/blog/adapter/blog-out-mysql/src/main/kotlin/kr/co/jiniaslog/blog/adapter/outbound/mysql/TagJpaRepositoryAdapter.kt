@@ -18,7 +18,7 @@ interface TagJpaRepository : JpaRepository<Tag, TagId> {
 @org.springframework.stereotype.Repository
 class TagRepositoryAdapter(
     private val tagJpaRepository: TagJpaRepository,
-    private val queryFactory: JPAQueryFactory,
+    private val blogJpaQueryFactory: JPAQueryFactory,
 ) : TagRepository {
     override fun save(entity: Tag): Tag {
         return tagJpaRepository.save(entity)
@@ -29,7 +29,7 @@ class TagRepositoryAdapter(
     }
 
     override fun findUnUsedTags(): List<Tag> {
-        return queryFactory
+        return blogJpaQueryFactory
             .selectFrom(tag)
             .where(
                 tag.entityId.notIn(
