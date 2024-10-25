@@ -20,7 +20,7 @@ internal class MemoUseCasesInteractor(
     private val memoRepository: MemoRepository,
     private val folderRepository: FolderRepository,
 ) : MemoUseCasesFacade {
-    @CacheEvict(value = ["folders"], allEntries = true)
+    @CacheEvict(value = ["folders"], key = "#command.authorId")
     override fun handle(command: IInitMemo.Command): IInitMemo.Info {
         ensureMemoCountIsUnderLimit(authorId = command.authorId)
         val newOne =
@@ -50,7 +50,7 @@ internal class MemoUseCasesInteractor(
         getMemo(id)
     }
 
-    @CacheEvict(value = ["folders"], allEntries = true)
+    @CacheEvict(value = ["folders"], key = "#command.authorId")
     override fun handle(command: IDeleteMemo.Command): IDeleteMemo.Info {
         val memo = getMemo(command.id)
         memo.validateOwnership(command.requesterId)
@@ -58,7 +58,7 @@ internal class MemoUseCasesInteractor(
         return IDeleteMemo.Info()
     }
 
-    @CacheEvict(value = ["folders"], allEntries = true)
+    @CacheEvict(value = ["folders"], key = "#command.authorId")
     override fun handle(command: IMakeRelationShipFolderAndMemo.Command): IMakeRelationShipFolderAndMemo.Info {
         val folder = command.folderId?.let {
             getFolder(it).also { it.validateOwnership(command.requesterId) }
@@ -72,7 +72,7 @@ internal class MemoUseCasesInteractor(
         return IMakeRelationShipFolderAndMemo.Info(memo.entityId, command.folderId)
     }
 
-    @CacheEvict(value = ["folders"], allEntries = true)
+    @CacheEvict(value = ["folders"], allEntries = true) // TODO: cache key
     override fun handle(command: IUpdateMemoReferences.Command): IUpdateMemoReferences.Info {
         val memo = getMemo(command.memoId)
 
