@@ -50,7 +50,7 @@ internal class MemoUseCasesInteractor(
         getMemo(id)
     }
 
-    @CacheEvict(value = ["folders"], key = "#command.authorId")
+    @CacheEvict(value = ["folders"], key = "#command.requesterId")
     override fun handle(command: IDeleteMemo.Command): IDeleteMemo.Info {
         val memo = getMemo(command.id)
         memo.validateOwnership(command.requesterId)
@@ -58,7 +58,7 @@ internal class MemoUseCasesInteractor(
         return IDeleteMemo.Info()
     }
 
-    @CacheEvict(value = ["folders"], key = "#command.authorId")
+    @CacheEvict(value = ["folders"], key = "#command.requesterId")
     override fun handle(command: IMakeRelationShipFolderAndMemo.Command): IMakeRelationShipFolderAndMemo.Info {
         val folder = command.folderId?.let {
             getFolder(it).also { it.validateOwnership(command.requesterId) }
