@@ -1,12 +1,17 @@
 plugins {
     kotlin("jvm")
     kotlin("plugin.allopen")
+    kotlin("plugin.noarg")
     id("java-test-fixtures")
     id("org.jetbrains.kotlinx.kover")
 }
 
 allOpen {
     annotation("kr.co.jiniaslog.shared.core.annotation.CustomComponent")
+}
+
+noArg {
+    annotation("kr.co.jiniaslog.shared.core.annotation.NoArgConstructor")
 }
 
 repositories {

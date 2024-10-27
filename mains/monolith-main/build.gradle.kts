@@ -73,6 +73,7 @@ var integrationTestLib = mutableListOf(
     libs.testcontainers,
     libs.testcontainers.junit5,
     libs.testcontainers.mysql,
+    libs.testcontainers.redis,
     libs.restassured,
     libs.wiremock,
     libs.mockkbean,

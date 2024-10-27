@@ -36,6 +36,10 @@ spring:
     authentication:
       username: neo4j
       password: password
+  data:
+    redis:
+      host: localhost
+      port: 8882
 
 api:
   github:

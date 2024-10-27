@@ -15,6 +15,7 @@ import kr.co.jiniaslog.memo.queries.IGetMemoById
 import kr.co.jiniaslog.memo.queries.IRecommendRelatedMemo
 import kr.co.jiniaslog.memo.queries.MemoQueriesFacade
 import kr.co.jiniaslog.shared.core.annotation.PersistenceAdapter
+import org.springframework.cache.annotation.Cacheable
 import org.springframework.transaction.annotation.Transactional
 import kotlin.jvm.optionals.getOrElse
 
@@ -107,6 +108,7 @@ internal class MemoFolderQueriesImpl(
             .fetchCount() > 0
     }
 
+    @Cacheable("folders", key = "#query.requesterId")
     override fun handle(query: IGetFoldersAllInHierirchyByAuthorId.Query): IGetFoldersAllInHierirchyByAuthorId.Info {
         if (query.value != null && query.value!!.isNotEmpty()) {
             val result = memoJpaQueryFactory.selectFrom(memo)
