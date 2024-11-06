@@ -62,6 +62,72 @@ rules:
   - apiGroups: ["autoscaling"]
     resources:
       - horizontalpodautoscalers
+  "raw.yaml" 306L, 7780B                                                                                                                                                                                                                                                                                                                                  1,1           Top
+---
+# Source: kube-state-metrics/templates/serviceaccount.yaml
+apiVersion: v1
+kind: ServiceAccount
+automountServiceAccountToken: true
+metadata:
+  labels:
+    helm.sh/chart: kube-state-metrics-5.26.0
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/component: metrics
+    app.kubernetes.io/part-of: kube-state-metrics
+    app.kubernetes.io/name: kube-state-metrics
+    app.kubernetes.io/instance: my-kube-state-metrics
+    app.kubernetes.io/version: "2.13.0"
+  name: my-kube-state-metrics
+  namespace: default
+---
+# Source: kube-state-metrics/templates/role.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    helm.sh/chart: kube-state-metrics-5.26.0
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/component: metrics
+    app.kubernetes.io/part-of: kube-state-metrics
+    app.kubernetes.io/name: kube-state-metrics
+    app.kubernetes.io/instance: my-kube-state-metrics
+    app.kubernetes.io/version: "2.13.0"
+  name: my-kube-state-metrics
+rules:
+
+  - apiGroups: ["certificates.k8s.io"]
+    resources:
+      - certificatesigningrequests
+    verbs: ["list", "watch"]
+
+  - apiGroups: [""]
+    resources:
+      - configmaps
+    verbs: ["list", "watch"]
+
+  - apiGroups: ["batch"]
+    resources:
+      - cronjobs
+    verbs: ["list", "watch"]
+
+  - apiGroups: ["extensions", "apps"]
+    resources:
+      - daemonsets
+    verbs: ["list", "watch"]
+
+  - apiGroups: ["extensions", "apps"]
+    resources:
+      - deployments
+    verbs: ["list", "watch"]
+
+  - apiGroups: [""]
+    resources:
+      - endpoints
+    verbs: ["list", "watch"]
+
+  - apiGroups: ["autoscaling"]
+    resources:
+      - horizontalpodautoscalers
     verbs: ["list", "watch"]
 
   - apiGroups: ["extensions", "networking.k8s.io"]
@@ -237,36 +303,6 @@ spec:
       app.kubernetes.io/name: kube-state-metrics
       app.kubernetes.io/instance: my-kube-state-metrics
   replicas: 1
-  strategy:
-    app.kubernetes.io/part-of: kube-state-metrics
-    app.kubernetes.io/version: "2.13.0"
-      type: RuntimeDefault
-    containers:
-      - --port=8080
----
-# Source: kube-state-metrics/templates/serviceaccount.yaml
-app.kubernetes.io/name: kube-state-metrics
-name: my-kube-state-metrics
-  app.kubernetes.io/name: kube-state-metrics
-name: my-kube-state-metrics
-resources:
-  - persistentvolumes
-- apiGroups: ["policy"]
-  resources:
-- apiGroups: [""]
-  verbs: ["list", "watch"]
-  verbs: ["list", "watch"]
-  resources:
-apiVersion: rbac.authorization.k8s.io/v1
-  name: my-kube-state-metrics
-roleRef:
-  apiGroup: rbac.authorization.k8s.io
-    app.kubernetes.io/component: metrics
-    app.kubernetes.io/part-of: kube-state-metrics
-    app.kubernetes.io/version: "2.13.0"
-  annotations:
-    prometheus.io/scrape: 'true'
-    matchLabels:
   strategy:
     type: RollingUpdate
   revisionHistoryLimit: 10
