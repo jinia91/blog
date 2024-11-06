@@ -197,7 +197,6 @@ metadata:
   namespace: o11y
   annotations: {}
 spec:
-  clusterIP: None
   ports:
     - name: http-metrics
       port: 8080
