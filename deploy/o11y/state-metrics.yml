@@ -153,8 +153,7 @@ spec:
     metadata:
       labels:
         app: kube-state-metrics
-      annotations:
-        {{- toYaml .Values.podAnnotations | nindent 8 }}
+      annotations: {}
     spec:
       containers:
         - image: quay.io/coreos/kube-state-metrics:v2.6.0
