@@ -1,28 +1,21 @@
 apiVersion: v1
 kind: Pod
 metadata:
-  creationTimestamp: "2024-11-06T05:25:38Z"
-  generateName: kube-state-metrics-1730870736-c99dcc659-
+  generateName: kube-state-metrics0
   labels:
     app.kubernetes.io/component: metrics
-    app.kubernetes.io/instance: kube-state-metrics-1730870736
-    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/instance: kube-state-metrics0
     app.kubernetes.io/name: kube-state-metrics
     app.kubernetes.io/part-of: kube-state-metrics
     app.kubernetes.io/version: 2.13.0
-    helm.sh/chart: kube-state-metrics-5.26.0
-    pod-template-hash: c99dcc659
-  name: kube-state-metrics-1730870736-c99dcc659-p2m5q
+  name: kube-state-metrics
   namespace: o11y
   ownerReferences:
     - apiVersion: apps/v1
       blockOwnerDeletion: true
       controller: true
       kind: ReplicaSet
-      name: kube-state-metrics-1730870736-c99dcc659
-      uid: 79801dcf-93ac-4b17-bf40-7decb3f9c63c
-  resourceVersion: "473647"
-  uid: e393e1ff-61fe-4974-ac6b-cfcb8c4da3f3
+      name: kube-state-metrics
 spec:
   automountServiceAccountToken: true
   containers:
@@ -62,15 +55,12 @@ spec:
           drop:
             - ALL
         readOnlyRootFilesystem: true
-      terminationMessagePath: /dev/termination-log
-      terminationMessagePolicy: File
       volumeMounts:
         - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
           name: kube-api-access-mg2lm
           readOnly: true
   dnsPolicy: ClusterFirst
   enableServiceLinks: true
-  nodeName: mk3
   preemptionPolicy: PreemptLowerPriority
   priority: 0
   restartPolicy: Always
@@ -82,8 +72,8 @@ spec:
     runAsUser: 65534
     seccompProfile:
       type: RuntimeDefault
-  serviceAccount: kube-state-metrics-1730870736
-  serviceAccountName: kube-state-metrics-1730870736
+  serviceAccount: kube-state-metrics
+  serviceAccountName: kube-state-metrics
   terminationGracePeriodSeconds: 30
   tolerations:
     - effect: NoExecute
@@ -113,46 +103,3 @@ spec:
                     apiVersion: v1
                     fieldPath: metadata.namespace
                   path: namespace
-status:
-  conditions:
-    - lastProbeTime: null
-      lastTransitionTime: "2024-11-06T05:25:46Z"
-      status: "True"
-      type: PodReadyToStartContainers
-    - lastProbeTime: null
-      lastTransitionTime: "2024-11-06T05:25:38Z"
-      status: "True"
-      type: Initialized
-    - lastProbeTime: null
-      lastTransitionTime: "2024-11-06T05:25:58Z"
-      status: "True"
-      type: Ready
-    - lastProbeTime: null
-      lastTransitionTime: "2024-11-06T05:25:58Z"
-      status: "True"
-      type: ContainersReady
-    - lastProbeTime: null
-      lastTransitionTime: "2024-11-06T05:25:38Z"
-      status: "True"
-      type: PodScheduled
-  containerStatuses:
-    - containerID: containerd://3b7ae337c78555f4ad5df48eeecb8b182b402b1801ce99cd1b88197d67726909
-      image: registry.k8s.io/kube-state-metrics/kube-state-metrics:v2.13.0
-      imageID: registry.k8s.io/kube-state-metrics/kube-state-metrics@sha256:639a1e2da549210adddc0391ff91e270e83f7873014aec53258462812f741e6f
-      lastState: {}
-      name: kube-state-metrics
-      ready: true
-      restartCount: 0
-      started: true
-      state:
-        running:
-          startedAt: "2024-11-06T05:25:45Z"
-  hostIP: 192.168.0.103
-  hostIPs:
-    - ip: 192.168.0.103
-  phase: Running
-  podIP: 10.42.2.88
-  podIPs:
-    - ip: 10.42.2.88
-  qosClass: BestEffort
-  startTime: "2024-11-06T05:25:38Z"
