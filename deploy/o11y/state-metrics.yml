@@ -4,6 +4,7 @@ metadata:
   labels:
     app: kube-state-metrics
   name: kube-state-metrics
+  annotations: {}
 rules:
   - apiGroups:
       - ""
@@ -123,6 +124,7 @@ metadata:
   labels:
     app: kube-state-metrics
   name: kube-state-metrics
+  annotations: {}
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
@@ -141,6 +143,7 @@ metadata:
     app: kube-state-metrics
   name: kube-state-metrics
   namespace: o11y
+  annotations: {}
 spec:
   replicas: 1
   selector:
@@ -150,6 +153,8 @@ spec:
     metadata:
       labels:
         app: kube-state-metrics
+      annotations:
+        {{- toYaml .Values.podAnnotations | nindent 8 }}
     spec:
       containers:
         - image: quay.io/coreos/kube-state-metrics:v2.6.0
@@ -191,6 +196,7 @@ metadata:
     app: kube-state-metrics
   name: kube-state-metrics
   namespace: o11y
+  annotations: {}
 spec:
   clusterIP: None
   ports:
@@ -212,3 +218,4 @@ metadata:
     app: kube-state-metrics
   name: kube-state-metrics
   namespace: o11y
+  annotations: {}
