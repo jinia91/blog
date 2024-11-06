@@ -1,219 +1,265 @@
-apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRole
-metadata:
-  labels:
-    app: kube-state-metrics
-  name: kube-state-metrics
-  annotations: {}
-rules:
-  - apiGroups:
-      - ""
-    resources:
-      - configmaps
-      - secrets
-      - nodes
-      - pods
-      - services
-      - resourcequotas
-      - replicationcontrollers
-      - limitranges
-      - persistentvolumeclaims
-      - persistentvolumes
-      - namespaces
-      - endpoints
-    verbs:
-      - list
-      - watch
-  - apiGroups:
-      - extensions
-    resources:
-      - daemonsets
-      - deployments
-      - replicasets
-      - ingresses
-    verbs:
-      - list
-      - watch
-  - apiGroups:
-      - apps
-    resources:
-      - statefulsets
-      - daemonsets
-      - deployments
-      - replicasets
-    verbs:
-      - list
-      - watch
-  - apiGroups:
-      - batch
-    resources:
-      - cronjobs
-      - jobs
-    verbs:
-      - list
-      - watch
-  - apiGroups:
-      - autoscaling
-    resources:
-      - horizontalpodautoscalers
-    verbs:
-      - list
-      - watch
-  - apiGroups:
-      - authentication.k8s.io
-    resources:
-      - tokenreviews
-    verbs:
-      - create
-  - apiGroups:
-      - authorization.k8s.io
-    resources:
-      - subjectaccessreviews
-    verbs:
-      - create
-  - apiGroups:
-      - policy
-    resources:
-      - poddisruptionbudgets
-    verbs:
-      - list
-      - watch
-  - apiGroups:
-      - certificates.k8s.io
-    resources:
-      - certificatesigningrequests
-    verbs:
-      - list
-      - watch
-  - apiGroups:
-      - storage.k8s.io
-    resources:
-      - storageclasses
-      - volumeattachments
-    verbs:
-      - list
-      - watch
-  - apiGroups:
-      - admissionregistration.k8s.io
-    resources:
-      - mutatingwebhookconfigurations
-      - validatingwebhookconfigurations
-    verbs:
-      - list
-      - watch
-  - apiGroups:
-      - networking.k8s.io
-    resources:
-      - networkpolicies
-    verbs:
-      - list
-      - watch
-  - apiGroups:
-      - coordination.k8s.io
-    resources:
-      - leases
-    verbs:
-      - list
-      - watch
-
----
-
-apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRoleBinding
-metadata:
-  labels:
-    app: kube-state-metrics
-  name: kube-state-metrics
-  annotations: {}
-roleRef:
-  apiGroup: rbac.authorization.k8s.io
-  kind: ClusterRole
-  name: kube-state-metrics
-subjects:
-  - kind: ServiceAccount
-    name: kube-state-metrics
-    namespace: o11y
-
----
-
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  labels:
-    app: kube-state-metrics
-  name: kube-state-metrics
+  name: kube-state-metrics-1730873276
   namespace: o11y
-  annotations: {}
+  uid: 20bc36c6-236a-49c7-82d9-60cb6dd76b4c
+  resourceVersion: '475504'
+  generation: 1
+  creationTimestamp: '2024-11-06T06:07:58Z'
+  labels:
+    app.kubernetes.io/component: metrics
+    app.kubernetes.io/instance: kube-state-metrics-1730873276
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: kube-state-metrics
+    app.kubernetes.io/part-of: kube-state-metrics
+    app.kubernetes.io/version: 2.13.0
+    helm.sh/chart: kube-state-metrics-5.26.0
+  annotations:
+    deployment.kubernetes.io/revision: '1'
+    meta.helm.sh/release-name: kube-state-metrics-1730873276
+    meta.helm.sh/release-namespace: o11y
+  managedFields:
+    - manager: helm
+      operation: Update
+      apiVersion: apps/v1
+      time: '2024-11-06T06:07:58Z'
+      fieldsType: FieldsV1
+      fieldsV1:
+        f:metadata:
+          f:annotations:
+            .: {}
+            f:meta.helm.sh/release-name: {}
+            f:meta.helm.sh/release-namespace: {}
+          f:labels:
+            .: {}
+            f:app.kubernetes.io/component: {}
+            f:app.kubernetes.io/instance: {}
+            f:app.kubernetes.io/managed-by: {}
+            f:app.kubernetes.io/name: {}
+            f:app.kubernetes.io/part-of: {}
+            f:app.kubernetes.io/version: {}
+            f:helm.sh/chart: {}
+        f:spec:
+          f:progressDeadlineSeconds: {}
+          f:replicas: {}
+          f:revisionHistoryLimit: {}
+          f:selector: {}
+          f:strategy:
+            f:rollingUpdate:
+              .: {}
+              f:maxSurge: {}
+              f:maxUnavailable: {}
+            f:type: {}
+          f:template:
+            f:metadata:
+              f:labels:
+                .: {}
+                f:app.kubernetes.io/component: {}
+                f:app.kubernetes.io/instance: {}
+                f:app.kubernetes.io/managed-by: {}
+                f:app.kubernetes.io/name: {}
+                f:app.kubernetes.io/part-of: {}
+                f:app.kubernetes.io/version: {}
+                f:helm.sh/chart: {}
+            f:spec:
+              f:automountServiceAccountToken: {}
+              f:containers:
+                k:{"name":"kube-state-metrics"}:
+                  .: {}
+                  f:args: {}
+                  f:image: {}
+                  f:imagePullPolicy: {}
+                  f:livenessProbe:
+                    .: {}
+                    f:failureThreshold: {}
+                    f:httpGet:
+                      .: {}
+                      f:path: {}
+                      f:port: {}
+                      f:scheme: {}
+                    f:initialDelaySeconds: {}
+                    f:periodSeconds: {}
+                    f:successThreshold: {}
+                    f:timeoutSeconds: {}
+                  f:name: {}
+                  f:ports:
+                    .: {}
+                    k:{"containerPort":8080,"protocol":"TCP"}:
+                      .: {}
+                      f:containerPort: {}
+                      f:name: {}
+                      f:protocol: {}
+                  f:readinessProbe:
+                    .: {}
+                    f:failureThreshold: {}
+                    f:httpGet:
+                      .: {}
+                      f:path: {}
+                      f:port: {}
+                      f:scheme: {}
+                    f:initialDelaySeconds: {}
+                    f:periodSeconds: {}
+                    f:successThreshold: {}
+                    f:timeoutSeconds: {}
+                  f:resources: {}
+                  f:securityContext:
+                    .: {}
+                    f:allowPrivilegeEscalation: {}
+                    f:capabilities:
+                      .: {}
+                      f:drop: {}
+                    f:readOnlyRootFilesystem: {}
+                  f:terminationMessagePath: {}
+                  f:terminationMessagePolicy: {}
+              f:dnsPolicy: {}
+              f:restartPolicy: {}
+              f:schedulerName: {}
+              f:securityContext:
+                .: {}
+                f:fsGroup: {}
+                f:runAsGroup: {}
+                f:runAsNonRoot: {}
+                f:runAsUser: {}
+                f:seccompProfile:
+                  .: {}
+                  f:type: {}
+              f:serviceAccount: {}
+              f:serviceAccountName: {}
+              f:terminationGracePeriodSeconds: {}
+    - manager: k3s
+      operation: Update
+      apiVersion: apps/v1
+      time: '2024-11-06T06:08:08Z'
+      fieldsType: FieldsV1
+      fieldsV1:
+        f:metadata:
+          f:annotations:
+            f:deployment.kubernetes.io/revision: {}
+        f:status:
+          f:availableReplicas: {}
+          f:conditions:
+            .: {}
+            k:{"type":"Available"}:
+              .: {}
+              f:lastTransitionTime: {}
+              f:lastUpdateTime: {}
+              f:message: {}
+              f:reason: {}
+              f:status: {}
+              f:type: {}
+            k:{"type":"Progressing"}:
+              .: {}
+              f:lastTransitionTime: {}
+              f:lastUpdateTime: {}
+              f:message: {}
+              f:reason: {}
+              f:status: {}
+              f:type: {}
+          f:observedGeneration: {}
+          f:readyReplicas: {}
+          f:replicas: {}
+          f:updatedReplicas: {}
+      subresource: status
+  selfLink: /apis/apps/v1/namespaces/o11y/deployments/kube-state-metrics-1730873276
+status:
+  observedGeneration: 1
+  replicas: 1
+  updatedReplicas: 1
+  readyReplicas: 1
+  availableReplicas: 1
+  conditions:
+    - type: Available
+      status: 'True'
+      lastUpdateTime: '2024-11-06T06:08:08Z'
+      lastTransitionTime: '2024-11-06T06:08:08Z'
+      reason: MinimumReplicasAvailable
+      message: Deployment has minimum availability.
+    - type: Progressing
+      status: 'True'
+      lastUpdateTime: '2024-11-06T06:08:08Z'
+      lastTransitionTime: '2024-11-06T06:07:58Z'
+      reason: NewReplicaSetAvailable
+      message: >-
+        ReplicaSet "kube-state-metrics-1730873276-5444fc5775" has successfully
+        progressed.
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: kube-state-metrics
+      app.kubernetes.io/instance: kube-state-metrics-1730873276
+      app.kubernetes.io/name: kube-state-metrics
   template:
     metadata:
+      creationTimestamp: null
       labels:
-        app: kube-state-metrics
-      annotations: {}
+        app.kubernetes.io/component: metrics
+        app.kubernetes.io/instance: kube-state-metrics-1730873276
+        app.kubernetes.io/managed-by: Helm
+        app.kubernetes.io/name: kube-state-metrics
+        app.kubernetes.io/part-of: kube-state-metrics
+        app.kubernetes.io/version: 2.13.0
+        helm.sh/chart: kube-state-metrics-5.26.0
     spec:
       containers:
-        - image: quay.io/coreos/kube-state-metrics:v2.6.0
+        - name: kube-state-metrics
+          image: registry.k8s.io/kube-state-metrics/kube-state-metrics:v2.13.0
+          args:
+            - '--port=8080'
+            - >-
+              --resources=certificatesigningrequests,configmaps,cronjobs,daemonsets,deployments,endpoints,horizontalpodautoscalers,ingresses,jobs,leases,limitranges,mutatingwebhookconfigurations,namespaces,networkpolicies,nodes,persistentvolumeclaims,persistentvolumes,poddisruptionbudgets,pods,replicasets,replicationcontrollers,resourcequotas,secrets,services,statefulsets,storageclasses,validatingwebhookconfigurations,volumeattachments
+          ports:
+            - name: http
+              containerPort: 8080
+              protocol: TCP
+          resources: {}
           livenessProbe:
             httpGet:
-              path: /healthz
+              path: /livez
               port: 8080
+              scheme: HTTP
             initialDelaySeconds: 5
             timeoutSeconds: 5
-          name: kube-state-metrics
-          resources:
-            limits:
-              cpu: 200m
-              memory: 400Mi
-            requests:
-              cpu: 20m
-              memory: 200Mi
-          ports:
-            - containerPort: 8080
-              name: http-metrics
-            - containerPort: 8081
-              name: telemetry
+            periodSeconds: 10
+            successThreshold: 1
+            failureThreshold: 3
           readinessProbe:
             httpGet:
-              path: /
-              port: 8081
+              path: /readyz
+              port: 8080
+              scheme: HTTP
             initialDelaySeconds: 5
             timeoutSeconds: 5
+            periodSeconds: 10
+            successThreshold: 1
+            failureThreshold: 3
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          imagePullPolicy: IfNotPresent
           securityContext:
-            runAsUser: 65534
-      serviceAccountName: kube-state-metrics
-
----
-
-apiVersion: v1
-kind: Service
-metadata:
-  labels:
-    app: kube-state-metrics
-  name: kube-state-metrics
-  namespace: o11y
-  annotations: {}
-spec:
-  ports:
-    - name: http-metrics
-      port: 8080
-      targetPort: http-metrics
-    - name: telemetry
-      port: 8081
-      targetPort: telemetry
-  selector:
-    app: kube-state-metrics
-
----
-
-apiVersion: v1
-kind: ServiceAccount
-metadata:
-  labels:
-    app: kube-state-metrics
-  name: kube-state-metrics
-  namespace: o11y
-  annotations: {}
+            capabilities:
+              drop:
+                - ALL
+            readOnlyRootFilesystem: true
+            allowPrivilegeEscalation: false
+      restartPolicy: Always
+      terminationGracePeriodSeconds: 30
+      dnsPolicy: ClusterFirst
+      serviceAccountName: kube-state-metrics-1730873276
+      serviceAccount: kube-state-metrics-1730873276
+      automountServiceAccountToken: true
+      securityContext:
+        runAsUser: 65534
+        runAsGroup: 65534
+        runAsNonRoot: true
+        fsGroup: 65534
+        seccompProfile:
+          type: RuntimeDefault
+      schedulerName: default-scheduler
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 25%
+      maxSurge: 25%
+  revisionHistoryLimit: 10
+  progressDeadlineSeconds: 600
