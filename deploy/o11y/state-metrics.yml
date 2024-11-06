@@ -1,60 +1,223 @@
-apiVersion: apps/v1
-kind: StatefulSet
-metadata:
-  name: kube-state-metrics
-  namespace: o11y
-  labels:
-    app: kube-state-metrics
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: kube-state-metrics
-  template:
-    metadata:
-      labels:
-        app: kube-state-metrics
-      annotations: {}
-    spec:
-      serviceAccountName: kube-state-metrics
-      affinity: {}
-      automountServiceAccountToken: true
-      securityContext:
-        fsGroup: 65534
-        runAsGroup: 65534
-        runAsNonRoot: true
-        runAsUser: 65534
-      containers:
-        - name: kube-state-metrics
-          image: registry.k8s.io/kube-state-metrics/kube-state-metrics:latest
-          imagePullPolicy: IfNotPresent
-          ports:
-            - containerPort: 8080
-          securityContext:
-            allowPrivilegeEscalation: false
-            capabilities:
-              drop:
-                - ALL
-            readOnlyRootFilesystem: true
-          resources:
-            limits:
-              cpu: 20m
-              memory: 100Mi
-            requests:
-              cpu: 10m
-              memory: 50Mi
----
 apiVersion: v1
-kind: Service
+kind: Pod
 metadata:
-  name: kube-state-metrics
-  namespace: o11y
+  creationTimestamp: "2024-11-06T05:25:38Z"
+  generateName: kube-state-metrics-1730870736-c99dcc659-
   labels:
-    app: kube-state-metrics
+    app.kubernetes.io/component: metrics
+    app.kubernetes.io/instance: kube-state-metrics-1730870736
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: kube-state-metrics
+    app.kubernetes.io/part-of: kube-state-metrics
+    app.kubernetes.io/version: 2.13.0
+    helm.sh/chart: kube-state-metrics-5.26.0
+    pod-template-hash: c99dcc659
+  name: kube-state-metrics-1730870736-c99dcc659-p2m5q
+  namespace: o11y
+  ownerReferences:
+    - apiVersion: apps/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: ReplicaSet
+      name: kube-state-metrics-1730870736-c99dcc659
+      uid: 79801dcf-93ac-4b17-bf40-7decb3f9c63c
+  resourceVersion: "473647"
+  uid: e393e1ff-61fe-4974-ac6b-cfcb8c4da3f3
 spec:
-  type: ClusterIP
-  ports:
-    - port: 8080
-      targetPort: 8080
-  selector:
-    app: kube-state-metrics
+  automountServiceAccountToken: true
+  containers:
+    - args:
+        - --port=8080
+        - --resources=certificatesigningrequests,configmaps,cronjobs,daemonsets,deployments,endpoints,horizontalpodautoscalers,ingresses,jobs,leases,limitranges,mutatingwebhookconfigurations,namespaces,networkpolicies,nodes,persistentvolumeclaims,persistentvolumes,poddisruptionbudgets,pods,replicasets,replicationcontrollers,resourcequotas,secrets,services,statefulsets,storageclasses,validatingwebhookconfigurations,volumeattachments
+      image: registry.k8s.io/kube-state-metrics/kube-state-metrics:v2.13.0
+      imagePullPolicy: IfNotPresent
+      livenessProbe:
+        failureThreshold: 3
+        httpGet:
+          path: /livez
+          port: 8080
+          scheme: HTTP
+        initialDelaySeconds: 5
+        periodSeconds: 10
+        successThreshold: 1
+        timeoutSeconds: 5
+      name: kube-state-metrics
+      ports:
+        - containerPort: 8080
+          name: http
+          protocol: TCP
+      readinessProbe:
+        failureThreshold: 3
+        httpGet:
+          path: /readyz
+          port: 8080
+          scheme: HTTP
+        initialDelaySeconds: 5
+        periodSeconds: 10
+        successThreshold: 1
+        timeoutSeconds: 5
+      resources: {}
+      securityContext:
+        allowPrivilegeEscalation: false
+        capabilities:
+          drop:
+            - ALL
+  "me.yml" 159L, 4849B                                                                                                                                                                                                                                                                                                                                    1,1           Top
+apiVersion: v1
+kind: Pod
+metadata:
+  creationTimestamp: "2024-11-06T05:25:38Z"
+  generateName: kube-state-metrics-1730870736-c99dcc659-
+  labels:
+    app.kubernetes.io/component: metrics
+    app.kubernetes.io/instance: kube-state-metrics-1730870736
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: kube-state-metrics
+    app.kubernetes.io/part-of: kube-state-metrics
+    app.kubernetes.io/version: 2.13.0
+    helm.sh/chart: kube-state-metrics-5.26.0
+    pod-template-hash: c99dcc659
+  name: kube-state-metrics-1730870736-c99dcc659-p2m5q
+  namespace: o11y
+  ownerReferences:
+    - apiVersion: apps/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: ReplicaSet
+      name: kube-state-metrics-1730870736-c99dcc659
+      uid: 79801dcf-93ac-4b17-bf40-7decb3f9c63c
+  resourceVersion: "473647"
+  uid: e393e1ff-61fe-4974-ac6b-cfcb8c4da3f3
+spec:
+  automountServiceAccountToken: true
+  containers:
+    - args:
+        - --port=8080
+      image: registry.k8s.io/kube-state-metrics/kube-state-metrics:v2.13.0
+      imagePullPolicy: IfNotPresent
+      livenessProbe:
+        failureThreshold: 3
+        httpGet:
+          path: /livez
+          port: 8080
+          scheme: HTTP
+        initialDelaySeconds: 5
+        periodSeconds: 10
+        successThreshold: 1
+        timeoutSeconds: 5
+      name: kube-state-metrics
+      ports:
+        - containerPort: 8080
+          name: http
+          protocol: TCP
+      readinessProbe:
+        failureThreshold: 3
+        httpGet:
+          path: /readyz
+          port: 8080
+          scheme: HTTP
+        initialDelaySeconds: 5
+        periodSeconds: 10
+        successThreshold: 1
+        timeoutSeconds: 5
+      resources: {}
+      securityContext:
+        allowPrivilegeEscalation: false
+        capabilities:
+          drop:
+            - ALL
+        readOnlyRootFilesystem: true
+      terminationMessagePath: /dev/termination-log
+      terminationMessagePolicy: File
+      volumeMounts:
+        - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+          name: kube-api-access-mg2lm
+          readOnly: true
+  dnsPolicy: ClusterFirst
+  enableServiceLinks: true
+  nodeName: mk3
+  preemptionPolicy: PreemptLowerPriority
+  priority: 0
+  restartPolicy: Always
+  schedulerName: default-scheduler
+  securityContext:
+    fsGroup: 65534
+    runAsGroup: 65534
+    runAsNonRoot: true
+    runAsUser: 65534
+    seccompProfile:
+      type: RuntimeDefault
+  serviceAccount: kube-state-metrics-1730870736
+  serviceAccountName: kube-state-metrics-1730870736
+  terminationGracePeriodSeconds: 30
+  tolerations:
+    - effect: NoExecute
+      key: node.kubernetes.io/not-ready
+      operator: Exists
+      tolerationSeconds: 300
+    - effect: NoExecute
+      key: node.kubernetes.io/unreachable
+      operator: Exists
+      tolerationSeconds: 300
+  volumes:
+    - name: kube-api-access-mg2lm
+      projected:
+        defaultMode: 420
+        sources:
+          - serviceAccountToken:
+              expirationSeconds: 3607
+              path: token
+          - configMap:
+              items:
+                - key: ca.crt
+                  path: ca.crt
+              name: kube-root-ca.crt
+          - downwardAPI:
+              items:
+                - fieldRef:
+                    apiVersion: v1
+                    fieldPath: metadata.namespace
+                  path: namespace
+status:
+  conditions:
+    - lastProbeTime: null
+      lastTransitionTime: "2024-11-06T05:25:46Z"
+      status: "True"
+      type: PodReadyToStartContainers
+    - lastProbeTime: null
+      lastTransitionTime: "2024-11-06T05:25:38Z"
+      status: "True"
+      type: Initialized
+    - lastProbeTime: null
+      lastTransitionTime: "2024-11-06T05:25:58Z"
+      status: "True"
+      type: Ready
+    - lastProbeTime: null
+      lastTransitionTime: "2024-11-06T05:25:58Z"
+      status: "True"
+      type: ContainersReady
+    - lastProbeTime: null
+      lastTransitionTime: "2024-11-06T05:25:38Z"
+      status: "True"
+      type: PodScheduled
+  containerStatuses:
+    - containerID: containerd://3b7ae337c78555f4ad5df48eeecb8b182b402b1801ce99cd1b88197d67726909
+      image: registry.k8s.io/kube-state-metrics/kube-state-metrics:v2.13.0
+      imageID: registry.k8s.io/kube-state-metrics/kube-state-metrics@sha256:639a1e2da549210adddc0391ff91e270e83f7873014aec53258462812f741e6f
+      lastState: {}
+      name: kube-state-metrics
+      ready: true
+      restartCount: 0
+      started: true
+      state:
+        running:
+          startedAt: "2024-11-06T05:25:45Z"
+  hostIP: 192.168.0.103
+  hostIPs:
+    - ip: 192.168.0.103
+  phase: Running
+  podIP: 10.42.2.88
+  podIPs:
+    - ip: 10.42.2.88
+  qosClass: BestEffort
+  startTime: "2024-11-06T05:25:38Z"
