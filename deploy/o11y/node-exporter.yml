@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: DaemonSet
 metadata:
   name: node-exporter
-  namespace: default
+  namespace: o11y
   labels:
     app: node-exporter
 spec:
