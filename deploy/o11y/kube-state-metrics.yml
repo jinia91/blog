@@ -11,7 +11,7 @@ metadata:
     app.kubernetes.io/instance: my-kube-state-metrics
     app.kubernetes.io/version: "2.13.0"
   name: my-kube-state-metrics
-  namespace: default
+  namespace: o11y
 ---
 # Source: kube-state-metrics/templates/role.yaml
 apiVersion: rbac.authorization.k8s.io/v1
@@ -188,14 +188,14 @@ roleRef:
 subjects:
   - kind: ServiceAccount
     name: my-kube-state-metrics
-    namespace: default
+    namespace: o11y
 ---
 # Source: kube-state-metrics/templates/service.yaml
 apiVersion: v1
 kind: Service
 metadata:
   name: my-kube-state-metrics
-  namespace: default
+  namespace: o11y
   labels:
     helm.sh/chart: kube-state-metrics-5.26.0
     app.kubernetes.io/managed-by: Helm
@@ -221,7 +221,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: my-kube-state-metrics
-  namespace: default
+  namespace: o11y
   labels:
     helm.sh/chart: kube-state-metrics-5.26.0
     app.kubernetes.io/managed-by: Helm
