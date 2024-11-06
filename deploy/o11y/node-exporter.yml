@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: node-exporter
+  namespace: default
+  labels:
+    app: node-exporter
+spec:
+  selector:
+    matchLabels:
+      app: node-exporter
+  template:
+    metadata:
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/path: /metrics
+        prometheus.io/port: "9100"
+      labels:
+        app: node-exporter
+    spec:
+      containers:
+        - name: node-exporter
+          image: prom/node-exporter:latest
+          ports:
+            - containerPort: 9100
+              name: metrics
+          resources:
+            limits:
+              cpu: 40m
+              memory: 50Mi
+            requests:
+              cpu: 20m
+              memory: 30Mi
+          securityContext:
+            privileged: true
+      hostNetwork: true
+      hostPID: true
+      hostIPC: true
