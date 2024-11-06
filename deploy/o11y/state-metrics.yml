@@ -1,105 +1,214 @@
-apiVersion: v1
-kind: Pod
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
 metadata:
-  generateName: kube-state-metrics0
   labels:
-    app.kubernetes.io/component: metrics
-    app.kubernetes.io/instance: kube-state-metrics0
-    app.kubernetes.io/name: kube-state-metrics
-    app.kubernetes.io/part-of: kube-state-metrics
-    app.kubernetes.io/version: 2.13.0
+    app: kube-state-metrics
+  name: kube-state-metrics
+rules:
+  - apiGroups:
+      - ""
+    resources:
+      - configmaps
+      - secrets
+      - nodes
+      - pods
+      - services
+      - resourcequotas
+      - replicationcontrollers
+      - limitranges
+      - persistentvolumeclaims
+      - persistentvolumes
+      - namespaces
+      - endpoints
+    verbs:
+      - list
+      - watch
+  - apiGroups:
+      - extensions
+    resources:
+      - daemonsets
+      - deployments
+      - replicasets
+      - ingresses
+    verbs:
+      - list
+      - watch
+  - apiGroups:
+      - apps
+    resources:
+      - statefulsets
+      - daemonsets
+      - deployments
+      - replicasets
+    verbs:
+      - list
+      - watch
+  - apiGroups:
+      - batch
+    resources:
+      - cronjobs
+      - jobs
+    verbs:
+      - list
+      - watch
+  - apiGroups:
+      - autoscaling
+    resources:
+      - horizontalpodautoscalers
+    verbs:
+      - list
+      - watch
+  - apiGroups:
+      - authentication.k8s.io
+    resources:
+      - tokenreviews
+    verbs:
+      - create
+  - apiGroups:
+      - authorization.k8s.io
+    resources:
+      - subjectaccessreviews
+    verbs:
+      - create
+  - apiGroups:
+      - policy
+    resources:
+      - poddisruptionbudgets
+    verbs:
+      - list
+      - watch
+  - apiGroups:
+      - certificates.k8s.io
+    resources:
+      - certificatesigningrequests
+    verbs:
+      - list
+      - watch
+  - apiGroups:
+      - storage.k8s.io
+    resources:
+      - storageclasses
+      - volumeattachments
+    verbs:
+      - list
+      - watch
+  - apiGroups:
+      - admissionregistration.k8s.io
+    resources:
+      - mutatingwebhookconfigurations
+      - validatingwebhookconfigurations
+    verbs:
+      - list
+      - watch
+  - apiGroups:
+      - networking.k8s.io
+    resources:
+      - networkpolicies
+    verbs:
+      - list
+      - watch
+  - apiGroups:
+      - coordination.k8s.io
+    resources:
+      - leases
+    verbs:
+      - list
+      - watch
+
+---
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  labels:
+    app: kube-state-metrics
+  name: kube-state-metrics
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: kube-state-metrics
+subjects:
+  - kind: ServiceAccount
+    name: kube-state-metrics
+    namespace: o11y
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: kube-state-metrics
   name: kube-state-metrics
   namespace: o11y
-  ownerReferences:
-    - apiVersion: apps/v1
-      blockOwnerDeletion: true
-      controller: true
-      kind: ReplicaSet
-      name: kube-state-metrics
 spec:
-  automountServiceAccountToken: true
-  containers:
-    - args:
-        - --port=8080
-      image: registry.k8s.io/kube-state-metrics/kube-state-metrics:v2.13.0
-      imagePullPolicy: IfNotPresent
-      livenessProbe:
-        failureThreshold: 3
-        httpGet:
-          path: /livez
-          port: 8080
-          scheme: HTTP
-        initialDelaySeconds: 5
-        periodSeconds: 10
-        successThreshold: 1
-        timeoutSeconds: 5
-      name: kube-state-metrics
-      ports:
-        - containerPort: 8080
-          name: http
-          protocol: TCP
-      readinessProbe:
-        failureThreshold: 3
-        httpGet:
-          path: /readyz
-          port: 8080
-          scheme: HTTP
-        initialDelaySeconds: 5
-        periodSeconds: 10
-        successThreshold: 1
-        timeoutSeconds: 5
-      resources: {}
-      securityContext:
-        allowPrivilegeEscalation: false
-        capabilities:
-          drop:
-            - ALL
-        readOnlyRootFilesystem: true
-      volumeMounts:
-        - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
-          name: kube-api-access-mg2lm
-          readOnly: true
-  dnsPolicy: ClusterFirst
-  enableServiceLinks: true
-  preemptionPolicy: PreemptLowerPriority
-  priority: 0
-  restartPolicy: Always
-  schedulerName: default-scheduler
-  securityContext:
-    fsGroup: 65534
-    runAsGroup: 65534
-    runAsNonRoot: true
-    runAsUser: 65534
-    seccompProfile:
-      type: RuntimeDefault
-  serviceAccount: kube-state-metrics
-  serviceAccountName: kube-state-metrics
-  terminationGracePeriodSeconds: 30
-  tolerations:
-    - effect: NoExecute
-      key: node.kubernetes.io/not-ready
-      operator: Exists
-      tolerationSeconds: 300
-    - effect: NoExecute
-      key: node.kubernetes.io/unreachable
-      operator: Exists
-      tolerationSeconds: 300
-  volumes:
-    - name: kube-api-access-mg2lm
-      projected:
-        defaultMode: 420
-        sources:
-          - serviceAccountToken:
-              expirationSeconds: 3607
-              path: token
-          - configMap:
-              items:
-                - key: ca.crt
-                  path: ca.crt
-              name: kube-root-ca.crt
-          - downwardAPI:
-              items:
-                - fieldRef:
-                    apiVersion: v1
-                    fieldPath: metadata.namespace
-                  path: namespace
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kube-state-metrics
+  template:
+    metadata:
+      labels:
+        app: kube-state-metrics
+    spec:
+      containers:
+        - image: quay.io/coreos/kube-state-metrics:v2.6.0
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: 8080
+            initialDelaySeconds: 5
+            timeoutSeconds: 5
+          name: kube-state-metrics
+          resources:
+            limits:
+              cpu: 200m
+              memory: 400Mi
+            requests:
+              cpu: 20m
+              memory: 200Mi
+          ports:
+            - containerPort: 8080
+              name: http-metrics
+            - containerPort: 8081
+              name: telemetry
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 8081
+            initialDelaySeconds: 5
+            timeoutSeconds: 5
+          securityContext:
+            runAsUser: 65534
+      serviceAccountName: kube-state-metrics
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: kube-state-metrics
+  name: kube-state-metrics
+  namespace: o11y
+spec:
+  clusterIP: None
+  ports:
+    - name: http-metrics
+      port: 8080
+      targetPort: http-metrics
+    - name: telemetry
+      port: 8081
+      targetPort: telemetry
+  selector:
+    app: kube-state-metrics
+
+---
+
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  labels:
+    app: kube-state-metrics
+  name: kube-state-metrics
+  namespace: o11y
