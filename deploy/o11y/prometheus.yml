@@ -19,7 +19,7 @@ spec:
     spec:
       containers:
         - name: prometheus
-          image: prom/prometheus:v2.47.2
+          image: prom/prometheus:latest
           args:
             - --config.file=/etc/prometheus.yml
             - --storage.tsdb.path=/prometheus

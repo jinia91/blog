@@ -19,7 +19,7 @@ spec:
     spec:
       containers:
         - name: grafana
-          image: grafana/grafana:11.3.0
+          image: grafana/grafana:latest
           env:
             - name: GF_AUTH_ANONYMOUS_ENABLED
               value: "true"
