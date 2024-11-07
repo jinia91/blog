@@ -17,7 +17,7 @@ spec:
       automountServiceAccountToken: true  # 토큰 자동 마운트 설정
       containers:
         - name: otel-collector
-          image: otel/opentelemetry-collector-contrib
+          image: otel/opentelemetry-collector-contrib:latest
           args: ["--config=/etc/otel-collector.yml"]
           ports:
             - containerPort: 4318
