@@ -7,7 +7,6 @@ metadata:
   namespace: "default"
   labels:
     release: jinias
-    chart: redis-ha-4.29.4
     app: jinias-redis-ha
 ---
 # Source: redis-ha/templates/redis-ha-configmap.yaml
@@ -776,7 +775,6 @@ metadata:
     app: redis-ha
     release: "jinias"
     chart: redis-ha-4.29.4
-  annotations:
 spec:
   publishNotReadyAddresses: true
   type: ClusterIP
@@ -804,7 +802,6 @@ metadata:
     app: redis-ha
     release: "jinias"
     chart: redis-ha-4.29.4
-  annotations:
 spec:
   publishNotReadyAddresses: true
   type: ClusterIP
@@ -832,7 +829,6 @@ metadata:
     app: redis-ha
     release: "jinias"
     chart: redis-ha-4.29.4
-  annotations:
 spec:
   publishNotReadyAddresses: true
   type: ClusterIP
@@ -860,7 +856,6 @@ metadata:
     app: redis-ha
     release: "jinias"
     chart: redis-ha-4.29.4
-  annotations:
 spec:
   type: ClusterIP
   clusterIP: None
@@ -904,6 +899,9 @@ spec:
     metadata:
       annotations:
         checksum/init-config: 35476e45d4cc022feb5f56366eec7a3f71e1f3a10d86c29d8dca4c122db291fe
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "6379"
+        prometheus.io/path: "/metrics"
       labels:
         release: jinias
         app: redis-ha
@@ -930,12 +928,7 @@ spec:
         image: public.ecr.aws/docker/library/redis:7.2.4-alpine
         imagePullPolicy: IfNotPresent
         resources:
-          requests:
-            cpu: "500m"
-            memory: "512Mi"
-          limits:
-            cpu: "1000m"
-            memory: "1Gi"
+          {}
         command:
         - sh
         args:
@@ -962,8 +955,6 @@ spec:
           readOnly: true
         - name: data
           mountPath: /data
-
-
       containers:
       - name: redis
         image: public.ecr.aws/docker/library/redis:7.2.4-alpine
@@ -1015,7 +1006,12 @@ spec:
               - -c
               - /health/redis_readiness.sh
         resources:
-          {}
+          requests:
+            cpu: "500m"
+            memory: "512Mi"
+          limits:
+            cpu: "1000m"
+            memory: "1Gi"
         ports:
         - name: redis
           containerPort: 6379
