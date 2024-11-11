@@ -896,7 +896,7 @@ spec:
       release: jinias
       app: redis-ha
   serviceName: jinias-redis-ha
-  replicas: 2
+  replicas: 3
   podManagementPolicy: OrderedReady
   updateStrategy:
     type: RollingUpdate
@@ -930,7 +930,12 @@ spec:
         image: public.ecr.aws/docker/library/redis:7.2.4-alpine
         imagePullPolicy: IfNotPresent
         resources:
-          {}
+          requests:
+            cpu: "500m"
+            memory: "512Mi"
+          limits:
+            cpu: "1000m"
+            memory: "1Gi"
         command:
         - sh
         args:
