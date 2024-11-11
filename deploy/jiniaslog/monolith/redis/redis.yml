@@ -899,9 +899,6 @@ spec:
     metadata:
       annotations:
         checksum/init-config: 35476e45d4cc022feb5f56366eec7a3f71e1f3a10d86c29d8dca4c122db291fe
-        prometheus.io/scrape: "true"
-        prometheus.io/port: "6379"
-        prometheus.io/path: "/metrics"
       labels:
         release: jinias
         app: redis-ha
