@@ -25,7 +25,7 @@ data:
     port 6379
     rename-command FLUSHDB ""
     rename-command FLUSHALL ""
-    maxmemory 0
+    maxmemory 1gb
     maxmemory-policy volatile-lru
     min-replicas-max-lag 5
     min-replicas-to-write 1
