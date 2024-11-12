@@ -50,6 +50,8 @@ metadata:
     app.kubernetes.io/name: prometheus-redis-exporter
     app.kubernetes.io/instance: redis-exporter
     app.kubernetes.io/version: "v1.66.0"
+    prometheus.io/scrape: "true"
+    prometheus.io/port: "9121"
   annotations:
     {}
 spec:
@@ -72,8 +74,6 @@ metadata:
     app.kubernetes.io/name: prometheus-redis-exporter
     app.kubernetes.io/instance: redis-exporter
     app.kubernetes.io/version: "v1.66.0"
-    prometheus.io/scrape: "true"
-    prometheus.io/port: "9121"
   annotations:
     {}
 spec:
