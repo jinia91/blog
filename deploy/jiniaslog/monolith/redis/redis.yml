@@ -787,6 +787,10 @@ spec:
     port: 26379
     protocol: TCP
     targetPort: sentinel
+  - name: metrics
+    port: 9121
+    protocol: TCP
+    targetPort: 9121
   selector:
     release: jinias
     app: redis-ha
@@ -899,6 +903,9 @@ spec:
     metadata:
       annotations:
         checksum/init-config: 35476e45d4cc022feb5f56366eec7a3f71e1f3a10d86c29d8dca4c122db291fe
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "9121"
+
       labels:
         release: jinias
         app: redis-ha
@@ -1088,6 +1095,28 @@ spec:
         lifecycle:
           {}
 
+      - name: redis-exporter
+        image: oliver006/redis_exporter:v1.66.0
+        imagePullPolicy: IfNotPresent
+        env:
+          - name: REDIS_ADDR
+            value: "redis://localhost:6379"
+        ports:
+          - name: exporter-port
+            containerPort: 9121
+        livenessProbe:
+          httpGet:
+            path: /
+            port: exporter-port
+          initialDelaySeconds: 5
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /
+            port: exporter-port
+          initialDelaySeconds: 5
+          periodSeconds: 10
+
       - name: split-brain-fix
         image: public.ecr.aws/docker/library/redis:7.2.4-alpine
         imagePullPolicy: IfNotPresent
@@ -1132,7 +1161,6 @@ spec:
     kind: PersistentVolumeClaim
     metadata:
       name: data
-      annotations:
       labels:
         {}
 
