@@ -1,0 +1,66 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: otel-collector-scraper
+  namespace: o11y
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: otel-collector
+  template:
+    metadata:
+      labels:
+        app: otel-collector
+    spec:
+      serviceAccountName: otel-collector  # 새로 만든 ServiceAccount 설정
+      automountServiceAccountToken: true  # 토큰 자동 마운트 설정
+      containers:
+        - name: otel-collector
+          image: otel/opentelemetry-collector-contrib:latest
+          args: ["--config=/etc/otel-collector.yml"]
+          ports:
+            - containerPort: 4318
+            - containerPort: 8888
+            - containerPort: 8889
+            - containerPort: 13133
+          volumeMounts:
+            - name: config-volume
+              mountPath: /etc/otel-collector.yml
+              subPath: otel-collector-config.yml
+          resources:
+            requests:
+              cpu: 500m
+              memory: 256Mi
+            limits:
+              cpu: 1000m
+              memory: 512Mi
+      volumes:
+        - name: config-volume
+          configMap:
+            name: otel-collector-config
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: otel-collector
+spec:
+  ports:
+    - name: otlp-http
+      protocol: TCP
+      port: 4318
+      targetPort: 4318
+    - name: otlp-prometheus
+      protocol: TCP
+      port: 8888
+      targetPort: 8888
+    - name: prometheus-exporter
+      protocol: TCP
+      port: 8889
+      targetPort: 8889
+    - name: health-check
+      protocol: TCP
+      port: 13133
+      targetPort: 13133
+  selector:
+    app: otel-collector

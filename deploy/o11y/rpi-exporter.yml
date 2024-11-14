@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: rpi-exporter
+spec:
+  selector:
+    matchLabels:
+      app: rpi-exporter
+  template:
+    metadata:
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/path: /metrics
+        prometheus.io/port: "9110"
+      labels:
+        app: rpi-exporter
+    spec:
+      containers:
+        - name: rpi-exporter
+          image: d3vilh/rpi_exporter-arm64:latest
+          ports:
+            - containerPort: 9110
+          securityContext:
+            privileged: true
+          resources:
+            limits:
+              cpu: 15m
+              memory: 20Mi
+            requests:
+              cpu: 10m
+              memory: 10Mi
+      hostNetwork: true
+      hostPID: true
+      hostIPC: true
