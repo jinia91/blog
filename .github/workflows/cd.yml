@@ -54,6 +54,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: jinia91/blog-gitops
+          token: ${{ secrets.GIT_OPS_TOKEN }}
           path: gitops-repo
 
       - name: 배포 태그 업데이트
