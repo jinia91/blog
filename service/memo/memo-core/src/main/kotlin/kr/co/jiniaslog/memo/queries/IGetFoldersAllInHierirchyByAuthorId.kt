@@ -7,7 +7,6 @@ interface IGetFoldersAllInHierirchyByAuthorId {
     fun handle(query: Query): Info
 
     data class Query(
-        val value: String?,
         val requesterId: AuthorId,
     )
 

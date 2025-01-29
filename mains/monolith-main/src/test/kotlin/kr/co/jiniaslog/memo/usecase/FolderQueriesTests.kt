@@ -53,7 +53,7 @@ class FolderQueriesTests : TestContainerAbstractSkeleton() {
         }
 
         // when
-        val result = sut.handle(IGetFoldersAllInHierirchyByAuthorId.Query(null, MemoTestFixtures.defaultAuthorId))
+        val result = sut.handle(IGetFoldersAllInHierirchyByAuthorId.Query(MemoTestFixtures.defaultAuthorId))
 
         // then
         result.folderInfos.size shouldBe 2
@@ -98,7 +98,7 @@ class FolderQueriesTests : TestContainerAbstractSkeleton() {
         }
 
         // when
-        val result = sut.handle(IGetFoldersAllInHierirchyByAuthorId.Query("검색", MemoTestFixtures.defaultAuthorId))
+        val result = sut.handle(IGetFoldersAllInHierirchyByAuthorId.Query(MemoTestFixtures.defaultAuthorId))
 
         // then
         result.folderInfos.size shouldBe 1

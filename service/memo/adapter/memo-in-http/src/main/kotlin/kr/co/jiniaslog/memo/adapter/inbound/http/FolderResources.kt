@@ -103,10 +103,19 @@ class FolderResources(
 
     @GetMapping
     fun getFoldersAndMemoAll(
-        @RequestParam(required = false) query: String?,
         @AuthUserId userId: Long?,
     ): ResponseEntity<GetFolderAndMemoResponse> {
-        val response = folderQueries.handle(IGetFoldersAllInHierirchyByAuthorId.Query(query, AuthorId(userId!!)))
+        val response = folderQueries.handle(IGetFoldersAllInHierirchyByAuthorId.Query(AuthorId(userId!!)))
+            .toResponse()
+        return ResponseEntity.ok(response)
+    }
+
+    @GetMapping("/search")
+    fun searchFoldersAndMemoAll(
+        @RequestParam(required = true) query: String,
+        @AuthUserId userId: Long,
+    ): ResponseEntity<GetFolderAndMemoResponse> {
+        val response = folderQueries.handle(IGetFoldersAllInHierirchyByAuthorId.Query(AuthorId(userId)))
             .toResponse()
         return ResponseEntity.ok(response)
     }
