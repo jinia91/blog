@@ -1,10 +1,12 @@
 package kr.co.jiniaslog.memo.queries
 
+import kr.co.jiniaslog.memo.domain.memo.AuthorId
+
 interface ISearchAllFoldersAndMemo {
     fun handle(query: Query): Info
 
     data class Query(
-        val requesterId: Long,
+        val requesterId: AuthorId,
         val keyword: String,
     )
 
