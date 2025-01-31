@@ -114,9 +114,9 @@ class FolderResources(
     @GetMapping("/search")
     fun searchFoldersAndMemoAll(
         @RequestParam(required = true) query: String,
-        @AuthUserId userId: Long,
+        @AuthUserId userId: Long?,
     ): ResponseEntity<ISearchAllFoldersAndMemo.Info> {
-        val response = folderQueries.handle(ISearchAllFoldersAndMemo.Query(AuthorId(userId), query))
+        val response = folderQueries.handle(ISearchAllFoldersAndMemo.Query(AuthorId(userId!!), query))
         return ResponseEntity.ok(response)
     }
 }

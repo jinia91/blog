@@ -9,13 +9,6 @@ services:
       JAVA_TOOL_OPTIONS: -Dcom.sun.management.jmxremote=true -Dcom.sun.management.jmxremote.port=7778 -Dcom.sun.management.jmxremote.rmi.port=7778 -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Djava.rmi.server.hostname=$DEFAULT_IP  -Xms2G -Xmx2G
       SPRING_APPLICATION_JSON: '{
   "spring": {
-    "neo4j": {
-      "uri": "bolt://host.docker.internal:7687",
-      "authentication": {
-        "username": "neo4j",
-        "password": "password"
-      }
-    },
     "datasource": {
       "user": {
         "driver-class-name": "com.mysql.cj.jdbc.Driver",
@@ -32,8 +25,9 @@ services:
       "memo": {
         "driver-class-name": "com.mysql.cj.jdbc.Driver",
         "jdbc-url": "jdbc:mysql://jiniaslog-db/jiniaslog_memo?useSSL=false&serverTimezone=UTC&characterEncoding=UTF-8",
-        "username: "root",
+        "username": "root",
         "password": ""
+        }
     }
   }
 }'
@@ -48,16 +42,14 @@ services:
     restart: always
     networks:
       - internal-network
-    deploy:
-      resources:
-        limits:
-          cpus: "1"
 
   jiniaslog-db:
     image: mysql:8.0.39
     restart: always
     networks:
       - internal-network
+    ports:
+        - "3307:3306"
     environment:
       MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
       MYSQL_DATABASE: jiniaslog_blog
