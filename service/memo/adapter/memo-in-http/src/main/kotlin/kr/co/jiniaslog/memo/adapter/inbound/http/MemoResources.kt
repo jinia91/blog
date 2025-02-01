@@ -97,7 +97,6 @@ class MemoResources(
         @PathVariable id: Long,
         @AuthUserId userId: Long?,
     ): ResponseEntity<GetMemoByIdResponse> {
-        log.info { "getMemoById 쿼리 호출: $id" }
         val query = IGetMemoById.Query(MemoId(id), AuthorId(userId!!))
         val info = memoQueries.handle(query)
         return ResponseEntity.ok(info.toResponse())
