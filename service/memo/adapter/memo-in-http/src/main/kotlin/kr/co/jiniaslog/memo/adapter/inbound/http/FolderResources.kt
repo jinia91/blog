@@ -14,6 +14,7 @@ import kr.co.jiniaslog.memo.domain.folder.FolderId
 import kr.co.jiniaslog.memo.domain.memo.AuthorId
 import kr.co.jiniaslog.memo.queries.FolderQueriesFacade
 import kr.co.jiniaslog.memo.queries.IGetFoldersAllInHierirchyByAuthorId
+import kr.co.jiniaslog.memo.queries.ISearchAllFoldersAndMemo
 import kr.co.jiniaslog.memo.usecase.FolderUseCasesFacade
 import kr.co.jiniaslog.memo.usecase.ICreateNewFolder
 import kr.co.jiniaslog.memo.usecase.IDeleteFoldersRecursively
@@ -103,11 +104,19 @@ class FolderResources(
 
     @GetMapping
     fun getFoldersAndMemoAll(
-        @RequestParam(required = false) query: String?,
         @AuthUserId userId: Long?,
     ): ResponseEntity<GetFolderAndMemoResponse> {
-        val response = folderQueries.handle(IGetFoldersAllInHierirchyByAuthorId.Query(query, AuthorId(userId!!)))
+        val response = folderQueries.handle(IGetFoldersAllInHierirchyByAuthorId.Query(AuthorId(userId!!)))
             .toResponse()
+        return ResponseEntity.ok(response)
+    }
+
+    @GetMapping("/search")
+    fun searchFoldersAndMemoAll(
+        @RequestParam(required = true) query: String,
+        @AuthUserId userId: Long?,
+    ): ResponseEntity<ISearchAllFoldersAndMemo.Info> {
+        val response = folderQueries.handle(ISearchAllFoldersAndMemo.Query(AuthorId(userId!!), query))
         return ResponseEntity.ok(response)
     }
 }

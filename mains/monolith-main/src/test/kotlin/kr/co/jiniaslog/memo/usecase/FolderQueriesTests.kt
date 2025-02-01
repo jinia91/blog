@@ -10,6 +10,7 @@ import kr.co.jiniaslog.memo.domain.memo.MemoRepository
 import kr.co.jiniaslog.memo.domain.memo.MemoTitle
 import kr.co.jiniaslog.memo.queries.FolderQueriesFacade
 import kr.co.jiniaslog.memo.queries.IGetFoldersAllInHierirchyByAuthorId
+import kr.co.jiniaslog.memo.queries.ISearchAllFoldersAndMemo
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 
@@ -53,7 +54,7 @@ class FolderQueriesTests : TestContainerAbstractSkeleton() {
         }
 
         // when
-        val result = sut.handle(IGetFoldersAllInHierirchyByAuthorId.Query(null, MemoTestFixtures.defaultAuthorId))
+        val result = sut.handle(IGetFoldersAllInHierirchyByAuthorId.Query(MemoTestFixtures.defaultAuthorId))
 
         // then
         result.folderInfos.size shouldBe 2
@@ -98,15 +99,14 @@ class FolderQueriesTests : TestContainerAbstractSkeleton() {
         }
 
         // when
-        val result = sut.handle(IGetFoldersAllInHierirchyByAuthorId.Query("검색", MemoTestFixtures.defaultAuthorId))
+        val result = sut.handle(
+            ISearchAllFoldersAndMemo.Query(
+                requesterId = MemoTestFixtures.defaultAuthorId,
+                keyword = "검색"
+            )
+        )
 
         // then
-        result.folderInfos.size shouldBe 1
-        result.folderInfos.find {
-            it.id == null
-        }?.let { unclassifiedFolderInfo ->
-            unclassifiedFolderInfo.children.size shouldBe 0
-            unclassifiedFolderInfo.memos.size shouldBe 10
-        }
+        result.result.memos.size shouldBe 10
     }
 }

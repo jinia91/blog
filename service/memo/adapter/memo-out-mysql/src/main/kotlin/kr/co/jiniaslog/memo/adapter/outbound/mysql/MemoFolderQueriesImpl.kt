@@ -1,6 +1,5 @@
 package kr.co.jiniaslog.memo.adapter.outbound.mysql
 
-import com.querydsl.core.types.ExpressionUtils.any
 import com.querydsl.jpa.impl.JPAQueryFactory
 import kr.co.jiniaslog.memo.domain.folder.Folder
 import kr.co.jiniaslog.memo.domain.memo.Memo
@@ -13,6 +12,7 @@ import kr.co.jiniaslog.memo.queries.IGetAllReferencesByMemo
 import kr.co.jiniaslog.memo.queries.IGetFoldersAllInHierirchyByAuthorId
 import kr.co.jiniaslog.memo.queries.IGetMemoById
 import kr.co.jiniaslog.memo.queries.IRecommendRelatedMemo
+import kr.co.jiniaslog.memo.queries.ISearchAllFoldersAndMemo
 import kr.co.jiniaslog.memo.queries.MemoQueriesFacade
 import kr.co.jiniaslog.shared.core.annotation.PersistenceAdapter
 import org.springframework.cache.annotation.Cacheable
@@ -110,32 +110,6 @@ internal class MemoFolderQueriesImpl(
 
     @Cacheable("folders", key = "#query.requesterId")
     override fun handle(query: IGetFoldersAllInHierirchyByAuthorId.Query): IGetFoldersAllInHierirchyByAuthorId.Info {
-        if (query.value != null && query.value!!.isNotEmpty()) {
-            val result = memoJpaQueryFactory.selectFrom(memo)
-                .where(
-                    memo.title.value.contains(query.value)
-                        .or(memo.content.value.contains(query.value))
-                ).fetch()
-
-            return IGetFoldersAllInHierirchyByAuthorId.Info(
-                folderInfos = listOf(
-                    IGetFoldersAllInHierirchyByAuthorId.FolderInfo(
-                        id = null,
-                        name = "검색 결과",
-                        parent = null,
-                        children = mutableListOf(),
-                        memos = result.map {
-                            IGetFoldersAllInHierirchyByAuthorId.MemoInfo(
-                                id = it.entityId.value,
-                                title = it.title.value,
-                                references = mutableListOf()
-                            )
-                        }
-                    )
-                )
-            )
-        }
-
         val allFolders = folderRepository.findAllByAuthorId(query.requesterId)
         val allMemoes = memoRepository.findAllByAuthorId(query.requesterId)
 
@@ -195,6 +169,32 @@ internal class MemoFolderQueriesImpl(
         )
         return IGetFoldersAllInHierirchyByAuthorId.Info(
             folderInfos = getFolderTree(rootFolders) + uncategorized
+        )
+    }
+
+    override fun handle(query: ISearchAllFoldersAndMemo.Query): ISearchAllFoldersAndMemo.Info {
+        if (query.keyword.isNotEmpty()) {
+            val result = memoJpaQueryFactory.selectFrom(memo)
+                .where(
+                    memo.title.value.contains(query.keyword)
+                        .or(memo.content.value.contains(query.keyword))
+                ).fetch()
+
+            return ISearchAllFoldersAndMemo.Info(
+                result = ISearchAllFoldersAndMemo.ResultInfo(
+                    memos = result.map {
+                        ISearchAllFoldersAndMemo.MemoInfo(
+                            id = it.entityId.value,
+                            title = it.title.value
+                        )
+                    }
+                )
+            )
+        }
+        return ISearchAllFoldersAndMemo.Info(
+            result = ISearchAllFoldersAndMemo.ResultInfo(
+                memos = emptyList()
+            )
         )
     }
 }
