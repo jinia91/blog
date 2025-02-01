@@ -2,7 +2,7 @@ package kr.co.jiniaslog.memo.queries
 
 import kr.co.jiniaslog.memo.domain.memo.AuthorId
 
-interface ISearchAllFoldersAndMemo {
+interface ISearchAllMemoByKeyword {
     fun handle(query: Query): Info
 
     data class Query(

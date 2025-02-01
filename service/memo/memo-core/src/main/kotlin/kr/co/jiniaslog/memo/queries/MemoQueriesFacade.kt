@@ -5,4 +5,5 @@ interface MemoQueriesFacade :
     IGetMemoById,
     IGetAllReferencesByMemo,
     IGetAllReferencedByMemo,
-    ICheckMemoExisted
+    ICheckMemoExisted,
+    ISearchAllMemoByKeyword

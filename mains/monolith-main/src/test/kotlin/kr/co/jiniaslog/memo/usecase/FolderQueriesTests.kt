@@ -10,7 +10,7 @@ import kr.co.jiniaslog.memo.domain.memo.MemoRepository
 import kr.co.jiniaslog.memo.domain.memo.MemoTitle
 import kr.co.jiniaslog.memo.queries.FolderQueriesFacade
 import kr.co.jiniaslog.memo.queries.IGetFoldersAllInHierirchyByAuthorId
-import kr.co.jiniaslog.memo.queries.ISearchAllFoldersAndMemo
+import kr.co.jiniaslog.memo.queries.ISearchAllMemoByKeyword
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 
@@ -100,7 +100,7 @@ class FolderQueriesTests : TestContainerAbstractSkeleton() {
 
         // when
         val result = sut.handle(
-            ISearchAllFoldersAndMemo.Query(
+            ISearchAllMemoByKeyword.Query(
                 requesterId = MemoTestFixtures.defaultAuthorId,
                 keyword = "검색"
             )

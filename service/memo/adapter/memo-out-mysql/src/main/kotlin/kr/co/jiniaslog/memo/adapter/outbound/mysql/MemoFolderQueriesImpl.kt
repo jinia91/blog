@@ -12,7 +12,7 @@ import kr.co.jiniaslog.memo.queries.IGetAllReferencesByMemo
 import kr.co.jiniaslog.memo.queries.IGetFoldersAllInHierirchyByAuthorId
 import kr.co.jiniaslog.memo.queries.IGetMemoById
 import kr.co.jiniaslog.memo.queries.IRecommendRelatedMemo
-import kr.co.jiniaslog.memo.queries.ISearchAllFoldersAndMemo
+import kr.co.jiniaslog.memo.queries.ISearchAllMemoByKeyword
 import kr.co.jiniaslog.memo.queries.MemoQueriesFacade
 import kr.co.jiniaslog.shared.core.annotation.PersistenceAdapter
 import org.springframework.cache.annotation.Cacheable
@@ -172,7 +172,7 @@ internal class MemoFolderQueriesImpl(
         )
     }
 
-    override fun handle(query: ISearchAllFoldersAndMemo.Query): ISearchAllFoldersAndMemo.Info {
+    override fun handle(query: ISearchAllMemoByKeyword.Query): ISearchAllMemoByKeyword.Info {
         if (query.keyword.isNotEmpty()) {
             val result = memoJpaQueryFactory.selectFrom(memo)
                 .where(
@@ -180,10 +180,10 @@ internal class MemoFolderQueriesImpl(
                         .or(memo.content.value.contains(query.keyword))
                 ).fetch()
 
-            return ISearchAllFoldersAndMemo.Info(
-                result = ISearchAllFoldersAndMemo.ResultInfo(
+            return ISearchAllMemoByKeyword.Info(
+                result = ISearchAllMemoByKeyword.ResultInfo(
                     memos = result.map {
-                        ISearchAllFoldersAndMemo.MemoInfo(
+                        ISearchAllMemoByKeyword.MemoInfo(
                             id = it.entityId.value,
                             title = it.title.value
                         )
@@ -191,8 +191,8 @@ internal class MemoFolderQueriesImpl(
                 )
             )
         }
-        return ISearchAllFoldersAndMemo.Info(
-            result = ISearchAllFoldersAndMemo.ResultInfo(
+        return ISearchAllMemoByKeyword.Info(
+            result = ISearchAllMemoByKeyword.ResultInfo(
                 memos = emptyList()
             )
         )
