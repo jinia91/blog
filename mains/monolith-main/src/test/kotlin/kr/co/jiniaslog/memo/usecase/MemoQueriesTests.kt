@@ -1,6 +1,7 @@
 package kr.co.jiniaslog.memo.usecase
 
 import io.kotest.assertions.throwables.shouldThrow
+import io.kotest.assertions.withClue
 import io.kotest.matchers.shouldBe
 import kr.co.jiniaslog.TestContainerAbstractSkeleton
 import kr.co.jiniaslog.memo.domain.FolderTestFixtures
@@ -9,11 +10,13 @@ import kr.co.jiniaslog.memo.domain.folder.FolderRepository
 import kr.co.jiniaslog.memo.domain.memo.MemoContent
 import kr.co.jiniaslog.memo.domain.memo.MemoId
 import kr.co.jiniaslog.memo.domain.memo.MemoRepository
+import kr.co.jiniaslog.memo.domain.memo.MemoTitle
 import kr.co.jiniaslog.memo.queries.ICheckMemoExisted
 import kr.co.jiniaslog.memo.queries.IGetAllReferencedByMemo
 import kr.co.jiniaslog.memo.queries.IGetAllReferencesByMemo
 import kr.co.jiniaslog.memo.queries.IGetMemoById
 import kr.co.jiniaslog.memo.queries.IRecommendRelatedMemo
+import kr.co.jiniaslog.memo.queries.ISearchAllMemoByKeyword
 import kr.co.jiniaslog.memo.queries.MemoQueriesFacade
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -156,5 +159,42 @@ class MemoQueriesTests : TestContainerAbstractSkeleton() {
 
         // then
         result shouldBe false
+    }
+
+    @Test
+    fun `키워드로 조회시 가상 폴더 하에 메모만 조회된다`() {
+        // given
+        val dummyParentFolder = FolderTestFixtures.build()
+        folderRepository.save(dummyParentFolder)
+
+        val emptyChildFolder = FolderTestFixtures.build(
+            parent = dummyParentFolder.entityId
+        )
+        folderRepository.save(emptyChildFolder)
+
+        withClue("키워드가 있는 메모") {
+            (1..10).map {
+                memoRepository.save(
+                    MemoTestFixtures.build(title = MemoTitle("검색"))
+                )
+            }
+        }
+
+        withClue("키워드가 없는 메모") {
+            memoRepository.save(
+                MemoTestFixtures.build()
+            )
+        }
+
+        // when
+        val result = sut.handle(
+            ISearchAllMemoByKeyword.Query(
+                requesterId = MemoTestFixtures.defaultAuthorId,
+                keyword = "검색"
+            )
+        )
+
+        // then
+        result.result.memos.size shouldBe 10
     }
 }
