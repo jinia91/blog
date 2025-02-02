@@ -14,7 +14,6 @@ import kr.co.jiniaslog.memo.domain.folder.FolderId
 import kr.co.jiniaslog.memo.domain.memo.AuthorId
 import kr.co.jiniaslog.memo.queries.FolderQueriesFacade
 import kr.co.jiniaslog.memo.queries.IGetFoldersAllInHierirchyByAuthorId
-import kr.co.jiniaslog.memo.queries.ISearchAllFoldersAndMemo
 import kr.co.jiniaslog.memo.usecase.FolderUseCasesFacade
 import kr.co.jiniaslog.memo.usecase.ICreateNewFolder
 import kr.co.jiniaslog.memo.usecase.IDeleteFoldersRecursively
@@ -29,7 +28,6 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 
 private val log = mu.KotlinLogging.logger {}
@@ -108,15 +106,6 @@ class FolderResources(
     ): ResponseEntity<GetFolderAndMemoResponse> {
         val response = folderQueries.handle(IGetFoldersAllInHierirchyByAuthorId.Query(AuthorId(userId!!)))
             .toResponse()
-        return ResponseEntity.ok(response)
-    }
-
-    @GetMapping("/search")
-    fun searchFoldersAndMemoAll(
-        @RequestParam(required = true) query: String,
-        @AuthUserId userId: Long?,
-    ): ResponseEntity<ISearchAllFoldersAndMemo.Info> {
-        val response = folderQueries.handle(ISearchAllFoldersAndMemo.Query(AuthorId(userId!!), query))
         return ResponseEntity.ok(response)
     }
 }

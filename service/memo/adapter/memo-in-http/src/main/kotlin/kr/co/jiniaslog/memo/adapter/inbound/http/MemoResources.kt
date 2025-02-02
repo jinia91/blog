@@ -17,6 +17,7 @@ import kr.co.jiniaslog.memo.queries.IGetAllReferencedByMemo
 import kr.co.jiniaslog.memo.queries.IGetAllReferencesByMemo
 import kr.co.jiniaslog.memo.queries.IGetMemoById
 import kr.co.jiniaslog.memo.queries.IRecommendRelatedMemo
+import kr.co.jiniaslog.memo.queries.ISearchAllMemoByKeyword
 import kr.co.jiniaslog.memo.queries.MemoQueriesFacade
 import kr.co.jiniaslog.memo.usecase.IDeleteMemo
 import kr.co.jiniaslog.memo.usecase.IInitMemo
@@ -34,10 +35,7 @@ import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
-import java.awt.SystemColor.info
 import java.net.URI
-
-private val log = mu.KotlinLogging.logger {}
 
 @RestController
 @RequestMapping("/api/v1/memos")
@@ -97,7 +95,6 @@ class MemoResources(
         @PathVariable id: Long,
         @AuthUserId userId: Long?,
     ): ResponseEntity<GetMemoByIdResponse> {
-        log.info { "getMemoById 쿼리 호출: $id" }
         val query = IGetMemoById.Query(MemoId(id), AuthorId(userId!!))
         val info = memoQueries.handle(query)
         return ResponseEntity.ok(info.toResponse())
@@ -132,5 +129,14 @@ class MemoResources(
         val query = IGetAllReferencedByMemo.Query(MemoId(id), AuthorId(userId!!))
         val info = memoQueries.handle(query)
         return ResponseEntity.ok(info.toResponse())
+    }
+
+    @GetMapping
+    fun searchFoldersAndMemoAll(
+        @RequestParam(required = true) query: String,
+        @AuthUserId userId: Long?,
+    ): ResponseEntity<ISearchAllMemoByKeyword.Info> {
+        val response = memoQueries.handle(ISearchAllMemoByKeyword.Query(AuthorId(userId!!), query))
+        return ResponseEntity.ok(response)
     }
 }

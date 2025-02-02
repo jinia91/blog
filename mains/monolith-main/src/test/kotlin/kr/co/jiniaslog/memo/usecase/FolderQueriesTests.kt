@@ -7,10 +7,8 @@ import kr.co.jiniaslog.memo.domain.FolderTestFixtures
 import kr.co.jiniaslog.memo.domain.MemoTestFixtures
 import kr.co.jiniaslog.memo.domain.folder.FolderRepository
 import kr.co.jiniaslog.memo.domain.memo.MemoRepository
-import kr.co.jiniaslog.memo.domain.memo.MemoTitle
 import kr.co.jiniaslog.memo.queries.FolderQueriesFacade
 import kr.co.jiniaslog.memo.queries.IGetFoldersAllInHierirchyByAuthorId
-import kr.co.jiniaslog.memo.queries.ISearchAllFoldersAndMemo
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 
@@ -71,42 +69,5 @@ class FolderQueriesTests : TestContainerAbstractSkeleton() {
             unclassifiedFolderInfo.children.size shouldBe 0
             unclassifiedFolderInfo.memos.size shouldBe 1
         }
-    }
-
-    @Test
-    fun `키워드로 조회시 가상 폴더 하에 메모만 조회된다`() {
-        // given
-        val dummyParentFolder = FolderTestFixtures.build()
-        folderRepository.save(dummyParentFolder)
-
-        val emptyChildFolder = FolderTestFixtures.build(
-            parent = dummyParentFolder.entityId
-        )
-        folderRepository.save(emptyChildFolder)
-
-        withClue("키워드가 있는 메모") {
-            (1..10).map {
-                memoRepository.save(
-                    MemoTestFixtures.build(title = MemoTitle("검색"))
-                )
-            }
-        }
-
-        withClue("키워드가 없는 메모") {
-            memoRepository.save(
-                MemoTestFixtures.build()
-            )
-        }
-
-        // when
-        val result = sut.handle(
-            ISearchAllFoldersAndMemo.Query(
-                requesterId = MemoTestFixtures.defaultAuthorId,
-                keyword = "검색"
-            )
-        )
-
-        // then
-        result.result.memos.size shouldBe 10
     }
 }
