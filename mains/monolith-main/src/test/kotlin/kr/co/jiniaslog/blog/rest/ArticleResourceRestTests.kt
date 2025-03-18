@@ -128,26 +128,6 @@ class ArticleResourceRestTests : RestTestAbstractSkeleton() {
     }
 
     @Nested
-    inner class `게시글 카테고리 분류 테스트` {
-        @Test
-        fun `유효한 카테고리 설정 요청이 있으면 200을 반환한다`() {
-            // given
-            every { articleUseCasesFacade.handle(any(ICategorizeArticle.Command::class)) } returns ICategorizeArticle.Info(
-                ArticleId(1L)
-            )
-
-            // when
-            RestAssuredMockMvc.given()
-                .cookies(PreAuthFilter.ACCESS_TOKEN_HEADER, getTestAdminUserToken())
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .put("/api/v1/articles/1/category/1")
-                // then
-                .then()
-                .statusCode(200)
-        }
-    }
-
-    @Nested
     inner class `게시글 태그 추가 테스트` {
         @Test
         fun `유효한 태그 추가 요청이 있으면 200을 반환한다`() {

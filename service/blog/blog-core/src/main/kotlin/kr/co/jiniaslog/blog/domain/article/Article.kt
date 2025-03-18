@@ -8,8 +8,6 @@ import jakarta.persistence.EmbeddedId
 import jakarta.persistence.Entity
 import kr.co.jiniaslog.blog.domain.MemoId
 import kr.co.jiniaslog.blog.domain.UserId
-import kr.co.jiniaslog.blog.domain.category.Category
-import kr.co.jiniaslog.blog.domain.category.CategoryId
 import kr.co.jiniaslog.blog.domain.tag.Tag
 import kr.co.jiniaslog.blog.domain.tag.TagId
 import kr.co.jiniaslog.shared.adapter.out.rdb.JpaAggregate
@@ -32,7 +30,6 @@ import org.hibernate.annotations.FetchMode
  * @param articleContents 게시글 상세 내용 VO
  * @param status 게시글 상태
  * @param tags 게시글에 달린 태그 목록
- * @param categoryId 게시글이 속한 카테고리 식별자
  * @param hit 조회수
  */
 @Entity
@@ -43,7 +40,6 @@ class Article internal constructor(
     status: Status,
     articleContents: ArticleContents,
     tags: MutableSet<Tagging>,
-    categoryId: CategoryId?,
     hit: Int,
 ) : JpaAggregate<ArticleId>() {
 
@@ -68,10 +64,6 @@ class Article internal constructor(
 
     @AttributeOverride(column = Column(name = "memo_ref_id", nullable = true), name = "value")
     var memoRefId: MemoId? = memoRefId
-        private set
-
-    @AttributeOverride(column = Column(name = "category_id"), name = "value")
-    var categoryId: CategoryId? = categoryId
         private set
 
     @AttributeOverrides(
@@ -102,12 +94,10 @@ class Article internal constructor(
             Status.DRAFT -> {}
 
             Status.PUBLISHED -> {
-                requireNotNull(categoryId) { "게시글이 속한 카테고리는 필수입니다." }
                 articleContents.validateOnPublish()
             }
 
             Status.DELETED -> {
-                require(categoryId == null) { "삭제된 게시글은 카테고리를 가질 수 없습니다." }
                 require(tags.isEmpty()) { "삭제된 게시글은 태그를 가질 수 없습니다." }
             }
         }
@@ -124,7 +114,6 @@ class Article internal constructor(
     val canPublish: Boolean
         get() {
             return status != Status.PUBLISHED &&
-                categoryId != null &&
                 articleContents.canPublish
         }
 
@@ -149,7 +138,6 @@ class Article internal constructor(
      */
     fun delete() {
         require(status != Status.DELETED) { "이미 삭제된 게시글입니다." }
-        categoryId = null
         _tags.clear()
         memoRefId = null
         status = Status.DELETED
@@ -163,19 +151,6 @@ class Article internal constructor(
     fun unDelete() {
         require(status == Status.DELETED) { "이미 삭제되지 않은 게시글입니다." }
         status = Status.DRAFT
-    }
-
-    /**
-     * 게시글을 분류한다
-     *
-     * - 최하위 카테고리만 분류 가능
-     *
-     * @param category 강검증을 위해 아이디가 아닌 카테고리 어그리게이트 루트를 전달
-     */
-    fun categorize(category: Category) {
-        require(category.isChild) { "카테고리는 하위 카테고리여야 합니다." }
-        require(this.status != Status.DELETED) { "삭제된 게시글은 카테고리를 설정할 수 없습니다." }
-        this.categoryId = category.entityId
     }
 
     /**
@@ -219,7 +194,6 @@ class Article internal constructor(
                 status = Status.DRAFT,
                 articleContents = ArticleContents.EMPTY,
                 tags = mutableSetOf(),
-                categoryId = null,
                 hit = 0,
             )
         }

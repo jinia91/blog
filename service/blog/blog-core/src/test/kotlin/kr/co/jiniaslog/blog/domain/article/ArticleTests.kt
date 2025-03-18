@@ -5,9 +5,6 @@ import io.kotest.matchers.nulls.shouldBeNull
 import io.kotest.matchers.shouldBe
 import kr.co.jiniaslog.blog.domain.ArticleTestFixtures
 import kr.co.jiniaslog.blog.domain.UserId
-import kr.co.jiniaslog.blog.domain.category.Category
-import kr.co.jiniaslog.blog.domain.category.CategoryId
-import kr.co.jiniaslog.blog.domain.category.CategoryTitle
 import kr.co.jiniaslog.blog.domain.tag.Tag
 import kr.co.jiniaslog.blog.domain.tag.TagId
 import kr.co.jiniaslog.blog.domain.tag.TagName
@@ -30,7 +27,6 @@ class ArticleTests : SimpleUnitTestContext() {
 
             // then
             newArticle.status shouldBe Article.Status.DRAFT
-            newArticle.categoryId.shouldBeNull()
             newArticle.memoRefId.shouldBeNull()
             newArticle.articleContents shouldBe ArticleContents.EMPTY
         }
@@ -42,17 +38,6 @@ class ArticleTests : SimpleUnitTestContext() {
             shouldThrow<IllegalArgumentException> {
                 ArticleTestFixtures.createPublishedArticle(
                     hit = -1
-                )
-            }
-        }
-
-        @Test
-        fun `게시글이 게시된경우 카테고리가 없을 수 없다`() {
-            // given
-            // when, then
-            shouldThrow<IllegalArgumentException> {
-                ArticleTestFixtures.createPublishedArticle(
-                    categoryId = null
                 )
             }
         }
@@ -91,24 +76,11 @@ class ArticleTests : SimpleUnitTestContext() {
         }
 
         @Test
-        fun `게시글이 삭제될경우 카테고리가 있을수 없다`() {
-            // given
-            // when, then
-            shouldThrow<IllegalArgumentException> {
-                ArticleTestFixtures.createPublishedArticle(
-                    categoryId = CategoryId(IdUtils.generate()),
-                    status = Article.Status.DELETED
-                )
-            }
-        }
-
-        @Test
         fun `게시글이 삭제될경우 태그가 있을수 없다`() {
             // given
             // when, then
             shouldThrow<IllegalArgumentException> {
                 ArticleTestFixtures.createPublishedArticle(
-                    categoryId = null,
                     tags = listOf(TagId(IdUtils.generate())),
                     status = Article.Status.DELETED
                 )
@@ -251,21 +223,6 @@ class ArticleTests : SimpleUnitTestContext() {
         }
 
         @Test
-        fun `카테고리가 없는 게시글 초안을 공개하려고 하면 실패한다`() {
-            // given
-            val article = ArticleTestFixtures.createPublishedArticle(
-                categoryId = null,
-                status = Article.Status.DRAFT
-            )
-            article.canPublish shouldBe false
-
-            // when, then
-            shouldThrow<IllegalArgumentException> {
-                article.publish()
-            }
-        }
-
-        @Test
         fun `제목이 없는 게시글 초안을 공개하려고 하면 실패한다`() {
             // given
             val article = ArticleTestFixtures.createPublishedArticle(
@@ -324,7 +281,6 @@ class ArticleTests : SimpleUnitTestContext() {
             article.delete()
 
             // then
-            article.categoryId.shouldBeNull()
             article.tags.size shouldBe 0
             article.memoRefId.shouldBeNull()
             article.status shouldBe Article.Status.DELETED
@@ -364,72 +320,6 @@ class ArticleTests : SimpleUnitTestContext() {
             // when, then
             shouldThrow<IllegalArgumentException> {
                 article.unDelete()
-            }
-        }
-    }
-
-    @Nested
-    inner class `게시글 카테고리 세팅 테스트`() {
-        @Test
-        fun `자식 카테고리는 게시글에 세팅할 수 있다`() {
-            // given
-            val article = ArticleTestFixtures.createPublishedArticle()
-            val parent = Category(
-                id = CategoryId(IdUtils.generate()),
-                categoryTitle = CategoryTitle("parent"),
-                sortingPoint = 0
-            )
-            val child = Category(
-                id = CategoryId(IdUtils.generate()),
-                categoryTitle = CategoryTitle("child"),
-                sortingPoint = 0
-            ).apply {
-                changeParent(parent)
-            }
-
-            // when
-            article.categorize(child)
-
-            // then
-            article.categoryId shouldBe child.entityId
-        }
-
-        @Test
-        fun `부모 카테고리는 게시글에 세팅할 수 없다`() {
-            // given
-            val article = ArticleTestFixtures.createPublishedArticle()
-            val parent = Category(
-                id = CategoryId(IdUtils.generate()),
-                categoryTitle = CategoryTitle("parent"),
-                sortingPoint = 0
-            )
-
-            // when, then
-            shouldThrow<IllegalArgumentException> {
-                article.categorize(parent)
-            }
-        }
-
-        @Test
-        fun `삭제된 게시글은 카테고리를 세팅할 수 없다`() {
-            // given
-            val article = ArticleTestFixtures.createDeletedArticle()
-            val parent = Category(
-                id = CategoryId(IdUtils.generate()),
-                categoryTitle = CategoryTitle("parent"),
-                sortingPoint = 0
-            )
-            val child = Category(
-                id = CategoryId(IdUtils.generate()),
-                categoryTitle = CategoryTitle("child"),
-                sortingPoint = 0
-            ).apply {
-                changeParent(parent)
-            }
-
-            // when, then
-            shouldThrow<IllegalArgumentException> {
-                article.categorize(child)
             }
         }
     }

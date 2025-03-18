@@ -4,7 +4,6 @@ import kr.co.jiniaslog.blog.domain.article.Article
 import kr.co.jiniaslog.blog.domain.article.ArticleContents
 import kr.co.jiniaslog.blog.domain.article.ArticleId
 import kr.co.jiniaslog.blog.domain.article.Tagging
-import kr.co.jiniaslog.blog.domain.category.CategoryId
 import kr.co.jiniaslog.blog.domain.tag.TagId
 import kr.co.jiniaslog.shared.core.domain.IdUtils
 import java.time.LocalDateTime
@@ -14,7 +13,6 @@ object ArticleTestFixtures {
         id: ArticleId = ArticleId(IdUtils.generate()),
         memoRefId: MemoId? = MemoId(IdUtils.generate()),
         authorId: UserId = UserId(1L),
-        categoryId: CategoryId? = CategoryId(IdUtils.generate()),
         title: String = "title",
         contents: String = "contents",
         thumbnailUrl: String = "thumbnailUrl",
@@ -37,7 +35,6 @@ object ArticleTestFixtures {
         return Article(
             memoRefId = memoRefId,
             authorId = authorId,
-            categoryId = categoryId,
             articleContents = articleContents,
             tags = tags.map { Tagging(it) }.toMutableSet(),
             hit = hit,
@@ -64,7 +61,6 @@ object ArticleTestFixtures {
         return Article(
             memoRefId = memoRefId,
             authorId = authorId,
-            categoryId = null,
             articleContents = ArticleContents(
                 title = title,
                 contents = contents,
@@ -84,7 +80,6 @@ object ArticleTestFixtures {
         id: ArticleId = ArticleId(IdUtils.generate()),
         memoRefId: MemoId? = null,
         authorId: UserId = UserId(1L),
-        categoryId: CategoryId? = null,
         title: String = "",
         contents: String = "",
         thumbnailUrl: String = "",
@@ -97,7 +92,6 @@ object ArticleTestFixtures {
         return Article(
             memoRefId = memoRefId,
             authorId = authorId,
-            categoryId = categoryId,
             articleContents = ArticleContents(
                 title = title,
                 contents = contents,
