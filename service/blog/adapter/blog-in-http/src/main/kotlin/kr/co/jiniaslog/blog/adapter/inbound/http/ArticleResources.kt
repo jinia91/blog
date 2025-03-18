@@ -85,7 +85,7 @@ class ArticleResources(
             .body(StartNewArticleResponse(info.articleId.value))
     }
 
-    @PutMapping("/{articleId}/publish")
+    @PostMapping("/{articleId}/publish")
     @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "게시글 게시", description = "게시글을 공개상태로 게시한다", security = [SecurityRequirement(name = "bearer")])
     fun publishArticle(
@@ -140,6 +140,7 @@ class ArticleResources(
                 thumbnailUrl = info.thumbnailUrl,
                 tags = info.tags.mapKeys { it.key.id },
                 createdAt = info.createdAt,
+                isPublished = info.isPublished
             )
         )
     }

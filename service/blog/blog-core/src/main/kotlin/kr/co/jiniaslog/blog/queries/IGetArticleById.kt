@@ -18,5 +18,6 @@ interface IGetArticleById {
         val thumbnailUrl: String,
         val tags: Map<TagId, String>,
         val createdAt: LocalDateTime,
+        val isPublished: Boolean
     )
 }

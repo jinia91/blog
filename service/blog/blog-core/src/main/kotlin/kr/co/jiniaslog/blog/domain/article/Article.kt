@@ -122,6 +122,9 @@ class Article internal constructor(
                 articleContents.canPublish
         }
 
+    val isPublished: Boolean
+        get() = status == Status.PUBLISHED
+
     /**
      * 게시글을 공개한다
      *

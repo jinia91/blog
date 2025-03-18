@@ -1,6 +1,5 @@
 package kr.co.jiniaslog.blog.queries
 
-import kr.co.jiniaslog.blog.domain.article.QArticle.article
 import kr.co.jiniaslog.blog.outbound.ArticleRepository
 import org.springframework.stereotype.Component
 
@@ -16,7 +15,8 @@ class ArticleQueries(
             content = article.articleContents.contents,
             thumbnailUrl = article.articleContents.thumbnailUrl,
             tags = article.tagsInfo,
-            createdAt = article.createdAt!!
+            createdAt = article.createdAt!!,
+            isPublished = article.isPublished
         )
     }
 }

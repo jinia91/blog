@@ -9,4 +9,5 @@ data class GetArticleByIdResponse(
     val thumbnailUrl: String,
     val tags: Map<Long, String>,
     val createdAt: LocalDateTime,
+    val isPublished: Boolean
 )
