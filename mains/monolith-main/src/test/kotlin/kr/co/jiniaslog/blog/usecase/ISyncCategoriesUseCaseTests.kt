@@ -10,7 +10,6 @@ import kr.co.jiniaslog.blog.domain.category.CategoryTitle
 import kr.co.jiniaslog.blog.domain.category.dto.CategoryDataHolder
 import kr.co.jiniaslog.blog.domain.toDto
 import kr.co.jiniaslog.blog.outbound.BlogTransactionHandler
-import kr.co.jiniaslog.blog.outbound.CategoryRepository
 import kr.co.jiniaslog.blog.usecase.category.ISyncCategories
 import kr.co.jiniaslog.shared.core.domain.IdUtils
 import org.junit.jupiter.api.Test

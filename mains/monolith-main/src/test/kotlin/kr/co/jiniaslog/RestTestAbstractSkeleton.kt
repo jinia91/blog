@@ -5,7 +5,6 @@ import io.restassured.module.mockmvc.RestAssuredMockMvc
 import kr.co.jiniaslog.admin.adapter.inbound.http.AuthDevResources
 import kr.co.jiniaslog.admin.application.AdminUseCaseFacade
 import kr.co.jiniaslog.blog.adapter.inbound.http.ArticleResources
-import kr.co.jiniaslog.blog.adapter.inbound.http.CategoryResources
 import kr.co.jiniaslog.blog.usecase.article.ArticleUseCasesFacade
 import kr.co.jiniaslog.blog.usecase.category.ISyncCategories
 import kr.co.jiniaslog.media.inbound.http.ImageResources

@@ -6,7 +6,6 @@ import kr.co.jiniaslog.RestTestAbstractSkeleton
 import kr.co.jiniaslog.blog.adapter.inbound.http.dto.AddTagToArticleRequest
 import kr.co.jiniaslog.blog.domain.article.ArticleId
 import kr.co.jiniaslog.blog.usecase.article.IAddAnyTagInArticle
-import kr.co.jiniaslog.blog.usecase.article.ICategorizeArticle
 import kr.co.jiniaslog.blog.usecase.article.IDeleteArticle
 import kr.co.jiniaslog.blog.usecase.article.IPublishArticle
 import kr.co.jiniaslog.blog.usecase.article.IStartToWriteNewDraftArticle

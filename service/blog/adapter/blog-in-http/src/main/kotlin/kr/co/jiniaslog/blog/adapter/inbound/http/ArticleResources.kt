@@ -9,18 +9,15 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement
 import io.swagger.v3.oas.annotations.tags.Tag
 import kr.co.jiniaslog.blog.adapter.inbound.http.dto.AddTagToArticleRequest
 import kr.co.jiniaslog.blog.adapter.inbound.http.dto.AddTagToArticleResponse
-import kr.co.jiniaslog.blog.adapter.inbound.http.dto.CategorizeArticleResponse
 import kr.co.jiniaslog.blog.adapter.inbound.http.dto.DeleteArticleResponse
 import kr.co.jiniaslog.blog.adapter.inbound.http.dto.PublishArticleResponse
 import kr.co.jiniaslog.blog.adapter.inbound.http.dto.StartNewArticleResponse
 import kr.co.jiniaslog.blog.adapter.inbound.http.dto.UnDeleteArticleResponse
 import kr.co.jiniaslog.blog.domain.UserId
 import kr.co.jiniaslog.blog.domain.article.ArticleId
-import kr.co.jiniaslog.blog.domain.category.CategoryId
 import kr.co.jiniaslog.blog.domain.tag.TagName
 import kr.co.jiniaslog.blog.usecase.article.ArticleUseCasesFacade
 import kr.co.jiniaslog.blog.usecase.article.IAddAnyTagInArticle
-import kr.co.jiniaslog.blog.usecase.article.ICategorizeArticle
 import kr.co.jiniaslog.blog.usecase.article.IDeleteArticle
 import kr.co.jiniaslog.blog.usecase.article.IPublishArticle
 import kr.co.jiniaslog.blog.usecase.article.IStartToWriteNewDraftArticle
@@ -110,17 +107,6 @@ class ArticleResources(private val articleFacade: ArticleUseCasesFacade) {
         val command = IUnDeleteArticle.Command(ArticleId(articleId))
         val info = articleFacade.handle(command)
         return ResponseEntity.ok(UnDeleteArticleResponse(info.articleId.value))
-    }
-
-    @PutMapping("/{articleId}/category/{categoryId}")
-    @PreAuthorize("hasRole('ADMIN')")
-    fun categorizeArticle(
-        @PathVariable articleId: Long,
-        @PathVariable categoryId: Long,
-    ): ResponseEntity<CategorizeArticleResponse> {
-        val command = ICategorizeArticle.Command(ArticleId(articleId), CategoryId(categoryId))
-        val info = articleFacade.handle(command)
-        return ResponseEntity.ok(CategorizeArticleResponse(info.articleId.value))
     }
 
     @PutMapping("/{articleId}/tag")

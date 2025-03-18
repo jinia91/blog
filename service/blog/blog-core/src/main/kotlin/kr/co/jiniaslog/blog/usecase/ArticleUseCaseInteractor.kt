@@ -5,12 +5,10 @@ import kr.co.jiniaslog.blog.domain.article.ArticleId
 import kr.co.jiniaslog.blog.domain.tag.Tag
 import kr.co.jiniaslog.blog.outbound.ArticleRepository
 import kr.co.jiniaslog.blog.outbound.BlogTransactionHandler
-import kr.co.jiniaslog.blog.outbound.CategoryRepository
 import kr.co.jiniaslog.blog.outbound.TagRepository
 import kr.co.jiniaslog.blog.outbound.UserService
 import kr.co.jiniaslog.blog.usecase.article.ArticleUseCasesFacade
 import kr.co.jiniaslog.blog.usecase.article.IAddAnyTagInArticle
-import kr.co.jiniaslog.blog.usecase.article.ICategorizeArticle
 import kr.co.jiniaslog.blog.usecase.article.IDeleteArticle
 import kr.co.jiniaslog.blog.usecase.article.IPublishArticle
 import kr.co.jiniaslog.blog.usecase.article.IStartToWriteNewDraftArticle
@@ -23,7 +21,6 @@ class ArticleUseCaseInteractor(
     private val userService: UserService,
     private val articleRepository: ArticleRepository,
     private val transactionHandler: BlogTransactionHandler,
-    private val categoryRepository: CategoryRepository,
     private val tagRepository: TagRepository
 ) : ArticleUseCasesFacade {
     override fun handle(command: IStartToWriteNewDraftArticle.Command): IStartToWriteNewDraftArticle.Info {
@@ -73,18 +70,6 @@ class ArticleUseCaseInteractor(
         }
 
         return IUnDeleteArticle.Info(article.entityId)
-    }
-
-    override fun handle(command: ICategorizeArticle.Command): ICategorizeArticle.Info {
-        val article = transactionHandler.runInRepeatableReadTransaction {
-            val article = getArticle(command.articleId)
-            val category = categoryRepository.findById(command.categoryId)
-                ?: throw IllegalArgumentException("카테고리가 존재하지 않습니다")
-            article.categorize(category)
-            articleRepository.save(article)
-        }
-
-        return ICategorizeArticle.Info(article.entityId)
     }
 
     override fun handle(command: IUpdateArticleContents.Command): IUpdateArticleContents.Info {

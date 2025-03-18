@@ -11,8 +11,6 @@ import kr.co.jiniaslog.blog.domain.article.ArticleId
 import kr.co.jiniaslog.blog.domain.category.CategoryId
 import kr.co.jiniaslog.blog.outbound.ArticleRepository
 import kr.co.jiniaslog.blog.outbound.BlogTransactionHandler
-import kr.co.jiniaslog.blog.outbound.CategoryRepository
-import kr.co.jiniaslog.blog.usecase.article.ICategorizeArticle
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 
