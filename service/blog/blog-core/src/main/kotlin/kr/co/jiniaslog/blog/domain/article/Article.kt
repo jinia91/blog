@@ -2,12 +2,14 @@ package kr.co.jiniaslog.blog.domain.article
 
 import jakarta.persistence.AttributeOverride
 import jakarta.persistence.AttributeOverrides
+import jakarta.persistence.CascadeType
 import jakarta.persistence.Column
-import jakarta.persistence.ElementCollection
 import jakarta.persistence.EmbeddedId
 import jakarta.persistence.Entity
+import jakarta.persistence.OneToMany
 import kr.co.jiniaslog.blog.domain.MemoId
 import kr.co.jiniaslog.blog.domain.UserId
+import kr.co.jiniaslog.blog.domain.article.QTagging.tagging
 import kr.co.jiniaslog.blog.domain.tag.Tag
 import kr.co.jiniaslog.blog.domain.tag.TagId
 import kr.co.jiniaslog.shared.adapter.out.rdb.JpaAggregate
@@ -78,12 +80,15 @@ class Article internal constructor(
     var hit: Int = hit
         private set
 
-    @ElementCollection
     @Fetch(FetchMode.JOIN)
+    @OneToMany(mappedBy = "article", orphanRemoval = true, cascade = [CascadeType.REMOVE])
     private var _tags: MutableSet<Tagging> = tags
 
-    val tags: Set<TagId>
-        get() = _tags.map { it.tagId }.toSet()
+    val tagsId: Set<TagId>
+        get() = _tags.map { it.tag.entityId }.toSet()
+
+    val tagsInfo: Map<TagId, String>
+        get() = _tags.associate { it.tag.entityId to it.tag.tagName.value }
 
     /**
      *  초기화시 상태에 따라 게시글의 불변성(Invariant) 검증
@@ -98,7 +103,7 @@ class Article internal constructor(
             }
 
             Status.DELETED -> {
-                require(tags.isEmpty()) { "삭제된 게시글은 태그를 가질 수 없습니다." }
+                require(tagsId.isEmpty()) { "삭제된 게시글은 태그를 가질 수 없습니다." }
             }
         }
     }
@@ -179,7 +184,7 @@ class Article internal constructor(
 
     fun addTag(tag: Tag) {
         require(status != Status.DELETED) { "삭제된 게시글은 태그를 추가할 수 없습니다." }
-        val tagging = Tagging(tag.entityId)
+        val tagging = Tagging(TaggingId(IdUtils.idGenerator.generate()), this, tag)
         _tags.add(tagging)
     }
 

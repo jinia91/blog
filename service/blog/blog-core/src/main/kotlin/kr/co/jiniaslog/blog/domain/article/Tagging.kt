@@ -1,18 +1,28 @@
 package kr.co.jiniaslog.blog.domain.article
 
-import jakarta.persistence.Embeddable
-import kr.co.jiniaslog.blog.domain.tag.TagId
-import kr.co.jiniaslog.shared.core.domain.vo.ValueObject
-import java.io.Serializable
-import java.time.LocalDateTime
+import jakarta.persistence.AttributeOverride
+import jakarta.persistence.Column
+import jakarta.persistence.EmbeddedId
+import jakarta.persistence.Entity
+import jakarta.persistence.ManyToOne
+import kr.co.jiniaslog.blog.domain.tag.Tag
+import kr.co.jiniaslog.shared.core.domain.DomainEntity
 
-@Embeddable
-data class Tagging(
-    val tagId: TagId,
-    val createdAt: LocalDateTime? = LocalDateTime.now()
-) : ValueObject, Serializable {
-    init {
-        validate()
-    }
-    override fun validate() {}
+@Entity
+class Tagging internal constructor(
+    id: TaggingId,
+    article: Article,
+    tag: Tag
+) : DomainEntity<TaggingId>() {
+    @EmbeddedId
+    @AttributeOverride(column = Column(name = "id"), name = "value")
+    override val entityId: TaggingId = id
+
+    @ManyToOne
+    @AttributeOverride(column = Column(name = "article_id"), name = "value")
+    val article: Article = article
+
+    @ManyToOne
+    @AttributeOverride(column = Column(name = "tag_id"), name = "value")
+    val tag: Tag = tag
 }

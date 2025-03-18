@@ -10,12 +10,13 @@ import kr.co.jiniaslog.blog.domain.tag.TagId
 import kr.co.jiniaslog.blog.domain.tag.TagName
 import kr.co.jiniaslog.blog.outbound.TagRepository
 import org.springframework.data.jpa.repository.JpaRepository
+import org.springframework.stereotype.Repository
 
 interface TagJpaRepository : JpaRepository<Tag, TagId> {
     fun findByTagName(tagName: TagName): Tag?
 }
 
-@org.springframework.stereotype.Repository
+@Repository
 class TagRepositoryAdapter(
     private val tagJpaRepository: TagJpaRepository,
     private val blogJpaQueryFactory: JPAQueryFactory,
@@ -33,10 +34,10 @@ class TagRepositoryAdapter(
             .selectFrom(tag)
             .where(
                 tag.entityId.notIn(
-                    JPAExpressions.select(tagging.tagId)
+                    JPAExpressions.select(tagging.tag.entityId)
                         .from(article)
                         .join(article._tags, tagging)
-                        .where(tagging.tagId.isNotNull)
+                        .where(tagging.tag.isNotNull)
                 )
             ).fetch()
     }

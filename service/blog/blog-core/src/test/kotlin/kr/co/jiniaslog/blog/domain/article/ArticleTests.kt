@@ -281,7 +281,7 @@ class ArticleTests : SimpleUnitTestContext() {
             article.delete()
 
             // then
-            article.tags.size shouldBe 0
+            article.tagsId.size shouldBe 0
             article.memoRefId.shouldBeNull()
             article.status shouldBe Article.Status.DELETED
         }
@@ -336,7 +336,7 @@ class ArticleTests : SimpleUnitTestContext() {
             article.addTag(tag)
 
             // then
-            article.tags.size shouldBe 2
+            article.tagsId.size shouldBe 2
         }
 
         @Test

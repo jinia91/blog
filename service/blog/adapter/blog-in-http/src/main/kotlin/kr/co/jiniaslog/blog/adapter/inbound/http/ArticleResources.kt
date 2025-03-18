@@ -10,12 +10,15 @@ import io.swagger.v3.oas.annotations.tags.Tag
 import kr.co.jiniaslog.blog.adapter.inbound.http.dto.AddTagToArticleRequest
 import kr.co.jiniaslog.blog.adapter.inbound.http.dto.AddTagToArticleResponse
 import kr.co.jiniaslog.blog.adapter.inbound.http.dto.DeleteArticleResponse
+import kr.co.jiniaslog.blog.adapter.inbound.http.dto.GetArticleByIdResponse
 import kr.co.jiniaslog.blog.adapter.inbound.http.dto.PublishArticleResponse
 import kr.co.jiniaslog.blog.adapter.inbound.http.dto.StartNewArticleResponse
 import kr.co.jiniaslog.blog.adapter.inbound.http.dto.UnDeleteArticleResponse
 import kr.co.jiniaslog.blog.domain.UserId
 import kr.co.jiniaslog.blog.domain.article.ArticleId
 import kr.co.jiniaslog.blog.domain.tag.TagName
+import kr.co.jiniaslog.blog.queries.ArticleQueriesFacade
+import kr.co.jiniaslog.blog.queries.IGetArticleById
 import kr.co.jiniaslog.blog.usecase.article.ArticleUseCasesFacade
 import kr.co.jiniaslog.blog.usecase.article.IAddAnyTagInArticle
 import kr.co.jiniaslog.blog.usecase.article.IDeleteArticle
@@ -26,6 +29,7 @@ import kr.cojiniaslog.shared.adapter.inbound.http.AuthUserId
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.DeleteMapping
+import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.PutMapping
@@ -37,7 +41,10 @@ import java.net.URI
 @RestController
 @RequestMapping("/api/v1/articles")
 @Tag(name = "게시글 API", description = "게시글 생명주기 관련")
-class ArticleResources(private val articleFacade: ArticleUseCasesFacade) {
+class ArticleResources(
+    private val articleFacade: ArticleUseCasesFacade,
+    private val articleQueryFacade: ArticleQueriesFacade,
+) {
     @PostMapping("")
     @PreAuthorize("hasRole('ADMIN')")
     @Operation(
@@ -118,5 +125,22 @@ class ArticleResources(private val articleFacade: ArticleUseCasesFacade) {
         val command = IAddAnyTagInArticle.Command(TagName(request.tagName), ArticleId(articleId))
         val info = articleFacade.handle(command)
         return ResponseEntity.ok(AddTagToArticleResponse(info.articleId.value))
+    }
+
+    @GetMapping("/{articleId}")
+    fun getArticle(
+        @PathVariable articleId: Long,
+    ): ResponseEntity<GetArticleByIdResponse> {
+        val info = articleQueryFacade.handle(IGetArticleById.Query(ArticleId(articleId)))
+        return ResponseEntity.ok(
+            GetArticleByIdResponse(
+                id = info.id.value,
+                title = info.title,
+                content = info.content,
+                thumbnailUrl = info.thumbnailUrl,
+                tags = info.tags.mapKeys { it.key.id },
+                createdAt = info.createdAt,
+            )
+        )
     }
 }
