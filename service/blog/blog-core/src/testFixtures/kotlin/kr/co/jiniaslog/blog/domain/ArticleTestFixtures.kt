@@ -19,7 +19,6 @@ object ArticleTestFixtures {
         tags: List<Tag> =
             listOf(
                 Tag.newOne(TagName("tag1")),
-                Tag.newOne(TagName("tag2")),
             ),
         status: Article.Status = Article.Status.PUBLISHED,
         hit: Int = 0,

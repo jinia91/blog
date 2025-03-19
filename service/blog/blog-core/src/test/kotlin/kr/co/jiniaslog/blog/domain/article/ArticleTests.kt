@@ -218,7 +218,7 @@ class ArticleTests : SimpleUnitTestContext() {
             article.canPublish shouldBe false
 
             // when, then
-            shouldThrow<IllegalArgumentException> {
+            shouldThrow<IllegalStateException> {
                 article.publish()
             }
         }
@@ -234,7 +234,7 @@ class ArticleTests : SimpleUnitTestContext() {
             article.canPublish shouldBe false
 
             // when, then
-            shouldThrow<IllegalArgumentException> {
+            shouldThrow<IllegalStateException> {
                 article.publish()
             }
         }
@@ -250,7 +250,7 @@ class ArticleTests : SimpleUnitTestContext() {
             article.canPublish shouldBe false
 
             // when, then
-            shouldThrow<IllegalArgumentException> {
+            shouldThrow<IllegalStateException> {
                 article.publish()
             }
         }
@@ -265,7 +265,7 @@ class ArticleTests : SimpleUnitTestContext() {
             article.canPublish shouldBe false
 
             // when, then
-            shouldThrow<IllegalArgumentException> {
+            shouldThrow<IllegalStateException> {
                 article.publish()
             }
         }
@@ -293,7 +293,7 @@ class ArticleTests : SimpleUnitTestContext() {
             val article = ArticleTestFixtures.createDeletedArticle()
 
             // when, then
-            shouldThrow<IllegalArgumentException> {
+            shouldThrow<IllegalStateException> {
                 article.delete()
             }
         }
@@ -319,7 +319,7 @@ class ArticleTests : SimpleUnitTestContext() {
             val article = ArticleTestFixtures.createPublishedArticle()
 
             // when, then
-            shouldThrow<IllegalArgumentException> {
+            shouldThrow<IllegalStateException> {
                 article.unDelete()
             }
         }
@@ -347,7 +347,7 @@ class ArticleTests : SimpleUnitTestContext() {
             val tag = Tag.newOne(TagName("tag"))
 
             // when, then
-            shouldThrow<IllegalArgumentException> {
+            shouldThrow<IllegalStateException> {
                 article.addTag(tag)
             }
         }
