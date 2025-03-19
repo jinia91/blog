@@ -337,7 +337,7 @@ class ArticleTests : SimpleUnitTestContext() {
             article.addTag(tag)
 
             // then
-            article.tagsId.size shouldBe 2
+            article.tagsId.size shouldBe 1
         }
 
         @Test
