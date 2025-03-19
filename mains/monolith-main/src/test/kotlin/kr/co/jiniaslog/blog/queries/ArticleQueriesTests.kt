@@ -49,7 +49,7 @@ class ArticleQueriesTests : TestContainerAbstractSkeleton() {
     fun `게시글을 조회할 수 없다`() {
         // when, then
         shouldThrow<IllegalArgumentException> {
-            sut.handle(IGetArticleById.Query(ArticleId(1)))
+            sut.handle(IGetArticleById.Query(ArticleId(1), isDraft = true))
         }
     }
 
