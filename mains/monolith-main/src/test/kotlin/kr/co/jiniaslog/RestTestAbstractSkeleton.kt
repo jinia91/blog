@@ -2,8 +2,6 @@ package kr.co.jiniaslog
 
 import com.ninjasquad.springmockk.MockkBean
 import io.restassured.module.mockmvc.RestAssuredMockMvc
-import kr.co.jiniaslog.admin.adapter.inbound.http.AuthDevResources
-import kr.co.jiniaslog.admin.application.AdminUseCaseFacade
 import kr.co.jiniaslog.blog.adapter.inbound.http.ArticleResources
 import kr.co.jiniaslog.blog.queries.ArticleQueriesFacade
 import kr.co.jiniaslog.blog.usecase.article.ArticleUseCasesFacade
@@ -56,7 +54,6 @@ class SecurityTestContextConfig {
         FolderResources::class,
         AuthUserResources::class,
         ArticleResources::class,
-        AuthDevResources::class
     ]
 )
 @Import(value = [SecurityTestContextConfig::class, AccessTokenConfig::class, SecurityConfig::class])
@@ -87,9 +84,6 @@ abstract class RestTestAbstractSkeleton {
 
     @MockkBean
     protected lateinit var articleUseCasesFacade: ArticleUseCasesFacade
-
-    @MockkBean
-    protected lateinit var adminUseCases: AdminUseCaseFacade
 
     @MockkBean
     protected lateinit var articleQueriesFacade: ArticleQueriesFacade
