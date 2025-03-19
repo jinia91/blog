@@ -395,4 +395,30 @@ class ArticleTests : SimpleUnitTestContext() {
             }
         }
     }
+
+    @Nested
+    inner class `게시글 내리기 테스트` {
+        @Test
+        fun `게시된 게시글을 내리면 게시글이 내려간다`() {
+            // given
+            val article = ArticleTestFixtures.createPublishedArticle()
+
+            // when
+            article.unPublish()
+
+            // then
+            article.status shouldBe Article.Status.DRAFT
+        }
+
+        @Test
+        fun `게시된 게시글이 아니면 내릴 수 없다`() {
+            // given
+            val article = ArticleTestFixtures.createDraftArticle()
+
+            // when, then
+            shouldThrow<IllegalStateException> {
+                article.unPublish()
+            }
+        }
+    }
 }
