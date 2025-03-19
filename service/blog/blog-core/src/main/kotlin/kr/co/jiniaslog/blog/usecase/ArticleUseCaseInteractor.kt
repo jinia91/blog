@@ -2,6 +2,8 @@ package kr.co.jiniaslog.blog.usecase
 
 import kr.co.jiniaslog.blog.domain.article.Article
 import kr.co.jiniaslog.blog.domain.article.ArticleId
+import kr.co.jiniaslog.blog.domain.article.QArticle.article
+import kr.co.jiniaslog.blog.domain.tag.QTag.tag
 import kr.co.jiniaslog.blog.domain.tag.Tag
 import kr.co.jiniaslog.blog.outbound.ArticleRepository
 import kr.co.jiniaslog.blog.outbound.BlogTransactionHandler
@@ -83,12 +85,9 @@ class ArticleUseCaseInteractor(
     }
 
     override fun handle(command: IAddAnyTagInArticle.Command): IAddAnyTagInArticle.Info {
-        val tag = transactionHandler.runInRepeatableReadTransaction {
-            tagRepository.findByName(command.tagName)
-                ?: tagRepository.save(Tag.newOne(command.tagName))
-        }
-
         val article = transactionHandler.runInRepeatableReadTransaction {
+            val tag = tagRepository.findByName(command.tagName)
+                ?: tagRepository.save(Tag.newOne(command.tagName))
             val article = getArticle(command.articleId)
             article.addTag(tag)
             articleRepository.save(article)

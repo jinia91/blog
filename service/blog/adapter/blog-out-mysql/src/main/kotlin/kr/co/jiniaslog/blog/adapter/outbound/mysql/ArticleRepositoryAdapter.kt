@@ -7,10 +7,11 @@ import kr.co.jiniaslog.blog.domain.article.QArticle.article
 import kr.co.jiniaslog.blog.outbound.ArticleRepository
 import kr.co.jiniaslog.blog.queries.IGetSimpleArticleListWithCursor
 import org.springframework.data.jpa.repository.JpaRepository
+import org.springframework.stereotype.Repository
 
 interface ArticleJpaRepository : JpaRepository<Article, ArticleId>
 
-@org.springframework.stereotype.Repository
+@Repository
 class ArticleRepositoryAdapter(
     private val articleJpaRepository: ArticleJpaRepository,
     private val blogJpaQueryFactory: JPAQueryFactory,
