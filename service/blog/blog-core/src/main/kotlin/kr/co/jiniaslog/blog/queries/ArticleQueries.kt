@@ -9,11 +9,13 @@ class ArticleQueries(
 ) : ArticleQueriesFacade {
     override fun handle(query: IGetArticleById.Query): IGetArticleById.Info {
         val article = articleRepository.findById(query.articleId) ?: throw IllegalArgumentException("해당 아티클이 존재하지 않습니다")
+        val contents = if (query.isDraft) article.draftContents else article.articleContents
+
         return IGetArticleById.Info(
             id = article.id,
-            title = article.articleContents.title,
-            content = article.articleContents.contents,
-            thumbnailUrl = article.articleContents.thumbnailUrl,
+            title = contents.title,
+            content = contents.contents,
+            thumbnailUrl = contents.thumbnailUrl,
             tags = article.tagsInfo,
             createdAt = article.createdAt!!,
             isPublished = article.isPublished

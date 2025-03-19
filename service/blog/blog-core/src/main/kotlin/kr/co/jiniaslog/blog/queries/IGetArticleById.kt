@@ -9,6 +9,7 @@ interface IGetArticleById {
 
     data class Query(
         val articleId: ArticleId,
+        val isDraft: Boolean
     )
 
     data class Info(

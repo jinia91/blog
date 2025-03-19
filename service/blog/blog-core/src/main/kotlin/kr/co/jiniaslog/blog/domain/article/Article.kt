@@ -6,6 +6,8 @@ import jakarta.persistence.CascadeType
 import jakarta.persistence.Column
 import jakarta.persistence.EmbeddedId
 import jakarta.persistence.Entity
+import jakarta.persistence.EnumType
+import jakarta.persistence.Enumerated
 import jakarta.persistence.OneToMany
 import kr.co.jiniaslog.blog.domain.MemoId
 import kr.co.jiniaslog.blog.domain.UserId
@@ -61,6 +63,7 @@ class Article internal constructor(
     val authorId: UserId = authorId
 
     @Column(name = "status")
+    @Enumerated(EnumType.STRING)
     var status: Status = status
         private set
 
@@ -140,6 +143,11 @@ class Article internal constructor(
         check(canPublish) { "게시글을 게시할 수 없습니다." }
         articleContents = draftContents
         status = Status.PUBLISHED
+    }
+
+    fun unPublish() {
+        check(status == Status.PUBLISHED) { "게시된 게시글이 아닙니다." }
+        status = Status.DRAFT
     }
 
     /**

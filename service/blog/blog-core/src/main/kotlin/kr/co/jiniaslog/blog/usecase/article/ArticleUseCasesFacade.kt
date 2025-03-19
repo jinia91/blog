@@ -6,4 +6,5 @@ interface ArticleUseCasesFacade :
     IDeleteArticle,
     IUnDeleteArticle,
     IUpdateDraftArticleContents,
-    IAddAnyTagInArticle
+    IAddAnyTagInArticle,
+    IUnPublishArticle

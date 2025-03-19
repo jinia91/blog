@@ -13,6 +13,7 @@ import kr.co.jiniaslog.blog.usecase.article.IDeleteArticle
 import kr.co.jiniaslog.blog.usecase.article.IPublishArticle
 import kr.co.jiniaslog.blog.usecase.article.IStartToWriteNewDraftArticle
 import kr.co.jiniaslog.blog.usecase.article.IUnDeleteArticle
+import kr.co.jiniaslog.blog.usecase.article.IUnPublishArticle
 import kr.co.jiniaslog.blog.usecase.article.IUpdateDraftArticleContents
 import kr.co.jiniaslog.shared.core.annotation.UseCaseInteractor
 
@@ -92,6 +93,16 @@ class ArticleUseCaseInteractor(
         }
 
         return IAddAnyTagInArticle.Info(article.entityId)
+    }
+
+    override fun handle(command: IUnPublishArticle.Command): IUnPublishArticle.Info {
+        val article = transactionHandler.runInRepeatableReadTransaction {
+            val article = getArticle(command.articleId)
+            article.unPublish()
+            articleRepository.save(article)
+        }
+
+        return IUnPublishArticle.Info(article.entityId)
     }
 
     private fun getArticle(articleId: ArticleId) = articleRepository.findById(articleId)

@@ -26,6 +26,7 @@ import kr.co.jiniaslog.blog.usecase.article.IDeleteArticle
 import kr.co.jiniaslog.blog.usecase.article.IPublishArticle
 import kr.co.jiniaslog.blog.usecase.article.IStartToWriteNewDraftArticle
 import kr.co.jiniaslog.blog.usecase.article.IUnDeleteArticle
+import kr.co.jiniaslog.blog.usecase.article.IUnPublishArticle
 import kr.cojiniaslog.shared.adapter.inbound.http.AuthUserId
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
@@ -87,13 +88,24 @@ class ArticleResources(
             .body(StartNewArticleResponse(info.articleId.value))
     }
 
-    @PostMapping("/{articleId}/publish")
+    @PutMapping("/{articleId}/publish")
     @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "게시글 게시", description = "게시글을 공개상태로 게시한다", security = [SecurityRequirement(name = "bearer")])
     fun publishArticle(
         @PathVariable articleId: Long,
     ): ResponseEntity<PublishArticleResponse> {
         val command = IPublishArticle.Command(ArticleId(articleId))
+        val info = articleFacade.handle(command)
+        return ResponseEntity.ok(PublishArticleResponse(info.articleId.value))
+    }
+
+    @PutMapping("/{articleId}/draft")
+    @PreAuthorize("hasRole('ADMIN')")
+    @Operation(summary = "게시글 내리기", description = "공개 게시글을 내린다", security = [SecurityRequirement(name = "bearer")])
+    fun unPublishArticle(
+        @PathVariable articleId: Long,
+    ): ResponseEntity<PublishArticleResponse> {
+        val command = IUnPublishArticle.Command(ArticleId(articleId))
         val info = articleFacade.handle(command)
         return ResponseEntity.ok(PublishArticleResponse(info.articleId.value))
     }
@@ -133,7 +145,26 @@ class ArticleResources(
     fun getArticle(
         @PathVariable articleId: Long,
     ): ResponseEntity<GetArticleByIdResponse> {
-        val info = articleQueryFacade.handle(IGetArticleById.Query(ArticleId(articleId)))
+        val info = articleQueryFacade.handle(IGetArticleById.Query(ArticleId(articleId), false))
+        return ResponseEntity.ok(
+            GetArticleByIdResponse(
+                id = info.id.value,
+                title = info.title,
+                content = info.content,
+                thumbnailUrl = info.thumbnailUrl,
+                tags = info.tags.mapKeys { it.key.id },
+                createdAt = info.createdAt,
+                isPublished = info.isPublished
+            )
+        )
+    }
+
+    @GetMapping("/{articleId}/draft")
+    @PreAuthorize("hasRole('ADMIN')")
+    fun getDraftArticle(
+        @PathVariable articleId: Long,
+    ): ResponseEntity<GetArticleByIdResponse> {
+        val info = articleQueryFacade.handle(IGetArticleById.Query(ArticleId(articleId), true))
         return ResponseEntity.ok(
             GetArticleByIdResponse(
                 id = info.id.value,
