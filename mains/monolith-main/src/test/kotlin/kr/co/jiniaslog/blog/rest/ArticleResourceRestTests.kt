@@ -11,6 +11,7 @@ import kr.co.jiniaslog.blog.usecase.article.IDeleteArticle
 import kr.co.jiniaslog.blog.usecase.article.IPublishArticle
 import kr.co.jiniaslog.blog.usecase.article.IStartToWriteNewDraftArticle
 import kr.co.jiniaslog.blog.usecase.article.IUnDeleteArticle
+import kr.co.jiniaslog.blog.usecase.article.IUnPublishArticle
 import kr.co.jiniaslog.user.application.security.PreAuthFilter
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
@@ -83,7 +84,26 @@ class ArticleResourceRestTests : RestTestAbstractSkeleton() {
             RestAssuredMockMvc.given()
                 .cookies(PreAuthFilter.ACCESS_TOKEN_HEADER, getTestAdminUserToken())
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .post("/api/v1/articles/1/publish")
+                .put("/api/v1/articles/1/publish")
+                // then
+                .then()
+                .statusCode(200)
+        }
+    }
+
+    @Nested
+    inner class `게시글 내리기 테스트` {
+        @Test
+        fun `어드민 사용자의 유효한 게시글 내리기 요청이 있으면 200을 반환한다`() {
+            // given
+            every { articleUseCasesFacade.handle(any(IUnPublishArticle.Command::class)) } returns IUnPublishArticle.Info(
+                ArticleId(1L)
+            )
+            // when
+            RestAssuredMockMvc.given()
+                .cookies(PreAuthFilter.ACCESS_TOKEN_HEADER, getTestAdminUserToken())
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .put("/api/v1/articles/1/draft")
                 // then
                 .then()
                 .statusCode(200)
