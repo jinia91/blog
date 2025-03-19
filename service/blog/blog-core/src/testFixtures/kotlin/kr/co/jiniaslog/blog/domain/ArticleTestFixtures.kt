@@ -3,8 +3,8 @@ package kr.co.jiniaslog.blog.domain
 import kr.co.jiniaslog.blog.domain.article.Article
 import kr.co.jiniaslog.blog.domain.article.ArticleContents
 import kr.co.jiniaslog.blog.domain.article.ArticleId
-import kr.co.jiniaslog.blog.domain.article.Tagging
-import kr.co.jiniaslog.blog.domain.tag.TagId
+import kr.co.jiniaslog.blog.domain.tag.Tag
+import kr.co.jiniaslog.blog.domain.tag.TagName
 import kr.co.jiniaslog.shared.core.domain.IdUtils
 import java.time.LocalDateTime
 
@@ -16,9 +16,10 @@ object ArticleTestFixtures {
         title: String = "title",
         contents: String = "contents",
         thumbnailUrl: String = "thumbnailUrl",
-        tags: List<TagId> =
+        tags: List<Tag> =
             listOf(
-                TagId(IdUtils.generate()),
+                Tag.newOne(TagName("tag1")),
+                Tag.newOne(TagName("tag2")),
             ),
         status: Article.Status = Article.Status.PUBLISHED,
         hit: Int = 0,
@@ -36,13 +37,14 @@ object ArticleTestFixtures {
             memoRefId = memoRefId,
             authorId = authorId,
             articleContents = articleContents,
-            tags = tags.map { Tagging(it) }.toMutableSet(),
+            tags = mutableSetOf(),
             hit = hit,
             status = status,
             id = id,
         ).apply {
             this.createdAt = createdAt
             this.updatedAt = updatedAt
+            tags.forEach(this::addTag)
         }
     }
 
@@ -83,7 +85,7 @@ object ArticleTestFixtures {
         title: String = "",
         contents: String = "",
         thumbnailUrl: String = "",
-        tags: List<TagId> = emptyList(),
+        tags: List<Tag> = emptyList(),
         status: Article.Status = Article.Status.DRAFT,
         hit: Int = 0,
         createdAt: LocalDateTime? = null,
@@ -97,13 +99,14 @@ object ArticleTestFixtures {
                 contents = contents,
                 thumbnailUrl = thumbnailUrl,
             ),
-            tags = tags.map { Tagging(it) }.toMutableSet(),
+            tags = mutableSetOf(),
             hit = hit,
             status = status,
             id = id,
         ).apply {
             this.createdAt = createdAt
             this.updatedAt = updatedAt
+            tags.forEach { addTag(it) }
         }
     }
 }
