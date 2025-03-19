@@ -8,6 +8,7 @@ import kr.co.jiniaslog.shared.core.domain.Repository
 interface ArticleRepository : Repository<Article, ArticleId> {
     fun getSimpleArticleListWithCursor(
         cursor: ArticleId,
-        limit: Int
+        limit: Int,
+        published: Boolean
     ): List<IGetPublishedSimpleArticleListWithCursor.Info>
 }

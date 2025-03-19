@@ -8,7 +8,8 @@ interface IGetPublishedSimpleArticleListWithCursor {
 
     data class Query(
         val cursor: ArticleId,
-        val limit: Int
+        val limit: Int,
+        val isPublished: Boolean
     )
 
     data class Info(

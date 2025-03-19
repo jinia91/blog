@@ -27,11 +27,18 @@ class ArticleRepositoryAdapter(
     override fun getSimpleArticleListWithCursor(
         cursor: ArticleId,
         limit: Int,
+        published: Boolean,
     ): List<IGetPublishedSimpleArticleListWithCursor.Info> {
         return blogJpaQueryFactory
             .selectFrom(article)
             .where(article.entityId.value.gt(cursor.value))
-            .where(article.status.eq(Article.Status.PUBLISHED))
+            .apply {
+                if (published) {
+                    this.where(article.status.eq(Article.Status.PUBLISHED))
+                } else {
+                    this.where(article.status.eq(Article.Status.DRAFT))
+                }
+            }
             .limit(limit.toLong())
             .fetch()
             .map {

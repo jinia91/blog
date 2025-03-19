@@ -15,6 +15,9 @@ import kr.co.jiniaslog.blog.adapter.inbound.http.dto.PublishArticleResponse
 import kr.co.jiniaslog.blog.adapter.inbound.http.dto.StartNewArticleResponse
 import kr.co.jiniaslog.blog.adapter.inbound.http.dto.UnDeleteArticleResponse
 import kr.co.jiniaslog.blog.domain.UserId
+import kr.co.jiniaslog.blog.domain.article.Article
+import kr.co.jiniaslog.blog.domain.article.Article.Status.DRAFT
+import kr.co.jiniaslog.blog.domain.article.Article.Status.PUBLISHED
 import kr.co.jiniaslog.blog.domain.article.ArticleId
 import kr.co.jiniaslog.blog.domain.tag.TagName
 import kr.co.jiniaslog.blog.queries.ArticleQueriesFacade
@@ -179,13 +182,22 @@ class ArticleResources(
     }
 
     @GetMapping("/simple")
-    fun getSimpleArticlesWithCursor(
-        @RequestParam(required = true) cursor: Long,
-        @RequestParam(required = true) limit: Int,
+    @PreAuthorize("!(#status.name() == 'DRAFT') or hasRole('ADMIN')")
+    fun getArticlesWithCursor(
+        @RequestParam cursor: Long,
+        @RequestParam limit: Int,
+        @RequestParam status: Article.Status
     ): ResponseEntity<List<IGetPublishedSimpleArticleListWithCursor.Info>> {
+        val isPublished = when (status) {
+            DRAFT -> false
+            PUBLISHED -> true
+            else -> throw IllegalArgumentException("status는 DRAFT 또는 PUBLISHED만 가능합니다")
+        }
+
         val articles = articleQueryFacade.handle(
-            IGetPublishedSimpleArticleListWithCursor.Query(ArticleId(cursor), limit)
+            IGetPublishedSimpleArticleListWithCursor.Query(ArticleId(cursor), limit, isPublished)
         )
+
         return ResponseEntity.ok(articles)
     }
 }
