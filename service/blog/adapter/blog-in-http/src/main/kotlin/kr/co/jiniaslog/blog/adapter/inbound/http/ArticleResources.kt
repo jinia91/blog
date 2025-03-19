@@ -19,6 +19,7 @@ import kr.co.jiniaslog.blog.domain.article.ArticleId
 import kr.co.jiniaslog.blog.domain.tag.TagName
 import kr.co.jiniaslog.blog.queries.ArticleQueriesFacade
 import kr.co.jiniaslog.blog.queries.IGetArticleById
+import kr.co.jiniaslog.blog.queries.IGetSimpleArticleListWithCursor
 import kr.co.jiniaslog.blog.usecase.article.ArticleUseCasesFacade
 import kr.co.jiniaslog.blog.usecase.article.IAddAnyTagInArticle
 import kr.co.jiniaslog.blog.usecase.article.IDeleteArticle
@@ -35,6 +36,7 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import java.net.URI
 
@@ -143,5 +145,14 @@ class ArticleResources(
                 isPublished = info.isPublished
             )
         )
+    }
+
+    @GetMapping("/simple")
+    fun getSimpleArticlesWithCursor(
+        @RequestParam(required = true) cursor: Long,
+        @RequestParam(required = true) limit: Int,
+    ): ResponseEntity<List<IGetSimpleArticleListWithCursor.Info>> {
+        val articles = articleQueryFacade.handle(IGetSimpleArticleListWithCursor.Query(ArticleId(cursor), limit))
+        return ResponseEntity.ok(articles)
     }
 }

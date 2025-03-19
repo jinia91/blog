@@ -103,7 +103,7 @@ class Article internal constructor(
             }
 
             Status.DELETED -> {
-                require(tagsId.isEmpty()) { "삭제된 게시글은 태그를 가질 수 없습니다." }
+                check(tagsId.isEmpty()) { "삭제된 게시글은 태그를 가질 수 없습니다." }
             }
         }
     }
@@ -132,7 +132,7 @@ class Article internal constructor(
      *
      */
     fun publish() {
-        require(canPublish) { "게시글을 게시할 수 없습니다." }
+        check(canPublish) { "게시글을 게시할 수 없습니다." }
         status = Status.PUBLISHED
     }
 
@@ -145,7 +145,7 @@ class Article internal constructor(
      * @see unDelete
      */
     fun delete() {
-        require(status != Status.DELETED) { "이미 삭제된 게시글입니다." }
+        check(status != Status.DELETED) { "이미 삭제된 게시글입니다." }
         _tags.clear()
         memoRefId = null
         status = Status.DELETED
@@ -157,7 +157,7 @@ class Article internal constructor(
      * @see delete
      */
     fun unDelete() {
-        require(status == Status.DELETED) { "이미 삭제되지 않은 게시글입니다." }
+        check(status == Status.DELETED) { "이미 삭제되지 않은 게시글입니다." }
         status = Status.DRAFT
     }
 
@@ -186,7 +186,7 @@ class Article internal constructor(
     }
 
     fun addTag(tag: Tag) {
-        require(status != Status.DELETED) { "삭제된 게시글은 태그를 추가할 수 없습니다." }
+        check(status != Status.DELETED) { "삭제된 게시글은 태그를 추가할 수 없습니다." }
         val tagging = Tagging(TaggingId(IdUtils.idGenerator.generate()), this, tag)
         _tags.add(tagging)
     }

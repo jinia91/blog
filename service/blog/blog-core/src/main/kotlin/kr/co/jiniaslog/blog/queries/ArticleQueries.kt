@@ -19,4 +19,8 @@ class ArticleQueries(
             isPublished = article.isPublished
         )
     }
+
+    override fun handle(query: IGetSimpleArticleListWithCursor.Query): List<IGetSimpleArticleListWithCursor.Info> {
+        return articleRepository.getSimpleArticleListWithCursor(query.cursor, query.limit)
+    }
 }
