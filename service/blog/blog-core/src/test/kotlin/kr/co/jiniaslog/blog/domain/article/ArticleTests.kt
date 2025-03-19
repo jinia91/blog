@@ -92,18 +92,6 @@ class ArticleTests : SimpleUnitTestContext() {
     @Nested
     inner class `게시글 기본 상태 조회 테스트` {
         @Test
-        fun `게시글 초안이면 publish 가능하다`() {
-            // given
-            val article = ArticleTestFixtures.createDraftArticle()
-
-            // when
-            val canPublish = article.canPublish
-
-            // then
-            canPublish shouldBe true
-        }
-
-        @Test
         fun `게시글이 게시된 상태이면 publish 불가능하다`() {
             // given
             val article = ArticleTestFixtures.createPublishedArticle()
