@@ -90,6 +90,45 @@ class ArticleTests : SimpleUnitTestContext() {
     }
 
     @Nested
+    inner class `게시글 기본 상태 조회 테스트` {
+        @Test
+        fun `게시글 초안이면 publish 가능하다`() {
+            // given
+            val article = ArticleTestFixtures.createDraftArticle()
+
+            // when
+            val canPublish = article.canPublish
+
+            // then
+            canPublish shouldBe true
+        }
+
+        @Test
+        fun `게시글이 게시된 상태이면 publish 불가능하다`() {
+            // given
+            val article = ArticleTestFixtures.createPublishedArticle()
+
+            // when
+            val canPublish = article.canPublish
+
+            // then
+            canPublish shouldBe false
+        }
+
+        @Test
+        fun `게시글 publsih상태인지 체크가능하다`() {
+            // given
+            val article = ArticleTestFixtures.createPublishedArticle()
+
+            // when
+            val isPublished = article.isPublished
+
+            // then
+            isPublished shouldBe true
+        }
+    }
+
+    @Nested
     inner class `게시글 수정 테스트`() {
         @Test
         fun `유효한 컨텐츠로 게시글 수정 요청을 하면 게시글의 내용을 수정할 수 있다`() {

@@ -17,7 +17,7 @@ import kr.co.jiniaslog.blog.adapter.inbound.http.dto.UnDeleteArticleResponse
 import kr.co.jiniaslog.blog.domain.UserId
 import kr.co.jiniaslog.blog.domain.article.ArticleId
 import kr.co.jiniaslog.blog.domain.tag.TagName
-import kr.co.jiniaslog.blog.queries.ArticleQueriesFacadePublished
+import kr.co.jiniaslog.blog.queries.ArticleQueriesFacade
 import kr.co.jiniaslog.blog.queries.IGetArticleById
 import kr.co.jiniaslog.blog.queries.IGetPublishedSimpleArticleListWithCursor
 import kr.co.jiniaslog.blog.usecase.article.ArticleUseCasesFacade
@@ -45,7 +45,7 @@ import java.net.URI
 @Tag(name = "게시글 API", description = "게시글 생명주기 관련")
 class ArticleResources(
     private val articleFacade: ArticleUseCasesFacade,
-    private val articleQueryFacade: ArticleQueriesFacadePublished,
+    private val articleQueryFacade: ArticleQueriesFacade,
 ) {
     @PostMapping("")
     @PreAuthorize("hasRole('ADMIN')")

@@ -3,7 +3,7 @@ package kr.co.jiniaslog
 import com.ninjasquad.springmockk.MockkBean
 import io.restassured.module.mockmvc.RestAssuredMockMvc
 import kr.co.jiniaslog.blog.adapter.inbound.http.ArticleResources
-import kr.co.jiniaslog.blog.queries.ArticleQueriesFacadePublished
+import kr.co.jiniaslog.blog.queries.ArticleQueriesFacade
 import kr.co.jiniaslog.blog.usecase.article.ArticleUseCasesFacade
 import kr.co.jiniaslog.media.inbound.http.ImageResources
 import kr.co.jiniaslog.media.usecase.image.ImageUseCasesFacade
@@ -86,7 +86,7 @@ abstract class RestTestAbstractSkeleton {
     protected lateinit var articleUseCasesFacade: ArticleUseCasesFacade
 
     @MockkBean
-    protected lateinit var articleQueriesFacade: ArticleQueriesFacadePublished
+    protected lateinit var articleQueriesFacade: ArticleQueriesFacade
 
     @BeforeEach
     fun setup() {

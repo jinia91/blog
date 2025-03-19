@@ -1,5 +1,5 @@
 package kr.co.jiniaslog.blog.queries
 
-interface ArticleQueriesFacadePublished :
+interface ArticleQueriesFacade :
     IGetArticleById,
     IGetPublishedSimpleArticleListWithCursor
