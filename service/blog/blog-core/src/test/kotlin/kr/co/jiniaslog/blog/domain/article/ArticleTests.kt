@@ -78,7 +78,7 @@ class ArticleTests : SimpleUnitTestContext() {
         fun `게시글이 삭제될경우 태그가 있을수 없다`() {
             // given
             // when, then
-            shouldThrow<IllegalArgumentException> {
+            shouldThrow<IllegalStateException> {
                 ArticleTestFixtures.createPublishedArticle(
                     tags = listOf(
                         Tag.newOne(TagName("tag"))
