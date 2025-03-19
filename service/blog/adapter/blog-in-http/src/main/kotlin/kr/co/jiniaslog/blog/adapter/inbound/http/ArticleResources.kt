@@ -145,29 +145,17 @@ class ArticleResources(
     }
 
     @GetMapping("/{articleId}")
+    @PreAuthorize("!(#status.name() == 'DRAFT') or hasRole('ADMIN')")
     fun getArticle(
         @PathVariable articleId: Long,
+        @RequestParam status: Article.Status
     ): ResponseEntity<GetArticleByIdResponse> {
-        val info = articleQueryFacade.handle(IGetArticleById.Query(ArticleId(articleId), false))
-        return ResponseEntity.ok(
-            GetArticleByIdResponse(
-                id = info.id.value,
-                title = info.title,
-                content = info.content,
-                thumbnailUrl = info.thumbnailUrl,
-                tags = info.tags.mapKeys { it.key.id },
-                createdAt = info.createdAt,
-                isPublished = info.isPublished
-            )
-        )
-    }
-
-    @GetMapping("/{articleId}/draft")
-    @PreAuthorize("hasRole('ADMIN')")
-    fun getDraftArticle(
-        @PathVariable articleId: Long,
-    ): ResponseEntity<GetArticleByIdResponse> {
-        val info = articleQueryFacade.handle(IGetArticleById.Query(ArticleId(articleId), true))
+        val isPublished = when (status) {
+            DRAFT -> false
+            PUBLISHED -> true
+            else -> throw IllegalArgumentException("status는 DRAFT 또는 PUBLISHED만 가능합니다")
+        }
+        val info = articleQueryFacade.handle(IGetArticleById.Query(ArticleId(articleId), isPublished))
         return ResponseEntity.ok(
             GetArticleByIdResponse(
                 id = info.id.value,
