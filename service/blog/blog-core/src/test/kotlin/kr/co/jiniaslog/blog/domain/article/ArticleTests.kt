@@ -129,7 +129,7 @@ class ArticleTests : SimpleUnitTestContext() {
             )
 
             // when
-            article.updateArticleContents(newContents)
+            article.updateDraftArticleContents(newContents)
 
             // then
             article.articleContents shouldBe newContents
@@ -149,7 +149,7 @@ class ArticleTests : SimpleUnitTestContext() {
 
             // when, then
             shouldThrow<IllegalArgumentException> {
-                article.updateArticleContents(newContents)
+                article.updateDraftArticleContents(newContents)
             }
         }
 
@@ -167,7 +167,7 @@ class ArticleTests : SimpleUnitTestContext() {
 
             // when, then
             shouldThrow<IllegalArgumentException> {
-                article.updateArticleContents(newContents)
+                article.updateDraftArticleContents(newContents)
             }
         }
 
@@ -185,7 +185,7 @@ class ArticleTests : SimpleUnitTestContext() {
 
             // when, then
             shouldThrow<IllegalArgumentException> {
-                article.updateArticleContents(newContents)
+                article.updateDraftArticleContents(newContents)
             }
         }
 
@@ -196,7 +196,7 @@ class ArticleTests : SimpleUnitTestContext() {
             val newContents = ArticleContents.EMPTY
 
             // when
-            article.updateArticleContents(newContents)
+            article.updateDraftArticleContents(newContents)
 
             // then
             article.articleContents shouldBe newContents
@@ -214,7 +214,7 @@ class ArticleTests : SimpleUnitTestContext() {
 
             // when, then
             shouldThrow<IllegalStateException> {
-                article.updateArticleContents(newContents)
+                article.updateDraftArticleContents(newContents)
             }
         }
     }

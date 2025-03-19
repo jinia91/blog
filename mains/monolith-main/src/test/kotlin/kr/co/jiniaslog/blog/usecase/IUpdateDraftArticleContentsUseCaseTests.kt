@@ -9,14 +9,14 @@ import kr.co.jiniaslog.blog.domain.ArticleTestFixtures
 import kr.co.jiniaslog.blog.domain.article.ArticleContents
 import kr.co.jiniaslog.blog.domain.article.ArticleId
 import kr.co.jiniaslog.blog.outbound.ArticleRepository
-import kr.co.jiniaslog.blog.usecase.article.IUpdateArticleContents
+import kr.co.jiniaslog.blog.usecase.article.IUpdateDraftArticleContents
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 
-class IUndateArticleContentsUseCaseTests : TestContainerAbstractSkeleton() {
+class IUpdateDraftArticleContentsUseCaseTests : TestContainerAbstractSkeleton() {
 
     @Autowired
-    private lateinit var sut: IUpdateArticleContents
+    private lateinit var sut: IUpdateDraftArticleContents
 
     @Autowired
     private lateinit var articleRepository: ArticleRepository
@@ -25,7 +25,7 @@ class IUndateArticleContentsUseCaseTests : TestContainerAbstractSkeleton() {
     private lateinit var em: EntityManager
 
     @Test
-    fun `유효한 게시글 내용들이 주어지면 이를 수정할 수 있다`() {
+    fun `유효한 게시글 내용들이 주어지면 초안에 수정할 수 있다`() {
         // given
         val article = ArticleTestFixtures.createPublishedArticle()
         articleRepository.save(article)
@@ -36,7 +36,7 @@ class IUndateArticleContentsUseCaseTests : TestContainerAbstractSkeleton() {
             thumbnailUrl = "수정된 썸네일"
         )
 
-        val command = IUpdateArticleContents.Command(article.entityId, articleContents)
+        val command = IUpdateDraftArticleContents.Command(article.entityId, articleContents)
 
         // when
         val result = sut.handle(command)
@@ -46,9 +46,9 @@ class IUndateArticleContentsUseCaseTests : TestContainerAbstractSkeleton() {
         em.clear()
         val updatedArticle = articleRepository.findById(article.entityId)
         updatedArticle.shouldNotBeNull()
-        updatedArticle.articleContents.title shouldBe "수정된 제목"
-        updatedArticle.articleContents.contents shouldBe "수정된 내용"
-        updatedArticle.articleContents.thumbnailUrl shouldBe "수정된 썸네일"
+        updatedArticle.draftContents.title shouldBe "수정된 제목"
+        updatedArticle.draftContents.contents shouldBe "수정된 내용"
+        updatedArticle.draftContents.thumbnailUrl shouldBe "수정된 썸네일"
     }
 
     @Test
@@ -60,7 +60,7 @@ class IUndateArticleContentsUseCaseTests : TestContainerAbstractSkeleton() {
             thumbnailUrl = "수정된 썸네일"
         )
 
-        val command = IUpdateArticleContents.Command(ArticleId(3), articleContents)
+        val command = IUpdateDraftArticleContents.Command(ArticleId(3), articleContents)
 
         // when, then
         shouldThrow<IllegalArgumentException> {

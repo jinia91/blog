@@ -2,8 +2,6 @@ package kr.co.jiniaslog.blog.usecase
 
 import kr.co.jiniaslog.blog.domain.article.Article
 import kr.co.jiniaslog.blog.domain.article.ArticleId
-import kr.co.jiniaslog.blog.domain.article.QArticle.article
-import kr.co.jiniaslog.blog.domain.tag.QTag.tag
 import kr.co.jiniaslog.blog.domain.tag.Tag
 import kr.co.jiniaslog.blog.outbound.ArticleRepository
 import kr.co.jiniaslog.blog.outbound.BlogTransactionHandler
@@ -15,7 +13,7 @@ import kr.co.jiniaslog.blog.usecase.article.IDeleteArticle
 import kr.co.jiniaslog.blog.usecase.article.IPublishArticle
 import kr.co.jiniaslog.blog.usecase.article.IStartToWriteNewDraftArticle
 import kr.co.jiniaslog.blog.usecase.article.IUnDeleteArticle
-import kr.co.jiniaslog.blog.usecase.article.IUpdateArticleContents
+import kr.co.jiniaslog.blog.usecase.article.IUpdateDraftArticleContents
 import kr.co.jiniaslog.shared.core.annotation.UseCaseInteractor
 
 @UseCaseInteractor
@@ -74,14 +72,14 @@ class ArticleUseCaseInteractor(
         return IUnDeleteArticle.Info(article.entityId)
     }
 
-    override fun handle(command: IUpdateArticleContents.Command): IUpdateArticleContents.Info {
+    override fun handle(command: IUpdateDraftArticleContents.Command): IUpdateDraftArticleContents.Info {
         val article = transactionHandler.runInRepeatableReadTransaction {
             val article = getArticle(command.articleId)
-            article.updateArticleContents(command.articleContents)
+            article.updateDraftArticleContents(command.articleContents)
             articleRepository.save(article)
         }
 
-        return IUpdateArticleContents.Info(article.entityId)
+        return IUpdateDraftArticleContents.Info(article.entityId)
     }
 
     override fun handle(command: IAddAnyTagInArticle.Command): IAddAnyTagInArticle.Info {

@@ -28,7 +28,7 @@ import org.hibernate.annotations.FetchMode
  * @param id 게시글 식별자
  * @param memoRefId 원본이 되는 메모 식별자
  * @param authorId 작성자 식별자
- * @param articleContents 게시글 상세 내용 VO
+ * @param publishedArticleContents 게시글 상세 내용 VO
  * @param status 게시글 상태
  * @param tags 게시글에 달린 태그 목록
  * @param hit 조회수
@@ -39,7 +39,8 @@ class Article internal constructor(
     memoRefId: MemoId?,
     authorId: UserId,
     status: Status,
-    articleContents: ArticleContents,
+    publishedArticleContents: ArticleContents,
+    draftContents: ArticleContents,
     tags: MutableSet<Tagging>,
     hit: Int,
 ) : JpaAggregate<ArticleId>() {
@@ -72,7 +73,15 @@ class Article internal constructor(
         AttributeOverride(name = "contents", column = Column(name = "contents")),
         AttributeOverride(name = "thumbnailUrl", column = Column(name = "thumbnail_url")),
     )
-    var articleContents: ArticleContents = articleContents
+    var articleContents: ArticleContents = publishedArticleContents
+        private set
+
+    @AttributeOverrides(
+        AttributeOverride(name = "title", column = Column(name = "draft_title")),
+        AttributeOverride(name = "contents", column = Column(name = "draft_contents")),
+        AttributeOverride(name = "thumbnailUrl", column = Column(name = "draft_thumbnail_url")),
+    )
+    var draftContents: ArticleContents = draftContents
         private set
 
     @Column(name = "hit")
@@ -98,7 +107,7 @@ class Article internal constructor(
             Status.DRAFT -> {}
 
             Status.PUBLISHED -> {
-                articleContents.validateOnPublish()
+                publishedArticleContents.validateOnPublish()
             }
 
             Status.DELETED -> {
@@ -116,22 +125,20 @@ class Article internal constructor(
      * @see publish
      */
     val canPublish: Boolean
-        get() {
-            return status != Status.PUBLISHED &&
-                articleContents.canPublish
-        }
+        get() = draftContents.canPublish && status != Status.DELETED
 
     val isPublished: Boolean
         get() = status == Status.PUBLISHED
 
     /**
-     * 게시글을 공개한다
+     * 초안 내용을 게시글 내용으로 변경하고 상태를 게시로 변경한다
      *
      * @see canPublish
      *
      */
     fun publish() {
         check(canPublish) { "게시글을 게시할 수 없습니다." }
+        articleContents = draftContents
         status = Status.PUBLISHED
     }
 
@@ -156,7 +163,7 @@ class Article internal constructor(
      * @see delete
      */
     fun unDelete() {
-        check(status == Status.DELETED) { "이미 삭제되지 않은 게시글입니다." }
+        check(status == Status.DELETED) { "삭제되지 않은 게시글입니다." }
         status = Status.DRAFT
     }
 
@@ -167,9 +174,9 @@ class Article internal constructor(
      *
      * @param articleContents
      */
-    fun updateArticleContents(articleContents: ArticleContents) {
+    fun updateDraftArticleContents(articleContents: ArticleContents) {
         validateContentEditable(articleContents)
-        this.articleContents = articleContents
+        this.draftContents = articleContents
     }
 
     private fun validateContentEditable(articleContents: ArticleContents) {
@@ -216,7 +223,8 @@ class Article internal constructor(
                 memoRefId = null,
                 authorId = authorId,
                 status = Status.DRAFT,
-                articleContents = ArticleContents.EMPTY,
+                publishedArticleContents = ArticleContents.EMPTY,
+                draftContents = ArticleContents.EMPTY,
                 tags = mutableSetOf(),
                 hit = 0,
             )

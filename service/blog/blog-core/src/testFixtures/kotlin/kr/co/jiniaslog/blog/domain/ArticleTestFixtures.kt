@@ -31,7 +31,8 @@ object ArticleTestFixtures {
         return Article(
             memoRefId = memoRefId,
             authorId = authorId,
-            articleContents = articleContents,
+            publishedArticleContents = articleContents,
+            draftContents = ArticleContents.EMPTY,
             tags = mutableSetOf(),
             hit = hit,
             status = status,
@@ -58,7 +59,7 @@ object ArticleTestFixtures {
         return Article(
             memoRefId = memoRefId,
             authorId = authorId,
-            articleContents = ArticleContents(
+            publishedArticleContents = ArticleContents(
                 title = title,
                 contents = contents,
                 thumbnailUrl = thumbnailUrl,
@@ -67,6 +68,7 @@ object ArticleTestFixtures {
             hit = hit,
             status = status,
             id = id,
+            draftContents = ArticleContents.EMPTY,
         ).apply {
             this.createdAt = createdAt
             this.updatedAt = updatedAt
@@ -89,15 +91,16 @@ object ArticleTestFixtures {
         return Article(
             memoRefId = memoRefId,
             authorId = authorId,
-            articleContents = ArticleContents(
-                title = title,
-                contents = contents,
-                thumbnailUrl = thumbnailUrl,
-            ),
+            publishedArticleContents = ArticleContents.EMPTY,
             tags = mutableSetOf(),
             hit = hit,
             status = status,
             id = id,
+            draftContents = ArticleContents(
+                title = title,
+                contents = contents,
+                thumbnailUrl = thumbnailUrl,
+            ),
         ).apply {
             this.createdAt = createdAt
             this.updatedAt = updatedAt

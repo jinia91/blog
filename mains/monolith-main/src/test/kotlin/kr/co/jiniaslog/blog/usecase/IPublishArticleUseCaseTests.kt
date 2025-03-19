@@ -31,9 +31,12 @@ class IPublishArticleUseCaseTests : TestContainerAbstractSkeleton() {
     fun `게시가능한 게시글 초안을 게시하려하면 성공한다`() {
         // given
         val command = IPublishArticle.Command(ArticleId(1L))
-        val draftArticle = ArticleTestFixtures.createPublishedArticle(
+        val draftArticle = ArticleTestFixtures.createDraftArticle(
             id = ArticleId(1L),
             status = Article.Status.DRAFT,
+            title = "title",
+            contents = "contents",
+            thumbnailUrl = "thumbnailUrl",
         ).also {
             it.canPublish shouldBe true
         }

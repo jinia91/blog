@@ -4,7 +4,7 @@ import jakarta.validation.Valid
 import kr.co.jiniaslog.blog.adapter.inbound.websocket.payload.UpdateArticlePayload
 import kr.co.jiniaslog.blog.adapter.inbound.websocket.payload.UpdateArticleResponse
 import kr.co.jiniaslog.blog.usecase.article.ArticleUseCasesFacade
-import kr.co.jiniaslog.blog.usecase.article.IUpdateArticleContents
+import kr.co.jiniaslog.blog.usecase.article.IUpdateDraftArticleContents
 import org.springframework.messaging.handler.annotation.MessageMapping
 import org.springframework.messaging.handler.annotation.SendTo
 import org.springframework.stereotype.Controller
@@ -20,7 +20,7 @@ class ArticleWebSocketHandler(
     fun handle(
         @Valid payload: UpdateArticlePayload,
     ): UpdateArticleResponse {
-        val command: IUpdateArticleContents.Command = payload.toCommand()
+        val command: IUpdateDraftArticleContents.Command = payload.toCommand()
         val info = articleUseCasesFacade.handle(command)
         return UpdateArticleResponse(info.articleId.value)
     }
