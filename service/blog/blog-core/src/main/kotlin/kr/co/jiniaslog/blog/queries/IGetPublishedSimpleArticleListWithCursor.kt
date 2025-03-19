@@ -3,7 +3,7 @@ package kr.co.jiniaslog.blog.queries
 import kr.co.jiniaslog.blog.domain.article.ArticleId
 import java.time.LocalDateTime
 
-interface IGetSimpleArticleListWithCursor {
+interface IGetPublishedSimpleArticleListWithCursor {
     fun handle(query: Query): List<Info>
 
     data class Query(

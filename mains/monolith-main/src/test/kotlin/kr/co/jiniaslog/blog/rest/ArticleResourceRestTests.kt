@@ -5,6 +5,7 @@ import io.restassured.module.mockmvc.RestAssuredMockMvc
 import kr.co.jiniaslog.RestTestAbstractSkeleton
 import kr.co.jiniaslog.blog.adapter.inbound.http.dto.AddTagToArticleRequest
 import kr.co.jiniaslog.blog.domain.article.ArticleId
+import kr.co.jiniaslog.blog.queries.IGetArticleById
 import kr.co.jiniaslog.blog.usecase.article.IAddAnyTagInArticle
 import kr.co.jiniaslog.blog.usecase.article.IDeleteArticle
 import kr.co.jiniaslog.blog.usecase.article.IPublishArticle
@@ -14,6 +15,7 @@ import kr.co.jiniaslog.user.application.security.PreAuthFilter
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.springframework.http.MediaType
+import java.time.LocalDateTime
 
 class ArticleResourceRestTests : RestTestAbstractSkeleton() {
     @Nested
@@ -142,6 +144,31 @@ class ArticleResourceRestTests : RestTestAbstractSkeleton() {
                 .body(AddTagToArticleRequest("tag"))
                 // when
                 .put("/api/v1/articles/1/tag")
+                // then
+                .then()
+                .statusCode(200)
+        }
+    }
+
+    @Nested
+    inner class `게시글 조회 테스트` {
+        @Test
+        fun `게시글 조회 요청이 있으면 유저가 아니여도 200을 반환한다`() {
+            // given
+            every { articleQueriesFacade.handle(any(IGetArticleById.Query::class)) } returns IGetArticleById.Info(
+                id = ArticleId(1L),
+                title = "title",
+                content = "content",
+                thumbnailUrl = "thumbnailUrl",
+                tags = emptyMap(),
+                createdAt = LocalDateTime.now(),
+                isPublished = false
+            )
+
+            // when
+            RestAssuredMockMvc.given()
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .get("/api/v1/articles/1")
                 // then
                 .then()
                 .statusCode(200)

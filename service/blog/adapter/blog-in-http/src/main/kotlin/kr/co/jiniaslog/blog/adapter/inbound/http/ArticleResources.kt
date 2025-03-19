@@ -17,9 +17,9 @@ import kr.co.jiniaslog.blog.adapter.inbound.http.dto.UnDeleteArticleResponse
 import kr.co.jiniaslog.blog.domain.UserId
 import kr.co.jiniaslog.blog.domain.article.ArticleId
 import kr.co.jiniaslog.blog.domain.tag.TagName
-import kr.co.jiniaslog.blog.queries.ArticleQueriesFacade
+import kr.co.jiniaslog.blog.queries.ArticleQueriesFacadePublished
 import kr.co.jiniaslog.blog.queries.IGetArticleById
-import kr.co.jiniaslog.blog.queries.IGetSimpleArticleListWithCursor
+import kr.co.jiniaslog.blog.queries.IGetPublishedSimpleArticleListWithCursor
 import kr.co.jiniaslog.blog.usecase.article.ArticleUseCasesFacade
 import kr.co.jiniaslog.blog.usecase.article.IAddAnyTagInArticle
 import kr.co.jiniaslog.blog.usecase.article.IDeleteArticle
@@ -45,7 +45,7 @@ import java.net.URI
 @Tag(name = "게시글 API", description = "게시글 생명주기 관련")
 class ArticleResources(
     private val articleFacade: ArticleUseCasesFacade,
-    private val articleQueryFacade: ArticleQueriesFacade,
+    private val articleQueryFacade: ArticleQueriesFacadePublished,
 ) {
     @PostMapping("")
     @PreAuthorize("hasRole('ADMIN')")
@@ -151,8 +151,10 @@ class ArticleResources(
     fun getSimpleArticlesWithCursor(
         @RequestParam(required = true) cursor: Long,
         @RequestParam(required = true) limit: Int,
-    ): ResponseEntity<List<IGetSimpleArticleListWithCursor.Info>> {
-        val articles = articleQueryFacade.handle(IGetSimpleArticleListWithCursor.Query(ArticleId(cursor), limit))
+    ): ResponseEntity<List<IGetPublishedSimpleArticleListWithCursor.Info>> {
+        val articles = articleQueryFacade.handle(
+            IGetPublishedSimpleArticleListWithCursor.Query(ArticleId(cursor), limit)
+        )
         return ResponseEntity.ok(articles)
     }
 }

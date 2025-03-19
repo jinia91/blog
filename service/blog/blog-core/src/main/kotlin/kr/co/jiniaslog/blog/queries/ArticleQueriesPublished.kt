@@ -4,9 +4,9 @@ import kr.co.jiniaslog.blog.outbound.ArticleRepository
 import org.springframework.stereotype.Component
 
 @Component
-class ArticleQueries(
+class ArticleQueriesPublished(
     private val articleRepository: ArticleRepository
-) : ArticleQueriesFacade {
+) : ArticleQueriesFacadePublished {
     override fun handle(query: IGetArticleById.Query): IGetArticleById.Info {
         val article = articleRepository.findById(query.articleId) ?: throw IllegalArgumentException("해당 아티클이 존재하지 않습니다")
         return IGetArticleById.Info(
@@ -20,7 +20,7 @@ class ArticleQueries(
         )
     }
 
-    override fun handle(query: IGetSimpleArticleListWithCursor.Query): List<IGetSimpleArticleListWithCursor.Info> {
+    override fun handle(query: IGetPublishedSimpleArticleListWithCursor.Query): List<IGetPublishedSimpleArticleListWithCursor.Info> {
         return articleRepository.getSimpleArticleListWithCursor(query.cursor, query.limit)
     }
 }

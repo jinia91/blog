@@ -71,7 +71,7 @@ class IStartToWriteNewDraftArticleUseCaseTests : TestContainerAbstractSkeleton()
             article.status shouldBe Article.Status.DRAFT
             article.authorId shouldBe UserId(user.entityId.value)
             article.articleContents shouldBe ArticleContents.EMPTY
-            article.tagsId.size shouldBe 0
+            article.tags.size shouldBe 0
             article.hit shouldBe 0
         }
     }

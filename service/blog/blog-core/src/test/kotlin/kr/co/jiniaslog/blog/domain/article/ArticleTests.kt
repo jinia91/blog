@@ -282,7 +282,7 @@ class ArticleTests : SimpleUnitTestContext() {
             article.delete()
 
             // then
-            article.tagsId.size shouldBe 0
+            article.tags.size shouldBe 0
             article.memoRefId.shouldBeNull()
             article.status shouldBe Article.Status.DELETED
         }
@@ -337,7 +337,7 @@ class ArticleTests : SimpleUnitTestContext() {
             article.addTag(tag)
 
             // then
-            article.tagsId.size shouldBe 1
+            article.tags.size shouldBe 1
         }
 
         @Test
@@ -349,6 +349,48 @@ class ArticleTests : SimpleUnitTestContext() {
             // when, then
             shouldThrow<IllegalStateException> {
                 article.addTag(tag)
+            }
+        }
+    }
+
+    @Nested
+    inner class `게시글 태그 삭제 테스트`() {
+        @Test
+        fun `기존 게시글에 태그를 삭제할 수 있다`() {
+            // given
+            val tag = Tag.newOne(TagName("tag"))
+            val article = ArticleTestFixtures.createPublishedArticle(
+                tags = listOf(tag)
+            )
+
+            // when
+            article.removeTag(tag)
+
+            // then
+            article.tags.size shouldBe 0
+        }
+
+        @Test
+        fun `없는 태그를 삭제하려고 하면 예외가 발생한다`() {
+            // given
+            val tag = Tag.newOne(TagName("tag"))
+            val article = ArticleTestFixtures.createPublishedArticle()
+
+            // when, then
+            shouldThrow<IllegalArgumentException> {
+                article.removeTag(tag)
+            }
+        }
+
+        @Test
+        fun `삭제된 게시글은 태그를 삭제할 수 없다`() {
+            // given
+            val tag = Tag.newOne(TagName("tag"))
+            val article = ArticleTestFixtures.createDeletedArticle()
+
+            // when, then
+            shouldThrow<IllegalStateException> {
+                article.removeTag(tag)
             }
         }
     }
