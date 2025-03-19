@@ -38,7 +38,7 @@ class IDeleteUnUsedTagsUseCaseTests : TestContainerAbstractSkeleton() {
         val tag3 = tagRespository.save(Tag.newOne(TagName("tag3")))
 
         val article = ArticleTestFixtures.createDraftArticle(
-            tags = listOf(tag3.id)
+            tags = listOf(tag3)
         )
 
         articleRepository.save(article)

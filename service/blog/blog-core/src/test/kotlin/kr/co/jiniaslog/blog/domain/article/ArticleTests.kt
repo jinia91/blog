@@ -6,7 +6,6 @@ import io.kotest.matchers.shouldBe
 import kr.co.jiniaslog.blog.domain.ArticleTestFixtures
 import kr.co.jiniaslog.blog.domain.UserId
 import kr.co.jiniaslog.blog.domain.tag.Tag
-import kr.co.jiniaslog.blog.domain.tag.TagId
 import kr.co.jiniaslog.blog.domain.tag.TagName
 import kr.co.jiniaslog.shared.SimpleUnitTestContext
 import kr.co.jiniaslog.shared.core.domain.IdUtils
@@ -81,7 +80,9 @@ class ArticleTests : SimpleUnitTestContext() {
             // when, then
             shouldThrow<IllegalArgumentException> {
                 ArticleTestFixtures.createPublishedArticle(
-                    tags = listOf(TagId(IdUtils.generate())),
+                    tags = listOf(
+                        Tag.newOne(TagName("tag"))
+                    ),
                     status = Article.Status.DELETED
                 )
             }

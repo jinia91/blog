@@ -38,7 +38,7 @@ class IDeleteArticleUseCaseTests : TestContainerAbstractSkeleton() {
         tagRepository.save(tag)
         tagRepository.save(tag2)
         val article = ArticleTestFixtures.createPublishedArticle(
-            tags = listOf(tag.entityId, tag2.entityId),
+            tags = listOf(tag, tag2),
         )
         articleRepository.save(article)
 
