@@ -5,6 +5,7 @@ import io.restassured.module.mockmvc.RestAssuredMockMvc
 import kr.co.jiniaslog.admin.adapter.inbound.http.AuthDevResources
 import kr.co.jiniaslog.admin.application.AdminUseCaseFacade
 import kr.co.jiniaslog.blog.adapter.inbound.http.ArticleResources
+import kr.co.jiniaslog.blog.queries.ArticleQueriesFacade
 import kr.co.jiniaslog.blog.usecase.article.ArticleUseCasesFacade
 import kr.co.jiniaslog.media.inbound.http.ImageResources
 import kr.co.jiniaslog.media.usecase.image.ImageUseCasesFacade
@@ -89,6 +90,9 @@ abstract class RestTestAbstractSkeleton {
 
     @MockkBean
     protected lateinit var adminUseCases: AdminUseCaseFacade
+
+    @MockkBean
+    protected lateinit var articleQueriesFacade: ArticleQueriesFacade
 
     @BeforeEach
     fun setup() {
