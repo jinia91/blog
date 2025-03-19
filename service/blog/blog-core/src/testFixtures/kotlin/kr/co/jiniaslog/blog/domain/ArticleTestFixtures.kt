@@ -32,7 +32,7 @@ object ArticleTestFixtures {
             memoRefId = memoRefId,
             authorId = authorId,
             publishedArticleContents = articleContents,
-            draftContents = ArticleContents.EMPTY,
+            draftContents = articleContents,
             tags = mutableSetOf(),
             hit = hit,
             status = status,

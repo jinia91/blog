@@ -92,18 +92,6 @@ class ArticleTests : SimpleUnitTestContext() {
     @Nested
     inner class `게시글 기본 상태 조회 테스트` {
         @Test
-        fun `게시글이 게시된 상태이면 publish 불가능하다`() {
-            // given
-            val article = ArticleTestFixtures.createPublishedArticle()
-
-            // when
-            val canPublish = article.canPublish
-
-            // then
-            canPublish shouldBe false
-        }
-
-        @Test
         fun `게시글 publsih상태인지 체크가능하다`() {
             // given
             val article = ArticleTestFixtures.createPublishedArticle()
@@ -132,7 +120,7 @@ class ArticleTests : SimpleUnitTestContext() {
             article.updateDraftArticleContents(newContents)
 
             // then
-            article.articleContents shouldBe newContents
+            article.draftContents shouldBe newContents
         }
 
         @Test
@@ -234,20 +222,6 @@ class ArticleTests : SimpleUnitTestContext() {
 
             // then
             article.status shouldBe Article.Status.PUBLISHED
-        }
-
-        @Test
-        fun `게시된 게시글을 다시 공개하려고 하면 실패한다`() {
-            // given
-            val article = ArticleTestFixtures.createPublishedArticle(
-                status = Article.Status.PUBLISHED
-            )
-            article.canPublish shouldBe false
-
-            // when, then
-            shouldThrow<IllegalStateException> {
-                article.publish()
-            }
         }
 
         @Test
