@@ -9,6 +9,7 @@ import kr.co.jiniaslog.blog.domain.ArticleTestFixtures
 import kr.co.jiniaslog.blog.domain.article.Article
 import kr.co.jiniaslog.blog.domain.article.ArticleId
 import kr.co.jiniaslog.blog.outbound.ArticleRepository
+import kr.co.jiniaslog.blog.outbound.BlogTransactionHandler
 import kr.co.jiniaslog.blog.usecase.article.IPublishArticle
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -23,6 +24,9 @@ class IPublishArticleUseCaseTests : TestContainerAbstractSkeleton() {
     @Autowired
     private lateinit var articleRepository: ArticleRepository
 
+    @Autowired
+    lateinit var transactionHandler: BlogTransactionHandler
+
     @Test
     fun `게시가능한 게시글 초안을 게시하려하면 성공한다`() {
         // given
@@ -33,6 +37,7 @@ class IPublishArticleUseCaseTests : TestContainerAbstractSkeleton() {
         ).also {
             it.canPublish shouldBe true
         }
+
         articleRepository.save(draftArticle)
 
         // when

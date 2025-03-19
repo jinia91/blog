@@ -4,12 +4,16 @@ import com.querydsl.jpa.impl.JPAQueryFactory
 import kr.co.jiniaslog.blog.domain.article.Article
 import kr.co.jiniaslog.blog.domain.article.ArticleId
 import kr.co.jiniaslog.blog.domain.article.QArticle.article
+import kr.co.jiniaslog.blog.domain.article.Tagging
+import kr.co.jiniaslog.blog.domain.article.TaggingId
 import kr.co.jiniaslog.blog.outbound.ArticleRepository
 import kr.co.jiniaslog.blog.queries.IGetSimpleArticleListWithCursor
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Repository
 
 interface ArticleJpaRepository : JpaRepository<Article, ArticleId>
+
+interface TaggingJpaRepository : JpaRepository<Tagging, TaggingId>
 
 @Repository
 class ArticleRepositoryAdapter(

@@ -4,7 +4,6 @@ import kr.co.jiniaslog.blog.domain.article.Article
 import kr.co.jiniaslog.blog.domain.article.ArticleContents
 import kr.co.jiniaslog.blog.domain.article.ArticleId
 import kr.co.jiniaslog.blog.domain.tag.Tag
-import kr.co.jiniaslog.blog.domain.tag.TagName
 import kr.co.jiniaslog.shared.core.domain.IdUtils
 import java.time.LocalDateTime
 
@@ -15,11 +14,8 @@ object ArticleTestFixtures {
         authorId: UserId = UserId(1L),
         title: String = "title",
         contents: String = "contents",
+        tags: List<Tag> = emptyList(),
         thumbnailUrl: String = "thumbnailUrl",
-        tags: List<Tag> =
-            listOf(
-                Tag.newOne(TagName("tag1")),
-            ),
         status: Article.Status = Article.Status.PUBLISHED,
         hit: Int = 0,
         createdAt: LocalDateTime? = null,
@@ -43,7 +39,7 @@ object ArticleTestFixtures {
         ).apply {
             this.createdAt = createdAt
             this.updatedAt = updatedAt
-            tags.forEach(this::addTag)
+            tags.forEach { addTag(it) }
         }
     }
 

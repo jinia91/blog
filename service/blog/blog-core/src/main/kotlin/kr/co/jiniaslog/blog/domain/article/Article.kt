@@ -81,8 +81,11 @@ class Article internal constructor(
         private set
 
     @Fetch(FetchMode.JOIN)
-    @OneToMany(mappedBy = "article", orphanRemoval = true, cascade = [CascadeType.REMOVE])
+    @OneToMany(mappedBy = "article", orphanRemoval = true, cascade = [CascadeType.ALL])
     private var _tags: MutableSet<Tagging> = tags
+
+    val tags: Set<Tagging>
+        get() = _tags.toSet()
 
     val tagsId: Set<TagId>
         get() = _tags.map { it.tag.entityId }.toSet()

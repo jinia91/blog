@@ -73,7 +73,7 @@ class IDeleteArticleUseCaseTests : TestContainerAbstractSkeleton() {
         articleRepository.save(article)
 
         // when, then
-        shouldThrow<IllegalArgumentException> {
+        shouldThrow<IllegalStateException> {
             sut.handle(IDeleteArticle.Command(article.entityId))
         }
     }

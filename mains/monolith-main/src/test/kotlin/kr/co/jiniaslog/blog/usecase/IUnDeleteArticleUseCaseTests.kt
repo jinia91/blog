@@ -48,7 +48,7 @@ class IUnDeleteArticleUseCaseTests : TestContainerAbstractSkeleton() {
         articleRepository.save(publishedArticle)
 
         // when, then
-        shouldThrow<IllegalArgumentException> {
+        shouldThrow<IllegalStateException> {
             sut.handle(IUnDeleteArticle.Command(publishedArticle.entityId))
         }
     }
