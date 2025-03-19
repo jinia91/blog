@@ -18,12 +18,26 @@ class ArticleQueriesTests : TestContainerAbstractSkeleton() {
     lateinit var articleRepository: ArticleRepository
 
     @Test
-    fun `게시글을 조회할 수 있다`() {
+    fun `초안 게시글을 조회할 수 있다`() {
         // given
         val article = articleRepository.save(ArticleTestFixtures.createDraftArticle())
 
         // when
-        val result = sut.handle(IGetArticleById.Query(article.entityId))
+        val result = sut.handle(IGetArticleById.Query(article.entityId, isDraft = false))
+
+        // then
+        result.shouldNotBeNull()
+        result.id shouldBe article.entityId
+        result.title shouldBe article.articleContents.title
+    }
+
+    @Test
+    fun `게시된 게시글을 조회할 수 있다`() {
+        // given
+        val article = articleRepository.save(ArticleTestFixtures.createPublishedArticle())
+
+        // when
+        val result = sut.handle(IGetArticleById.Query(article.entityId, isDraft = true))
 
         // then
         result.shouldNotBeNull()
