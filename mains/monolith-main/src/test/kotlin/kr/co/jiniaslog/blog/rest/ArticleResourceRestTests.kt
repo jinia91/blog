@@ -72,7 +72,7 @@ class ArticleResourceRestTests : RestTestAbstractSkeleton() {
     @Nested
     inner class `게시글 게시 테스트` {
         @Test
-        fun `인증된 사용자의 유효한 게시글 게시 요청이 있으면 200을 반환한다`() {
+        fun `어드민 사용자의 유효한 게시글 게시 요청이 있으면 200을 반환한다`() {
             // given
             every { articleUseCasesFacade.handle(any(IPublishArticle.Command::class)) } returns IPublishArticle.Info(
                 ArticleId(1L)
@@ -81,7 +81,7 @@ class ArticleResourceRestTests : RestTestAbstractSkeleton() {
             RestAssuredMockMvc.given()
                 .cookies(PreAuthFilter.ACCESS_TOKEN_HEADER, getTestAdminUserToken())
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .put("/api/v1/articles/1/publish")
+                .post("/api/v1/articles/1/publish")
                 // then
                 .then()
                 .statusCode(200)
