@@ -60,7 +60,11 @@ jobs:
       - name: 배포 태그 업데이트
         working-directory: ./gitops-repo
         run: |
-          yq -i '.spec.template.spec.containers[0].image = "jinia91/blog-backend:${{ github.sha }}"' deploy/jiniaslog/monolith/jiniaslog-main.yml
+          yq -i 'select(.kind == "Deployment") | .spec.template.spec.containers[0].image = "jinia91/blog-backend:${{ github.sha }}"' deploy/jiniaslog/monolith/jiniaslog-main.yml
+
+      - name: 변경 내용 확인
+        working-directory: ./gitops-repo
+        run: cat deploy/jiniaslog/monolith/jiniaslog-main.yml
 
       - name: GitOps 레포지토리 커밋 및 푸시
         working-directory: ./gitops-repo
