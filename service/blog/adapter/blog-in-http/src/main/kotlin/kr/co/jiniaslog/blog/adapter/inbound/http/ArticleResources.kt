@@ -11,9 +11,9 @@ import kr.co.jiniaslog.blog.adapter.inbound.http.dto.AddTagToArticleRequest
 import kr.co.jiniaslog.blog.adapter.inbound.http.dto.AddTagToArticleResponse
 import kr.co.jiniaslog.blog.adapter.inbound.http.dto.DeleteArticleResponse
 import kr.co.jiniaslog.blog.adapter.inbound.http.dto.GetArticleByIdResponse
-import kr.co.jiniaslog.blog.adapter.inbound.http.dto.PublishArticleResponse
 import kr.co.jiniaslog.blog.adapter.inbound.http.dto.StartNewArticleResponse
-import kr.co.jiniaslog.blog.adapter.inbound.http.dto.UnDeleteArticleResponse
+import kr.co.jiniaslog.blog.adapter.inbound.http.dto.UpdateArticleStatusRequest
+import kr.co.jiniaslog.blog.adapter.inbound.http.dto.UpdateArticleStatusResponse
 import kr.co.jiniaslog.blog.domain.UserId
 import kr.co.jiniaslog.blog.domain.article.Article
 import kr.co.jiniaslog.blog.domain.article.Article.Status.DRAFT
@@ -23,21 +23,20 @@ import kr.co.jiniaslog.blog.domain.tag.TagName
 import kr.co.jiniaslog.blog.queries.ArticleQueriesFacade
 import kr.co.jiniaslog.blog.queries.IGetArticleById
 import kr.co.jiniaslog.blog.queries.IGetPublishedSimpleArticleListWithCursor
+import kr.co.jiniaslog.blog.usecase.article.ArticleStatusChangeFacade
 import kr.co.jiniaslog.blog.usecase.article.ArticleUseCasesFacade
 import kr.co.jiniaslog.blog.usecase.article.IAddAnyTagInArticle
 import kr.co.jiniaslog.blog.usecase.article.IDeleteArticle
-import kr.co.jiniaslog.blog.usecase.article.IPublishArticle
 import kr.co.jiniaslog.blog.usecase.article.IStartToWriteNewDraftArticle
-import kr.co.jiniaslog.blog.usecase.article.IUnDeleteArticle
-import kr.co.jiniaslog.blog.usecase.article.IUnPublishArticle
 import kr.cojiniaslog.shared.adapter.inbound.http.AuthUserId
+import kr.cojiniaslog.shared.adapter.inbound.http.CommonApiResponses
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PatchMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
@@ -47,17 +46,17 @@ import java.net.URI
 @RestController
 @RequestMapping("/api/v1/articles")
 @Tag(name = "게시글 API", description = "게시글 생명주기 관련")
+@CommonApiResponses
 class ArticleResources(
     private val articleFacade: ArticleUseCasesFacade,
+    private val articleStatusChangeFacade: ArticleStatusChangeFacade,
     private val articleQueryFacade: ArticleQueriesFacade,
 ) {
-    @PostMapping("")
+    @PostMapping()
     @PreAuthorize("hasRole('ADMIN')")
     @Operation(
         summary = "새로운 게시글 작성 시작",
-        description = "게시글 초안 상태로 새로운 게시글 작성을 시작한다.",
-        method = "POST",
-        security = [SecurityRequirement(name = "access token", scopes = ["ADMIN"])]
+        description = "게시글 초안 상태로 새로운 게시글 작성을 시작한다."
     )
     @ApiResponses(
         value = [
@@ -70,17 +69,7 @@ class ArticleResources(
                         schema = Schema(implementation = StartNewArticleResponse::class)
                     )
                 ]
-            ),
-            ApiResponse(
-                responseCode = "401",
-                description = "인증 실패",
-                content = [Content(schema = Schema())]
-            ),
-            ApiResponse(
-                responseCode = "403",
-                description = "인가 되지 없음",
-                content = [Content(schema = Schema())]
-            ),
+            )
         ]
     )
     fun startNewArticle(@AuthUserId userId: Long?): ResponseEntity<StartNewArticleResponse> {
@@ -91,49 +80,66 @@ class ArticleResources(
             .body(StartNewArticleResponse(info.articleId.value))
     }
 
-    @PutMapping("/{articleId}/publish")
-    @PreAuthorize("hasRole('ADMIN')")
-    @Operation(summary = "게시글 게시", description = "게시글을 공개상태로 게시한다", security = [SecurityRequirement(name = "bearer")])
-    fun publishArticle(
-        @PathVariable articleId: Long,
-    ): ResponseEntity<PublishArticleResponse> {
-        val command = IPublishArticle.Command(ArticleId(articleId))
-        val info = articleFacade.handle(command)
-        return ResponseEntity.ok(PublishArticleResponse(info.articleId.value))
-    }
-
-    @PutMapping("/{articleId}/draft")
-    @PreAuthorize("hasRole('ADMIN')")
-    @Operation(summary = "게시글 내리기", description = "공개 게시글을 내린다", security = [SecurityRequirement(name = "bearer")])
-    fun unPublishArticle(
-        @PathVariable articleId: Long,
-    ): ResponseEntity<PublishArticleResponse> {
-        val command = IUnPublishArticle.Command(ArticleId(articleId))
-        val info = articleFacade.handle(command)
-        return ResponseEntity.ok(PublishArticleResponse(info.articleId.value))
-    }
-
     @DeleteMapping("/{articleId}")
     @PreAuthorize("hasRole('ADMIN')")
+    @Operation(summary = "게시글 삭제", description = "게시글을 논리 삭제한다, 복원 가능")
+    @ApiResponses(
+        value = [
+            ApiResponse(
+                responseCode = "200",
+                description = "게시글 삭제 성공",
+                content = [
+                    Content(
+                        mediaType = "application/json",
+                        schema = Schema(implementation = DeleteArticleResponse::class)
+                    )
+                ]
+            )
+        ]
+    )
     fun deleteArticle(
         @PathVariable articleId: Long,
     ): ResponseEntity<DeleteArticleResponse> {
         val command = IDeleteArticle.Command(ArticleId(articleId))
-        val info = articleFacade.handle(command)
+        val info = articleStatusChangeFacade.handle(command)
         return ResponseEntity.ok(DeleteArticleResponse(info.articleId.value))
     }
 
-    @PutMapping("/{articleId}/undelete")
+    @PatchMapping("/{articleId}")
     @PreAuthorize("hasRole('ADMIN')")
-    fun unDeleteArticle(
+    @Operation(
+        summary = "게시글 상태 변경",
+        description = "게시글을 게시하거나 내리거나 삭제를 복구한다.",
+        security = [SecurityRequirement(name = "bearer")]
+    )
+    @ApiResponses(
+        value = [
+            ApiResponse(
+                responseCode = "200",
+                description = "게시글 상태 변경 성공",
+                content = [
+                    Content(
+                        mediaType = "application/json",
+                        schema = Schema(implementation = UpdateArticleStatusResponse::class)
+                    )
+                ]
+            )
+        ]
+    )
+    fun updateArticleStatus(
         @PathVariable articleId: Long,
-    ): ResponseEntity<UnDeleteArticleResponse> {
-        val command = IUnDeleteArticle.Command(ArticleId(articleId))
-        val info = articleFacade.handle(command)
-        return ResponseEntity.ok(UnDeleteArticleResponse(info.articleId.value))
+        @RequestBody request: UpdateArticleStatusRequest
+    ): ResponseEntity<UpdateArticleStatusResponse> {
+        val command = articleStatusChangeFacade.determineCommand(
+            request.asIsStatus,
+            request.toBeStatus,
+            ArticleId(articleId)
+        )
+        val info = articleStatusChangeFacade.handle(command)
+        return ResponseEntity.ok(UpdateArticleStatusResponse(info.articleId.value))
     }
 
-    @PutMapping("/{articleId}/tag")
+    @PostMapping("/{articleId}/tags")
     @PreAuthorize("hasRole('ADMIN')")
     fun addTagToArticle(
         @PathVariable articleId: Long,
@@ -148,7 +154,7 @@ class ArticleResources(
     @PreAuthorize("!(#status.name() == 'DRAFT') or hasRole('ADMIN')")
     fun getArticle(
         @PathVariable articleId: Long,
-        @RequestParam status: Article.Status
+        @RequestParam status: Article.Status,
     ): ResponseEntity<GetArticleByIdResponse> {
         val isPublished = when (status) {
             DRAFT -> false
@@ -174,7 +180,7 @@ class ArticleResources(
     fun getArticlesWithCursor(
         @RequestParam cursor: Long,
         @RequestParam limit: Int,
-        @RequestParam status: Article.Status
+        @RequestParam status: Article.Status,
     ): ResponseEntity<List<IGetPublishedSimpleArticleListWithCursor.Info>> {
         val isPublished = when (status) {
             DRAFT -> false

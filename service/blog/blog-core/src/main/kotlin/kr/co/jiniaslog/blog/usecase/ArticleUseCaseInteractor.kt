@@ -9,11 +9,7 @@ import kr.co.jiniaslog.blog.outbound.TagRepository
 import kr.co.jiniaslog.blog.outbound.UserService
 import kr.co.jiniaslog.blog.usecase.article.ArticleUseCasesFacade
 import kr.co.jiniaslog.blog.usecase.article.IAddAnyTagInArticle
-import kr.co.jiniaslog.blog.usecase.article.IDeleteArticle
-import kr.co.jiniaslog.blog.usecase.article.IPublishArticle
 import kr.co.jiniaslog.blog.usecase.article.IStartToWriteNewDraftArticle
-import kr.co.jiniaslog.blog.usecase.article.IUnDeleteArticle
-import kr.co.jiniaslog.blog.usecase.article.IUnPublishArticle
 import kr.co.jiniaslog.blog.usecase.article.IUpdateDraftArticleContents
 import kr.co.jiniaslog.shared.core.annotation.UseCaseInteractor
 
@@ -39,38 +35,8 @@ class ArticleUseCaseInteractor(
         require(userService.isExistUser(this.authorId)) { "유저가 존재하지 않습니다" }
     }
 
-    override fun handle(command: IPublishArticle.Command): IPublishArticle.Info {
-        val article = transactionHandler.runInRepeatableReadTransaction {
-            val article = getArticle(command.articleId)
-            article.publish()
-            articleRepository.save(article)
-        }
-
-        return IPublishArticle.Info(article.entityId)
-    }
-
     private fun IStartToWriteNewDraftArticle.Command.toArticle(): Article {
         return Article.newOne(this.authorId)
-    }
-
-    override fun handle(command: IDeleteArticle.Command): IDeleteArticle.Info {
-        val article = transactionHandler.runInRepeatableReadTransaction {
-            val article = getArticle(command.articleId)
-            article.delete()
-            articleRepository.save(article)
-        }
-
-        return IDeleteArticle.Info(article.entityId)
-    }
-
-    override fun handle(command: IUnDeleteArticle.Command): IUnDeleteArticle.Info {
-        val article = transactionHandler.runInRepeatableReadTransaction {
-            val article = getArticle(command.articleId)
-            article.unDelete()
-            articleRepository.save(article)
-        }
-
-        return IUnDeleteArticle.Info(article.entityId)
     }
 
     override fun handle(command: IUpdateDraftArticleContents.Command): IUpdateDraftArticleContents.Info {
@@ -93,16 +59,6 @@ class ArticleUseCaseInteractor(
         }
 
         return IAddAnyTagInArticle.Info(article.entityId)
-    }
-
-    override fun handle(command: IUnPublishArticle.Command): IUnPublishArticle.Info {
-        val article = transactionHandler.runInRepeatableReadTransaction {
-            val article = getArticle(command.articleId)
-            article.unPublish()
-            articleRepository.save(article)
-        }
-
-        return IUnPublishArticle.Info(article.entityId)
     }
 
     private fun getArticle(articleId: ArticleId) = articleRepository.findById(articleId)

@@ -53,7 +53,15 @@ class Article internal constructor(
      * - PUBLISHED: 게시 - 작성중인 게시글을 게시
      * - DELETED: 삭제 - 게시글 삭제는 물리적 삭제가 아닌 상태만 변경
      */
-    enum class Status { DRAFT, PUBLISHED, DELETED }
+    enum class Status {
+        DRAFT,
+        PUBLISHED,
+        DELETED;
+        fun canPublish(): Boolean = setOf(DRAFT, PUBLISHED).contains(this)
+        fun canDelete(): Boolean = setOf(DRAFT, PUBLISHED).contains(this)
+        fun canUnDelete(): Boolean = setOf(DELETED).contains(this)
+        fun canUnPublish(): Boolean = setOf(PUBLISHED).contains(this)
+    }
 
     @EmbeddedId
     @AttributeOverride(column = Column(name = "id"), name = "value")
@@ -128,7 +136,7 @@ class Article internal constructor(
      * @see publish
      */
     val canPublish: Boolean
-        get() = draftContents.canPublish && status != Status.DELETED
+        get() = draftContents.canPublish && status.canPublish()
 
     val isPublished: Boolean
         get() = status == Status.PUBLISHED
@@ -146,7 +154,7 @@ class Article internal constructor(
     }
 
     fun unPublish() {
-        check(status == Status.PUBLISHED) { "게시된 게시글이 아닙니다." }
+        check(status.canUnPublish()) { "게시된 게시글이 아닙니다." }
         status = Status.DRAFT
     }
 
@@ -159,7 +167,7 @@ class Article internal constructor(
      * @see unDelete
      */
     fun delete() {
-        check(status != Status.DELETED) { "이미 삭제된 게시글입니다." }
+        check(status.canDelete()) { "이미 삭제된 게시글입니다." }
         _tags.clear()
         memoRefId = null
         status = Status.DELETED
@@ -171,7 +179,7 @@ class Article internal constructor(
      * @see delete
      */
     fun unDelete() {
-        check(status == Status.DELETED) { "삭제되지 않은 게시글입니다." }
+        check(status.canUnDelete()) { "삭제되지 않은 게시글입니다." }
         status = Status.DRAFT
     }
 
