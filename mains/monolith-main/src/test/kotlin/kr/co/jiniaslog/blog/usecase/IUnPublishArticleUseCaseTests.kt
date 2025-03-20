@@ -8,6 +8,7 @@ import kr.co.jiniaslog.TestContainerAbstractSkeleton
 import kr.co.jiniaslog.blog.domain.ArticleTestFixtures
 import kr.co.jiniaslog.blog.domain.article.Article
 import kr.co.jiniaslog.blog.outbound.ArticleRepository
+import kr.co.jiniaslog.blog.usecase.article.ArticleStatusChangeFacade
 import kr.co.jiniaslog.blog.usecase.article.IUnPublishArticle
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -15,7 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired
 class IUnPublishArticleUseCaseTests : TestContainerAbstractSkeleton() {
 
     @Autowired
-    private lateinit var sut: IUnPublishArticle
+    private lateinit var sut: ArticleStatusChangeFacade
 
     @Autowired
     private lateinit var articleRepository: ArticleRepository

@@ -14,7 +14,6 @@ import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 
 class IUpdateDraftArticleContentsUseCaseTests : TestContainerAbstractSkeleton() {
-
     @Autowired
     private lateinit var sut: IUpdateDraftArticleContents
 

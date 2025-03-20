@@ -12,14 +12,16 @@ import kr.co.jiniaslog.blog.domain.tag.Tag
 import kr.co.jiniaslog.blog.domain.tag.TagName
 import kr.co.jiniaslog.blog.outbound.ArticleRepository
 import kr.co.jiniaslog.blog.outbound.TagRepository
+import kr.co.jiniaslog.blog.usecase.article.ArticleStatusChangeFacade
 import kr.co.jiniaslog.blog.usecase.article.IDeleteArticle
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.transaction.annotation.Transactional
 
 class IDeleteArticleUseCaseTests : TestContainerAbstractSkeleton() {
+
     @Autowired
-    private lateinit var sut: IDeleteArticle
+    private lateinit var sut: ArticleStatusChangeFacade
 
     @Autowired
     private lateinit var tagRepository: TagRepository

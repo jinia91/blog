@@ -10,13 +10,14 @@ import kr.co.jiniaslog.blog.domain.article.Article
 import kr.co.jiniaslog.blog.domain.article.ArticleId
 import kr.co.jiniaslog.blog.outbound.ArticleRepository
 import kr.co.jiniaslog.blog.outbound.BlogTransactionHandler
+import kr.co.jiniaslog.blog.usecase.article.ArticleStatusChangeFacade
 import kr.co.jiniaslog.blog.usecase.article.IPublishArticle
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 
 class IPublishArticleUseCaseTests : TestContainerAbstractSkeleton() {
     @Autowired
-    private lateinit var sut: IPublishArticle
+    private lateinit var sut: ArticleStatusChangeFacade
 
     @Autowired
     private lateinit var em: EntityManager
