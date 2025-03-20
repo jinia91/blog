@@ -45,3 +45,15 @@ src/main/resources/application.yml
 src/main/resources/application-dev.yml
 /logs/
 /src/logback.xml
+**/application.yml
+**/application-otel.yml
+
+.DS_Store
+
+### db ###
+/h2/
+**/neo4j_data/
+**/neo4j_import/
+**/neo4j_logs/
+**/neo4j_plugins/
+**/mysql_data

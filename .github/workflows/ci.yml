@@ -1,0 +1,102 @@
+name: CI
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+  push:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 체크아웃
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      # java 17
+      - name: JDK 17 설치
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: gradle 권한부여
+        run: chmod +x gradlew
+
+      - name: gradle 빌드
+        run: ./gradlew build -Pprofile=ci
+
+      - name: detekt 정적 분석
+        run: ./gradlew detekt
+
+      - name: detekt 리포트
+        uses: actions/github-script@v5
+        with:
+          script: |
+            const comments = await github.rest.issues.listComments({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+            });
+            
+            const existingComment = comments.data.find(comment => comment.body.includes('Detekt 정적 분석 결과'));
+            
+            if (existingComment) {
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: existingComment.id,
+                body: 'Detekt 정적 분석 결과\n' + require('fs').readFileSync('build/reports/detekt/detekt.md', 'utf8'),
+              });
+            } else {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body: 'Detekt 정적 분석 결과\n' + require('fs').readFileSync('build/reports/detekt/detekt.md', 'utf8'),
+              });
+            }
+
+      - name: Install Pandoc
+        run: sudo apt-get install -y pandoc
+
+      - name: kover 커버리지 리포트 변환
+        run: |
+          pandoc mains/monolith-main/build/reports/kover/html/index.html -f html -t gfm -o output.md
+          sed -n '/# monolith-main: Overall Coverage Summary/,/# Coverage Breakdown/p' output.md | grep -v '# Coverage Breakdown' > coverage-summary.md
+          echo "COVERAGE_SUMMARY_PATH=$(pwd)/coverage-summary.md" >> $GITHUB_ENV
+
+      - name: kover coverage report
+        uses: actions/github-script@v5
+        with:
+          script: |
+            const fs = require('fs');
+            const path = process.env.COVERAGE_SUMMARY_PATH;
+            const coverageData = fs.readFileSync(path, 'utf8');
+            
+            const comments = await github.rest.issues.listComments({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+            });
+            
+            const existingComment = comments.data.find(comment => comment.body.includes('kover 커버리지 결과'));
+            
+            if (existingComment) {
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: existingComment.id,
+                body: 'kover 커버리지 결과\n' + coverageData,
+              });
+            } else {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body: 'kover 커버리지 결과\n' + coverageData,
+              });
+            }

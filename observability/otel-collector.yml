@@ -1,0 +1,95 @@
+receivers:
+  otlp:
+    protocols:
+      grpc:
+        endpoint: 0.0.0.0:4317
+      http:
+        endpoint: 0.0.0.0:4318
+
+processors:
+  batch:
+  resource:
+    attributes:
+      - action: insert
+        key: service_name
+        from_attribute: service.name
+      - action: insert
+        key: loki.resource.labels
+        value: service_name
+      - action: delete
+        key: process.runtime.name
+      - action: delete
+        key: process.runtime.version
+      - action: delete
+        key: process.runtime.description
+      - action: delete
+        key: process.executable.path
+      - action: delete
+        key: os.description
+      - action: delete
+        key: os.type
+      - action: delete
+        key: telemetry.distro.name
+      - action: delete
+        key: telemetry.distro.version
+      - action: delete
+        key: telemetry.sdk.language
+      - action: delete
+        key: telemetry.sdk.name
+      - action: delete
+        key: telemetry.sdk.version
+      - action: delete
+        key: host.arch
+      - action: delete
+        key: telemetry.sdk.version
+      - action: delete
+        key: process.command_args
+  tail_sampling:
+    policies: [
+      {
+        name: filter_url_path,
+        type: string_attribute,
+        string_attribute: {
+          key: url.path,
+          values: [ "/actuator/health" ],
+          enabled_regex_matching: true,
+          invert_match: true
+        }
+      }
+    ]
+
+exporters:
+  logging:
+    loglevel: debug
+  prometheus:
+    endpoint: "0.0.0.0:8889"
+  otlp/tempo:
+    endpoint: "tempo:4317"
+    tls:
+      insecure: true
+  loki:
+    endpoint: "http://loki:3100/loki/api/v1/push"
+    default_labels_enabled:
+      exporter: false
+      job: true
+    tls:
+      insecure: true
+
+extensions:
+  health_check:
+
+service:
+  extensions: [ health_check ]
+  pipelines:
+    traces:
+      receivers: [ otlp ]
+      processors: [ batch, tail_sampling ]
+      exporters: [ otlp/tempo, logging ]
+    metrics:
+      receivers: [ otlp ]
+      processors: [ batch ]
+      exporters: [ prometheus, logging ]
+    logs:
+      receivers: [ otlp ]
+      processors: [ batch, resource ]
+      exporters: [ loki ]
