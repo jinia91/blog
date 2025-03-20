@@ -112,6 +112,35 @@ class FolderUseCaseTests : TestContainerAbstractSkeleton() {
     }
 
     @Test
+    fun `유효한 폴더가 있고, 폴더가 폴더를 가지고 있을때, 유효한 폴더 삭제 요청이 있으면 재귀적으로 모든 폴더가 삭제된다`() {
+        // given
+        val parentFolder =
+            folderRepository.save(
+                Folder.init(
+                    authorId = AuthorId(1),
+                ),
+            )
+        val childFolder =
+            folderRepository.save(
+                Folder.init(
+                    authorId = AuthorId(1),
+                    parent = parentFolder.entityId,
+                ),
+            )
+        val command =
+            IDeleteFoldersRecursively.Command(
+                folderId = parentFolder.entityId,
+                requesterId = FolderTestFixtures.defaultAuthorId,
+            )
+        // when
+        val info = sut.handle(command)
+        // then
+        info.folderId shouldNotBe null
+        folderRepository.findById(info.folderId) shouldBe null
+        folderRepository.findById(childFolder.entityId) shouldBe null
+    }
+
+    @Test
     fun `유효한 폴더 관계 설정 요청이 있고 유효한 폴더 둘이 있으면 폴더 관계가 설정된다`() {
         // given
         val folder1 =

@@ -4,4 +4,5 @@ interface FolderUseCasesFacade :
     ICreateNewFolder,
     IChangeFolderName,
     IMakeRelationShipFolderAndFolder,
-    IDeleteFoldersRecursively
+    IDeleteFoldersRecursively,
+    IDeleteAllWithoutAdmin

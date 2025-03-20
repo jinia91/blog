@@ -1,5 +1,6 @@
 package kr.co.jiniaslog.memo.adapter.outbound.mysql
 
+import com.querydsl.jpa.impl.JPAQueryFactory
 import kr.co.jiniaslog.memo.domain.folder.Folder
 import kr.co.jiniaslog.memo.domain.folder.FolderId
 import kr.co.jiniaslog.memo.domain.folder.FolderRepository
@@ -8,10 +9,14 @@ import kr.co.jiniaslog.shared.core.annotation.PersistenceAdapter
 
 @PersistenceAdapter
 internal class FolderRepositoryAdapter(
-    private val folderJpaRepository: FolderJpaRepository
+    private val folderJpaRepository: FolderJpaRepository,
+    private val memoJpaQueryFactory: JPAQueryFactory
 ) : FolderRepository {
     override fun countByAuthorId(authorId: AuthorId): Long {
         return folderJpaRepository.countByAuthorId(authorId)
+    }
+
+    override fun deleteAllWithoutAdmin() {
     }
 
     override fun findById(id: FolderId): Folder? {

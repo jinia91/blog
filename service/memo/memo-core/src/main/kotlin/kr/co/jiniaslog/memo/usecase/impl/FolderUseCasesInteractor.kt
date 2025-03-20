@@ -7,6 +7,7 @@ import kr.co.jiniaslog.memo.domain.memo.AuthorId
 import kr.co.jiniaslog.memo.usecase.FolderUseCasesFacade
 import kr.co.jiniaslog.memo.usecase.IChangeFolderName
 import kr.co.jiniaslog.memo.usecase.ICreateNewFolder
+import kr.co.jiniaslog.memo.usecase.IDeleteAllWithoutAdmin
 import kr.co.jiniaslog.memo.usecase.IDeleteFoldersRecursively
 import kr.co.jiniaslog.memo.usecase.IMakeRelationShipFolderAndFolder
 import kr.co.jiniaslog.shared.core.annotation.UseCaseInteractor
@@ -58,6 +59,11 @@ internal class FolderUseCasesInteractor(
         folder.validateOwnership(command.requesterId)
         folderRepository.deleteById(folder.entityId)
         return IDeleteFoldersRecursively.Info(folder.entityId)
+    }
+
+    override fun handle(command: IDeleteAllWithoutAdmin.Command): IDeleteAllWithoutAdmin.Info {
+        folderRepository.deleteAllWithoutAdmin()
+        return IDeleteAllWithoutAdmin.Info()
     }
 
     private fun getFolder(id: FolderId) =
