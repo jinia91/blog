@@ -44,11 +44,11 @@ class ArticleRepositoryAdapter(
             .map {
                 IGetPublishedSimpleArticleListWithCursor.Info(
                     id = it.id.value,
-                    title = it.articleContents.title,
-                    thumbnailUrl = it.articleContents.thumbnailUrl,
+                    title = if (published) it.articleContents.title else it.draftContents.title,
+                    thumbnailUrl = if (published) it.articleContents.thumbnailUrl else it.draftContents.thumbnailUrl,
+                    content = (if (published) it.articleContents.contents else it.draftContents.contents).take(100),
                     createdAt = it.createdAt!!,
                     tags = it.tagsInfo.mapKeys { it.key.id },
-                    content = it.articleContents.contents.take(100)
                 )
             }
     }
