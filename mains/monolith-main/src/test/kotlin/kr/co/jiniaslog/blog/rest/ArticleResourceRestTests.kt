@@ -237,5 +237,94 @@ class ArticleResourceRestTests : RestTestAbstractSkeleton() {
                 .then()
                 .statusCode(200)
         }
+
+        @Test
+        fun `게시된 게시물 간소조회 요청이 있으면 유저가 아니여도 200을 반환한다`() {
+            // given
+            every { articleQueriesFacade.handle(any(IGetArticleById.Query::class)) } returns IGetArticleById.Info(
+                id = ArticleId(1L),
+                title = "title",
+                content = "content",
+                thumbnailUrl = "thumbnailUrl",
+                tags = emptyMap(),
+                createdAt = LocalDateTime.now(),
+                isPublished = false
+            )
+
+            // when
+            RestAssuredMockMvc.given()
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .get("/api/v1/articles/simple?cursor=1&limit=10&status=PUBLISHED")
+                // then
+                .then()
+                .statusCode(200)
+        }
+
+        @Test
+        fun `DRAFT 간소조회 요청이 있으면 어드민의 경우 200을 반환한다`() {
+            // given
+            every { articleQueriesFacade.handle(any(IGetArticleById.Query::class)) } returns IGetArticleById.Info(
+                id = ArticleId(1L),
+                title = "title",
+                content = "content",
+                thumbnailUrl = "thumbnailUrl",
+                tags = emptyMap(),
+                createdAt = LocalDateTime.now(),
+                isPublished = false
+            )
+
+            // when
+            RestAssuredMockMvc.given()
+                .cookies(PreAuthFilter.ACCESS_TOKEN_HEADER, getTestAdminUserToken())
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .get("/api/v1/articles/simple?cursor=1&limit=10&status=DRAFT")
+                // then
+                .then()
+                .statusCode(200)
+        }
+
+        @Test
+        fun `DRAFT 간소조회 요청이 있으면 일반 유저의 경우 403을 반환한다`() {
+            // given
+            every { articleQueriesFacade.handle(any(IGetArticleById.Query::class)) } returns IGetArticleById.Info(
+                id = ArticleId(1L),
+                title = "title",
+                content = "content",
+                thumbnailUrl = "thumbnailUrl",
+                tags = emptyMap(),
+                createdAt = LocalDateTime.now(),
+                isPublished = false
+            )
+
+            // when
+            RestAssuredMockMvc.given()
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .get("/api/v1/articles/simple?cursor=1&limit=10&status=DRAFT")
+                // then
+                .then()
+                .statusCode(403)
+        }
+
+        @Test
+        fun `DRAFT 간소조회 요청이 있으면 유저가 아닐경우 401을 반환한다`() {
+            // given
+            every { articleQueriesFacade.handle(any(IGetArticleById.Query::class)) } returns IGetArticleById.Info(
+                id = ArticleId(1L),
+                title = "title",
+                content = "content",
+                thumbnailUrl = "thumbnailUrl",
+                tags = emptyMap(),
+                createdAt = LocalDateTime.now(),
+                isPublished = false
+            )
+
+            // when
+            RestAssuredMockMvc.given()
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .get("/api/v1/articles/simple?cursor=1&limit=10&status=DRAFT")
+                // then
+                .then()
+                .statusCode(401)
+        }
     }
 }
