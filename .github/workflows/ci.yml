@@ -33,6 +33,7 @@ jobs:
         run: ./gradlew detekt
 
       - name: detekt 리포트
+        if: github.event_name == 'pull_request'
         uses: actions/github-script@v5
         with:
           script: |
@@ -61,15 +62,18 @@ jobs:
             }
 
       - name: Install Pandoc
+        if: github.event_name == 'pull_request'
         run: sudo apt-get install -y pandoc
 
       - name: kover 커버리지 리포트 변환
+        if: github.event_name == 'pull_request'
         run: |
           pandoc mains/monolith-main/build/reports/kover/html/index.html -f html -t gfm -o output.md
           sed -n '/# monolith-main: Overall Coverage Summary/,/# Coverage Breakdown/p' output.md | grep -v '# Coverage Breakdown' > coverage-summary.md
           echo "COVERAGE_SUMMARY_PATH=$(pwd)/coverage-summary.md" >> $GITHUB_ENV
 
       - name: kover coverage report
+        if: github.event_name == 'pull_request'
         uses: actions/github-script@v5
         with:
           script: |

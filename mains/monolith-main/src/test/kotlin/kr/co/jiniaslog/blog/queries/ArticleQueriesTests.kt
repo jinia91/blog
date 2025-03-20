@@ -158,7 +158,7 @@ class ArticleQueriesTests : TestContainerAbstractSkeleton() {
         @Test
         fun `간소 게시물은 컨텐츠가 100자 이상이면 절삭한다`() {
             // given
-            val article = articleRepository.save(
+            articleRepository.save(
                 ArticleTestFixtures.createPublishedArticle(
                     contents = "a".repeat(500)
                 )
