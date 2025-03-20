@@ -7,9 +7,9 @@ interface IDeleteArticle {
 
     data class Command(
         val articleId: ArticleId,
-    )
+    ) : ArticleStatusChangeFacade.Command
 
     class Info(
-        val articleId: ArticleId
-    )
+        override val articleId: ArticleId
+    ) : ArticleStatusChangeFacade.Info
 }

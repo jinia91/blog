@@ -43,7 +43,7 @@ class IAddAnyTagInArticleUseCaseTests : TestContainerAbstractSkeleton() {
         val foundArticle = articleRepository.findById(result.articleId)
         foundArticle.shouldNotBeNull()
         foundArticle.tags.shouldNotBeEmpty()
-        foundArticle.tags.contains(tag.id)
+        foundArticle.tags.map { it.tag }.contains(tag)
     }
 
     @Test
@@ -60,7 +60,7 @@ class IAddAnyTagInArticleUseCaseTests : TestContainerAbstractSkeleton() {
         val foundArticle = articleRepository.findById(result.articleId)
         foundArticle.shouldNotBeNull()
         foundArticle.tags.shouldNotBeEmpty()
-        foundArticle.tags.contains(tag.id)
+        foundArticle.tags.map { it.tag }.contains(tag)
     }
 
     @Test

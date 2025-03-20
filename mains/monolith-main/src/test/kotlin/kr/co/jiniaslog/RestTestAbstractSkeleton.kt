@@ -2,12 +2,10 @@ package kr.co.jiniaslog
 
 import com.ninjasquad.springmockk.MockkBean
 import io.restassured.module.mockmvc.RestAssuredMockMvc
-import kr.co.jiniaslog.admin.adapter.inbound.http.AuthDevResources
-import kr.co.jiniaslog.admin.application.AdminUseCaseFacade
 import kr.co.jiniaslog.blog.adapter.inbound.http.ArticleResources
-import kr.co.jiniaslog.blog.adapter.inbound.http.CategoryResources
+import kr.co.jiniaslog.blog.queries.ArticleQueriesFacade
+import kr.co.jiniaslog.blog.usecase.article.ArticleStatusChangeFacade
 import kr.co.jiniaslog.blog.usecase.article.ArticleUseCasesFacade
-import kr.co.jiniaslog.blog.usecase.category.ISyncCategories
 import kr.co.jiniaslog.media.inbound.http.ImageResources
 import kr.co.jiniaslog.media.usecase.image.ImageUseCasesFacade
 import kr.co.jiniaslog.memo.adapter.inbound.http.FolderResources
@@ -57,8 +55,6 @@ class SecurityTestContextConfig {
         FolderResources::class,
         AuthUserResources::class,
         ArticleResources::class,
-        CategoryResources::class,
-        AuthDevResources::class
     ]
 )
 @Import(value = [SecurityTestContextConfig::class, AccessTokenConfig::class, SecurityConfig::class])
@@ -91,10 +87,10 @@ abstract class RestTestAbstractSkeleton {
     protected lateinit var articleUseCasesFacade: ArticleUseCasesFacade
 
     @MockkBean
-    protected lateinit var categoryUseCasesFacade: ISyncCategories
+    protected lateinit var articleQueriesFacade: ArticleQueriesFacade
 
     @MockkBean
-    protected lateinit var adminUseCases: AdminUseCaseFacade
+    protected lateinit var articleStatusChangeFacade: ArticleStatusChangeFacade
 
     @BeforeEach
     fun setup() {

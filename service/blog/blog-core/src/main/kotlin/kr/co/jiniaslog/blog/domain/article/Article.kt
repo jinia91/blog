@@ -2,14 +2,15 @@ package kr.co.jiniaslog.blog.domain.article
 
 import jakarta.persistence.AttributeOverride
 import jakarta.persistence.AttributeOverrides
+import jakarta.persistence.CascadeType
 import jakarta.persistence.Column
-import jakarta.persistence.ElementCollection
 import jakarta.persistence.EmbeddedId
 import jakarta.persistence.Entity
+import jakarta.persistence.EnumType
+import jakarta.persistence.Enumerated
+import jakarta.persistence.OneToMany
 import kr.co.jiniaslog.blog.domain.MemoId
 import kr.co.jiniaslog.blog.domain.UserId
-import kr.co.jiniaslog.blog.domain.category.Category
-import kr.co.jiniaslog.blog.domain.category.CategoryId
 import kr.co.jiniaslog.blog.domain.tag.Tag
 import kr.co.jiniaslog.blog.domain.tag.TagId
 import kr.co.jiniaslog.shared.adapter.out.rdb.JpaAggregate
@@ -29,10 +30,9 @@ import org.hibernate.annotations.FetchMode
  * @param id 게시글 식별자
  * @param memoRefId 원본이 되는 메모 식별자
  * @param authorId 작성자 식별자
- * @param articleContents 게시글 상세 내용 VO
+ * @param publishedArticleContents 게시글 상세 내용 VO
  * @param status 게시글 상태
  * @param tags 게시글에 달린 태그 목록
- * @param categoryId 게시글이 속한 카테고리 식별자
  * @param hit 조회수
  */
 @Entity
@@ -41,9 +41,9 @@ class Article internal constructor(
     memoRefId: MemoId?,
     authorId: UserId,
     status: Status,
-    articleContents: ArticleContents,
+    publishedArticleContents: ArticleContents,
+    draftContents: ArticleContents,
     tags: MutableSet<Tagging>,
-    categoryId: CategoryId?,
     hit: Int,
 ) : JpaAggregate<ArticleId>() {
 
@@ -53,7 +53,15 @@ class Article internal constructor(
      * - PUBLISHED: 게시 - 작성중인 게시글을 게시
      * - DELETED: 삭제 - 게시글 삭제는 물리적 삭제가 아닌 상태만 변경
      */
-    enum class Status { DRAFT, PUBLISHED, DELETED }
+    enum class Status {
+        DRAFT,
+        PUBLISHED,
+        DELETED;
+        fun canPublish(): Boolean = setOf(DRAFT, PUBLISHED).contains(this)
+        fun canDelete(): Boolean = setOf(DRAFT, PUBLISHED).contains(this)
+        fun canUnDelete(): Boolean = setOf(DELETED).contains(this)
+        fun canUnPublish(): Boolean = setOf(PUBLISHED).contains(this)
+    }
 
     @EmbeddedId
     @AttributeOverride(column = Column(name = "id"), name = "value")
@@ -63,6 +71,7 @@ class Article internal constructor(
     val authorId: UserId = authorId
 
     @Column(name = "status")
+    @Enumerated(EnumType.STRING)
     var status: Status = status
         private set
 
@@ -70,28 +79,35 @@ class Article internal constructor(
     var memoRefId: MemoId? = memoRefId
         private set
 
-    @AttributeOverride(column = Column(name = "category_id"), name = "value")
-    var categoryId: CategoryId? = categoryId
+    @AttributeOverrides(
+        AttributeOverride(name = "title", column = Column(name = "title")),
+        AttributeOverride(name = "contents", column = Column(name = "contents", columnDefinition = "TEXT")),
+        AttributeOverride(name = "thumbnailUrl", column = Column(name = "thumbnail_url")),
+    )
+    var articleContents: ArticleContents = publishedArticleContents
         private set
 
     @AttributeOverrides(
-        AttributeOverride(name = "title", column = Column(name = "title")),
-        AttributeOverride(name = "contents", column = Column(name = "contents")),
-        AttributeOverride(name = "thumbnailUrl", column = Column(name = "thumbnail_url")),
+        AttributeOverride(name = "title", column = Column(name = "draft_title")),
+        AttributeOverride(name = "contents", column = Column(name = "draft_contents", columnDefinition = "TEXT")),
+        AttributeOverride(name = "thumbnailUrl", column = Column(name = "draft_thumbnail_url")),
     )
-    var articleContents: ArticleContents = articleContents
+    var draftContents: ArticleContents = draftContents
         private set
 
     @Column(name = "hit")
     var hit: Int = hit
         private set
 
-    @ElementCollection
     @Fetch(FetchMode.JOIN)
+    @OneToMany(mappedBy = "article", orphanRemoval = true, cascade = [CascadeType.ALL])
     private var _tags: MutableSet<Tagging> = tags
 
-    val tags: Set<TagId>
-        get() = _tags.map { it.tagId }.toSet()
+    val tags: Set<Tagging>
+        get() = _tags.toSet()
+
+    val tagsInfo: Map<TagId, String>
+        get() = _tags.associate { it.tag.entityId to it.tag.tagName.value }
 
     /**
      *  초기화시 상태에 따라 게시글의 불변성(Invariant) 검증
@@ -102,13 +118,11 @@ class Article internal constructor(
             Status.DRAFT -> {}
 
             Status.PUBLISHED -> {
-                requireNotNull(categoryId) { "게시글이 속한 카테고리는 필수입니다." }
-                articleContents.validateOnPublish()
+                publishedArticleContents.validateOnPublish()
             }
 
             Status.DELETED -> {
-                require(categoryId == null) { "삭제된 게시글은 카테고리를 가질 수 없습니다." }
-                require(tags.isEmpty()) { "삭제된 게시글은 태그를 가질 수 없습니다." }
+                check(_tags.isEmpty()) { "삭제된 게시글은 태그를 가질 수 없습니다." }
             }
         }
     }
@@ -122,21 +136,26 @@ class Article internal constructor(
      * @see publish
      */
     val canPublish: Boolean
-        get() {
-            return status != Status.PUBLISHED &&
-                categoryId != null &&
-                articleContents.canPublish
-        }
+        get() = draftContents.canPublish && status.canPublish()
+
+    val isPublished: Boolean
+        get() = status == Status.PUBLISHED
 
     /**
-     * 게시글을 공개한다
+     * 초안 내용을 게시글 내용으로 변경하고 상태를 게시로 변경한다
      *
      * @see canPublish
      *
      */
     fun publish() {
-        require(canPublish) { "게시글을 게시할 수 없습니다." }
+        check(canPublish) { "게시글을 게시할 수 없습니다." }
+        articleContents = draftContents
         status = Status.PUBLISHED
+    }
+
+    fun unPublish() {
+        check(status.canUnPublish()) { "게시된 게시글이 아닙니다." }
+        status = Status.DRAFT
     }
 
     /**
@@ -148,8 +167,7 @@ class Article internal constructor(
      * @see unDelete
      */
     fun delete() {
-        require(status != Status.DELETED) { "이미 삭제된 게시글입니다." }
-        categoryId = null
+        check(status.canDelete()) { "이미 삭제된 게시글입니다." }
         _tags.clear()
         memoRefId = null
         status = Status.DELETED
@@ -161,21 +179,8 @@ class Article internal constructor(
      * @see delete
      */
     fun unDelete() {
-        require(status == Status.DELETED) { "이미 삭제되지 않은 게시글입니다." }
+        check(status.canUnDelete()) { "삭제되지 않은 게시글입니다." }
         status = Status.DRAFT
-    }
-
-    /**
-     * 게시글을 분류한다
-     *
-     * - 최하위 카테고리만 분류 가능
-     *
-     * @param category 강검증을 위해 아이디가 아닌 카테고리 어그리게이트 루트를 전달
-     */
-    fun categorize(category: Category) {
-        require(category.isChild) { "카테고리는 하위 카테고리여야 합니다." }
-        require(this.status != Status.DELETED) { "삭제된 게시글은 카테고리를 설정할 수 없습니다." }
-        this.categoryId = category.entityId
     }
 
     /**
@@ -185,9 +190,9 @@ class Article internal constructor(
      *
      * @param articleContents
      */
-    fun updateArticleContents(articleContents: ArticleContents) {
+    fun updateDraftArticleContents(articleContents: ArticleContents) {
         validateContentEditable(articleContents)
-        this.articleContents = articleContents
+        this.draftContents = articleContents
     }
 
     private fun validateContentEditable(articleContents: ArticleContents) {
@@ -202,10 +207,27 @@ class Article internal constructor(
         }
     }
 
+    /**
+     * 게시글에 태그를 추가한다
+     * - 삭제된 게시글에는 태그를 추가할 수 없다
+     * @param tag
+     */
     fun addTag(tag: Tag) {
-        require(status != Status.DELETED) { "삭제된 게시글은 태그를 추가할 수 없습니다." }
-        val tagging = Tagging(tag.entityId)
+        check(status != Status.DELETED) { "삭제된 게시글은 태그를 추가할 수 없습니다." }
+        val tagging = Tagging(TaggingId(IdUtils.idGenerator.generate()), this, tag)
         _tags.add(tagging)
+    }
+
+    /**
+     * 게시글에 태그를 제거한다
+     * - 삭제된 게시글에는 태그를 제거할 수 없다
+     * @param tag
+     */
+    fun removeTag(tag: Tag) {
+        check(status != Status.DELETED) { "삭제된 게시글은 태그를 제거할 수 없습니다." }
+        val tagging = _tags.find { it.tag == tag }
+            ?: throw IllegalArgumentException("해당 태그가 존재하지 않습니다.")
+        _tags.remove(tagging)
     }
 
     companion object {
@@ -217,9 +239,9 @@ class Article internal constructor(
                 memoRefId = null,
                 authorId = authorId,
                 status = Status.DRAFT,
-                articleContents = ArticleContents.EMPTY,
+                publishedArticleContents = ArticleContents.EMPTY,
+                draftContents = ArticleContents.EMPTY,
                 tags = mutableSetOf(),
-                categoryId = null,
                 hit = 0,
             )
         }

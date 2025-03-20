@@ -1,7 +1,7 @@
 plugins {
     springBootConventions
     koverReport
-    observability
+//    observability
 }
 
 /**
@@ -46,11 +46,6 @@ val authUserService = mutableListOf(
     project(Modules.Service.AuthUser.Adaptors.OutMySql.path),
 )
 
-val admin = mutableListOf(
-    project(Modules.Service.Admin.Core.path),
-    project(Modules.Service.Admin.Adaptors.InHttp.path),
-)
-
 var moduleBlocks = mutableListOf<Project>()
     .apply {
         addAll(shared)
@@ -58,7 +53,6 @@ var moduleBlocks = mutableListOf<Project>()
         addAll(memoService)
         addAll(mediaService)
         addAll(authUserService)
-        addAll(admin)
     }
 
 val bootLib = mutableListOf(

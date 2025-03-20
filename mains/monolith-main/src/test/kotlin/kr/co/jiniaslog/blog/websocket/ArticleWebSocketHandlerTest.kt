@@ -7,7 +7,7 @@ import kr.co.jiniaslog.WebSocketTestAbstractSkeleton
 import kr.co.jiniaslog.blog.adapter.inbound.websocket.payload.UpdateArticlePayload
 import kr.co.jiniaslog.blog.adapter.inbound.websocket.payload.UpdateArticleResponse
 import kr.co.jiniaslog.blog.domain.article.ArticleId
-import kr.co.jiniaslog.blog.usecase.article.IUpdateArticleContents
+import kr.co.jiniaslog.blog.usecase.article.IUpdateDraftArticleContents
 import kr.co.jiniaslog.user.application.security.PreAuthFilter
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
@@ -84,8 +84,8 @@ class ArticleWebSocketHandlerTest : WebSocketTestAbstractSkeleton() {
             thumbnailUrl = ""
         )
         every {
-            articleUseCases.handle(any(IUpdateArticleContents.Command::class))
-        } returns IUpdateArticleContents.Info(ArticleId(1))
+            articleUseCases.handle(any(IUpdateDraftArticleContents.Command::class))
+        } returns IUpdateDraftArticleContents.Info(ArticleId(1))
 
         // when
         client.send(WEBSOCKET_ARTICLE_UPDATE, payload)

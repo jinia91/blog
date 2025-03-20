@@ -68,7 +68,6 @@ class IStartToWriteNewDraftArticleUseCaseTests : TestContainerAbstractSkeleton()
             val article = articleRepository.findById(info.articleId)
             article.shouldNotBeNull()
             article.memoRefId.shouldBeNull()
-            article.categoryId.shouldBeNull()
             article.status shouldBe Article.Status.DRAFT
             article.authorId shouldBe UserId(user.entityId.value)
             article.articleContents shouldBe ArticleContents.EMPTY

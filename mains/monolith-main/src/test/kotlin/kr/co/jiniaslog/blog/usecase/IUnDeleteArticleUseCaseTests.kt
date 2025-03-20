@@ -9,6 +9,7 @@ import kr.co.jiniaslog.blog.domain.ArticleTestFixtures
 import kr.co.jiniaslog.blog.domain.article.Article
 import kr.co.jiniaslog.blog.domain.article.ArticleId
 import kr.co.jiniaslog.blog.outbound.ArticleRepository
+import kr.co.jiniaslog.blog.usecase.article.ArticleStatusChangeFacade
 import kr.co.jiniaslog.blog.usecase.article.IUnDeleteArticle
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -16,7 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired
 class IUnDeleteArticleUseCaseTests : TestContainerAbstractSkeleton() {
 
     @Autowired
-    private lateinit var sut: IUnDeleteArticle
+    private lateinit var sut: ArticleStatusChangeFacade
 
     @Autowired
     private lateinit var articleRepository: ArticleRepository
@@ -29,9 +30,10 @@ class IUnDeleteArticleUseCaseTests : TestContainerAbstractSkeleton() {
         // given
         val deletedArticle = ArticleTestFixtures.createDeletedArticle()
         articleRepository.save(deletedArticle)
+        val command = IUnDeleteArticle.Command(deletedArticle.entityId) as ArticleStatusChangeFacade.Command
 
         // when
-        val info = sut.handle(IUnDeleteArticle.Command(deletedArticle.entityId))
+        val info = sut.handle(command)
 
         //
         info.articleId shouldBe deletedArticle.entityId
@@ -48,7 +50,7 @@ class IUnDeleteArticleUseCaseTests : TestContainerAbstractSkeleton() {
         articleRepository.save(publishedArticle)
 
         // when, then
-        shouldThrow<IllegalArgumentException> {
+        shouldThrow<IllegalStateException> {
             sut.handle(IUnDeleteArticle.Command(publishedArticle.entityId))
         }
     }

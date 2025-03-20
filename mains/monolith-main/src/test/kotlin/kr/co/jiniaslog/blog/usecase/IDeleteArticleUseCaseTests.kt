@@ -12,14 +12,16 @@ import kr.co.jiniaslog.blog.domain.tag.Tag
 import kr.co.jiniaslog.blog.domain.tag.TagName
 import kr.co.jiniaslog.blog.outbound.ArticleRepository
 import kr.co.jiniaslog.blog.outbound.TagRepository
+import kr.co.jiniaslog.blog.usecase.article.ArticleStatusChangeFacade
 import kr.co.jiniaslog.blog.usecase.article.IDeleteArticle
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.transaction.annotation.Transactional
 
 class IDeleteArticleUseCaseTests : TestContainerAbstractSkeleton() {
+
     @Autowired
-    private lateinit var sut: IDeleteArticle
+    private lateinit var sut: ArticleStatusChangeFacade
 
     @Autowired
     private lateinit var tagRepository: TagRepository
@@ -38,12 +40,13 @@ class IDeleteArticleUseCaseTests : TestContainerAbstractSkeleton() {
         tagRepository.save(tag)
         tagRepository.save(tag2)
         val article = ArticleTestFixtures.createPublishedArticle(
-            tags = listOf(tag.entityId, tag2.entityId),
+            tags = listOf(tag, tag2),
         )
         articleRepository.save(article)
+        val command = IDeleteArticle.Command(article.entityId) as ArticleStatusChangeFacade.Command
 
         // when
-        val info = sut.handle(IDeleteArticle.Command(article.entityId))
+        val info = sut.handle(command)
 
         // then
         info.articleId shouldBe article.entityId
@@ -73,7 +76,7 @@ class IDeleteArticleUseCaseTests : TestContainerAbstractSkeleton() {
         articleRepository.save(article)
 
         // when, then
-        shouldThrow<IllegalArgumentException> {
+        shouldThrow<IllegalStateException> {
             sut.handle(IDeleteArticle.Command(article.entityId))
         }
     }
