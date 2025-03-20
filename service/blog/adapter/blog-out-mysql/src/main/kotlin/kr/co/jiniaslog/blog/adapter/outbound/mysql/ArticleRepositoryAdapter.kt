@@ -48,9 +48,7 @@ class ArticleRepositoryAdapter(
                     thumbnailUrl = it.articleContents.thumbnailUrl,
                     createdAt = it.createdAt!!,
                     tags = it.tagsInfo.mapKeys { it.key.id },
-                    content = it.articleContents.contents.apply {
-                        if (this.length > 100) substring(0, 100) else this
-                    }
+                    content = it.articleContents.contents.take(100)
                 )
             }
     }

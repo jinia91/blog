@@ -81,7 +81,7 @@ class Article internal constructor(
 
     @AttributeOverrides(
         AttributeOverride(name = "title", column = Column(name = "title")),
-        AttributeOverride(name = "contents", column = Column(name = "contents")),
+        AttributeOverride(name = "contents", column = Column(name = "contents", columnDefinition = "TEXT")),
         AttributeOverride(name = "thumbnailUrl", column = Column(name = "thumbnail_url")),
     )
     var articleContents: ArticleContents = publishedArticleContents
@@ -89,7 +89,7 @@ class Article internal constructor(
 
     @AttributeOverrides(
         AttributeOverride(name = "title", column = Column(name = "draft_title")),
-        AttributeOverride(name = "contents", column = Column(name = "draft_contents")),
+        AttributeOverride(name = "contents", column = Column(name = "draft_contents", columnDefinition = "TEXT")),
         AttributeOverride(name = "thumbnailUrl", column = Column(name = "draft_thumbnail_url")),
     )
     var draftContents: ArticleContents = draftContents
