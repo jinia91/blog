@@ -12,6 +12,8 @@ import kr.co.jiniaslog.memo.domain.folder.FolderId
 import kr.co.jiniaslog.memo.domain.folder.FolderName
 import kr.co.jiniaslog.memo.domain.folder.FolderRepository
 import kr.co.jiniaslog.memo.domain.memo.AuthorId
+import kr.co.jiniaslog.memo.domain.memo.Memo
+import kr.co.jiniaslog.memo.domain.memo.MemoRepository
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Qualifier
@@ -22,6 +24,9 @@ import javax.sql.DataSource
 class FolderUseCaseTests : TestContainerAbstractSkeleton() {
     @Autowired
     lateinit var folderRepository: FolderRepository
+
+    @Autowired
+    lateinit var memoRepository: MemoRepository
 
     @Autowired
     @Qualifier(MemoDb.DATASOURCE)
@@ -138,6 +143,36 @@ class FolderUseCaseTests : TestContainerAbstractSkeleton() {
         info.folderId shouldNotBe null
         folderRepository.findById(info.folderId) shouldBe null
         folderRepository.findById(childFolder.entityId) shouldBe null
+    }
+
+    @Test
+    fun `유효한 폴더가 있고, 폴더가 메모를 가지고 있을때 유효한 폴더 삭제 요청이 있으면 모두 삭제된다`() {
+        // given
+        val folder =
+            folderRepository.save(
+                Folder.init(
+                    authorId = AuthorId(1),
+                ),
+            )
+        val memo =
+            memoRepository.save(
+                Memo.init(
+                    authorId = AuthorId(1),
+                    parentFolderId = folder.entityId,
+                ),
+            )
+
+        val command =
+            IDeleteFoldersRecursively.Command(
+                folderId = folder.entityId,
+                requesterId = FolderTestFixtures.defaultAuthorId,
+            )
+        // when
+        val info = sut.handle(command)
+        // then
+        info.folderId shouldNotBe null
+        folderRepository.findById(info.folderId) shouldBe null
+        memoRepository.findById(memo.entityId) shouldBe null
     }
 
     @Test
