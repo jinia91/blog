@@ -6,3 +6,7 @@ data class UpdateArticleStatusRequest(
     val asIsStatus: Article.Status,
     val toBeStatus: Article.Status
 )
+
+data class UpdateArticleStatusResponse(
+    val articleId: Long
+)

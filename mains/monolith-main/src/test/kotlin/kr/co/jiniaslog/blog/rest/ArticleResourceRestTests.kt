@@ -4,8 +4,11 @@ import io.mockk.every
 import io.restassured.module.mockmvc.RestAssuredMockMvc
 import kr.co.jiniaslog.RestTestAbstractSkeleton
 import kr.co.jiniaslog.blog.adapter.inbound.http.dto.AddTagToArticleRequest
+import kr.co.jiniaslog.blog.adapter.inbound.http.dto.UpdateArticleStatusRequest
+import kr.co.jiniaslog.blog.domain.article.Article
 import kr.co.jiniaslog.blog.domain.article.ArticleId
 import kr.co.jiniaslog.blog.queries.IGetArticleById
+import kr.co.jiniaslog.blog.usecase.article.ArticleStatusChangeFacade
 import kr.co.jiniaslog.blog.usecase.article.IAddAnyTagInArticle
 import kr.co.jiniaslog.blog.usecase.article.IDeleteArticle
 import kr.co.jiniaslog.blog.usecase.article.IPublishArticle
@@ -77,14 +80,27 @@ class ArticleResourceRestTests : RestTestAbstractSkeleton() {
         @Test
         fun `어드민 사용자의 유효한 게시글 게시 요청이 있으면 200을 반환한다`() {
             // given
-            every { articleUseCasesFacade.handle(any(IPublishArticle.Command::class)) } returns IPublishArticle.Info(
+            every {
+                articleStatusChangeFacade.determineCommand(
+                    Article.Status.DRAFT,
+                    Article.Status.PUBLISHED,
+                    ArticleId(1L)
+                )
+            } returns IPublishArticle.Command(ArticleId(1L))
+            every { articleStatusChangeFacade.handle(any(ArticleStatusChangeFacade.Command::class)) } returns IPublishArticle.Info(
                 ArticleId(1L)
             )
             // when
             RestAssuredMockMvc.given()
                 .cookies(PreAuthFilter.ACCESS_TOKEN_HEADER, getTestAdminUserToken())
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .put("/api/v1/articles/1/publish")
+                .body(
+                    UpdateArticleStatusRequest(
+                        asIsStatus = Article.Status.DRAFT,
+                        toBeStatus = Article.Status.PUBLISHED
+                    )
+                )
+                .patch("/api/v1/articles/1")
                 // then
                 .then()
                 .statusCode(200)
@@ -96,14 +112,29 @@ class ArticleResourceRestTests : RestTestAbstractSkeleton() {
         @Test
         fun `어드민 사용자의 유효한 게시글 내리기 요청이 있으면 200을 반환한다`() {
             // given
-            every { articleUseCasesFacade.handle(any(IUnPublishArticle.Command::class)) } returns IUnPublishArticle.Info(
+            every {
+                articleStatusChangeFacade.determineCommand(
+                    Article.Status.PUBLISHED,
+                    Article.Status.DRAFT,
+                    ArticleId(1L)
+                )
+            } returns IPublishArticle.Command(ArticleId(1L))
+            every {
+                articleStatusChangeFacade.handle(any(ArticleStatusChangeFacade.Command::class))
+            } returns IUnPublishArticle.Info(
                 ArticleId(1L)
             )
             // when
             RestAssuredMockMvc.given()
                 .cookies(PreAuthFilter.ACCESS_TOKEN_HEADER, getTestAdminUserToken())
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .put("/api/v1/articles/1/draft")
+                .body(
+                    UpdateArticleStatusRequest(
+                        asIsStatus = Article.Status.PUBLISHED,
+                        toBeStatus = Article.Status.DRAFT
+                    )
+                )
+                .patch("/api/v1/articles/1")
                 // then
                 .then()
                 .statusCode(200)
@@ -115,7 +146,7 @@ class ArticleResourceRestTests : RestTestAbstractSkeleton() {
         @Test
         fun `정상적인 게시글 삭제 요청이 있으면 200을 반환한다`() {
             // given
-            every { articleUseCasesFacade.handle(any(IDeleteArticle.Command::class)) } returns IDeleteArticle.Info(
+            every { articleStatusChangeFacade.handle(any(IDeleteArticle.Command::class)) } returns IDeleteArticle.Info(
                 ArticleId(1L)
             )
             // when
@@ -134,7 +165,14 @@ class ArticleResourceRestTests : RestTestAbstractSkeleton() {
         @Test
         fun `삭제된 게시글을 성공적으로 복구하면 200을 반환한다`() {
             // given
-            every { articleUseCasesFacade.handle(any(IUnDeleteArticle.Command::class)) } returns IUnDeleteArticle.Info(
+            every {
+                articleStatusChangeFacade.determineCommand(
+                    Article.Status.DELETED,
+                    Article.Status.DRAFT,
+                    ArticleId(1L)
+                )
+            } returns IPublishArticle.Command(ArticleId(1L))
+            every { articleStatusChangeFacade.handle(any(ArticleStatusChangeFacade.Command::class)) } returns IUnDeleteArticle.Info(
                 ArticleId(1L)
             )
 
@@ -142,7 +180,13 @@ class ArticleResourceRestTests : RestTestAbstractSkeleton() {
             RestAssuredMockMvc.given()
                 .cookies(PreAuthFilter.ACCESS_TOKEN_HEADER, getTestAdminUserToken())
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .put("/api/v1/articles/1/undelete")
+                .body(
+                    UpdateArticleStatusRequest(
+                        asIsStatus = Article.Status.DELETED,
+                        toBeStatus = Article.Status.DRAFT
+                    )
+                )
+                .patch("/api/v1/articles/1")
                 // then
                 .then()
                 .statusCode(200)
@@ -163,7 +207,7 @@ class ArticleResourceRestTests : RestTestAbstractSkeleton() {
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(AddTagToArticleRequest("tag"))
                 // when
-                .put("/api/v1/articles/1/tag")
+                .post("/api/v1/articles/1/tags")
                 // then
                 .then()
                 .statusCode(200)
@@ -188,7 +232,7 @@ class ArticleResourceRestTests : RestTestAbstractSkeleton() {
             // when
             RestAssuredMockMvc.given()
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .get("/api/v1/articles/1")
+                .get("/api/v1/articles/1?status=PUBLISHED")
                 // then
                 .then()
                 .statusCode(200)

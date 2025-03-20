@@ -61,7 +61,7 @@ class ArticleQueriesTests : TestContainerAbstractSkeleton() {
         val article3 = articleRepository.save(ArticleTestFixtures.createPublishedArticle())
 
         // when
-        val result = sut.handle(IGetPublishedSimpleArticleListWithCursor.Query(article1.entityId, 3))
+        val result = sut.handle(IGetPublishedSimpleArticleListWithCursor.Query(article1.entityId, 3, true))
 
         // then
         result.size shouldBe 2

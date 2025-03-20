@@ -1,6 +1,9 @@
 package kr.co.jiniaslog.blog.usecase
 
 import kr.co.jiniaslog.blog.domain.article.Article
+import kr.co.jiniaslog.blog.domain.article.Article.Status.DELETED
+import kr.co.jiniaslog.blog.domain.article.Article.Status.DRAFT
+import kr.co.jiniaslog.blog.domain.article.Article.Status.PUBLISHED
 import kr.co.jiniaslog.blog.domain.article.ArticleId
 import kr.co.jiniaslog.blog.outbound.ArticleRepository
 import kr.co.jiniaslog.blog.outbound.BlogTransactionHandler
@@ -22,16 +25,18 @@ class ArticleStatusChangeInteractor(
         articleId: ArticleId,
     ): ArticleStatusChangeFacade.Command {
         return when (asIsStatus to toBeStatus) {
-            Article.Status.DRAFT to Article.Status.PUBLISHED -> IPublishArticle.Command(articleId)
-            Article.Status.PUBLISHED to Article.Status.DRAFT -> IUnPublishArticle.Command(articleId)
-            Article.Status.DELETED to Article.Status.DRAFT -> IUnDeleteArticle.Command(articleId)
-            Article.Status.DRAFT to Article.Status.DELETED -> IDeleteArticle.Command(articleId)
+            DRAFT to PUBLISHED,
+            PUBLISHED to PUBLISHED -> IPublishArticle.Command(articleId)
+            PUBLISHED to DRAFT -> IUnPublishArticle.Command(articleId)
+            DELETED to DRAFT -> IUnDeleteArticle.Command(articleId)
+            PUBLISHED to DELETED,
+            DRAFT to DELETED -> IDeleteArticle.Command(articleId)
             else -> throw IllegalArgumentException("해당 상태 전이는 허용되지 않습니다")
         }
     }
 
     override fun handle(command: ArticleStatusChangeFacade.Command): ArticleStatusChangeFacade.Info {
-        return when (command) {
+        return when (command) { // 타입캐스팅후 오버로딩
             is IPublishArticle.Command -> handle(command)
             is IUnPublishArticle.Command -> handle(command)
             is IDeleteArticle.Command -> handle(command)
