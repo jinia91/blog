@@ -10,6 +10,7 @@ import kr.co.jiniaslog.blog.outbound.ArticleRepository
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
+import org.testcontainers.shaded.org.bouncycastle.asn1.x500.style.RFC4519Style.title
 
 class ArticleQueriesTests : TestContainerAbstractSkeleton() {
     @Autowired
@@ -72,6 +73,48 @@ class ArticleQueriesTests : TestContainerAbstractSkeleton() {
 
     @Nested
     inner class `간소조회 테스트` {
+        @Test
+        fun `초안 조회를 하면 게시되지 않은 게시물들이 조회된다`() {
+            // given
+            val article1 = articleRepository.save(ArticleTestFixtures.createDraftArticle())
+            val article2 = articleRepository.save(ArticleTestFixtures.createDraftArticle())
+            val article3 = articleRepository.save(ArticleTestFixtures.createDraftArticle())
+
+            // when
+            val result = sut.handle(IGetPublishedSimpleArticleListWithCursor.Query(article1.entityId, 3, true))
+
+            // then
+            result.size shouldBe 2
+            result[0].id shouldBe article2.entityId.value
+            result[0].title shouldBe article2.draftContents.title
+            result[0].content shouldBe article2.draftContents.contents
+
+            result[1].id shouldBe article3.entityId.value
+            result[1].title shouldBe article3.draftContents.title
+            result[1].content shouldBe article3.draftContents.contents
+        }
+
+        @Test
+        fun `게시된 게시물을 조회하면 게시된 게시물 내용이 조회된다`() {
+            // given
+            val article1 = articleRepository.save(ArticleTestFixtures.createPublishedArticle())
+            val article2 = articleRepository.save(ArticleTestFixtures.createPublishedArticle())
+            val article3 = articleRepository.save(ArticleTestFixtures.createPublishedArticle())
+
+            // when
+            val result = sut.handle(IGetPublishedSimpleArticleListWithCursor.Query(article1.entityId, 3, true))
+
+            // then
+            result.size shouldBe 2
+            result[0].id shouldBe article2.entityId.value
+            result[0].title shouldBe article2.articleContents.title
+            result[0].content shouldBe article2.articleContents.contents
+
+            result[1].id shouldBe article3.entityId.value
+            result[1].title shouldBe article3.articleContents.title
+            result[1].content shouldBe article3.articleContents.contents
+        }
+
         @Test
         fun `커서가 된 게시된 게시물은 조회되지않는다`() {
             // given
