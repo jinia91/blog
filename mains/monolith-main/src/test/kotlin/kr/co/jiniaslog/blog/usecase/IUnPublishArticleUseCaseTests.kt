@@ -29,9 +29,9 @@ class IUnPublishArticleUseCaseTests : TestContainerAbstractSkeleton() {
         // given
         val publishedArticle = ArticleTestFixtures.createPublishedArticle()
         articleRepository.save(publishedArticle)
-
+        val command = IUnPublishArticle.Command(publishedArticle.entityId) as ArticleStatusChangeFacade.Command
         // when
-        val info = sut.handle(IUnPublishArticle.Command(publishedArticle.entityId))
+        val info = sut.handle(command)
 
         // then
         info.articleId shouldBe publishedArticle.entityId

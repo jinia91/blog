@@ -8,7 +8,6 @@ import kr.co.jiniaslog.blog.domain.ArticleTestFixtures
 import kr.co.jiniaslog.blog.domain.tag.Tag
 import kr.co.jiniaslog.blog.domain.tag.TagName
 import kr.co.jiniaslog.blog.outbound.ArticleRepository
-import kr.co.jiniaslog.blog.outbound.BlogTransactionHandler
 import kr.co.jiniaslog.blog.outbound.TagRepository
 import kr.co.jiniaslog.blog.usecase.tag.IDeleteUnUsedTags
 import org.junit.jupiter.api.Test
@@ -26,9 +25,6 @@ class IDeleteUnUsedTagsUseCaseTests : TestContainerAbstractSkeleton() {
 
     @Autowired
     lateinit var em: EntityManager
-
-    @Autowired
-    lateinit var transactionHandler: BlogTransactionHandler
 
     @Test
     fun `사용하지 않는 태그들을 삭제할 수 있다`() {

@@ -43,9 +43,10 @@ class IDeleteArticleUseCaseTests : TestContainerAbstractSkeleton() {
             tags = listOf(tag, tag2),
         )
         articleRepository.save(article)
+        val command = IDeleteArticle.Command(article.entityId) as ArticleStatusChangeFacade.Command
 
         // when
-        val info = sut.handle(IDeleteArticle.Command(article.entityId))
+        val info = sut.handle(command)
 
         // then
         info.articleId shouldBe article.entityId

@@ -30,9 +30,10 @@ class IUnDeleteArticleUseCaseTests : TestContainerAbstractSkeleton() {
         // given
         val deletedArticle = ArticleTestFixtures.createDeletedArticle()
         articleRepository.save(deletedArticle)
+        val command = IUnDeleteArticle.Command(deletedArticle.entityId) as ArticleStatusChangeFacade.Command
 
         // when
-        val info = sut.handle(IUnDeleteArticle.Command(deletedArticle.entityId))
+        val info = sut.handle(command)
 
         //
         info.articleId shouldBe deletedArticle.entityId
