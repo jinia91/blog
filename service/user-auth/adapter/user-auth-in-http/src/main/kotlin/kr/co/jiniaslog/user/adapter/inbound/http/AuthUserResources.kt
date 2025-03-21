@@ -105,8 +105,7 @@ class AuthUserResources(
 
     private fun buildCookieWithAccessToken(accessToken: AccessToken): ResponseCookie =
         ResponseCookie.from(ACCESS_TOKEN_COOKIE_NAME, accessToken.value)
-            // fixme : domain도 주입하게 변경하기
-            .domain(domain)
+            .domain("*$domain")
             .path("/")
             .httpOnly(true)
             .maxAge(ACCESS_TOKEN_COOKIE_MAX_AGE)
@@ -116,7 +115,7 @@ class AuthUserResources(
 
     private fun buildCookieWithRefreshToken(refreshToken: RefreshToken): ResponseCookie =
         ResponseCookie.from(REFRESH_TOKEN_COOKIE_NAME, refreshToken.value)
-            .domain(domain)
+            .domain("*$domain")
             .path("/api/v1/auth/refresh")
             .httpOnly(true)
             .maxAge(REFRESH_TOKEN_COOKIE_MAX_AGE)
@@ -133,7 +132,7 @@ class AuthUserResources(
         val command = ILogOut.Command(UserId(userId))
         usecases.handle(command)
         val accessCookie = ResponseCookie.from(ACCESS_TOKEN_COOKIE_NAME, "")
-            .domain(domain)
+            .domain("*$domain")
             .path("/")
             .maxAge(0)
             .secure(true)
@@ -141,7 +140,7 @@ class AuthUserResources(
             .build()
 
         val refreshCookie = ResponseCookie.from(REFRESH_TOKEN_COOKIE_NAME, "")
-            .domain(domain)
+            .domain("*$domain")
             .path("/api/v1/auth/refresh")
             .maxAge(0)
             .secure(true)
