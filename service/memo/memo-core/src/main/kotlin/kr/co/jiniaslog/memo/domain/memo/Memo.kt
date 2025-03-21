@@ -12,6 +12,8 @@ import kr.co.jiniaslog.memo.domain.exception.NotOwnershipException
 import kr.co.jiniaslog.memo.domain.folder.FolderId
 import kr.co.jiniaslog.shared.adapter.out.rdb.JpaAggregate
 import kr.co.jiniaslog.shared.core.domain.IdUtils
+import org.hibernate.annotations.Cascade
+import org.hibernate.annotations.CascadeType
 import org.hibernate.annotations.Fetch
 import org.hibernate.annotations.FetchMode
 import java.time.LocalDateTime
@@ -51,6 +53,7 @@ class Memo private constructor(
         private set
 
     @ElementCollection
+    @Cascade(CascadeType.ALL)
     @CollectionTable(name = "memo_reference")
     @Fetch(FetchMode.JOIN)
     private var _references: MutableSet<MemoReference> = references

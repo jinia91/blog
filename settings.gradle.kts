@@ -38,6 +38,7 @@ include(
     "service:memo:adapter:memo-in-message",
     "service:memo:adapter:memo-in-batch",
     "service:memo:adapter:memo-out-mysql",
+    "service:memo:adapter:memo-out-user",
 
     // media
     "service:media:media-domain",

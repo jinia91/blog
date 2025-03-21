@@ -9,4 +9,5 @@ interface UserRepository : Repository<User, UserId> {
     fun findByEmail(email: Email): User?
 
     fun findAll(): List<User>
+    fun findAdminUsers(): List<User>
 }

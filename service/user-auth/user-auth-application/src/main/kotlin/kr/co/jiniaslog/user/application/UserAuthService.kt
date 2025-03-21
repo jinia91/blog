@@ -11,6 +11,7 @@ import kr.co.jiniaslog.user.application.usecase.ICheckUserExisted
 import kr.co.jiniaslog.user.application.usecase.IGetOAuthRedirectionUrl
 import kr.co.jiniaslog.user.application.usecase.ILogOut
 import kr.co.jiniaslog.user.application.usecase.IRefreshToken
+import kr.co.jiniaslog.user.application.usecase.IRetrieveAdminUserIds
 import kr.co.jiniaslog.user.application.usecase.ISignInOAuthUser
 import kr.co.jiniaslog.user.application.usecase.UseCasesUserAuthFacade
 import kr.co.jiniaslog.user.domain.auth.provider.ProviderUserInfo
@@ -175,5 +176,10 @@ class UserAuthService(
     override fun handle(command: ILogOut.Command): ILogOut.Info {
         tokenStore.delete(command.userId)
         return ILogOut.Info()
+    }
+
+    override fun handle(query: IRetrieveAdminUserIds.Query): IRetrieveAdminUserIds.Info {
+        val adminUsers = userRepository.findAdminUsers()
+        return IRetrieveAdminUserIds.Info(adminUsers.map { it.entityId })
     }
 }

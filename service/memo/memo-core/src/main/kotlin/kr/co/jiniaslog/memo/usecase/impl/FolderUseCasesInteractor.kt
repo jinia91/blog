@@ -4,6 +4,7 @@ import kr.co.jiniaslog.memo.domain.folder.Folder
 import kr.co.jiniaslog.memo.domain.folder.FolderId
 import kr.co.jiniaslog.memo.domain.folder.FolderRepository
 import kr.co.jiniaslog.memo.domain.memo.AuthorId
+import kr.co.jiniaslog.memo.domain.user.UserService
 import kr.co.jiniaslog.memo.usecase.FolderUseCasesFacade
 import kr.co.jiniaslog.memo.usecase.IChangeFolderName
 import kr.co.jiniaslog.memo.usecase.ICreateNewFolder
@@ -16,6 +17,7 @@ import org.springframework.cache.annotation.CacheEvict
 @UseCaseInteractor
 internal class FolderUseCasesInteractor(
     private val folderRepository: FolderRepository,
+    private val userService: UserService
 ) : FolderUseCasesFacade {
     @CacheEvict(value = ["folders"], key = "#command.authorId")
     override fun handle(command: ICreateNewFolder.Command): ICreateNewFolder.Info {
@@ -62,7 +64,8 @@ internal class FolderUseCasesInteractor(
     }
 
     override fun handle(command: IDeleteAllWithoutAdmin.Command): IDeleteAllWithoutAdmin.Info {
-        folderRepository.deleteAllWithoutAdmin()
+        val adminIds = userService.retrieveAdminUserIds()
+        folderRepository.deleteAllFoldersAndMemosWithout(adminIds)
         return IDeleteAllWithoutAdmin.Info()
     }
 

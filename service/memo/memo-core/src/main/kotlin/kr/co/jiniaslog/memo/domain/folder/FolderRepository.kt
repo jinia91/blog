@@ -6,5 +6,5 @@ import kr.co.jiniaslog.shared.core.domain.Repository
 interface FolderRepository : Repository<Folder, FolderId> {
     fun countByAuthorId(authorId: AuthorId): Long
 
-    fun deleteAllWithoutAdmin()
+    fun deleteAllFoldersAndMemosWithout(adminIds: List<AuthorId>)
 }

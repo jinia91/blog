@@ -3,6 +3,7 @@ package kr.co.jiniaslog.user.adapter.out.mysql.user
 import kr.co.jiniaslog.shared.core.annotation.PersistenceAdapter
 import kr.co.jiniaslog.user.application.infra.UserRepository
 import kr.co.jiniaslog.user.domain.user.Email
+import kr.co.jiniaslog.user.domain.user.Role
 import kr.co.jiniaslog.user.domain.user.User
 import kr.co.jiniaslog.user.domain.user.UserId
 
@@ -16,6 +17,10 @@ internal class UserRepositoryAdapter(
 
     override fun findAll(): List<User> {
         return userJpaRepository.findAll().map { it.toDomain() }
+    }
+
+    override fun findAdminUsers(): List<User> {
+        return userJpaRepository.findAllByRoles(Role.ADMIN.name).map { it.toDomain() }
     }
 
     override fun findById(id: UserId): User? {

@@ -28,6 +28,7 @@ val memoService = mutableListOf(
     project(Modules.Service.Memo.Adaptors.InHttp.path),
     project(Modules.Service.Memo.Adaptors.InWebsocket.path),
     project(Modules.Service.Memo.Adaptors.OutMySql.path),
+    project(Modules.Service.Memo.Adaptors.OutUser.path),
 )
 
 val mediaService = mutableListOf(
@@ -84,7 +85,6 @@ dependencies {
     testImplementation(testFixtures(project(Modules.Service.Memo.Core.path)))
     testImplementation(testFixtures(project(Modules.Service.AuthUser.Application.path)))
     testImplementation(testFixtures(project(Modules.Service.Blog.Core.path)))
-
     // external libs
     bootLib.forEach {
         implementation(it)
