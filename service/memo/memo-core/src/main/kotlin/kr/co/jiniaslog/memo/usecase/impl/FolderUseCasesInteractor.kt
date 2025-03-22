@@ -4,9 +4,11 @@ import kr.co.jiniaslog.memo.domain.folder.Folder
 import kr.co.jiniaslog.memo.domain.folder.FolderId
 import kr.co.jiniaslog.memo.domain.folder.FolderRepository
 import kr.co.jiniaslog.memo.domain.memo.AuthorId
+import kr.co.jiniaslog.memo.domain.user.UserService
 import kr.co.jiniaslog.memo.usecase.FolderUseCasesFacade
 import kr.co.jiniaslog.memo.usecase.IChangeFolderName
 import kr.co.jiniaslog.memo.usecase.ICreateNewFolder
+import kr.co.jiniaslog.memo.usecase.IDeleteAllWithoutAdmin
 import kr.co.jiniaslog.memo.usecase.IDeleteFoldersRecursively
 import kr.co.jiniaslog.memo.usecase.IMakeRelationShipFolderAndFolder
 import kr.co.jiniaslog.shared.core.annotation.UseCaseInteractor
@@ -15,6 +17,7 @@ import org.springframework.cache.annotation.CacheEvict
 @UseCaseInteractor
 internal class FolderUseCasesInteractor(
     private val folderRepository: FolderRepository,
+    private val userService: UserService
 ) : FolderUseCasesFacade {
     @CacheEvict(value = ["folders"], key = "#command.authorId")
     override fun handle(command: ICreateNewFolder.Command): ICreateNewFolder.Info {
@@ -58,6 +61,12 @@ internal class FolderUseCasesInteractor(
         folder.validateOwnership(command.requesterId)
         folderRepository.deleteById(folder.entityId)
         return IDeleteFoldersRecursively.Info(folder.entityId)
+    }
+
+    override fun handle(command: IDeleteAllWithoutAdmin.Command): IDeleteAllWithoutAdmin.Info {
+        val adminIds = userService.retrieveAdminUserIds()
+        folderRepository.deleteAllFoldersAndMemosWithout(adminIds)
+        return IDeleteAllWithoutAdmin.Info()
     }
 
     private fun getFolder(id: FolderId) =

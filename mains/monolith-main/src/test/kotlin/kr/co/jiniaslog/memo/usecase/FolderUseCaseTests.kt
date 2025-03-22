@@ -1,6 +1,7 @@
 package kr.co.jiniaslog.memo.usecase
 
 import io.kotest.assertions.throwables.shouldThrow
+import io.kotest.assertions.withClue
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import kr.co.jiniaslog.TestContainerAbstractSkeleton
@@ -12,6 +13,8 @@ import kr.co.jiniaslog.memo.domain.folder.FolderId
 import kr.co.jiniaslog.memo.domain.folder.FolderName
 import kr.co.jiniaslog.memo.domain.folder.FolderRepository
 import kr.co.jiniaslog.memo.domain.memo.AuthorId
+import kr.co.jiniaslog.memo.domain.memo.Memo
+import kr.co.jiniaslog.memo.domain.memo.MemoRepository
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Qualifier
@@ -22,6 +25,9 @@ import javax.sql.DataSource
 class FolderUseCaseTests : TestContainerAbstractSkeleton() {
     @Autowired
     lateinit var folderRepository: FolderRepository
+
+    @Autowired
+    lateinit var memoRepository: MemoRepository
 
     @Autowired
     @Qualifier(MemoDb.DATASOURCE)
@@ -107,8 +113,171 @@ class FolderUseCaseTests : TestContainerAbstractSkeleton() {
         // when
         val info = sut.handle(command)
         // then
+        folderRepository.findById(info.folderId) shouldBe null
+    }
+
+    @Test
+    fun `유효한 폴더가 있고, 폴더가 폴더를 가지고 있을때, 유효한 폴더 삭제 요청이 있으면 재귀적으로 모든 폴더가 삭제된다`() {
+        // given
+        val parentFolder =
+            folderRepository.save(
+                Folder.init(
+                    authorId = AuthorId(1),
+                ),
+            )
+        val childFolder =
+            folderRepository.save(
+                Folder.init(
+                    authorId = AuthorId(1),
+                    parent = parentFolder.entityId,
+                ),
+            )
+        val command =
+            IDeleteFoldersRecursively.Command(
+                folderId = parentFolder.entityId,
+                requesterId = FolderTestFixtures.defaultAuthorId,
+            )
+        // when
+        val info = sut.handle(command)
+        // then
         info.folderId shouldNotBe null
         folderRepository.findById(info.folderId) shouldBe null
+        folderRepository.findById(childFolder.entityId) shouldBe null
+    }
+
+    @Test
+    fun `유효한 폴더가 있고, 폴더가 메모를 가지고 있을때 유효한 폴더 삭제 요청이 있으면 모두 삭제된다`() {
+        // given
+        val folder =
+            folderRepository.save(
+                Folder.init(
+                    authorId = AuthorId(1),
+                ),
+            )
+        val memo =
+            memoRepository.save(
+                Memo.init(
+                    authorId = AuthorId(1),
+                    parentFolderId = folder.entityId,
+                ),
+            )
+
+        val command =
+            IDeleteFoldersRecursively.Command(
+                folderId = folder.entityId,
+                requesterId = FolderTestFixtures.defaultAuthorId,
+            )
+        // when
+        val info = sut.handle(command)
+        // then
+        info.folderId shouldNotBe null
+        folderRepository.findById(info.folderId) shouldBe null
+        memoRepository.findById(memo.entityId) shouldBe null
+    }
+
+    @Test
+    fun `유효한 폴더가 있고, 폴더가 메모를 가지고 있으며 메모간 참조가 있을때 메모가 삭제되면 메모 참조도 삭제된다`() {
+        // given
+        val folder =
+            folderRepository.save(
+                Folder.init(
+                    authorId = AuthorId(1),
+                ),
+            )
+        val memo1 =
+            memoRepository.save(
+                Memo.init(
+                    authorId = AuthorId(1),
+                    parentFolderId = folder.entityId,
+                ),
+            )
+        val memo2 =
+            memoRepository.save(
+                Memo.init(
+                    authorId = AuthorId(1),
+                    parentFolderId = folder.entityId,
+                ),
+            )
+        withClue("참조 추가") {
+            memo1.addReference(memo2.entityId)
+            memoRepository.save(memo1)
+        }
+
+        fun checkMemoReference(isPersistence: Boolean) {
+            dataSource.connection.use { connection ->
+                connection.prepareStatement("SELECT * FROM memo_reference WHERE reference_id = ?").use { statement ->
+                    statement.setLong(1, memo2.entityId.value)
+                    statement.executeQuery().next() shouldBe isPersistence
+                }
+            }
+        }
+
+        withClue("메모 참조가 존재하는지 확인") {
+            checkMemoReference(true)
+        }
+
+        val command =
+            IDeleteFoldersRecursively.Command(
+                folderId = folder.entityId,
+                requesterId = FolderTestFixtures.defaultAuthorId,
+            )
+        // when
+        val info = sut.handle(command)
+
+        // then
+        info.folderId shouldNotBe null
+        folderRepository.findById(info.folderId) shouldBe null
+        memoRepository.findById(memo1.entityId) shouldBe null
+        memoRepository.findById(memo2.entityId) shouldBe null
+        withClue("메모 참조가 삭제되었는지 확인") {
+            checkMemoReference(false)
+        }
+    }
+
+    @Test
+    fun `유효한 폴더가 있고, 폴더가 복잡한 계층구조로 폴더와 메모를 가지고 있어도 루트 폴더를 삭제하면 모두 삭제된다`() {
+        // given
+        val rootFolder =
+            folderRepository.save(
+                Folder.init(
+                    authorId = AuthorId(1),
+                ),
+            )
+        val childFolder1 =
+            folderRepository.save(
+                Folder.init(
+                    authorId = AuthorId(1),
+                    parent = rootFolder.entityId,
+                ),
+            )
+        val childFolder2 =
+            folderRepository.save(
+                Folder.init(
+                    authorId = AuthorId(1),
+                    parent = childFolder1.entityId,
+                ),
+            )
+        val memo =
+            memoRepository.save(
+                Memo.init(
+                    authorId = AuthorId(1),
+                    parentFolderId = childFolder2.entityId,
+                ),
+            )
+
+        val command =
+            IDeleteFoldersRecursively.Command(
+                folderId = rootFolder.entityId,
+                requesterId = FolderTestFixtures.defaultAuthorId,
+            )
+        // when
+        val info = sut.handle(command)
+        // then
+        info.folderId shouldNotBe null
+        folderRepository.findById(info.folderId) shouldBe null
+        folderRepository.findById(childFolder1.entityId) shouldBe null
+        folderRepository.findById(childFolder2.entityId) shouldBe null
+        memoRepository.findById(memo.entityId) shouldBe null
     }
 
     @Test

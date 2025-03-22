@@ -5,4 +5,5 @@ interface UseCasesUserAuthFacade :
     ISignInOAuthUser,
     IRefreshToken,
     ICheckUserExisted,
-    ILogOut
+    ILogOut,
+    IRetrieveAdminUserIds

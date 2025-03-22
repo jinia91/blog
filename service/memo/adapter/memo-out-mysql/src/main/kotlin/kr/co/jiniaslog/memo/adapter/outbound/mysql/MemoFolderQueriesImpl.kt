@@ -1,6 +1,7 @@
 package kr.co.jiniaslog.memo.adapter.outbound.mysql
 
 import com.querydsl.jpa.impl.JPAQueryFactory
+import kr.co.jiniaslog.memo.adapter.outbound.mysql.config.MemoDb
 import kr.co.jiniaslog.memo.domain.folder.Folder
 import kr.co.jiniaslog.memo.domain.memo.Memo
 import kr.co.jiniaslog.memo.domain.memo.QMemo
@@ -20,7 +21,7 @@ import org.springframework.transaction.annotation.Transactional
 import kotlin.jvm.optionals.getOrElse
 
 @PersistenceAdapter
-@Transactional(readOnly = true, transactionManager = "memoTransactionManager")
+@Transactional(readOnly = true, transactionManager = MemoDb.TRANSACTION_MANAGER)
 internal class MemoFolderQueriesImpl(
     private val memoJpaQueryFactory: JPAQueryFactory,
     private val memoRepository: MemoJpaRepository,
