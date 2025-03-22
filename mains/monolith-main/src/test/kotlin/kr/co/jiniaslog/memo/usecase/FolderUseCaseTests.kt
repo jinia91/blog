@@ -1,6 +1,7 @@
 package kr.co.jiniaslog.memo.usecase
 
 import io.kotest.assertions.throwables.shouldThrow
+import io.kotest.assertions.withClue
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import kr.co.jiniaslog.TestContainerAbstractSkeleton
@@ -172,6 +173,64 @@ class FolderUseCaseTests : TestContainerAbstractSkeleton() {
         info.folderId shouldNotBe null
         folderRepository.findById(info.folderId) shouldBe null
         memoRepository.findById(memo.entityId) shouldBe null
+    }
+
+    @Test
+    fun `유효한 폴더가 있고, 폴더가 메모를 가지고 있으며 메모간 참조가 있을때 메모가 삭제되면 메모 참조도 삭제된다`() {
+        // given
+        val folder =
+            folderRepository.save(
+                Folder.init(
+                    authorId = AuthorId(1),
+                ),
+            )
+        val memo1 =
+            memoRepository.save(
+                Memo.init(
+                    authorId = AuthorId(1),
+                    parentFolderId = folder.entityId,
+                ),
+            )
+        val memo2 =
+            memoRepository.save(
+                Memo.init(
+                    authorId = AuthorId(1),
+                    parentFolderId = folder.entityId,
+                ),
+            )
+        withClue("참조 추가") {
+            memo1.addReference(memo2.entityId)
+            memoRepository.save(memo1)
+        }
+        withClue("메모 참조가 존재하는지 확인") {
+            dataSource.connection.use { connection ->
+                connection.prepareStatement("SELECT * FROM memo_reference WHERE reference_id = ?").use { statement ->
+                    statement.setLong(1, memo2.entityId.value)
+                    statement.executeQuery().next() shouldBe true
+                }
+            }
+        }
+
+        val command =
+            IDeleteFoldersRecursively.Command(
+                folderId = folder.entityId,
+                requesterId = FolderTestFixtures.defaultAuthorId,
+            )
+        // when
+        val info = sut.handle(command)
+
+        // then
+        info.folderId shouldNotBe null
+        folderRepository.findById(info.folderId) shouldBe null
+        memoRepository.findById(memo1.entityId) shouldBe null
+        memoRepository.findById(memo2.entityId) shouldBe null
+
+        dataSource.connection.use { connection ->
+            connection.prepareStatement("SELECT * FROM memo_reference WHERE reference_id = ?").use { statement ->
+                statement.setInt(1, memo2.entityId.value.toInt())
+                statement.executeQuery().next() shouldBe false
+            }
+        }
     }
 
     @Test
