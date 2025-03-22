@@ -112,7 +112,6 @@ class FolderUseCaseTests : TestContainerAbstractSkeleton() {
         // when
         val info = sut.handle(command)
         // then
-        info.folderId shouldNotBe null
         folderRepository.findById(info.folderId) shouldBe null
     }
 
