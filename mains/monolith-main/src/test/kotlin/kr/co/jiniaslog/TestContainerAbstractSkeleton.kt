@@ -93,8 +93,6 @@ abstract class TestContainerAbstractSkeleton {
         val memoDb: MySQLContainer<*> =
             MySQLContainer("mysql:8.0")
                 .withCommand(RDB_CHARSET, RDB_COLLATION)
-                .withUsername("root")
-                .withPassword("root")
                 .withDatabaseName("jiniaslog_memo")
                 .withReuse(true)
 
