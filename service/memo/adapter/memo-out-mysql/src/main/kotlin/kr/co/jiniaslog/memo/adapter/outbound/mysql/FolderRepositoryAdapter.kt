@@ -37,7 +37,6 @@ internal class FolderRepositoryAdapter(
             .execute()
     }
 
-    @Transactional(transactionManager = TRANSACTION_MANAGER)
     override fun deleteById(id: FolderId) {
         val folderIds = memoFolderNativeRepository.findRecursiveFolderIds(id.value)
             .map { FolderId(it) }

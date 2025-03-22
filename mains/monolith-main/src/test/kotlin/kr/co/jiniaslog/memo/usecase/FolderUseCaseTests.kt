@@ -175,6 +175,52 @@ class FolderUseCaseTests : TestContainerAbstractSkeleton() {
     }
 
     @Test
+    fun `유효한 폴더가 있고, 폴더가 복잡한 계층구조로 폴더와 메모를 가지고 있어도 루트 폴더를 삭제하면 모두 삭제된다`() {
+        // given
+        val rootFolder =
+            folderRepository.save(
+                Folder.init(
+                    authorId = AuthorId(1),
+                ),
+            )
+        val childFolder1 =
+            folderRepository.save(
+                Folder.init(
+                    authorId = AuthorId(1),
+                    parent = rootFolder.entityId,
+                ),
+            )
+        val childFolder2 =
+            folderRepository.save(
+                Folder.init(
+                    authorId = AuthorId(1),
+                    parent = childFolder1.entityId,
+                ),
+            )
+        val memo =
+            memoRepository.save(
+                Memo.init(
+                    authorId = AuthorId(1),
+                    parentFolderId = childFolder2.entityId,
+                ),
+            )
+
+        val command =
+            IDeleteFoldersRecursively.Command(
+                folderId = rootFolder.entityId,
+                requesterId = FolderTestFixtures.defaultAuthorId,
+            )
+        // when
+        val info = sut.handle(command)
+        // then
+        info.folderId shouldNotBe null
+        folderRepository.findById(info.folderId) shouldBe null
+        folderRepository.findById(childFolder1.entityId) shouldBe null
+        folderRepository.findById(childFolder2.entityId) shouldBe null
+        memoRepository.findById(memo.entityId) shouldBe null
+    }
+
+    @Test
     fun `유효한 폴더 관계 설정 요청이 있고 유효한 폴더 둘이 있으면 폴더 관계가 설정된다`() {
         // given
         val folder1 =
