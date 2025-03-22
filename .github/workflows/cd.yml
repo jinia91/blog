@@ -60,9 +60,10 @@ jobs:
       - name: 배포 태그 업데이트
         working-directory: ./gitops-repo
         run: |
-          yq -i 'select(.kind == "Deployment") 
-          | .spec.template.spec.containers[0].image = "jinia91/blog-backend:${{ github.sha }}"' \
-          -o yaml --inplace deploy/jiniaslog/monolith/jiniaslog-main.yml
+          yq -i '
+          select(.kind == "Deployment")
+          |= (.spec.template.spec.containers[0].image = "jinia91/blog-backend:${{ github.sha }}")
+           ' deploy/jiniaslog/monolith/jiniaslog-main.yml
       - name: 변경 내용 확인
         working-directory: ./gitops-repo
         run: cat deploy/jiniaslog/monolith/jiniaslog-main.yml
