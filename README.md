@@ -21,13 +21,13 @@ https://www.jiniaslog.co.kr/
 - Prometheus
 - Grafana
 - Loki
-- Tempo
 
 ## Backend
 - Spring Boot 3.3.0
 - kotlin 1.9.24
 - jpa
 - querydsl
+- mybatis
 - swagger
 - gradle
 
