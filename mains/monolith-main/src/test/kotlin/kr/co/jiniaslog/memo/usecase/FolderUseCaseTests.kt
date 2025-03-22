@@ -202,13 +202,18 @@ class FolderUseCaseTests : TestContainerAbstractSkeleton() {
             memo1.addReference(memo2.entityId)
             memoRepository.save(memo1)
         }
-        withClue("메모 참조가 존재하는지 확인") {
+
+        fun checkMemoReference(isPersistence: Boolean) {
             dataSource.connection.use { connection ->
                 connection.prepareStatement("SELECT * FROM memo_reference WHERE reference_id = ?").use { statement ->
                     statement.setLong(1, memo2.entityId.value)
-                    statement.executeQuery().next() shouldBe true
+                    statement.executeQuery().next() shouldBe isPersistence
                 }
             }
+        }
+
+        withClue("메모 참조가 존재하는지 확인") {
+            checkMemoReference(true)
         }
 
         val command =
@@ -224,12 +229,8 @@ class FolderUseCaseTests : TestContainerAbstractSkeleton() {
         folderRepository.findById(info.folderId) shouldBe null
         memoRepository.findById(memo1.entityId) shouldBe null
         memoRepository.findById(memo2.entityId) shouldBe null
-
-        dataSource.connection.use { connection ->
-            connection.prepareStatement("SELECT * FROM memo_reference WHERE reference_id = ?").use { statement ->
-                statement.setInt(1, memo2.entityId.value.toInt())
-                statement.executeQuery().next() shouldBe false
-            }
+        withClue("메모 참조가 삭제되었는지 확인") {
+            checkMemoReference(false)
         }
     }
 
