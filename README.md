@@ -31,9 +31,17 @@ https://www.jiniaslog.co.kr/
 - swagger
 - gradle
 
+### data processing
+- kafka
+- kafka connect
+  - debezium
+  - elasticsearch sink
+- ksqlDB
+
 ### Database
 - mysql
 - redis sentinel
+- elasticsearch
 
 ### test / static analysis
 - testcontainers
