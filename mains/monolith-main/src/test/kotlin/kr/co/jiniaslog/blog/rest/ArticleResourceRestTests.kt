@@ -8,7 +8,7 @@ import kr.co.jiniaslog.blog.adapter.inbound.http.dto.UpdateArticleStatusRequest
 import kr.co.jiniaslog.blog.domain.article.Article
 import kr.co.jiniaslog.blog.domain.article.ArticleId
 import kr.co.jiniaslog.blog.queries.IGetArticleById
-import kr.co.jiniaslog.blog.queries.IGetPublishedSimpleArticleListWithCursor
+import kr.co.jiniaslog.blog.queries.IGetSimpleArticleListWithCursor
 import kr.co.jiniaslog.blog.usecase.article.ArticleStatusChangeFacade
 import kr.co.jiniaslog.blog.usecase.article.IAddAnyTagInArticle
 import kr.co.jiniaslog.blog.usecase.article.IDeleteArticle
@@ -242,7 +242,7 @@ class ArticleResourceRestTests : RestTestAbstractSkeleton() {
         @Test
         fun `게시된 게시물 간소조회 요청이 있으면 유저가 아니여도 200을 반환한다`() {
             // given
-            every { articleQueriesFacade.handle(any(IGetPublishedSimpleArticleListWithCursor.Query::class)) } returns emptyList()
+            every { articleQueriesFacade.handle(any(IGetSimpleArticleListWithCursor.Query::class)) } returns emptyList()
 
             // when
             RestAssuredMockMvc.given()
@@ -256,7 +256,7 @@ class ArticleResourceRestTests : RestTestAbstractSkeleton() {
         @Test
         fun `DRAFT 간소조회 요청이 있으면 어드민의 경우 200을 반환한다`() {
             // given
-            every { articleQueriesFacade.handle(any(IGetPublishedSimpleArticleListWithCursor.Query::class)) } returns emptyList()
+            every { articleQueriesFacade.handle(any(IGetSimpleArticleListWithCursor.Query::class)) } returns emptyList()
 
             // when
             RestAssuredMockMvc.given()
@@ -271,7 +271,7 @@ class ArticleResourceRestTests : RestTestAbstractSkeleton() {
         @Test
         fun `DRAFT 간소조회 요청이 있으면 일반 유저의 경우 403을 반환한다`() {
             // given
-            every { articleQueriesFacade.handle(any(IGetPublishedSimpleArticleListWithCursor.Query::class)) } returns emptyList()
+            every { articleQueriesFacade.handle(any(IGetSimpleArticleListWithCursor.Query::class)) } returns emptyList()
 
             // when
             RestAssuredMockMvc.given()

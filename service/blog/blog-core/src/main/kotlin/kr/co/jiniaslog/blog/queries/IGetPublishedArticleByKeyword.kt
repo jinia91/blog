@@ -1,6 +1,6 @@
 package kr.co.jiniaslog.blog.queries
 
-import kr.co.jiniaslog.blog.domain.article.PublishedArticleVo
+import kr.co.jiniaslog.blog.domain.article.ArticleVo
 
 /**
  * 키워드로 발행된 게시글을 가져온다
@@ -15,7 +15,5 @@ interface IGetPublishedArticleByKeyword {
         val keyword: String,
     )
 
-    data class Info(
-        val articles: List<PublishedArticleVo>
-    )
+    data class Info(val articles: List<ArticleVo>)
 }

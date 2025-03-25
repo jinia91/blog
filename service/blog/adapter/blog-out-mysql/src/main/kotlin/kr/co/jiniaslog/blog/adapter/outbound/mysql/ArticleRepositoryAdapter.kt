@@ -7,7 +7,7 @@ import kr.co.jiniaslog.blog.domain.article.QArticle.article
 import kr.co.jiniaslog.blog.domain.article.Tagging
 import kr.co.jiniaslog.blog.domain.article.TaggingId
 import kr.co.jiniaslog.blog.outbound.ArticleRepository
-import kr.co.jiniaslog.blog.queries.IGetPublishedSimpleArticleListWithCursor
+import kr.co.jiniaslog.blog.queries.IGetSimpleArticleListWithCursor
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Repository
 
@@ -28,7 +28,7 @@ class ArticleRepositoryAdapter(
         cursor: ArticleId,
         limit: Int,
         published: Boolean,
-    ): List<IGetPublishedSimpleArticleListWithCursor.Info> {
+    ): List<IGetSimpleArticleListWithCursor.Info> {
         return blogJpaQueryFactory
             .selectFrom(article)
             .where(article.entityId.value.gt(cursor.value))
@@ -42,7 +42,7 @@ class ArticleRepositoryAdapter(
             .limit(limit.toLong())
             .fetch()
             .map {
-                IGetPublishedSimpleArticleListWithCursor.Info(
+                IGetSimpleArticleListWithCursor.Info(
                     id = it.id.value,
                     title = if (published) it.articleContents.title else it.draftContents.title,
                     thumbnailUrl = if (published) it.articleContents.thumbnailUrl else it.draftContents.thumbnailUrl,

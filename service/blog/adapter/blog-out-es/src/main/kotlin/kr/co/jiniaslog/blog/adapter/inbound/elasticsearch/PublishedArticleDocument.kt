@@ -1,6 +1,6 @@
 package kr.co.jiniaslog.blog.adapter.inbound.elasticsearch
 
-import kr.co.jiniaslog.blog.domain.article.PublishedArticleVo
+import kr.co.jiniaslog.blog.domain.article.ArticleVo
 import org.springframework.data.annotation.Id
 import org.springframework.data.elasticsearch.annotations.Document
 import org.springframework.data.elasticsearch.annotations.Field
@@ -38,8 +38,8 @@ data class PublishedArticleDocument(
         return "ArticleDocument(id='$id', title='$title', content='$content', status='$status', thumbnailUrl='$thumbnailUrl', createdAt=$createdAt, updatedAt=$updatedAt)"
     }
 
-    fun toArticleVo(): PublishedArticleVo {
-        return PublishedArticleVo(
+    fun toArticleVo(): ArticleVo {
+        return ArticleVo(
             id = id,
             title = title,
             content = content,

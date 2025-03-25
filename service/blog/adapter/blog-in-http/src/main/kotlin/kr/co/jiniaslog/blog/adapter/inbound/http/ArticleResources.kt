@@ -22,7 +22,7 @@ import kr.co.jiniaslog.blog.domain.article.ArticleId
 import kr.co.jiniaslog.blog.domain.tag.TagName
 import kr.co.jiniaslog.blog.queries.ArticleQueriesFacade
 import kr.co.jiniaslog.blog.queries.IGetArticleById
-import kr.co.jiniaslog.blog.queries.IGetPublishedSimpleArticleListWithCursor
+import kr.co.jiniaslog.blog.queries.IGetSimpleArticleListWithCursor
 import kr.co.jiniaslog.blog.usecase.article.ArticleStatusChangeFacade
 import kr.co.jiniaslog.blog.usecase.article.ArticleUseCasesFacade
 import kr.co.jiniaslog.blog.usecase.article.IAddAnyTagInArticle
@@ -181,7 +181,7 @@ class ArticleResources(
         @RequestParam cursor: Long,
         @RequestParam limit: Int,
         @RequestParam status: Article.Status,
-    ): ResponseEntity<List<IGetPublishedSimpleArticleListWithCursor.Info>> {
+    ): ResponseEntity<List<IGetSimpleArticleListWithCursor.Info>> {
         val isPublished = when (status) {
             DRAFT -> false
             PUBLISHED -> true
@@ -189,7 +189,7 @@ class ArticleResources(
         }
 
         val articles = articleQueryFacade.handle(
-            IGetPublishedSimpleArticleListWithCursor.Query(ArticleId(cursor), limit, isPublished)
+            IGetSimpleArticleListWithCursor.Query(ArticleId(cursor), limit, isPublished)
         )
 
         return ResponseEntity.ok(articles)

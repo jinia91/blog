@@ -3,7 +3,8 @@ package kr.co.jiniaslog.blog.queries
 import kr.co.jiniaslog.blog.domain.article.ArticleId
 import java.time.LocalDateTime
 
-interface IGetPublishedSimpleArticleListWithCursor {
+// fixme vo 방식으로 수정할것
+interface IGetSimpleArticleListWithCursor {
     fun handle(query: Query): List<Info>
 
     data class Query(

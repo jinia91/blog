@@ -7,22 +7,22 @@ import java.time.LocalDateTime
  *
  * 불변 값 객체로서 엔티티가 아닌 계층 이동과 계층 공용 데이터 홀더역할
  *
- * Published된 게시글의 정보를 담는다
+ * 상태에따라 단일 데이터만 담으므로 해당 상태를 명시적으로 표현해야한다
  *
  */
-data class PublishedArticleVo(
+data class ArticleVo(
     val id: String,
     val title: String,
     val content: String,
     val thumbnailUrl: String,
     val status: String,
-    val tags: List<String>,
     val hit: Int = 0,
+    val tags: Map<Long, String>,
     val createdAt: LocalDateTime,
-    val updatedAt: LocalDateTime,
+    val voDataStatus: Article.Status
 ) {
-    fun toTrimmedArticleVo(): PublishedArticleVo {
-        return PublishedArticleVo(
+    fun toTrimmedArticleVo(): ArticleVo {
+        return ArticleVo(
             id = id,
             title = title,
             content = content.take(100),
@@ -30,7 +30,7 @@ data class PublishedArticleVo(
             status = status,
             tags = tags,
             createdAt = createdAt,
-            updatedAt = updatedAt
+            voDataStatus = voDataStatus
         )
     }
 }

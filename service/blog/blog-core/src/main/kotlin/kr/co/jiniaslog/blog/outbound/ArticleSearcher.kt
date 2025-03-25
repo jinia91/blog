@@ -1,7 +1,7 @@
 package kr.co.jiniaslog.blog.outbound
 
-import kr.co.jiniaslog.blog.domain.article.PublishedArticleVo
+import kr.co.jiniaslog.blog.domain.article.ArticleVo
 
 interface ArticleSearcher {
-    fun searchPublishedArticlesByKeyword(keyword: String): List<PublishedArticleVo>
+    fun searchPublishedArticlesByKeyword(keyword: String): List<ArticleVo>
 }

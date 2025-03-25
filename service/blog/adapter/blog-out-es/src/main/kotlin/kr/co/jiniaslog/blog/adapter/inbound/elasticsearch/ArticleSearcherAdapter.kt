@@ -1,7 +1,7 @@
 package kr.co.jiniaslog.blog.adapter.inbound.elasticsearch
 
 import co.elastic.clients.elasticsearch._types.query_dsl.TextQueryType
-import kr.co.jiniaslog.blog.domain.article.PublishedArticleVo
+import kr.co.jiniaslog.blog.domain.article.ArticleVo
 import kr.co.jiniaslog.blog.outbound.ArticleSearcher
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.elasticsearch.client.elc.NativeQuery
@@ -23,7 +23,7 @@ class ArticleSearcherAdapter(
      * 페이지네이션은 일단 기본 50개로 제한
      *
      */
-    override fun searchPublishedArticlesByKeyword(keyword: String): List<PublishedArticleVo> {
+    override fun searchPublishedArticlesByKeyword(keyword: String): List<ArticleVo> {
         val query = NativeQuery.builder()
             .withQuery { q ->
                 q.bool { b ->
