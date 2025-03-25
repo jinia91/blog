@@ -13,6 +13,7 @@ object Modules {
                 InAcl(":service:memo:adapter:memo-in-acl"),
                 InHttp(":service:memo:adapter:memo-in-http"),
                 InWebsocket(":service:memo:adapter:memo-in-websocket"),
+                InBatch(":service:memo:adapter:memo-in-batch"),
                 OutMySql(":service:memo:adapter:memo-out-mysql"),
                 OutUser(":service:memo:adapter:memo-out-user")
             }
