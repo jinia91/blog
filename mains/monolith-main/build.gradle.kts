@@ -21,6 +21,7 @@ val blogService = mutableListOf(
     project(Modules.Service.Blog.Adaptors.OutUser.path),
     project(Modules.Service.Blog.Adaptors.OutMemo.path),
     project(Modules.Service.Blog.Adaptors.OutMySql.path),
+    project(Modules.Service.Blog.Adaptors.OutEs.path),
 )
 
 val memoService = mutableListOf(
