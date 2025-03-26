@@ -9,7 +9,7 @@ interface IGetSimpleArticles {
         val cursor: Long?,
         val limit: Int?,
         val isPublished: Boolean,
-        val keyword: String?
+        val keyword: String? = null
     ) {
         fun isCursorQuery(): Boolean = cursor != null && limit != null
         fun isKeywordQuery(): Boolean = keyword != null
