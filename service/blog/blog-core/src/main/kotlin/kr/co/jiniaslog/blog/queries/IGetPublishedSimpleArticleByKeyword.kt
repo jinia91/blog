@@ -8,7 +8,7 @@ import kr.co.jiniaslog.blog.domain.article.ArticleVo
  * 게시글 특성상 대량의 자료가 아니므로 페이징 처리는 하지 않는다
  *
  */
-interface IGetPublishedArticleByKeyword {
+interface IGetPublishedSimpleArticleByKeyword {
     fun handle(query: Query): Info
 
     data class Query(

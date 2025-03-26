@@ -11,7 +11,7 @@ import java.time.LocalDateTime
  *
  */
 data class ArticleVo(
-    val id: String,
+    val id: Long,
     val title: String,
     val content: String,
     val thumbnailUrl: String,

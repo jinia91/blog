@@ -39,7 +39,7 @@ class ArticleSearcherAdapter(
                     }
                 }
             }
-            .withPageable(PageRequest.of(0, 30))
+            .withPageable(PageRequest.of(0, 50))
             .build()
 
         val result = elasticsearchOperations.search(query, PublishedArticleDocument::class.java)

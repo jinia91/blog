@@ -28,9 +28,11 @@ class ArticleQueries(
         return articleRepository.getSimpleArticleListWithCursor(query.cursor, query.limit, query.isPublished)
     }
 
-    override fun handle(query: IGetPublishedArticleByKeyword.Query): IGetPublishedArticleByKeyword.Info {
-        return IGetPublishedArticleByKeyword.Info(
-            articles = articleSearcher.searchPublishedArticlesByKeyword(query.keyword)
+    override fun handle(query: IGetPublishedSimpleArticleByKeyword.Query): IGetPublishedSimpleArticleByKeyword.Info {
+        return IGetPublishedSimpleArticleByKeyword.Info(
+            articles = articleSearcher.searchPublishedArticlesByKeyword(
+                query.keyword
+            ).map { vo -> vo.toTrimmedArticleVo() }
         )
     }
 }

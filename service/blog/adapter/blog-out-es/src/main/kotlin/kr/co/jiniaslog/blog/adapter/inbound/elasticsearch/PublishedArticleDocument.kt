@@ -1,5 +1,6 @@
 package kr.co.jiniaslog.blog.adapter.inbound.elasticsearch
 
+import kr.co.jiniaslog.blog.domain.article.Article.Status.PUBLISHED
 import kr.co.jiniaslog.blog.domain.article.ArticleVo
 import org.springframework.data.annotation.Id
 import org.springframework.data.elasticsearch.annotations.Document
@@ -31,23 +32,20 @@ data class PublishedArticleDocument(
 ) {
     val createdAt: LocalDateTime
         get() = LocalDateTime.ofEpochSecond(createdAtTimeStamp, 0, null)
-    val updatedAt: LocalDateTime
-        get() = LocalDateTime.ofEpochSecond(updatedAtTimeStamp, 0, null)
-
     override fun toString(): String {
-        return "ArticleDocument(id='$id', title='$title', content='$content', status='$status', thumbnailUrl='$thumbnailUrl', createdAt=$createdAt, updatedAt=$updatedAt)"
+        return "ArticleDocument(id='$id', title='$title', content='$content', status='$status', thumbnailUrl='$thumbnailUrl', createdAt=$createdAt)"
     }
 
     fun toArticleVo(): ArticleVo {
         return ArticleVo(
-            id = id,
+            id = id.toLong(),
             title = title,
             content = content,
             thumbnailUrl = thumbnailUrl,
             status = status,
-            tags = emptyList(),
+            tags = emptyMap(),
             createdAt = createdAt,
-            updatedAt = updatedAt
+            voDataStatus = PUBLISHED
         )
     }
 }

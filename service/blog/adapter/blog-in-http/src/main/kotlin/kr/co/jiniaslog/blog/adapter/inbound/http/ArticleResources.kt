@@ -11,6 +11,7 @@ import kr.co.jiniaslog.blog.adapter.inbound.http.dto.AddTagToArticleRequest
 import kr.co.jiniaslog.blog.adapter.inbound.http.dto.AddTagToArticleResponse
 import kr.co.jiniaslog.blog.adapter.inbound.http.dto.DeleteArticleResponse
 import kr.co.jiniaslog.blog.adapter.inbound.http.dto.GetArticleByIdResponse
+import kr.co.jiniaslog.blog.adapter.inbound.http.dto.SimpleArticleCardsViewModel
 import kr.co.jiniaslog.blog.adapter.inbound.http.dto.StartNewArticleResponse
 import kr.co.jiniaslog.blog.adapter.inbound.http.dto.UpdateArticleStatusRequest
 import kr.co.jiniaslog.blog.adapter.inbound.http.dto.UpdateArticleStatusResponse
@@ -22,6 +23,7 @@ import kr.co.jiniaslog.blog.domain.article.ArticleId
 import kr.co.jiniaslog.blog.domain.tag.TagName
 import kr.co.jiniaslog.blog.queries.ArticleQueriesFacade
 import kr.co.jiniaslog.blog.queries.IGetArticleById
+import kr.co.jiniaslog.blog.queries.IGetPublishedSimpleArticleByKeyword
 import kr.co.jiniaslog.blog.queries.IGetSimpleArticleListWithCursor
 import kr.co.jiniaslog.blog.usecase.article.ArticleStatusChangeFacade
 import kr.co.jiniaslog.blog.usecase.article.ArticleUseCasesFacade
@@ -177,21 +179,50 @@ class ArticleResources(
 
     @GetMapping("/simple")
     @PreAuthorize("!(#status.name() == 'DRAFT') or hasRole('ADMIN')")
-    fun getArticlesWithCursor(
-        @RequestParam cursor: Long,
-        @RequestParam limit: Int,
-        @RequestParam status: Article.Status,
-    ): ResponseEntity<List<IGetSimpleArticleListWithCursor.Info>> {
+    fun getSimpleArticleCards(
+        @RequestParam(required = false) cursor: Long?,
+        @RequestParam(required = false) limit: Int?,
+        @RequestParam(required = false) status: Article.Status?,
+        @RequestParam(required = false) keyword: String?,
+    ): ResponseEntity<List<SimpleArticleCardsViewModel>> {
         val isPublished = when (status) {
             DRAFT -> false
             PUBLISHED -> true
             else -> throw IllegalArgumentException("status는 DRAFT 또는 PUBLISHED만 가능합니다")
         }
 
-        val articles = articleQueryFacade.handle(
-            IGetSimpleArticleListWithCursor.Query(ArticleId(cursor), limit, isPublished)
-        )
+        if (keyword != null) {
+            val info = articleQueryFacade.handle(
+                IGetPublishedSimpleArticleByKeyword.Query(keyword)
+            )
+            return ResponseEntity.ok(
+                info.articles.map {
+                    SimpleArticleCardsViewModel(
+                        id = it.id,
+                        title = it.title,
+                        content = it.content,
+                        thumbnailUrl = it.thumbnailUrl,
+                        createdAt = it.createdAt,
+                        tags = it.tags
+                    )
+                }
+            )
+        }
 
-        return ResponseEntity.ok(articles)
+        val articles = articleQueryFacade.handle(
+            IGetSimpleArticleListWithCursor.Query(ArticleId(cursor!!), limit!!, isPublished)
+        )
+        return ResponseEntity.ok(
+            articles.map {
+                SimpleArticleCardsViewModel(
+                    id = it.id,
+                    title = it.title,
+                    content = it.content,
+                    thumbnailUrl = it.thumbnailUrl,
+                    createdAt = it.createdAt,
+                    tags = it.tags
+                )
+            }
+        )
     }
 }
