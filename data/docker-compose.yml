@@ -112,9 +112,10 @@ services:
       - data-network
 
   elasticsearch:
-    image: docker.elastic.co/elasticsearch/elasticsearch:8.5.1
+    image: bitnami/elasticsearch:8.5.1
     container_name: elasticsearch
     environment:
+      - ELASTICSEARCH_PLUGINS=nori
       - discovery.type=single-node
       - xpack.security.enabled=false
       - bootstrap.memory_lock=true

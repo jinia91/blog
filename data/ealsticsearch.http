@@ -1,5 +1,7 @@
+DELETE http://localhost:9200/article_changed
+
 ### 1. 정적 스키마 삽입 article_changed
-PUT http://localhost:9200/article_changed/_mapping
+PUT http://localhost:9200/article_changed
 Content-Type: application/json
 
 {
