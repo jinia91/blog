@@ -1,0 +1,55 @@
+### 1. 정적 스키마 삽입 article_changed
+PUT http://localhost:9200/article_changed/_mapping
+Content-Type: application/json
+
+{
+  "mappings": {
+    "properties": {
+      "ID": {
+        "type": "long"
+      },
+      "CREATED_AT": {
+        "type": "date",
+        "format": "epoch_millis"
+      },
+      "UPDATED_AT": {
+        "type": "date",
+        "format": "epoch_millis"
+      },
+      "CONTENTS": {
+        "type": "text",
+        "analyzer": "korean",
+        "fields": {
+          "keyword": {
+            "type": "keyword",
+            "ignore_above": 256
+          },
+          "ngram": {
+            "type": "text",
+            "analyzer": "edge_ngram_analyzer"
+          }
+        }
+      },
+      "TITLE": {
+        "type": "text",
+        "analyzer": "korean",
+        "fields": {
+          "keyword": {
+            "type": "keyword",
+            "ignore_above": 256
+          },
+          "ngram": {
+            "type": "text",
+            "analyzer": "edge_ngram_analyzer"
+          }
+        }
+      },
+      "THUMBNAIL_URL": {
+        "type": "keyword"
+      },
+      "STATUS": {
+        "type": "keyword"
+      }
+    }
+  }
+}
