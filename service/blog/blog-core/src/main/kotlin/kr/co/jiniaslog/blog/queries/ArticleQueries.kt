@@ -24,15 +24,16 @@ class ArticleQueries(
         )
     }
 
-    override fun handle(query: IGetSimpleArticleListWithCursor.Query): List<IGetSimpleArticleListWithCursor.Info> {
-        return articleRepository.getSimpleArticleListWithCursor(query.cursor, query.limit, query.isPublished)
-    }
-
-    override fun handle(query: IGetPublishedSimpleArticleByKeyword.Query): IGetPublishedSimpleArticleByKeyword.Info {
-        return IGetPublishedSimpleArticleByKeyword.Info(
-            articles = articleSearcher.searchPublishedArticlesByKeyword(
-                query.keyword
-            ).map { vo -> vo.toTrimmedArticleVo() }
-        )
+    override fun handle(query: IGetSimpleArticles.Query): IGetSimpleArticles.Info {
+        val vos = when {
+            query.isKeywordQuery() -> articleSearcher.searchPublishedArticlesByKeyword(query.keyword!!)
+            query.isCursorQuery() -> articleRepository.getArticleListWithCursor(
+                query.cursor!!,
+                query.limit!!,
+                query.isPublished
+            )
+            else -> throw IllegalArgumentException("지원하지 않는 쿼리 입니다")
+        }
+        return IGetSimpleArticles.Info(vos.map { it.toSimplifiedArticleVo() })
     }
 }

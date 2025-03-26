@@ -23,8 +23,7 @@ import kr.co.jiniaslog.blog.domain.article.ArticleId
 import kr.co.jiniaslog.blog.domain.tag.TagName
 import kr.co.jiniaslog.blog.queries.ArticleQueriesFacade
 import kr.co.jiniaslog.blog.queries.IGetArticleById
-import kr.co.jiniaslog.blog.queries.IGetPublishedSimpleArticleByKeyword
-import kr.co.jiniaslog.blog.queries.IGetSimpleArticleListWithCursor
+import kr.co.jiniaslog.blog.queries.IGetSimpleArticles
 import kr.co.jiniaslog.blog.usecase.article.ArticleStatusChangeFacade
 import kr.co.jiniaslog.blog.usecase.article.ArticleUseCasesFacade
 import kr.co.jiniaslog.blog.usecase.article.IAddAnyTagInArticle
@@ -180,9 +179,9 @@ class ArticleResources(
     @GetMapping("/simple")
     @PreAuthorize("!(#status.name() == 'DRAFT') or hasRole('ADMIN')")
     fun getSimpleArticleCards(
+        @RequestParam(required = true) status: Article.Status?,
         @RequestParam(required = false) cursor: Long?,
         @RequestParam(required = false) limit: Int?,
-        @RequestParam(required = false) status: Article.Status?,
         @RequestParam(required = false) keyword: String?,
     ): ResponseEntity<List<SimpleArticleCardsViewModel>> {
         val isPublished = when (status) {
@@ -190,37 +189,17 @@ class ArticleResources(
             PUBLISHED -> true
             else -> throw IllegalArgumentException("status는 DRAFT 또는 PUBLISHED만 가능합니다")
         }
-
-        if (keyword != null) {
-            val info = articleQueryFacade.handle(
-                IGetPublishedSimpleArticleByKeyword.Query(keyword)
-            )
-            return ResponseEntity.ok(
-                info.articles.map {
-                    SimpleArticleCardsViewModel(
-                        id = it.id,
-                        title = it.title,
-                        content = it.content,
-                        thumbnailUrl = it.thumbnailUrl,
-                        createdAt = it.createdAt,
-                        tags = it.tags
-                    )
-                }
-            )
-        }
-
-        val articles = articleQueryFacade.handle(
-            IGetSimpleArticleListWithCursor.Query(ArticleId(cursor!!), limit!!, isPublished)
-        )
+        val info = articleQueryFacade.handle(IGetSimpleArticles.Query(cursor, limit, isPublished, keyword))
         return ResponseEntity.ok(
-            articles.map {
+            info.articles.map {
                 SimpleArticleCardsViewModel(
                     id = it.id,
                     title = it.title,
-                    content = it.content,
                     thumbnailUrl = it.thumbnailUrl,
                     createdAt = it.createdAt,
-                    tags = it.tags
+                    tags = it.tags,
+                    content = it.content,
+                    contentStatus = status
                 )
             }
         )

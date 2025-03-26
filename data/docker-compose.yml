@@ -112,18 +112,13 @@ services:
       - data-network
 
   elasticsearch:
-    image: bitnami/elasticsearch:8.5.1
+    image: bitnami/elasticsearch:8.17.3
     container_name: elasticsearch
     environment:
-      - ELASTICSEARCH_PLUGINS=nori
+      - ELASTICSEARCH_PLUGINS=analysis-nori
       - discovery.type=single-node
       - xpack.security.enabled=false
       - bootstrap.memory_lock=true
-      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
-    ulimits:
-      memlock:
-        soft: -1
-        hard: -1
     ports:
       - "9200:9200"
     networks:

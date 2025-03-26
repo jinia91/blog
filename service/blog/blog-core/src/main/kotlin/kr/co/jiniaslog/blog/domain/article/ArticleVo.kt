@@ -21,7 +21,7 @@ data class ArticleVo(
     val createdAt: LocalDateTime,
     val voDataStatus: Article.Status
 ) {
-    fun toTrimmedArticleVo(): ArticleVo {
+    fun toSimplifiedArticleVo(): ArticleVo {
         return ArticleVo(
             id = id,
             title = title,

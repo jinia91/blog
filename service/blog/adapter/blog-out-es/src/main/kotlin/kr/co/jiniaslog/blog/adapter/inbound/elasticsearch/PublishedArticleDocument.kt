@@ -6,6 +6,7 @@ import org.springframework.data.annotation.Id
 import org.springframework.data.elasticsearch.annotations.Document
 import org.springframework.data.elasticsearch.annotations.Field
 import java.time.LocalDateTime
+import java.time.ZoneOffset
 
 /**
  * Article document
@@ -31,7 +32,7 @@ data class PublishedArticleDocument(
     private val updatedAtTimeStamp: Long,
 ) {
     val createdAt: LocalDateTime
-        get() = LocalDateTime.ofEpochSecond(createdAtTimeStamp, 0, null)
+        get() = LocalDateTime.ofEpochSecond(createdAtTimeStamp, 0, ZoneOffset.of("+09:00"))
     override fun toString(): String {
         return "ArticleDocument(id='$id', title='$title', content='$content', status='$status', thumbnailUrl='$thumbnailUrl', createdAt=$createdAt)"
     }

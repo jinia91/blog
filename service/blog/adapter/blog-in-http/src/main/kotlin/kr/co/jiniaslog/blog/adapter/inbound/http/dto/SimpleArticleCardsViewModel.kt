@@ -1,5 +1,6 @@
 package kr.co.jiniaslog.blog.adapter.inbound.http.dto
 
+import kr.co.jiniaslog.blog.domain.article.Article
 import java.time.LocalDateTime
 
 data class SimpleArticleCardsViewModel(
@@ -8,5 +9,6 @@ data class SimpleArticleCardsViewModel(
     val content: String,
     val thumbnailUrl: String,
     val createdAt: LocalDateTime,
-    val tags: Map<Long, String>
+    val tags: Map<Long, String>,
+    val contentStatus: Article.Status
 )

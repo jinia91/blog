@@ -62,7 +62,7 @@ class ArticleQueriesTests : TestContainerAbstractSkeleton() {
         val article3 = articleRepository.save(ArticleTestFixtures.createPublishedArticle())
 
         // when
-        val result = sut.handle(IGetSimpleArticleListWithCursor.Query(article1.entityId, 3, true))
+        val result = sut.handle(IGetSimpleArticles.Query(article1.entityId, 3, true))
 
         // then
         result.size shouldBe 2
@@ -80,7 +80,7 @@ class ArticleQueriesTests : TestContainerAbstractSkeleton() {
             val article3 = articleRepository.save(ArticleTestFixtures.createDraftArticle())
 
             // when
-            val result = sut.handle(IGetSimpleArticleListWithCursor.Query(article1.entityId, 3, false))
+            val result = sut.handle(IGetSimpleArticles.Query(article1.entityId, 3, false))
 
             // then
             result.size shouldBe 2
@@ -101,7 +101,7 @@ class ArticleQueriesTests : TestContainerAbstractSkeleton() {
             val article3 = articleRepository.save(ArticleTestFixtures.createPublishedArticle())
 
             // when
-            val result = sut.handle(IGetSimpleArticleListWithCursor.Query(article1.entityId, 3, true))
+            val result = sut.handle(IGetSimpleArticles.Query(article1.entityId, 3, true))
 
             // then
             result.size shouldBe 2
@@ -120,7 +120,7 @@ class ArticleQueriesTests : TestContainerAbstractSkeleton() {
             val article1 = articleRepository.save(ArticleTestFixtures.createPublishedArticle())
 
             // when
-            val result = sut.handle(IGetSimpleArticleListWithCursor.Query(article1.entityId, 3, true))
+            val result = sut.handle(IGetSimpleArticles.Query(article1.entityId, 3, true))
 
             // then
             result.size shouldBe 0
@@ -134,7 +134,7 @@ class ArticleQueriesTests : TestContainerAbstractSkeleton() {
             val article3 = articleRepository.save(ArticleTestFixtures.createDraftArticle())
 
             // when
-            val result = sut.handle(IGetSimpleArticleListWithCursor.Query(article1.entityId, 3, false))
+            val result = sut.handle(IGetSimpleArticles.Query(article1.entityId, 3, false))
 
             // then
             result.size shouldBe 2
@@ -148,7 +148,7 @@ class ArticleQueriesTests : TestContainerAbstractSkeleton() {
             val article1 = articleRepository.save(ArticleTestFixtures.createDraftArticle())
 
             // when
-            val result = sut.handle(IGetSimpleArticleListWithCursor.Query(article1.entityId, 3, false))
+            val result = sut.handle(IGetSimpleArticles.Query(article1.entityId, 3, false))
 
             // then
             result.size shouldBe 0
@@ -164,7 +164,7 @@ class ArticleQueriesTests : TestContainerAbstractSkeleton() {
             )
 
             // when
-            val result = sut.handle(IGetSimpleArticleListWithCursor.Query(ArticleId(1), 3, true))
+            val result = sut.handle(IGetSimpleArticles.Query(ArticleId(1), 3, true))
 
             // then
             result[0].content.length shouldBe 100
