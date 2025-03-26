@@ -242,7 +242,9 @@ class ArticleResourceRestTests : RestTestAbstractSkeleton() {
         @Test
         fun `게시된 게시물 간소조회 요청이 있으면 유저가 아니여도 200을 반환한다`() {
             // given
-            every { articleQueriesFacade.handle(any(IGetSimpleArticles.Query::class)) } returns emptyList()
+            every { articleQueriesFacade.handle(any(IGetSimpleArticles.Query::class)) } returns IGetSimpleArticles.Info(
+                emptyList()
+            )
 
             // when
             RestAssuredMockMvc.given()
@@ -256,7 +258,9 @@ class ArticleResourceRestTests : RestTestAbstractSkeleton() {
         @Test
         fun `DRAFT 간소조회 요청이 있으면 어드민의 경우 200을 반환한다`() {
             // given
-            every { articleQueriesFacade.handle(any(IGetSimpleArticles.Query::class)) } returns emptyList()
+            every { articleQueriesFacade.handle(any(IGetSimpleArticles.Query::class)) } returns IGetSimpleArticles.Info(
+                emptyList()
+            )
 
             // when
             RestAssuredMockMvc.given()
@@ -271,7 +275,9 @@ class ArticleResourceRestTests : RestTestAbstractSkeleton() {
         @Test
         fun `DRAFT 간소조회 요청이 있으면 일반 유저의 경우 403을 반환한다`() {
             // given
-            every { articleQueriesFacade.handle(any(IGetSimpleArticles.Query::class)) } returns emptyList()
+            every { articleQueriesFacade.handle(any(IGetSimpleArticles.Query::class)) } returns IGetSimpleArticles.Info(
+                emptyList()
+            )
 
             // when
             RestAssuredMockMvc.given()
