@@ -3,11 +3,11 @@ package kr.co.jiniaslog.blog.adapter.outbound.mysql
 import com.querydsl.jpa.impl.JPAQueryFactory
 import kr.co.jiniaslog.blog.domain.article.Article
 import kr.co.jiniaslog.blog.domain.article.ArticleId
+import kr.co.jiniaslog.blog.domain.article.ArticleVo
 import kr.co.jiniaslog.blog.domain.article.QArticle.article
 import kr.co.jiniaslog.blog.domain.article.Tagging
 import kr.co.jiniaslog.blog.domain.article.TaggingId
 import kr.co.jiniaslog.blog.outbound.ArticleRepository
-import kr.co.jiniaslog.blog.queries.IGetPublishedSimpleArticleListWithCursor
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Repository
 
@@ -24,14 +24,14 @@ class ArticleRepositoryAdapter(
         return articleJpaRepository.save(entity)
     }
 
-    override fun getSimpleArticleListWithCursor(
-        cursor: ArticleId,
+    override fun getArticleListWithCursor(
+        cursor: Long,
         limit: Int,
         published: Boolean,
-    ): List<IGetPublishedSimpleArticleListWithCursor.Info> {
+    ): List<ArticleVo> {
         return blogJpaQueryFactory
             .selectFrom(article)
-            .where(article.entityId.value.gt(cursor.value))
+            .where(article.entityId.value.lt(cursor))
             .apply {
                 if (published) {
                     this.where(article.status.eq(Article.Status.PUBLISHED))
@@ -40,15 +40,19 @@ class ArticleRepositoryAdapter(
                 }
             }
             .limit(limit.toLong())
+            .orderBy(article.entityId.value.desc())
             .fetch()
             .map {
-                IGetPublishedSimpleArticleListWithCursor.Info(
+                val articleContentByPublished = if (published) it.articleContents else it.draftContents
+                ArticleVo(
                     id = it.id.value,
-                    title = if (published) it.articleContents.title else it.draftContents.title,
-                    thumbnailUrl = if (published) it.articleContents.thumbnailUrl else it.draftContents.thumbnailUrl,
-                    content = (if (published) it.articleContents.contents else it.draftContents.contents).take(100),
+                    title = articleContentByPublished.title,
+                    thumbnailUrl = articleContentByPublished.thumbnailUrl,
+                    content = articleContentByPublished.contents,
                     createdAt = it.createdAt!!,
                     tags = it.tagsInfo.mapKeys { it.key.id },
+                    status = it.status.name,
+                    voDataStatus = if (published) Article.Status.PUBLISHED else Article.Status.DRAFT
                 )
             }
     }

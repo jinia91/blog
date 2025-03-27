@@ -10,10 +10,13 @@ https://www.jiniaslog.co.kr/
 
 ## 인프라 / DevOps
 [gitOps Repository](https://github.com/jinia91/blog-gitops)
-- 라즈베리파이 4B 4대 (os: Ubuntu 22.04.4 LTS)
+- 라즈베리파이 4B 4대
+  - 4core 
+  - 8GB Ram 
+  - os: Ubuntu 22.04.4 LTS
+  - sdcard
 - 쿠버네티스 클러스터 (k3s)
 - ArgoCd
-- Helm
 - GitHub Actions
 
 ## Observability
@@ -21,6 +24,7 @@ https://www.jiniaslog.co.kr/
 - Prometheus
 - Grafana
 - Loki
+- tempo
 
 ## Backend
 - Spring Boot 3.3.0
@@ -31,13 +35,22 @@ https://www.jiniaslog.co.kr/
 - swagger
 - gradle
 
+### data processing
+- kafka
+- kafka connect
+  - debezium
+  - elasticsearch sink
+- ksqlDB
+- kafka web ui
+
 ### Database
 - mysql
 - redis sentinel
+- elasticsearch
 
 ### test / static analysis
 - testcontainers
-- kotest
+- kotest assertion
 - kover
 - junit
 - rest-assured

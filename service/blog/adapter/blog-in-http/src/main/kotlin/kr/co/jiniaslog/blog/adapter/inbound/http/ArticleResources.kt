@@ -1,6 +1,7 @@
 package kr.co.jiniaslog.blog.adapter.inbound.http
 
 import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.Parameter
 import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
@@ -11,6 +12,7 @@ import kr.co.jiniaslog.blog.adapter.inbound.http.dto.AddTagToArticleRequest
 import kr.co.jiniaslog.blog.adapter.inbound.http.dto.AddTagToArticleResponse
 import kr.co.jiniaslog.blog.adapter.inbound.http.dto.DeleteArticleResponse
 import kr.co.jiniaslog.blog.adapter.inbound.http.dto.GetArticleByIdResponse
+import kr.co.jiniaslog.blog.adapter.inbound.http.dto.SimpleArticleCardsViewModel
 import kr.co.jiniaslog.blog.adapter.inbound.http.dto.StartNewArticleResponse
 import kr.co.jiniaslog.blog.adapter.inbound.http.dto.UpdateArticleStatusRequest
 import kr.co.jiniaslog.blog.adapter.inbound.http.dto.UpdateArticleStatusResponse
@@ -22,7 +24,7 @@ import kr.co.jiniaslog.blog.domain.article.ArticleId
 import kr.co.jiniaslog.blog.domain.tag.TagName
 import kr.co.jiniaslog.blog.queries.ArticleQueriesFacade
 import kr.co.jiniaslog.blog.queries.IGetArticleById
-import kr.co.jiniaslog.blog.queries.IGetPublishedSimpleArticleListWithCursor
+import kr.co.jiniaslog.blog.queries.IGetSimpleArticles
 import kr.co.jiniaslog.blog.usecase.article.ArticleStatusChangeFacade
 import kr.co.jiniaslog.blog.usecase.article.ArticleUseCasesFacade
 import kr.co.jiniaslog.blog.usecase.article.IAddAnyTagInArticle
@@ -177,21 +179,45 @@ class ArticleResources(
 
     @GetMapping("/simple")
     @PreAuthorize("!(#status.name() == 'DRAFT') or hasRole('ADMIN')")
-    fun getArticlesWithCursor(
-        @RequestParam cursor: Long,
-        @RequestParam limit: Int,
-        @RequestParam status: Article.Status,
-    ): ResponseEntity<List<IGetPublishedSimpleArticleListWithCursor.Info>> {
+    @Operation(
+        summary = "게시글 카드 목록 조회",
+        description = "게시글의 간단한 정보를 조회한다. 키워드 검색은 커서와 함께 사용할 수 없다."
+    )
+    fun getSimpleArticleCards(
+        @Parameter(description = "조회하려는 게시글 상태", required = true)
+        @RequestParam(required = true)
+        status: Article.Status?,
+
+        @Parameter(description = "페이징을 위한 커서, 가장 마지막 글의 Id", required = false)
+        @RequestParam(required = false)
+        cursor: Long?,
+
+        @Parameter(description = "조회할 게시글 수", required = false)
+        @RequestParam(required = false)
+        limit: Int?,
+
+        @Parameter(description = "검색 키워드", required = false)
+        @RequestParam(required = false)
+        keyword: String?,
+    ): ResponseEntity<List<SimpleArticleCardsViewModel>> {
         val isPublished = when (status) {
             DRAFT -> false
             PUBLISHED -> true
             else -> throw IllegalArgumentException("status는 DRAFT 또는 PUBLISHED만 가능합니다")
         }
-
-        val articles = articleQueryFacade.handle(
-            IGetPublishedSimpleArticleListWithCursor.Query(ArticleId(cursor), limit, isPublished)
+        val info = articleQueryFacade.handle(IGetSimpleArticles.Query(cursor, limit, isPublished, keyword))
+        return ResponseEntity.ok(
+            info.articles.map {
+                SimpleArticleCardsViewModel(
+                    id = it.id,
+                    title = it.title,
+                    thumbnailUrl = it.thumbnailUrl,
+                    createdAt = it.createdAt,
+                    tags = it.tags,
+                    content = it.content,
+                    contentStatus = status
+                )
+            }
         )
-
-        return ResponseEntity.ok(articles)
     }
 }

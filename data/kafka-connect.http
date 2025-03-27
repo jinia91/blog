@@ -1,0 +1,56 @@
+### 카프카 커넥트 데비지움 소스 커넥터
+
+POST http://localhost:8083/connectors
+Content-Type: application/json
+
+{
+  "name": "article-source",
+  "config": {
+    "connector.class": "io.debezium.connector.mysql.MySqlConnector",
+    "database.allowPublicKeyRetrieval": "true",
+    "database.user": "root",
+    "database.server.id": "1",
+    "tasks.max": "1",
+    "time.precision.mode": "connect",
+    "database.server.name": "mysql-standalone",
+    "decimal.handling.mode": "string",
+    "heartbeat.interval.ms": "10000",
+    "include.schema.changes": "false",
+    "database.ssl.mode": "disabled",
+    "topic.prefix": "cdc",
+    "schema.history.internal.kafka.bootstrap.servers": "kafka00Service:9092",
+    "schema.history.internal.kafka.topic": "schema.jiniaslog_blog.history",
+    "database.hostname": "host.docker.internal",
+    "database.port": "3307",
+    "table.include.list": "jiniaslog_blog.article",
+    "value.converter.ignore.default.for.nullables": "true",
+    "database.include.list": "jiniaslog_blog",
+    "snapshot.mode": "initial"
+  }
+}
+
+### 카프카 커넥트 엘라스틱서치 싱크 커넥터
+
+POST http://localhost:8083/connectors
+Content-Type: application/json
+
+{
+  "name": "article-es-sink",
+  "config": {
+    "connector.class": "io.confluent.connect.elasticsearch.ElasticsearchSinkConnector",
+    "type.name": "_doc",
+    "transforms.convertKey.field": "ID",
+    "transforms.extractKey.fields": "ID",
+    "tasks.max": "1",
+    "topics": "ARTICLE_CHANGED",
+    "key.ignore": "false",
+    "schema.ignore": "true",
+    "connection.url": "http://elasticsearch:9200",
+    "value.converter.schemas.enable": "false",
+    "transforms": "extractKey,convertKey",
+    "transforms.extractKey.type": "org.apache.kafka.connect.transforms.ValueToKey",
+    "transforms.convertKey.type": "org.apache.kafka.connect.transforms.ExtractField$Key",
+    "value.converter": "org.apache.kafka.connect.json.JsonConverter",
+    "key.converter": "org.apache.kafka.connect.storage.StringConverter"
+  }
+}

@@ -37,7 +37,8 @@ object Modules {
                 InWebsocket(":service:blog:adapter:blog-in-websocket"),
                 OutUser(":service:blog:adapter:blog-out-user"),
                 OutMemo(":service:blog:adapter:blog-out-memo"),
-                OutMySql(":service:blog:adapter:blog-out-mysql")
+                OutMySql(":service:blog:adapter:blog-out-mysql"),
+                OutEs(":service:blog:adapter:blog-out-es")
             }
         }
 

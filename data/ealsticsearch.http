@@ -1,0 +1,52 @@
+### 1. 정적 스키마 삽입 article_changed
+PUT http://localhost:9200/article_changed
+Content-Type: application/json
+
+{
+  "settings": {
+    "analysis": {
+      "analyzer": {
+        "korean": {
+          "type": "custom",
+          "tokenizer": "nori_tokenizer"
+        },
+        "edge_ngram_analyzer": {
+          "tokenizer": "standard",
+          "filter": ["lowercase", "edge_ngram_filter"]
+        }
+      },
+      "filter": {
+        "edge_ngram_filter": {
+          "type": "edge_ngram",
+          "min_gram": 1,
+          "max_gram": 20
+        }
+      }
+    }
+  },
+  "mappings": {
+    "properties": {
+      "ID": { "type": "long" },
+      "CREATED_AT": { "type": "date", "format": "epoch_millis" },
+      "UPDATED_AT": { "type": "date", "format": "epoch_millis" },
+      "CONTENTS": {
+        "type": "text",
+        "analyzer": "korean",
+        "fields": {
+          "keyword": { "type": "keyword", "ignore_above": 256 },
+          "ngram": { "type": "text", "analyzer": "edge_ngram_analyzer" }
+        }
+      },
+      "TITLE": {
+        "type": "text",
+        "analyzer": "korean",
+        "fields": {
+          "keyword": { "type": "keyword", "ignore_above": 256 },
+          "ngram": { "type": "text", "analyzer": "edge_ngram_analyzer" }
+        }
+      },
+      "THUMBNAIL_URL": { "type": "keyword" },
+      "STATUS": { "type": "keyword" }
+    }
+  }
+}

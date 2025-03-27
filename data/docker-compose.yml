@@ -1,0 +1,125 @@
+networks:
+  data-network:
+    driver: bridge
+
+volumes:
+  kafka:
+    driver: local
+
+services:
+  Kafka00Service:
+    image: bitnami/kafka:latest
+    restart: unless-stopped
+    ports:
+      - '9092:9092'
+      - '9093:9093'
+      - '9094:9094'
+    environment:
+      - ALLOW_PLAINTEXT_LISTENER=yes
+      - KAFKA_CFG_BROKER_ID=0
+      - KAFKA_CFG_NODE_ID=0
+      - KAFKA_KRAFT_CLUSTER_ID=HsDBs9l6UUmQq7Y5E6bNlw
+      - KAFKA_CFG_PROCESS_ROLES=controller,broker
+      - KAFKA_CFG_CONTROLLER_LISTENER_NAMES=CONTROLLER
+      - KAFKA_CFG_LISTENERS=PLAINTEXT://:9092,CONTROLLER://:9093,EXTERNAL://:9094
+      - KAFKA_CFG_CONTROLLER_QUORUM_VOTERS=0@localhost:9093
+      - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://kafka00Service:9092,EXTERNAL://127.0.0.1:9094
+      - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=PLAINTEXT:PLAINTEXT,CONTROLLER:PLAINTEXT,EXTERNAL:PLAINTEXT
+      - KAFKA_CFG_OFFSETS_TOPIC_REPLICATION_FACTOR=1
+      - KAFKA_CFG_TRANSACTION_STATE_LOG_REPLICATION_FACTOR=1
+      - KAFKA_CFG_TRANSACTION_STATE_LOG_MIN_ISR=1
+      - KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE=true
+    networks:
+      - data-network
+    volumes:
+      - kafka:/bitnami/kafka
+
+  kafka-connect:
+    image: confluentinc/cp-kafka-connect:latest
+    container_name: kafka-connect
+    ports:
+      - "8083:8083"
+      - "9095:8080"
+    environment:
+      CONNECT_BOOTSTRAP_SERVERS: "PLAINTEXT://Kafka00Service:9092"
+      CONNECT_REST_PORT: 8083
+      CONNECT_GROUP_ID: "kafka-connect-group"
+      CONNECT_CONFIG_STORAGE_TOPIC: "_connect-configs"
+      CONNECT_OFFSET_STORAGE_TOPIC: "_connect-offsets"
+      CONNECT_STATUS_STORAGE_TOPIC: "_connect-status"
+      CONNECT_KEY_CONVERTER: "org.apache.kafka.connect.json.JsonConverter"
+      CONNECT_VALUE_CONVERTER: "org.apache.kafka.connect.json.JsonConverter"
+      CONNECT_INTERNAL_KEY_CONVERTER: "org.apache.kafka.connect.json.JsonConverter"
+      CONNECT_INTERNAL_VALUE_CONVERTER: "org.apache.kafka.connect.json.JsonConverter"
+      CONNECT_CONFIG_STORAGE_REPLICATION_FACTOR: 1
+      CONNECT_OFFSET_STORAGE_REPLICATION_FACTOR: 1
+      CONNECT_STATUS_STORAGE_REPLICATION_FACTOR: 1
+      CONNECT_REST_ADVERTISED_HOST_NAME: "kafka-connect"
+      CONNECT_PLUGIN_PATH: "/usr/share/java,/usr/share/confluent-hub-components"
+      CONNECT_KEY_CONVERTER_SCHEMAS_ENABLE: "false"
+      CONNECT_VALUE_CONVERTER_SCHEMAS_ENABLE: "false"
+      KAFKA_HEAP_OPTS: "-Xms1G -Xmx3G"
+
+    depends_on:
+      - Kafka00Service
+    networks:
+      - data-network
+    volumes:
+      - ./../confluent-hub-components:/usr/share/confluent-hub-components
+
+  KafkaWebUiService:
+    image: provectuslabs/kafka-ui:latest
+    restart: always
+    container_name: KafkaWebUiContainer
+    ports:
+      - '8085:8080'
+    environment:
+      - KAFKA_CLUSTERS_0_NAME=Local-Kraft-Cluster
+      - KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS=Kafka00Service:9092
+      - KAFKA_CLUSTERS_0_AUDIT_TOPICAUDITENABLED=true
+      - KAFKA_CLUSTERS_0_AUDIT_CONSOLEAUDITENABLED=true
+      - KAFKA_CLUSTERS_0_KAFKACONNECT_0_NAME=Local-Kafka-Connect
+      - KAFKA_CLUSTERS_0_KAFKACONNECT_0_ADDRESS=http://kafka-connect:8083
+      - KAFKA_CLUSTERS_0_KSQLDB_0_NAME=ksqldb-server
+      - KAFKA_CLUSTERS_0_KSQLDBSERVER=http://ksqldb-server:8088
+      - KAFKA_CLUSTERS_0_KSQLDB_0_URL=http://ksqldb-server:8088
+    depends_on:
+      - Kafka00Service
+      - kafka-connect
+    networks:
+      - data-network
+
+  ksqldb-server:
+    image: confluentinc/cp-ksqldb-server:latest
+    hostname: ksqldb-server
+    container_name: ksqldb-server
+    ports:
+      - "8088:8088"
+    environment:
+      KSQL_CONFIG_DIR: "/etc/ksql"
+      KSQL_BOOTSTRAP_SERVERS: "PLAINTEXT://Kafka00Service:9092"
+      KSQL_HOST_NAME: ksqldb-server
+      KSQL_LISTENERS: "http://0.0.0.0:8088"
+      KSQL_CACHE_MAX_BYTES_BUFFERING: 0
+      KSQL_PRODUCER_INTERCEPTOR_CLASSES: "io.confluent.monitoring.clients.interceptor.MonitoringProducerInterceptor"
+      KSQL_CONSUMER_INTERCEPTOR_CLASSES: "io.confluent.monitoring.clients.interceptor.MonitoringConsumerInterceptor"
+      KSQL_KSQL_LOGGING_PROCESSING_TOPIC_REPLICATION_FACTOR: 1
+      KSQL_KSQL_LOGGING_PROCESSING_TOPIC_AUTO_CREATE: 'true'
+      KSQL_KSQL_LOGGING_PROCESSING_STREAM_AUTO_CREATE: 'true'
+    depends_on:
+      - Kafka00Service
+    networks:
+      - data-network
+
+  elasticsearch:
+    image: bitnami/elasticsearch:8.17.3
+    container_name: elasticsearch
+    environment:
+      - ELASTICSEARCH_PLUGINS=analysis-nori
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+      - bootstrap.memory_lock=true
+    ports:
+      - "9200:9200"
+    networks:
+      - data-network

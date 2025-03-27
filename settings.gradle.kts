@@ -29,6 +29,7 @@ include(
     "service:blog:adapter:blog-out-user",
     "service:blog:adapter:blog-out-memo",
     "service:blog:adapter:blog-out-mysql",
+    "service:blog:adapter:blog-out-es",
 
     // memo
     "service:memo:memo-core",

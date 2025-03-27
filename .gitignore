@@ -57,3 +57,7 @@ src/main/resources/application-dev.yml
 **/neo4j_logs/
 **/neo4j_plugins/
 **/mysql_data
+
+### kafka
+confluent-hub-components/
+
