@@ -1,6 +1,7 @@
 package kr.co.jiniaslog.blog.adapter.inbound.http
 
 import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.Parameter
 import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
@@ -178,11 +179,26 @@ class ArticleResources(
 
     @GetMapping("/simple")
     @PreAuthorize("!(#status.name() == 'DRAFT') or hasRole('ADMIN')")
+    @Operation(
+        summary = "게시글 카드 목록 조회",
+        description = "게시글의 간단한 정보를 조회한다."
+    )
     fun getSimpleArticleCards(
-        @RequestParam(required = true) status: Article.Status?,
-        @RequestParam(required = false) cursor: Long?,
-        @RequestParam(required = false) limit: Int?,
-        @RequestParam(required = false) keyword: String?,
+        @Parameter(description = "조회하려는 게시글 상태", required = true)
+        @RequestParam(required = true)
+        status: Article.Status?,
+
+        @Parameter(description = "페이징을 위한 커서", required = false)
+        @RequestParam(required = false)
+        cursor: Long?,
+
+        @Parameter(description = "조회할 게시글 수", required = false)
+        @RequestParam(required = false)
+        limit: Int?,
+
+        @Parameter(description = "검색 키워드", required = false)
+        @RequestParam(required = false)
+        keyword: String?,
     ): ResponseEntity<List<SimpleArticleCardsViewModel>> {
         val isPublished = when (status) {
             DRAFT -> false
