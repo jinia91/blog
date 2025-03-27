@@ -41,7 +41,7 @@ spring:
       host: localhost
       port: 8882
   elasticsearch:
-    uris: http://localhost:9200
+    uris: localhost:9200
     connection-timeout: 1000
     socket-timeout: 30000
 
