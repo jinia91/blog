@@ -32,7 +32,7 @@ data class PublishedArticleDocument(
     private val updatedAtTimeStamp: Long,
 ) {
     val createdAt: LocalDateTime
-        get() = LocalDateTime.ofEpochSecond(createdAtTimeStamp, 0, ZoneOffset.of("+09:00"))
+        get() = LocalDateTime.ofEpochSecond(createdAtTimeStamp / 1000, 0, ZoneOffset.ofHours(9))
     override fun toString(): String {
         return "ArticleDocument(id='$id', title='$title', content='$content', status='$status', thumbnailUrl='$thumbnailUrl', createdAt=$createdAt)"
     }

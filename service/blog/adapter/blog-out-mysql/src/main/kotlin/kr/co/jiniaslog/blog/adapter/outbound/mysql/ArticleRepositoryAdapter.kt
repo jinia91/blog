@@ -31,7 +31,7 @@ class ArticleRepositoryAdapter(
     ): List<ArticleVo> {
         return blogJpaQueryFactory
             .selectFrom(article)
-            .where(article.entityId.value.gt(cursor))
+            .where(article.entityId.value.lt(cursor))
             .apply {
                 if (published) {
                     this.where(article.status.eq(Article.Status.PUBLISHED))
@@ -40,6 +40,7 @@ class ArticleRepositoryAdapter(
                 }
             }
             .limit(limit.toLong())
+            .orderBy(article.entityId.value.desc())
             .fetch()
             .map {
                 val articleContentByPublished = if (published) it.articleContents else it.draftContents

@@ -181,14 +181,14 @@ class ArticleResources(
     @PreAuthorize("!(#status.name() == 'DRAFT') or hasRole('ADMIN')")
     @Operation(
         summary = "게시글 카드 목록 조회",
-        description = "게시글의 간단한 정보를 조회한다."
+        description = "게시글의 간단한 정보를 조회한다. 키워드 검색은 커서와 함께 사용할 수 없다."
     )
     fun getSimpleArticleCards(
         @Parameter(description = "조회하려는 게시글 상태", required = true)
         @RequestParam(required = true)
         status: Article.Status?,
 
-        @Parameter(description = "페이징을 위한 커서", required = false)
+        @Parameter(description = "페이징을 위한 커서, 가장 마지막 글의 Id", required = false)
         @RequestParam(required = false)
         cursor: Long?,
 
