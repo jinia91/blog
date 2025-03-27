@@ -216,7 +216,6 @@ class Article internal constructor(
         check(status != Status.DELETED) { "삭제된 게시글은 태그를 추가할 수 없습니다." }
         val tagging = Tagging(TaggingId(IdUtils.idGenerator.generate()), this, tag)
         _tags.add(tagging)
-        tag.addTagging(tagging)
     }
 
     /**
