@@ -1,6 +1,7 @@
 package kr.co.jiniaslog.blog.queries
 
 import kr.co.jiniaslog.blog.domain.article.ArticleVo
+import kr.co.jiniaslog.blog.domain.tag.TagId
 
 /**
  * 간소화 시킨 게시물들을 가져온다
@@ -15,10 +16,15 @@ interface IGetSimpleArticles {
         val cursor: Long?,
         val limit: Int?,
         val isPublished: Boolean,
-        val keyword: String? = null
+        val keyword: String? = null,
+        private val tagIdRaw: Long? = null
     ) {
-        fun isCursorQuery(): Boolean = cursor != null && limit != null
-        fun isKeywordQuery(): Boolean = keyword != null
+        val tagId: TagId? = tagIdRaw?.let { TagId(it) }
+
+        fun isCursorQuery(): Boolean = cursor != null && limit != null && keyword == null && tagId == null
+        fun isKeywordQuery(): Boolean = keyword != null && cursor == null && limit == null && tagId == null
+
+        fun isTagQuery(): Boolean = tagId != null && cursor == null && limit == null && keyword == null
     }
 
     data class Info(

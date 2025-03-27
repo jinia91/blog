@@ -32,6 +32,7 @@ class ArticleQueries(
                 query.limit!!,
                 query.isPublished
             )
+            query.isTagQuery() -> articleRepository.getArticleByTagId(query.tagId!!)
             else -> throw IllegalArgumentException("지원하지 않는 쿼리 입니다")
         }
         return IGetSimpleArticles.Info(vos.map { it.toSimplifiedArticleVo() })

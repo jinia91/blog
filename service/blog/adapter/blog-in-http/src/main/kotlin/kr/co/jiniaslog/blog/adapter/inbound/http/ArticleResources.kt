@@ -181,7 +181,7 @@ class ArticleResources(
     @PreAuthorize("!(#status.name() == 'DRAFT') or hasRole('ADMIN')")
     @Operation(
         summary = "게시글 카드 목록 조회",
-        description = "게시글의 간단한 정보를 조회한다. 키워드 검색은 커서와 함께 사용할 수 없다."
+        description = "게시글의 간단한 정보를 조회한다. 키워드 검색은 커서와 함께 사용할 수 없다. 태그 검색은 커서와 함께 사용할 수 없다."
     )
     fun getSimpleArticleCards(
         @Parameter(description = "조회하려는 게시글 상태", required = true)
@@ -199,13 +199,17 @@ class ArticleResources(
         @Parameter(description = "검색 키워드", required = false)
         @RequestParam(required = false)
         keyword: String?,
+
+        @Parameter(description = "태그 아이디", required = false)
+        @RequestParam(required = false)
+        tagId: Long?,
     ): ResponseEntity<List<SimpleArticleCardsViewModel>> {
         val isPublished = when (status) {
             DRAFT -> false
             PUBLISHED -> true
             else -> throw IllegalArgumentException("status는 DRAFT 또는 PUBLISHED만 가능합니다")
         }
-        val info = articleQueryFacade.handle(IGetSimpleArticles.Query(cursor, limit, isPublished, keyword))
+        val info = articleQueryFacade.handle(IGetSimpleArticles.Query(cursor, limit, isPublished, keyword, tagId))
         return ResponseEntity.ok(
             info.articles.map {
                 SimpleArticleCardsViewModel(

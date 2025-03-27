@@ -5,8 +5,10 @@ import kr.co.jiniaslog.blog.domain.article.Article
 import kr.co.jiniaslog.blog.domain.article.ArticleId
 import kr.co.jiniaslog.blog.domain.article.ArticleVo
 import kr.co.jiniaslog.blog.domain.article.QArticle.article
+import kr.co.jiniaslog.blog.domain.article.QTagging.tagging
 import kr.co.jiniaslog.blog.domain.article.Tagging
 import kr.co.jiniaslog.blog.domain.article.TaggingId
+import kr.co.jiniaslog.blog.domain.tag.TagId
 import kr.co.jiniaslog.blog.outbound.ArticleRepository
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Repository
@@ -42,19 +44,15 @@ class ArticleRepositoryAdapter(
             .limit(limit.toLong())
             .orderBy(article.entityId.value.desc())
             .fetch()
-            .map {
-                val articleContentByPublished = if (published) it.articleContents else it.draftContents
-                ArticleVo(
-                    id = it.id.value,
-                    title = articleContentByPublished.title,
-                    thumbnailUrl = articleContentByPublished.thumbnailUrl,
-                    content = articleContentByPublished.contents,
-                    createdAt = it.createdAt!!,
-                    tags = it.tagsInfo.mapKeys { it.key.id },
-                    status = it.status.name,
-                    voDataStatus = if (published) Article.Status.PUBLISHED else Article.Status.DRAFT
-                )
-            }
+            .map { ArticleVo.from(it) }
+    }
+
+    override fun getArticleByTagId(tagId: TagId): List<ArticleVo> {
+        return blogJpaQueryFactory.select(article)
+            .from(tagging)
+            .join(article._tags, tagging).on(tagging.tag.entityId.eq(tagId))
+            .fetch()
+            .map { ArticleVo.from(it) }
     }
 
     override fun findById(id: ArticleId): Article? {
