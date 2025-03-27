@@ -9,4 +9,6 @@ interface TagRepository : Repository<Tag, TagId> {
     fun findByName(tagName: TagName): Tag?
 
     fun findUnUsedTags(): List<Tag>
+
+    fun findTopNTags(n: Int): List<Tag>
 }
