@@ -14,6 +14,7 @@ import kr.co.jiniaslog.blog.adapter.inbound.http.dto.DeleteArticleResponse
 import kr.co.jiniaslog.blog.adapter.inbound.http.dto.GetArticleByIdResponse
 import kr.co.jiniaslog.blog.adapter.inbound.http.dto.SimpleArticleCardsViewModel
 import kr.co.jiniaslog.blog.adapter.inbound.http.dto.StartNewArticleResponse
+import kr.co.jiniaslog.blog.adapter.inbound.http.dto.TagViewModel
 import kr.co.jiniaslog.blog.adapter.inbound.http.dto.UpdateArticleStatusRequest
 import kr.co.jiniaslog.blog.adapter.inbound.http.dto.UpdateArticleStatusResponse
 import kr.co.jiniaslog.blog.domain.UserId
@@ -170,7 +171,7 @@ class ArticleResources(
                 title = info.title,
                 content = info.content,
                 thumbnailUrl = info.thumbnailUrl,
-                tags = info.tags.mapKeys { it.key.id },
+                tags = info.tags.map { TagViewModel(it.key.id, it.value) },
                 createdAt = info.createdAt,
                 isPublished = info.isPublished
             )
@@ -217,7 +218,7 @@ class ArticleResources(
                     title = it.title,
                     thumbnailUrl = it.thumbnailUrl,
                     createdAt = it.createdAt,
-                    tags = it.tags,
+                    tags = it.tags.map { tag -> TagViewModel(tag.key, tag.value) },
                     content = it.content,
                     contentStatus = status
                 )

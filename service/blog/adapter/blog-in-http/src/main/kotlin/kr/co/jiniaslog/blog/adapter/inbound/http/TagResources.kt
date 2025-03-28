@@ -1,5 +1,6 @@
 package kr.co.jiniaslog.blog.adapter.inbound.http
 
+import kr.co.jiniaslog.blog.adapter.inbound.http.dto.TagViewModel
 import kr.co.jiniaslog.blog.adapter.inbound.http.dto.TopNTagResponse
 import kr.co.jiniaslog.blog.usecase.tag.IGetTopNTags
 import kr.co.jiniaslog.blog.usecase.tag.TagUseCasesFacade
@@ -17,8 +18,6 @@ class TagResources(
     @GetMapping("/top")
     fun getTopNTags(@RequestParam n: Int): ResponseEntity<TopNTagResponse> {
         val tags = tagUseCasesFacade.handle(IGetTopNTags.Query(n)).tags
-            .map { it.key.id to it.value.value }
-            .toMap()
-        return ResponseEntity.ok(TopNTagResponse(tags))
+        return ResponseEntity.ok(TopNTagResponse(tags.map { TagViewModel(it.key.id, it.value.value) }))
     }
 }

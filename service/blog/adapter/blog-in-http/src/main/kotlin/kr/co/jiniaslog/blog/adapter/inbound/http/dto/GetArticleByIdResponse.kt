@@ -7,7 +7,7 @@ data class GetArticleByIdResponse(
     val title: String,
     val content: String,
     val thumbnailUrl: String,
-    val tags: Map<Long, String>,
+    val tags: List<TagViewModel>,
     val createdAt: LocalDateTime,
     val isPublished: Boolean
 )

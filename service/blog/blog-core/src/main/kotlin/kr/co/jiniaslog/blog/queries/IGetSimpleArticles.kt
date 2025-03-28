@@ -23,7 +23,6 @@ interface IGetSimpleArticles {
 
         fun isCursorQuery(): Boolean = cursor != null && limit != null && keyword == null && tagId == null
         fun isKeywordQuery(): Boolean = keyword != null && cursor == null && limit == null && tagId == null
-
         fun isTagQuery(): Boolean = tagId != null && cursor == null && limit == null && keyword == null
     }
 

@@ -5,5 +5,5 @@ data class AddTagToArticleRequest(
 )
 
 data class AddTagToArticleResponse(
-    val articleId: Long,
+    val tagId: Long
 )
