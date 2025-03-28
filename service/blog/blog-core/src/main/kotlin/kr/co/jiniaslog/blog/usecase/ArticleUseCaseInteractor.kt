@@ -9,6 +9,7 @@ import kr.co.jiniaslog.blog.outbound.TagRepository
 import kr.co.jiniaslog.blog.outbound.UserService
 import kr.co.jiniaslog.blog.usecase.article.ArticleUseCasesFacade
 import kr.co.jiniaslog.blog.usecase.article.IAddAnyTagInArticle
+import kr.co.jiniaslog.blog.usecase.article.IRemoveTagInArticle
 import kr.co.jiniaslog.blog.usecase.article.IStartToWriteNewDraftArticle
 import kr.co.jiniaslog.blog.usecase.article.IUpdateDraftArticleContents
 import kr.co.jiniaslog.shared.core.annotation.UseCaseInteractor
@@ -59,6 +60,18 @@ class ArticleUseCaseInteractor(
         }
 
         return IAddAnyTagInArticle.Info(article.entityId)
+    }
+
+    override fun handle(command: IRemoveTagInArticle.Command): IRemoveTagInArticle.Info {
+        val article = transactionHandler.runInRepeatableReadTransaction {
+            val tag = tagRepository.findByName(command.tagName)
+                ?: throw IllegalArgumentException("태그가 존재하지 않습니다")
+            val article = getArticle(command.articleId)
+            article.removeTag(tag)
+            articleRepository.save(article)
+        }
+
+        return IRemoveTagInArticle.Info(article.entityId)
     }
 
     private fun getArticle(articleId: ArticleId) = articleRepository.findById(articleId)

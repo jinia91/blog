@@ -30,6 +30,7 @@ import kr.co.jiniaslog.blog.usecase.article.ArticleStatusChangeFacade
 import kr.co.jiniaslog.blog.usecase.article.ArticleUseCasesFacade
 import kr.co.jiniaslog.blog.usecase.article.IAddAnyTagInArticle
 import kr.co.jiniaslog.blog.usecase.article.IDeleteArticle
+import kr.co.jiniaslog.blog.usecase.article.IRemoveTagInArticle
 import kr.co.jiniaslog.blog.usecase.article.IStartToWriteNewDraftArticle
 import kr.cojiniaslog.shared.adapter.inbound.http.AuthUserId
 import kr.cojiniaslog.shared.adapter.inbound.http.CommonApiResponses
@@ -151,6 +152,17 @@ class ArticleResources(
         val command = IAddAnyTagInArticle.Command(TagName(request.tagName), ArticleId(articleId))
         val info = articleFacade.handle(command)
         return ResponseEntity.ok(AddTagToArticleResponse(info.articleId.value))
+    }
+
+    @DeleteMapping("/{articleId}/tags/{tagName}")
+    @PreAuthorize("hasRole('ADMIN')")
+    fun removeTagFromArticle(
+        @PathVariable articleId: Long,
+        @PathVariable tagName: String,
+    ): ResponseEntity<DeleteTaggingResponse> {
+        val command = IRemoveTagInArticle.Command(ArticleId(articleId), TagName(tagName))
+        val info = articleFacade.handle(command)
+        return ResponseEntity.ok(DeleteTaggingResponse(info.articleId.value))
     }
 
     @GetMapping("/{articleId}")
