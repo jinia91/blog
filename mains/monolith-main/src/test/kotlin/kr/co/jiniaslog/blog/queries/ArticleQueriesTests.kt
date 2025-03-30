@@ -232,7 +232,7 @@ class ArticleQueriesTests : TestContainerAbstractSkeleton() {
         fun `지원하지 않는 쿼리면, 조회되지 않는다`() {
             // when, then
             shouldThrow<IllegalArgumentException> {
-                sut.handle(IGetSimpleArticles.Query(null, 3, true, null, null))
+                sut.handle(IGetSimpleArticles.Query(null, 3, false, null, null))
             }
         }
     }
