@@ -6,6 +6,7 @@ import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
 import kr.co.jiniaslog.TestContainerAbstractSkeleton
 import kr.co.jiniaslog.blog.domain.ArticleTestFixtures
+import kr.co.jiniaslog.blog.domain.article.Article
 import kr.co.jiniaslog.blog.domain.article.ArticleId
 import kr.co.jiniaslog.blog.domain.tag.Tag
 import kr.co.jiniaslog.blog.domain.tag.TagName
@@ -31,7 +32,7 @@ class ArticleQueriesTests : TestContainerAbstractSkeleton() {
         val article = articleRepository.save(ArticleTestFixtures.createDraftArticle())
 
         // when
-        val result = sut.handle(IGetArticleById.Query(article.entityId, isDraft = false))
+        val result = sut.handle(IGetArticleById.Query(article.entityId, status = Article.Status.DRAFT))
 
         // then
         result.shouldNotBeNull()
@@ -45,7 +46,7 @@ class ArticleQueriesTests : TestContainerAbstractSkeleton() {
         val article = articleRepository.save(ArticleTestFixtures.createPublishedArticle())
 
         // when
-        val result = sut.handle(IGetArticleById.Query(article.entityId, isDraft = true))
+        val result = sut.handle(IGetArticleById.Query(article.entityId, status = Article.Status.PUBLISHED))
 
         // then
         result.shouldNotBeNull()
@@ -57,7 +58,7 @@ class ArticleQueriesTests : TestContainerAbstractSkeleton() {
     fun `게시글을 조회할 수 없다`() {
         // when, then
         shouldThrow<IllegalArgumentException> {
-            sut.handle(IGetArticleById.Query(ArticleId(1), isDraft = true))
+            sut.handle(IGetArticleById.Query(ArticleId(1), status = Article.Status.DRAFT))
         }
     }
 
