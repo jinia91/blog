@@ -14,8 +14,9 @@ class RssResource(
         val feed: String
     )
 
-    @GetMapping("/rss")
-    fun getRssFeed(): ResponseEntity<RssResponse> {
-        return ResponseEntity.ok(RssResponse(retrieveRssFeed.handle(IRetrieveRssFeed.Command()).feed))
+    @GetMapping("/rss", produces = ["application/rss+xml"])
+    fun getRssFeed(): ResponseEntity<String> {
+        val rssXml = retrieveRssFeed.handle(IRetrieveRssFeed.Command()).feed
+        return ResponseEntity.ok(rssXml)
     }
 }
