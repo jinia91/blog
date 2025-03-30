@@ -171,12 +171,7 @@ class ArticleResources(
         @PathVariable articleId: Long,
         @RequestParam status: Article.Status,
     ): ResponseEntity<GetArticleByIdResponse> {
-        val isDraft = when (status) {
-            DRAFT -> true
-            PUBLISHED -> false
-            else -> throw IllegalArgumentException("status는 DRAFT 또는 PUBLISHED만 가능합니다")
-        }
-        val info = articleQueryFacade.handle(IGetArticleById.Query(ArticleId(articleId), isDraft))
+        val info = articleQueryFacade.handle(IGetArticleById.Query(ArticleId(articleId), status))
         return ResponseEntity.ok(
             GetArticleByIdResponse(
                 id = info.id.value,

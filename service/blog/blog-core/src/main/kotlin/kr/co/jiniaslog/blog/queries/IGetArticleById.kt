@@ -1,5 +1,6 @@
 package kr.co.jiniaslog.blog.queries
 
+import kr.co.jiniaslog.blog.domain.article.Article
 import kr.co.jiniaslog.blog.domain.article.ArticleId
 import kr.co.jiniaslog.blog.domain.tag.TagId
 import java.time.LocalDateTime
@@ -9,7 +10,7 @@ interface IGetArticleById {
 
     data class Query(
         val articleId: ArticleId,
-        val isDraft: Boolean
+        val status: Article.Status
     )
 
     data class Info(
