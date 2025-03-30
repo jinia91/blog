@@ -42,6 +42,17 @@ class TagRepositoryAdapter(
             ).fetch()
     }
 
+    override fun findTopNTags(n: Int): List<Tag> {
+        return blogJpaQueryFactory
+            .select(tag)
+            .from(tagging)
+            .join(tagging.tag, tag)
+            .groupBy(tag)
+            .orderBy(tagging.count().desc())
+            .limit(n.toLong())
+            .fetch()
+    }
+
     override fun findById(id: TagId): Tag? {
         return tagJpaRepository.findById(id).orElse(null)
     }
