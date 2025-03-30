@@ -5,6 +5,7 @@ import com.rometools.rome.feed.rss.Description
 import com.rometools.rome.feed.rss.Item
 import kr.co.jiniaslog.blog.adapter.inbound.acl.BlogAclInboundAdapter
 import kr.co.jiniaslog.shared.core.annotation.UseCaseInteractor
+import java.io.StringWriter
 import java.time.ZoneId
 import java.util.*
 
@@ -34,7 +35,9 @@ class RssUseCasesInteractor(
         }
 
         val output = com.rometools.rome.io.WireFeedOutput()
-        val rssString = output.outputString(channel)
+        val stringWriter = StringWriter()
+        output.output(channel, stringWriter)
+        val rssString = stringWriter.toString()
         return IRetrieveRssFeed.Info(rssString)
     }
 }

@@ -57,6 +57,10 @@ object Modules {
             }
         }
 
+        object Seo {
+            val Core = Module(":service:seo")
+        }
+
         val MessageNexus = Module(":service:message-nexus")
     }
 

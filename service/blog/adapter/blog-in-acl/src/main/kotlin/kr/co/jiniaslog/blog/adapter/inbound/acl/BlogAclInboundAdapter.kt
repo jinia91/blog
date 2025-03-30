@@ -1,6 +1,5 @@
 package kr.co.jiniaslog.blog.adapter.inbound.acl
 
-import kr.co.jiniaslog.blog.domain.article.ArticleVo
 import kr.co.jiniaslog.blog.queries.ArticleQueriesFacade
 import kr.co.jiniaslog.blog.queries.IGetSimpleArticles
 import org.springframework.stereotype.Component
@@ -9,7 +8,7 @@ import org.springframework.stereotype.Component
 class BlogAclInboundAdapter(
     private val articleQueriesFacade: ArticleQueriesFacade
 ) {
-    fun getAllArticle(): List<ArticleVo> {
+    fun getAllArticle(): List<ArticleAclVo> {
         val simpleAllArticles = articleQueriesFacade.handle(
             IGetSimpleArticles.Query(
                 isPublished = true,
@@ -20,6 +19,13 @@ class BlogAclInboundAdapter(
             )
         )
 
-        return simpleAllArticles.articles
+        return simpleAllArticles.articles.map {
+            ArticleAclVo(
+                id = it.id,
+                title = it.title,
+                content = it.content,
+                createdAt = it.createdAt
+            )
+        }
     }
 }

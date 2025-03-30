@@ -13,6 +13,7 @@ import kr.co.jiniaslog.blog.usecase.article.IRemoveTagInArticle
 import kr.co.jiniaslog.blog.usecase.article.IStartToWriteNewDraftArticle
 import kr.co.jiniaslog.blog.usecase.article.IUpdateDraftArticleContents
 import kr.co.jiniaslog.shared.core.annotation.UseCaseInteractor
+import org.springframework.cache.annotation.CacheEvict
 
 @UseCaseInteractor
 class ArticleUseCaseInteractor(
@@ -50,6 +51,7 @@ class ArticleUseCaseInteractor(
         return IUpdateDraftArticleContents.Info(article.entityId)
     }
 
+    @CacheEvict(cacheNames = ["blog.article.simple"], allEntries = true)
     override fun handle(command: IAddAnyTagInArticle.Command): IAddAnyTagInArticle.Info {
         val article = transactionHandler.runInRepeatableReadTransaction {
             val tag = tagRepository.findByName(command.tagName)
@@ -62,6 +64,7 @@ class ArticleUseCaseInteractor(
         return IAddAnyTagInArticle.Info(article.entityId)
     }
 
+    @CacheEvict(cacheNames = ["blog.article.simple"], allEntries = true)
     override fun handle(command: IRemoveTagInArticle.Command): IRemoveTagInArticle.Info {
         val article = transactionHandler.runInRepeatableReadTransaction {
             val tag = tagRepository.findByName(command.tagName)

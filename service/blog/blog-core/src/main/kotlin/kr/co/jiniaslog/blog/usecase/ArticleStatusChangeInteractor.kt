@@ -12,6 +12,7 @@ import kr.co.jiniaslog.blog.usecase.article.IDeleteArticle
 import kr.co.jiniaslog.blog.usecase.article.IPublishArticle
 import kr.co.jiniaslog.blog.usecase.article.IUnDeleteArticle
 import kr.co.jiniaslog.blog.usecase.article.IUnPublishArticle
+import org.springframework.cache.annotation.CacheEvict
 import org.springframework.stereotype.Component
 
 @Component
@@ -19,6 +20,8 @@ class ArticleStatusChangeInteractor(
     private val articleRepository: ArticleRepository,
     private val transactionHandler: BlogTransactionHandler,
 ) : ArticleStatusChangeFacade {
+
+    @CacheEvict(cacheNames = ["blog.article.simple"], allEntries = true)
     override fun determineCommand(
         asIsStatus: Article.Status,
         toBeStatus: Article.Status,

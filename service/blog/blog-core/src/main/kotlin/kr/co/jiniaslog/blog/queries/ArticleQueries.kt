@@ -4,6 +4,7 @@ import kr.co.jiniaslog.blog.domain.article.Article
 import kr.co.jiniaslog.blog.domain.tag.TagName
 import kr.co.jiniaslog.blog.outbound.ArticleRepository
 import kr.co.jiniaslog.blog.outbound.ArticleSearcher
+import org.springframework.cache.annotation.Cacheable
 import org.springframework.stereotype.Component
 
 @Component
@@ -26,6 +27,7 @@ class ArticleQueries(
         )
     }
 
+    @Cacheable("blog.article.simple", key = "#query")
     override fun handle(query: IGetSimpleArticles.Query): IGetSimpleArticles.Info {
         val vos = when {
             query.isKeywordQuery() -> articleSearcher.searchPublishedArticlesByKeyword(query.keyword!!)

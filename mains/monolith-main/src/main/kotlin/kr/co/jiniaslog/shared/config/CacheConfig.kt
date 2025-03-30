@@ -1,5 +1,8 @@
 package kr.co.jiniaslog.shared.config
-
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.databind.jsontype.BasicPolymorphicTypeValidator
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
+import com.fasterxml.jackson.module.kotlin.registerKotlinModule
 import org.springframework.cache.annotation.EnableCaching
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -17,6 +20,15 @@ import java.time.Duration
 class CacheConfig(
     private val redisConnectionFactory: RedisConnectionFactory
 ) {
+    val objectMapper = ObjectMapper().registerKotlinModule()
+        .registerModule(JavaTimeModule())
+        .activateDefaultTyping(
+            BasicPolymorphicTypeValidator.builder()
+                .allowIfBaseType(Any::class.java).build(),
+            ObjectMapper.DefaultTyping.EVERYTHING
+        )
+    val serializer = GenericJackson2JsonRedisSerializer(objectMapper)
+
     @Bean
     fun redisCacheManager(): RedisCacheManager {
         return RedisCacheManager.builder(redisConnectionFactory)
@@ -28,7 +40,7 @@ class CacheConfig(
                         RedisSerializationContext.SerializationPair.fromSerializer(StringRedisSerializer())
                     )
                     .serializeValuesWith(
-                        RedisSerializationContext.SerializationPair.fromSerializer(GenericJackson2JsonRedisSerializer())
+                        RedisSerializationContext.SerializationPair.fromSerializer(serializer)
                     )
             )
             .build()
@@ -39,7 +51,7 @@ class CacheConfig(
         val template = RedisTemplate<String, Any>()
         template.connectionFactory = redisConnectionFactory
         template.keySerializer = StringRedisSerializer()
-        template.valueSerializer = GenericJackson2JsonRedisSerializer()
+        template.valueSerializer = serializer
         return template
     }
 }
