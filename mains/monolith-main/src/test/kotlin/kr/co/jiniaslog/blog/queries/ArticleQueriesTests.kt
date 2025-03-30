@@ -211,10 +211,28 @@ class ArticleQueriesTests : TestContainerAbstractSkeleton() {
         }
 
         @Test
+        fun `단순 게시된 게시물들을 조회한다`() {
+            // given
+            val article1 = articleRepository.save(ArticleTestFixtures.createPublishedArticle())
+            val article2 = articleRepository.save(ArticleTestFixtures.createPublishedArticle())
+            val article3 = articleRepository.save(ArticleTestFixtures.createPublishedArticle())
+
+            // when
+            val result = sut.handle(IGetSimpleArticles.Query(null, null, true, null, null))
+                .articles
+
+            // then
+            result.size shouldBe 3
+            result.map { it.id } shouldContain article3.entityId.value
+            result.map { it.id } shouldContain article2.entityId.value
+            result.map { it.id } shouldContain article1.entityId.value
+        }
+
+        @Test
         fun `지원하지 않는 쿼리면, 조회되지 않는다`() {
             // when, then
             shouldThrow<IllegalArgumentException> {
-                sut.handle(IGetSimpleArticles.Query(null, 3, true, "keyword", "tag"))
+                sut.handle(IGetSimpleArticles.Query(null, 3, true, null, null))
             }
         }
     }
