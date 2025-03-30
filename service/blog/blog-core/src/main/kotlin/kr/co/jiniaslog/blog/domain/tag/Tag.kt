@@ -25,7 +25,7 @@ class Tag private constructor(
     override val entityId: TagId = id
 
     @AttributeOverride(
-        column = Column(name = "tag_name"),
+        column = Column(name = "tag_name", unique = true),
         name = "value",
     )
     val tagName: TagName = name

@@ -33,4 +33,21 @@ data class ArticleVo(
             voDataStatus = voDataStatus
         )
     }
+
+    companion object {
+        fun from(it: Article): ArticleVo {
+            val articleContentByPublished =
+                if (it.status == Article.Status.PUBLISHED) it.articleContents else it.draftContents
+            return ArticleVo(
+                id = it.id.value,
+                title = articleContentByPublished.title,
+                thumbnailUrl = articleContentByPublished.thumbnailUrl,
+                content = articleContentByPublished.contents,
+                createdAt = it.createdAt!!,
+                tags = it.tagsInfo.mapKeys { it.key.id },
+                status = it.status.name,
+                voDataStatus = if (it.status == Article.Status.PUBLISHED) Article.Status.PUBLISHED else Article.Status.DRAFT
+            )
+        }
+    }
 }

@@ -9,6 +9,6 @@ data class SimpleArticleCardsViewModel(
     val content: String,
     val thumbnailUrl: String,
     val createdAt: LocalDateTime,
-    val tags: Map<Long, String>,
+    val tags: List<TagViewModel>,
     val contentStatus: Article.Status
 )

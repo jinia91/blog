@@ -14,6 +14,7 @@ import kr.co.jiniaslog.blog.adapter.inbound.http.dto.DeleteArticleResponse
 import kr.co.jiniaslog.blog.adapter.inbound.http.dto.GetArticleByIdResponse
 import kr.co.jiniaslog.blog.adapter.inbound.http.dto.SimpleArticleCardsViewModel
 import kr.co.jiniaslog.blog.adapter.inbound.http.dto.StartNewArticleResponse
+import kr.co.jiniaslog.blog.adapter.inbound.http.dto.TagViewModel
 import kr.co.jiniaslog.blog.adapter.inbound.http.dto.UpdateArticleStatusRequest
 import kr.co.jiniaslog.blog.adapter.inbound.http.dto.UpdateArticleStatusResponse
 import kr.co.jiniaslog.blog.domain.UserId
@@ -29,6 +30,7 @@ import kr.co.jiniaslog.blog.usecase.article.ArticleStatusChangeFacade
 import kr.co.jiniaslog.blog.usecase.article.ArticleUseCasesFacade
 import kr.co.jiniaslog.blog.usecase.article.IAddAnyTagInArticle
 import kr.co.jiniaslog.blog.usecase.article.IDeleteArticle
+import kr.co.jiniaslog.blog.usecase.article.IRemoveTagInArticle
 import kr.co.jiniaslog.blog.usecase.article.IStartToWriteNewDraftArticle
 import kr.cojiniaslog.shared.adapter.inbound.http.AuthUserId
 import kr.cojiniaslog.shared.adapter.inbound.http.CommonApiResponses
@@ -152,6 +154,17 @@ class ArticleResources(
         return ResponseEntity.ok(AddTagToArticleResponse(info.articleId.value))
     }
 
+    @DeleteMapping("/{articleId}/tags/{tagName}")
+    @PreAuthorize("hasRole('ADMIN')")
+    fun removeTagFromArticle(
+        @PathVariable articleId: Long,
+        @PathVariable tagName: String,
+    ): ResponseEntity<DeleteTaggingResponse> {
+        val command = IRemoveTagInArticle.Command(ArticleId(articleId), TagName(tagName))
+        val info = articleFacade.handle(command)
+        return ResponseEntity.ok(DeleteTaggingResponse(info.articleId.value))
+    }
+
     @GetMapping("/{articleId}")
     @PreAuthorize("!(#status.name() == 'DRAFT') or hasRole('ADMIN')")
     fun getArticle(
@@ -170,7 +183,7 @@ class ArticleResources(
                 title = info.title,
                 content = info.content,
                 thumbnailUrl = info.thumbnailUrl,
-                tags = info.tags.mapKeys { it.key.id },
+                tags = info.tags.map { TagViewModel(it.key.id, it.value) },
                 createdAt = info.createdAt,
                 isPublished = info.isPublished
             )
@@ -181,7 +194,7 @@ class ArticleResources(
     @PreAuthorize("!(#status.name() == 'DRAFT') or hasRole('ADMIN')")
     @Operation(
         summary = "게시글 카드 목록 조회",
-        description = "게시글의 간단한 정보를 조회한다. 키워드 검색은 커서와 함께 사용할 수 없다."
+        description = "게시글의 간단한 정보를 조회한다. 키워드 검색은 커서와 함께 사용할 수 없다. 태그 검색은 커서와 함께 사용할 수 없다."
     )
     fun getSimpleArticleCards(
         @Parameter(description = "조회하려는 게시글 상태", required = true)
@@ -199,13 +212,17 @@ class ArticleResources(
         @Parameter(description = "검색 키워드", required = false)
         @RequestParam(required = false)
         keyword: String?,
+
+        @Parameter(description = "태그 이름", required = false)
+        @RequestParam(required = false)
+        tagName: String?,
     ): ResponseEntity<List<SimpleArticleCardsViewModel>> {
         val isPublished = when (status) {
             DRAFT -> false
             PUBLISHED -> true
             else -> throw IllegalArgumentException("status는 DRAFT 또는 PUBLISHED만 가능합니다")
         }
-        val info = articleQueryFacade.handle(IGetSimpleArticles.Query(cursor, limit, isPublished, keyword))
+        val info = articleQueryFacade.handle(IGetSimpleArticles.Query(cursor, limit, isPublished, keyword, tagName))
         return ResponseEntity.ok(
             info.articles.map {
                 SimpleArticleCardsViewModel(
@@ -213,7 +230,7 @@ class ArticleResources(
                     title = it.title,
                     thumbnailUrl = it.thumbnailUrl,
                     createdAt = it.createdAt,
-                    tags = it.tags,
+                    tags = it.tags.map { tag -> TagViewModel(tag.key, tag.value) },
                     content = it.content,
                     contentStatus = status
                 )

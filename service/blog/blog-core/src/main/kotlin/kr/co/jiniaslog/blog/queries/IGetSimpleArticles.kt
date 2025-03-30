@@ -15,10 +15,12 @@ interface IGetSimpleArticles {
         val cursor: Long?,
         val limit: Int?,
         val isPublished: Boolean,
-        val keyword: String? = null
+        val keyword: String? = null,
+        val tagName: String? = null,
     ) {
-        fun isCursorQuery(): Boolean = cursor != null && limit != null
-        fun isKeywordQuery(): Boolean = keyword != null
+        fun isCursorQuery(): Boolean = cursor != null && limit != null && keyword == null && tagName == null
+        fun isKeywordQuery(): Boolean = keyword != null && cursor == null && limit == null && tagName == null
+        fun isTagQuery(): Boolean = tagName != null && cursor == null && limit == null && keyword == null
     }
 
     data class Info(
