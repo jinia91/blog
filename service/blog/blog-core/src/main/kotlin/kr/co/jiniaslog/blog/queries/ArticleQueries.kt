@@ -1,8 +1,10 @@
 package kr.co.jiniaslog.blog.queries
 
+import kr.co.jiniaslog.blog.domain.article.Article
 import kr.co.jiniaslog.blog.domain.tag.TagName
 import kr.co.jiniaslog.blog.outbound.ArticleRepository
 import kr.co.jiniaslog.blog.outbound.ArticleSearcher
+import org.springframework.cache.annotation.Cacheable
 import org.springframework.stereotype.Component
 
 @Component
@@ -25,6 +27,7 @@ class ArticleQueries(
         )
     }
 
+    @Cacheable("blog.article.simple", key = "#query")
     override fun handle(query: IGetSimpleArticles.Query): IGetSimpleArticles.Info {
         val vos = when {
             query.isKeywordQuery() -> articleSearcher.searchPublishedArticlesByKeyword(query.keyword!!)
@@ -34,6 +37,7 @@ class ArticleQueries(
                 query.isPublished
             )
             query.isTagQuery() -> articleRepository.getArticleByTagName(TagName(query.tagName!!))
+            query.isJustSimplePublishedQuery() -> articleRepository.findArticleVoByStatus(Article.Status.PUBLISHED)
             else -> throw IllegalArgumentException("지원하지 않는 쿼리 입니다")
         }
         return IGetSimpleArticles.Info(vos.map { it.toSimplifiedArticleVo() })

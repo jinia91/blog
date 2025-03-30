@@ -17,6 +17,8 @@ val shared = mutableListOf(
 val blogService = mutableListOf(
     project(Modules.Service.Blog.Core.path),
     project(Modules.Service.Blog.Adaptors.InHttp.path),
+    project(Modules.Service.Blog.Adaptors.InBatch.path),
+    project(Modules.Service.Blog.Adaptors.InAcl.path),
     project(Modules.Service.Blog.Adaptors.InWebsocket.path),
     project(Modules.Service.Blog.Adaptors.OutUser.path),
     project(Modules.Service.Blog.Adaptors.OutMemo.path),
@@ -49,6 +51,10 @@ val authUserService = mutableListOf(
     project(Modules.Service.AuthUser.Adaptors.OutMySql.path),
 )
 
+val seoService = mutableListOf(
+    project(Modules.Service.Seo.Core.path),
+)
+
 var moduleBlocks = mutableListOf<Project>()
     .apply {
         addAll(shared)
@@ -56,6 +62,7 @@ var moduleBlocks = mutableListOf<Project>()
         addAll(memoService)
         addAll(mediaService)
         addAll(authUserService)
+        addAll(seoService)
     }
 
 val bootLib = mutableListOf(

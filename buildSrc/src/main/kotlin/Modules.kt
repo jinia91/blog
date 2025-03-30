@@ -33,6 +33,8 @@ object Modules {
             val Core = Module(":service:blog:blog-core")
 
             enum class Adaptors(val path: String) {
+                InBatch(":service:blog:adapter:blog-in-batch"),
+                InAcl(":service:blog:adapter:blog-in-acl"),
                 InHttp(":service:blog:adapter:blog-in-http"),
                 InWebsocket(":service:blog:adapter:blog-in-websocket"),
                 OutUser(":service:blog:adapter:blog-out-user"),
@@ -53,6 +55,10 @@ object Modules {
                 OutMySql(":service:user-auth:adapter:user-auth-out-mysql"),
                 OutCache(":service:user-auth:adapter:user-auth-out-cache")
             }
+        }
+
+        object Seo {
+            val Core = Module(":service:seo")
         }
 
         val MessageNexus = Module(":service:message-nexus")

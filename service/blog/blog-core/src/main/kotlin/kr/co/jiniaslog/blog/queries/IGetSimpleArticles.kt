@@ -21,6 +21,8 @@ interface IGetSimpleArticles {
         fun isCursorQuery(): Boolean = cursor != null && limit != null && keyword == null && tagName == null
         fun isKeywordQuery(): Boolean = keyword != null && cursor == null && limit == null && tagName == null
         fun isTagQuery(): Boolean = tagName != null && cursor == null && limit == null && keyword == null
+
+        fun isJustSimplePublishedQuery(): Boolean = !isCursorQuery() && !isKeywordQuery() && !isTagQuery() && isPublished
     }
 
     data class Info(
