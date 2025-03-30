@@ -3,7 +3,7 @@ package kr.co.jiniaslog.blog.outbound
 import kr.co.jiniaslog.blog.domain.article.Article
 import kr.co.jiniaslog.blog.domain.article.ArticleId
 import kr.co.jiniaslog.blog.domain.article.ArticleVo
-import kr.co.jiniaslog.blog.domain.tag.TagId
+import kr.co.jiniaslog.blog.domain.tag.TagName
 import kr.co.jiniaslog.shared.core.domain.Repository
 
 interface ArticleRepository : Repository<Article, ArticleId> {
@@ -13,5 +13,5 @@ interface ArticleRepository : Repository<Article, ArticleId> {
         published: Boolean
     ): List<ArticleVo>
 
-    fun getArticleByTagId(tagId: TagId): List<ArticleVo>
+    fun getArticleByTagName(tagName: TagName): List<ArticleVo>
 }

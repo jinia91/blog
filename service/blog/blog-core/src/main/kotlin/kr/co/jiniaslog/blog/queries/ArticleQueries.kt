@@ -1,5 +1,6 @@
 package kr.co.jiniaslog.blog.queries
 
+import kr.co.jiniaslog.blog.domain.tag.TagName
 import kr.co.jiniaslog.blog.outbound.ArticleRepository
 import kr.co.jiniaslog.blog.outbound.ArticleSearcher
 import org.springframework.stereotype.Component
@@ -32,7 +33,7 @@ class ArticleQueries(
                 query.limit!!,
                 query.isPublished
             )
-            query.isTagQuery() -> articleRepository.getArticleByTagId(query.tagId!!)
+            query.isTagQuery() -> articleRepository.getArticleByTagName(TagName(query.tagName!!))
             else -> throw IllegalArgumentException("지원하지 않는 쿼리 입니다")
         }
         return IGetSimpleArticles.Info(vos.map { it.toSimplifiedArticleVo() })

@@ -213,16 +213,16 @@ class ArticleResources(
         @RequestParam(required = false)
         keyword: String?,
 
-        @Parameter(description = "태그 아이디", required = false)
+        @Parameter(description = "태그 이름", required = false)
         @RequestParam(required = false)
-        tagId: Long?,
+        tagName: String?,
     ): ResponseEntity<List<SimpleArticleCardsViewModel>> {
         val isPublished = when (status) {
             DRAFT -> false
             PUBLISHED -> true
             else -> throw IllegalArgumentException("status는 DRAFT 또는 PUBLISHED만 가능합니다")
         }
-        val info = articleQueryFacade.handle(IGetSimpleArticles.Query(cursor, limit, isPublished, keyword, tagId))
+        val info = articleQueryFacade.handle(IGetSimpleArticles.Query(cursor, limit, isPublished, keyword, tagName))
         return ResponseEntity.ok(
             info.articles.map {
                 SimpleArticleCardsViewModel(

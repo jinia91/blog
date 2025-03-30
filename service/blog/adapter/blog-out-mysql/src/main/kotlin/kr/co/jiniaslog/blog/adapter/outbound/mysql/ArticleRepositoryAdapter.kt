@@ -8,7 +8,7 @@ import kr.co.jiniaslog.blog.domain.article.QArticle.article
 import kr.co.jiniaslog.blog.domain.article.QTagging.tagging
 import kr.co.jiniaslog.blog.domain.article.Tagging
 import kr.co.jiniaslog.blog.domain.article.TaggingId
-import kr.co.jiniaslog.blog.domain.tag.TagId
+import kr.co.jiniaslog.blog.domain.tag.TagName
 import kr.co.jiniaslog.blog.outbound.ArticleRepository
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Repository
@@ -47,10 +47,12 @@ class ArticleRepositoryAdapter(
             .map { ArticleVo.from(it) }
     }
 
-    override fun getArticleByTagId(tagId: TagId): List<ArticleVo> {
-        return blogJpaQueryFactory.select(article)
-            .from(tagging)
-            .join(article._tags, tagging).on(tagging.tag.entityId.eq(tagId))
+    override fun getArticleByTagName(tagName: TagName): List<ArticleVo> {
+        return blogJpaQueryFactory
+            .select(article)
+            .from(article)
+            .join(article._tags, tagging)
+            .where(tagging.tag.tagName.eq(tagName))
             .fetch()
             .map { ArticleVo.from(it) }
     }
