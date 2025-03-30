@@ -21,11 +21,12 @@ include(
 
     // blog
     "service:blog:blog-core",
-    "service:blog:adapter:blog-out-rdb",
     "service:blog:adapter:blog-in-http",
+    "service:blog:adapter:blog-in-acl",
     "service:blog:adapter:blog-in-batch",
     "service:blog:adapter:blog-in-message",
     "service:blog:adapter:blog-in-websocket",
+    "service:blog:adapter:blog-out-rdb",
     "service:blog:adapter:blog-out-user",
     "service:blog:adapter:blog-out-memo",
     "service:blog:adapter:blog-out-mysql",
