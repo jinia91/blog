@@ -57,6 +57,14 @@ class ArticleRepositoryAdapter(
             .map { ArticleVo.from(it) }
     }
 
+    override fun findArticleVoByStatus(status: Article.Status): List<ArticleVo> {
+        return blogJpaQueryFactory
+            .selectFrom(article)
+            .where(article.status.eq(status))
+            .fetch()
+            .map { ArticleVo.from(it) }
+    }
+
     override fun findById(id: ArticleId): Article? {
         return articleJpaRepository.findById(id).orElse(null)
     }

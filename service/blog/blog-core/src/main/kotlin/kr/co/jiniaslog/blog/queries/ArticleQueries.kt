@@ -1,5 +1,6 @@
 package kr.co.jiniaslog.blog.queries
 
+import kr.co.jiniaslog.blog.domain.article.Article
 import kr.co.jiniaslog.blog.domain.tag.TagName
 import kr.co.jiniaslog.blog.outbound.ArticleRepository
 import kr.co.jiniaslog.blog.outbound.ArticleSearcher
@@ -34,6 +35,7 @@ class ArticleQueries(
                 query.isPublished
             )
             query.isTagQuery() -> articleRepository.getArticleByTagName(TagName(query.tagName!!))
+            query.isJustSimplePublishedQuery() -> articleRepository.findArticleVoByStatus(Article.Status.PUBLISHED)
             else -> throw IllegalArgumentException("지원하지 않는 쿼리 입니다")
         }
         return IGetSimpleArticles.Info(vos.map { it.toSimplifiedArticleVo() })

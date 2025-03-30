@@ -14,4 +14,6 @@ interface ArticleRepository : Repository<Article, ArticleId> {
     ): List<ArticleVo>
 
     fun getArticleByTagName(tagName: TagName): List<ArticleVo>
+
+    fun findArticleVoByStatus(status: Article.Status): List<ArticleVo>
 }
