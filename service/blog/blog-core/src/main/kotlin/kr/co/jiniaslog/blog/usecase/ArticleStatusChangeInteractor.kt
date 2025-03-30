@@ -21,7 +21,6 @@ class ArticleStatusChangeInteractor(
     private val transactionHandler: BlogTransactionHandler,
 ) : ArticleStatusChangeFacade {
 
-    @CacheEvict(cacheNames = ["blog.article.simple"], allEntries = true)
     override fun determineCommand(
         asIsStatus: Article.Status,
         toBeStatus: Article.Status,
@@ -38,6 +37,7 @@ class ArticleStatusChangeInteractor(
         }
     }
 
+    @CacheEvict(cacheNames = ["blog.article.simple"], allEntries = true)
     override fun handle(command: ArticleStatusChangeFacade.Command): ArticleStatusChangeFacade.Info {
         return when (command) { // 타입캐스팅후 오버로딩
             is IPublishArticle.Command -> handle(command)
@@ -48,6 +48,7 @@ class ArticleStatusChangeInteractor(
         }
     }
 
+    @CacheEvict(cacheNames = ["blog.article.simple"], allEntries = true)
     override fun handle(command: IPublishArticle.Command): IPublishArticle.Info {
         val article = transactionHandler.runInRepeatableReadTransaction {
             val article = getArticle(command.articleId)
@@ -58,6 +59,7 @@ class ArticleStatusChangeInteractor(
         return IPublishArticle.Info(article.entityId)
     }
 
+    @CacheEvict(cacheNames = ["blog.article.simple"], allEntries = true)
     override fun handle(command: IDeleteArticle.Command): IDeleteArticle.Info {
         val article = transactionHandler.runInRepeatableReadTransaction {
             val article = getArticle(command.articleId)
@@ -68,6 +70,7 @@ class ArticleStatusChangeInteractor(
         return IDeleteArticle.Info(article.entityId)
     }
 
+    @CacheEvict(cacheNames = ["blog.article.simple"], allEntries = true)
     override fun handle(command: IUnDeleteArticle.Command): IUnDeleteArticle.Info {
         val article = transactionHandler.runInRepeatableReadTransaction {
             val article = getArticle(command.articleId)
@@ -78,6 +81,7 @@ class ArticleStatusChangeInteractor(
         return IUnDeleteArticle.Info(article.entityId)
     }
 
+    @CacheEvict(cacheNames = ["blog.article.simple"], allEntries = true)
     override fun handle(command: IUnPublishArticle.Command): IUnPublishArticle.Info {
         val article = transactionHandler.runInRepeatableReadTransaction {
             val article = getArticle(command.articleId)
