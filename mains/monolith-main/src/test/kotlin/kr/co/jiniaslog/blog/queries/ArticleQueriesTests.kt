@@ -1,12 +1,16 @@
 package kr.co.jiniaslog.blog.queries
 
 import io.kotest.assertions.throwables.shouldThrow
+import io.kotest.matchers.collections.shouldContain
 import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
 import kr.co.jiniaslog.TestContainerAbstractSkeleton
 import kr.co.jiniaslog.blog.domain.ArticleTestFixtures
 import kr.co.jiniaslog.blog.domain.article.ArticleId
+import kr.co.jiniaslog.blog.domain.tag.Tag
+import kr.co.jiniaslog.blog.domain.tag.TagName
 import kr.co.jiniaslog.blog.outbound.ArticleRepository
+import kr.co.jiniaslog.blog.outbound.TagRepository
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -17,6 +21,9 @@ class ArticleQueriesTests : TestContainerAbstractSkeleton() {
 
     @Autowired
     lateinit var articleRepository: ArticleRepository
+
+    @Autowired
+    lateinit var tagRepository: TagRepository
 
     @Test
     fun `초안 게시글을 조회할 수 있다`() {
@@ -175,6 +182,40 @@ class ArticleQueriesTests : TestContainerAbstractSkeleton() {
 
             // then
             result[0].content.length shouldBe 100
+        }
+
+        @Test
+        fun `태그 조회 쿼리면 해당 태그가 있는 게시물들을 조회한다`() {
+            // given
+            val tag = tagRepository.save(Tag.newOne(TagName("tag")))
+            val article1 = articleRepository.save(
+                ArticleTestFixtures.createPublishedArticle(
+                    tags = listOf(tag)
+                )
+            )
+            val article2 = articleRepository.save(
+                ArticleTestFixtures.createPublishedArticle(
+                    tags = listOf(tag)
+                )
+            )
+            val article3 = articleRepository.save(ArticleTestFixtures.createPublishedArticle())
+
+            // when
+            val result = sut.handle(IGetSimpleArticles.Query(null, null, true, null, "tag"))
+                .articles
+
+            // then
+            result.size shouldBe 2
+            result.map { it.id } shouldContain article2.entityId.value
+            result.map { it.id } shouldContain article1.entityId.value
+        }
+
+        @Test
+        fun `지원하지 않는 쿼리면, 조회되지 않는다`() {
+            // when, then
+            shouldThrow<IllegalArgumentException> {
+                sut.handle(IGetSimpleArticles.Query(null, 3, true, "keyword", "tag"))
+            }
         }
     }
 }
