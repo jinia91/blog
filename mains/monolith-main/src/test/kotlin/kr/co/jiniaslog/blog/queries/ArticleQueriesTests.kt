@@ -32,7 +32,7 @@ class ArticleQueriesTests : TestContainerAbstractSkeleton() {
         val article = articleRepository.save(ArticleTestFixtures.createDraftArticle())
 
         // when
-        val result = sut.handle(IGetArticleById.Query(article.entityId, status = Article.Status.PUBLISHED))
+        val result = sut.handle(IGetArticleById.Query(article.entityId, status = Article.Status.DRAFT))
 
         // then
         result.shouldNotBeNull()
