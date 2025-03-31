@@ -25,9 +25,7 @@ class TagUseCasesInteractor(
     }
 
     override fun handle(query: IGetTopNTags.Query): IGetTopNTags.Info {
-        return transactionHandler.runInRepeatableReadTransaction {
-            val tags = tagRepository.findTopNTags(query.n)
-            IGetTopNTags.Info(tags.associate { it.entityId to it.tagName })
-        }
+        val tags = tagRepository.findTopNTagsInPublishedArticles(query.n)
+        return IGetTopNTags.Info(tags.associate { it.entityId to it.tagName })
     }
 }
