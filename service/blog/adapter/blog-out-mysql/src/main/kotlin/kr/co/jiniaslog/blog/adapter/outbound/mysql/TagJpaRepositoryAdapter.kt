@@ -2,6 +2,7 @@ package kr.co.jiniaslog.blog.adapter.outbound.mysql
 
 import com.querydsl.jpa.JPAExpressions
 import com.querydsl.jpa.impl.JPAQueryFactory
+import kr.co.jiniaslog.blog.domain.article.Article
 import kr.co.jiniaslog.blog.domain.article.QArticle.article
 import kr.co.jiniaslog.blog.domain.article.QTagging.tagging
 import kr.co.jiniaslog.blog.domain.tag.QTag.tag
@@ -42,11 +43,13 @@ class TagRepositoryAdapter(
             ).fetch()
     }
 
-    override fun findTopNTags(n: Int): List<Tag> {
+    override fun findTopNTagsInPublishedArticles(n: Int): List<Tag> {
         return blogJpaQueryFactory
             .select(tag)
             .from(tagging)
             .join(tagging.tag, tag)
+            .join(tagging.article, article)
+            .where(article.status.eq(Article.Status.PUBLISHED))
             .groupBy(tag)
             .orderBy(tagging.count().desc())
             .limit(n.toLong())
