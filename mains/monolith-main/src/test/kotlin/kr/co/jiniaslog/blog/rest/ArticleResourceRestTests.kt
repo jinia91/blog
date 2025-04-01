@@ -7,7 +7,7 @@ import kr.co.jiniaslog.blog.adapter.inbound.http.dto.AddTagToArticleRequest
 import kr.co.jiniaslog.blog.adapter.inbound.http.dto.UpdateArticleStatusRequest
 import kr.co.jiniaslog.blog.domain.article.Article
 import kr.co.jiniaslog.blog.domain.article.ArticleId
-import kr.co.jiniaslog.blog.queries.IGetArticleById
+import kr.co.jiniaslog.blog.queries.IGetExpectedStatusArticleById
 import kr.co.jiniaslog.blog.queries.IGetSimpleArticles
 import kr.co.jiniaslog.blog.usecase.article.ArticleStatusChangeFacade
 import kr.co.jiniaslog.blog.usecase.article.IAddAnyTagInArticle
@@ -218,9 +218,11 @@ class ArticleResourceRestTests : RestTestAbstractSkeleton() {
     @Nested
     inner class `게시글 조회 테스트` {
         @Test
-        fun `게시글 조회 요청이 있으면 유저가 아니여도 200을 반환한다`() {
+        fun `게시된 게시글 조회 요청이 있으면 유저가 아니여도 200을 반환한다`() {
             // given
-            every { articleQueriesFacade.handle(any(IGetArticleById.Query::class)) } returns IGetArticleById.Info(
+            every {
+                articleQueriesFacade.handle(any(IGetExpectedStatusArticleById.Query::class))
+            } returns IGetExpectedStatusArticleById.Info(
                 id = ArticleId(1L),
                 title = "title",
                 content = "content",
@@ -233,7 +235,81 @@ class ArticleResourceRestTests : RestTestAbstractSkeleton() {
             // when
             RestAssuredMockMvc.given()
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .get("/api/v1/articles/1?status=PUBLISHED")
+                .get("/api/v1/articles/1?expectedStatus=PUBLISHED")
+                // then
+                .then()
+                .statusCode(200)
+        }
+
+        @Test
+        fun `초안 게시글 조회요청이 있으면 유저가 아닌경우 401을 반환한다`() {
+            // given
+            every {
+                articleQueriesFacade.handle(any(IGetExpectedStatusArticleById.Query::class))
+            } returns IGetExpectedStatusArticleById.Info(
+                id = ArticleId(1L),
+                title = "title",
+                content = "content",
+                thumbnailUrl = "thumbnailUrl",
+                tags = emptyMap(),
+                createdAt = LocalDateTime.now(),
+                isPublished = false
+            )
+
+            // when
+            RestAssuredMockMvc.given()
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .get("/api/v1/articles/1?expectedStatus=DRAFT")
+                // then
+                .then()
+                .statusCode(401)
+        }
+
+        @Test
+        fun `초안 게시글 조회요청이 있으면 어드민이 아닌경우 403을 반환한다`() {
+            // given
+            every {
+                articleQueriesFacade.handle(any(IGetExpectedStatusArticleById.Query::class))
+            } returns IGetExpectedStatusArticleById.Info(
+                id = ArticleId(1L),
+                title = "title",
+                content = "content",
+                thumbnailUrl = "thumbnailUrl",
+                tags = emptyMap(),
+                createdAt = LocalDateTime.now(),
+                isPublished = false
+            )
+
+            // when
+            RestAssuredMockMvc.given()
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .cookies(PreAuthFilter.ACCESS_TOKEN_HEADER, getTestUserToken())
+                .get("/api/v1/articles/1?expectedStatus=DRAFT")
+                // then
+                .then()
+                .statusCode(403)
+        }
+
+        @Test
+        fun `초안 게시글 조회요청이 있으면 어드민일경우 조회된다`() {
+            // given
+            every {
+                articleQueriesFacade.handle(any(IGetExpectedStatusArticleById.Query::class))
+            } returns IGetExpectedStatusArticleById.Info(
+                id = ArticleId(1L),
+                title = "title",
+                content = "content",
+                thumbnailUrl = "thumbnailUrl",
+                tags = emptyMap(),
+                createdAt = LocalDateTime.now(),
+                isPublished = false
+            )
+
+            // when
+            RestAssuredMockMvc.given()
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .cookies(PreAuthFilter.ACCESS_TOKEN_HEADER, getTestAdminUserToken())
+                .get("/api/v1/articles/1?expectedStatus=DRAFT")
                 // then
                 .then()
                 .statusCode(200)
@@ -287,28 +363,6 @@ class ArticleResourceRestTests : RestTestAbstractSkeleton() {
                 // then
                 .then()
                 .statusCode(403)
-        }
-
-        @Test
-        fun `DRAFT 간소조회 요청이 있으면 유저가 아닐경우 401을 반환한다`() {
-            // given
-            every { articleQueriesFacade.handle(any(IGetArticleById.Query::class)) } returns IGetArticleById.Info(
-                id = ArticleId(1L),
-                title = "title",
-                content = "content",
-                thumbnailUrl = "thumbnailUrl",
-                tags = emptyMap(),
-                createdAt = LocalDateTime.now(),
-                isPublished = false
-            )
-
-            // when
-            RestAssuredMockMvc.given()
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .get("/api/v1/articles/simple?cursor=1&limit=10&status=DRAFT")
-                // then
-                .then()
-                .statusCode(401)
         }
     }
 }

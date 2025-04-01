@@ -24,7 +24,7 @@ import kr.co.jiniaslog.blog.domain.article.Article.Status.PUBLISHED
 import kr.co.jiniaslog.blog.domain.article.ArticleId
 import kr.co.jiniaslog.blog.domain.tag.TagName
 import kr.co.jiniaslog.blog.queries.ArticleQueriesFacade
-import kr.co.jiniaslog.blog.queries.IGetArticleById
+import kr.co.jiniaslog.blog.queries.IGetExpectedStatusArticleById
 import kr.co.jiniaslog.blog.queries.IGetSimpleArticles
 import kr.co.jiniaslog.blog.usecase.article.ArticleStatusChangeFacade
 import kr.co.jiniaslog.blog.usecase.article.ArticleUseCasesFacade
@@ -166,12 +166,12 @@ class ArticleResources(
     }
 
     @GetMapping("/{articleId}")
-    @PreAuthorize("!(#status.name() == 'DRAFT') or hasRole('ADMIN')")
-    fun getArticle(
+    @PreAuthorize("!(#expectedStatus.name() == 'DRAFT') or hasRole('ADMIN')")
+    fun getExpectedStatusArticleById(
         @PathVariable articleId: Long,
-        @RequestParam status: Article.Status,
+        @RequestParam expectedStatus: Article.Status,
     ): ResponseEntity<GetArticleByIdResponse> {
-        val info = articleQueryFacade.handle(IGetArticleById.Query(ArticleId(articleId), status))
+        val info = articleQueryFacade.handle(IGetExpectedStatusArticleById.Query(ArticleId(articleId), expectedStatus))
         return ResponseEntity.ok(
             GetArticleByIdResponse(
                 id = info.id.value,
