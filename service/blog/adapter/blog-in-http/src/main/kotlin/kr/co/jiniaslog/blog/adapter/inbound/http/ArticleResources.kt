@@ -167,7 +167,7 @@ class ArticleResources(
 
     @GetMapping("/{articleId}")
     @PreAuthorize("!(#expectedStatus.name() == 'DRAFT') or hasRole('ADMIN')")
-    fun getArticle(
+    fun getExpectedStatusArticleById(
         @PathVariable articleId: Long,
         @RequestParam expectedStatus: Article.Status,
     ): ResponseEntity<GetArticleByIdResponse> {
