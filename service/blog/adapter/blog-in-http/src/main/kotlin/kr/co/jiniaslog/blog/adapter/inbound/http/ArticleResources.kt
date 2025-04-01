@@ -186,7 +186,7 @@ class ArticleResources(
     }
 
     @GetMapping("/simple")
-    @PreAuthorize("!(#expectedStatus.name() == 'DRAFT') or hasRole('ADMIN')")
+    @PreAuthorize("!(#status.name() == 'DRAFT') or hasRole('ADMIN')")
     @Operation(
         summary = "게시글 카드 목록 조회",
         description = "게시글의 간단한 정보를 조회한다. 키워드 검색은 커서와 함께 사용할 수 없다. 태그 검색은 커서와 함께 사용할 수 없다."
@@ -194,7 +194,7 @@ class ArticleResources(
     fun getSimpleArticleCards(
         @Parameter(description = "조회하려는 게시글 상태", required = true)
         @RequestParam(required = true)
-        expectedStatus: Article.Status?,
+        status: Article.Status?,
 
         @Parameter(description = "페이징을 위한 커서, 가장 마지막 글의 Id", required = false)
         @RequestParam(required = false)
@@ -212,7 +212,7 @@ class ArticleResources(
         @RequestParam(required = false)
         tagName: String?,
     ): ResponseEntity<List<SimpleArticleCardsViewModel>> {
-        val isPublished = when (expectedStatus) {
+        val isPublished = when (status) {
             DRAFT -> false
             PUBLISHED -> true
             else -> throw IllegalArgumentException("status는 DRAFT 또는 PUBLISHED만 가능합니다")
@@ -227,7 +227,7 @@ class ArticleResources(
                     createdAt = it.createdAt,
                     tags = it.tags.map { tag -> TagViewModel(tag.key, tag.value) },
                     content = it.content,
-                    contentStatus = expectedStatus
+                    contentStatus = status
                 )
             }
         )
