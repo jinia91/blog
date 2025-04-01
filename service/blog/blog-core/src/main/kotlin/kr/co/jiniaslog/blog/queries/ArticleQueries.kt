@@ -14,9 +14,6 @@ class ArticleQueries(
 ) : ArticleQueriesFacade {
     override fun handle(query: IGetArticleById.Query): IGetArticleById.Info {
         val article = articleRepository.findById(query.articleId) ?: throw IllegalArgumentException("해당 아티클이 존재하지 않습니다")
-        check(
-            article.status == query.status
-        ) { "쿼리 요청은 ${query.status} 상태의 아티클을 요구하지만, 실제 아티클은 ${article.status} 상태입니다" }
         val contents = if (query.status === Article.Status.DRAFT) article.draftContents else article.articleContents
 
         return IGetArticleById.Info(
