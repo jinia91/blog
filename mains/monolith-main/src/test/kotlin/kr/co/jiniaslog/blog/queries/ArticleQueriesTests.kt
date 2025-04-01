@@ -52,7 +52,9 @@ class ArticleQueriesTests : TestContainerAbstractSkeleton() {
 
             // when
             shouldThrow<IllegalArgumentException> {
-                sut.handle(IGetExpectedStatusArticleById.Query(article.entityId, expectedStatus = Article.Status.DRAFT))
+                sut.handle(
+                    IGetExpectedStatusArticleById.Query(article.entityId, expectedStatus = Article.Status.PUBLISHED)
+                )
             }
         }
 
