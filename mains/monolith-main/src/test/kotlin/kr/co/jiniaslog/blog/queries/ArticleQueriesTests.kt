@@ -15,6 +15,7 @@ import kr.co.jiniaslog.blog.outbound.TagRepository
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
+import org.testcontainers.shaded.org.bouncycastle.asn1.x500.style.RFC4519Style.title
 
 class ArticleQueriesTests : TestContainerAbstractSkeleton() {
     @Autowired
@@ -26,39 +27,86 @@ class ArticleQueriesTests : TestContainerAbstractSkeleton() {
     @Autowired
     lateinit var tagRepository: TagRepository
 
-    @Test
-    fun `초안 게시글을 조회할 수 있다`() {
-        // given
-        val article = articleRepository.save(ArticleTestFixtures.createDraftArticle())
+    @Nested
+    inner class `아이디에 따른 게시글의 특정 상태별 데이터 조회` {
+        @Test
+        fun `초안 게시글은 초안상태 데이터를 조회할 수 있다`() {
+            // given
+            val article = articleRepository.save(ArticleTestFixtures.createDraftArticle())
 
-        // when
-        val result = sut.handle(IGetArticleById.Query(article.entityId, status = Article.Status.DRAFT))
+            // when
+            val result = sut.handle(
+                IGetExpectedStatusArticleById.Query(article.entityId, expectedStatus = Article.Status.DRAFT)
+            )
 
-        // then
-        result.shouldNotBeNull()
-        result.id shouldBe article.entityId
-        result.title shouldBe article.articleContents.title
-    }
+            // then
+            result.shouldNotBeNull()
+            result.id shouldBe article.entityId
+            result.title shouldBe article.articleContents.title
+        }
 
-    @Test
-    fun `게시된 게시글을 조회할 수 있다`() {
-        // given
-        val article = articleRepository.save(ArticleTestFixtures.createPublishedArticle())
+        @Test
+        fun `초안 게시글은 게시 상태 데이터를 조회할 수 없다`() {
+            // given
+            val article = articleRepository.save(ArticleTestFixtures.createDraftArticle())
 
-        // when
-        val result = sut.handle(IGetArticleById.Query(article.entityId, status = Article.Status.PUBLISHED))
+            // when
+            shouldThrow<IllegalArgumentException> {
+                sut.handle(IGetExpectedStatusArticleById.Query(article.entityId, expectedStatus = Article.Status.DRAFT))
+            }
+        }
 
-        // then
-        result.shouldNotBeNull()
-        result.id shouldBe article.entityId
-        result.title shouldBe article.articleContents.title
+        @Test
+        fun `삭제된 게시글은 게시상태 데이터를 조회할 수 없다`() {
+            // given
+            val article = articleRepository.save(ArticleTestFixtures.createDeletedArticle())
+
+            // when
+            shouldThrow<IllegalArgumentException> {
+                sut.handle(
+                    IGetExpectedStatusArticleById.Query(article.entityId, expectedStatus = Article.Status.PUBLISHED)
+                )
+            }
+        }
+
+        @Test
+        fun `게시상태 게시글은 초안상태 데이터를 조회할 수 있다`() {
+            // given
+            val article = articleRepository.save(ArticleTestFixtures.createPublishedArticle())
+
+            // when
+            val result = sut.handle(
+                IGetExpectedStatusArticleById.Query(article.entityId, expectedStatus = Article.Status.DRAFT)
+            )
+
+            // then
+            result.shouldNotBeNull()
+            result.id shouldBe article.entityId
+            result.title shouldBe article.draftContents.title
+        }
+
+        @Test
+        fun `게시상태 게시글은 게시 상태 데이터를 조회할 수 있다`() {
+            // given
+            val article = articleRepository.save(ArticleTestFixtures.createPublishedArticle())
+
+            // when
+            val result = sut.handle(
+                IGetExpectedStatusArticleById.Query(article.entityId, expectedStatus = Article.Status.PUBLISHED)
+            )
+
+            // then
+            result.shouldNotBeNull()
+            result.id shouldBe article.entityId
+            result.title shouldBe article.articleContents.title
+        }
     }
 
     @Test
     fun `게시글을 조회할 수 없다`() {
         // when, then
         shouldThrow<IllegalArgumentException> {
-            sut.handle(IGetArticleById.Query(ArticleId(1), status = Article.Status.DRAFT))
+            sut.handle(IGetExpectedStatusArticleById.Query(ArticleId(1), expectedStatus = Article.Status.DRAFT))
         }
     }
 

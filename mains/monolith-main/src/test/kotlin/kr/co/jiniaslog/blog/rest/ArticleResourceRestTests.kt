@@ -7,7 +7,7 @@ import kr.co.jiniaslog.blog.adapter.inbound.http.dto.AddTagToArticleRequest
 import kr.co.jiniaslog.blog.adapter.inbound.http.dto.UpdateArticleStatusRequest
 import kr.co.jiniaslog.blog.domain.article.Article
 import kr.co.jiniaslog.blog.domain.article.ArticleId
-import kr.co.jiniaslog.blog.queries.IGetArticleById
+import kr.co.jiniaslog.blog.queries.IGetExpectedStatusArticleById
 import kr.co.jiniaslog.blog.queries.IGetSimpleArticles
 import kr.co.jiniaslog.blog.usecase.article.ArticleStatusChangeFacade
 import kr.co.jiniaslog.blog.usecase.article.IAddAnyTagInArticle
@@ -220,7 +220,9 @@ class ArticleResourceRestTests : RestTestAbstractSkeleton() {
         @Test
         fun `게시글 조회 요청이 있으면 유저가 아니여도 200을 반환한다`() {
             // given
-            every { articleQueriesFacade.handle(any(IGetArticleById.Query::class)) } returns IGetArticleById.Info(
+            every {
+                articleQueriesFacade.handle(any(IGetExpectedStatusArticleById.Query::class))
+            } returns IGetExpectedStatusArticleById.Info(
                 id = ArticleId(1L),
                 title = "title",
                 content = "content",
@@ -233,7 +235,7 @@ class ArticleResourceRestTests : RestTestAbstractSkeleton() {
             // when
             RestAssuredMockMvc.given()
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .get("/api/v1/articles/1?status=PUBLISHED")
+                .get("/api/v1/articles/1?expectedStatus=PUBLISHED")
                 // then
                 .then()
                 .statusCode(200)
@@ -249,7 +251,7 @@ class ArticleResourceRestTests : RestTestAbstractSkeleton() {
             // when
             RestAssuredMockMvc.given()
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .get("/api/v1/articles/simple?cursor=1&limit=10&status=PUBLISHED")
+                .get("/api/v1/articles/simple?cursor=1&limit=10&expectedStatus=PUBLISHED")
                 // then
                 .then()
                 .statusCode(200)
@@ -266,7 +268,7 @@ class ArticleResourceRestTests : RestTestAbstractSkeleton() {
             RestAssuredMockMvc.given()
                 .cookies(PreAuthFilter.ACCESS_TOKEN_HEADER, getTestAdminUserToken())
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .get("/api/v1/articles/simple?cursor=1&limit=10&status=DRAFT")
+                .get("/api/v1/articles/simple?cursor=1&limit=10&expectedStatus=DRAFT")
                 // then
                 .then()
                 .statusCode(200)
@@ -283,7 +285,7 @@ class ArticleResourceRestTests : RestTestAbstractSkeleton() {
             RestAssuredMockMvc.given()
                 .cookies(PreAuthFilter.ACCESS_TOKEN_HEADER, getTestUserToken())
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .get("/api/v1/articles/simple?cursor=1&limit=10&status=DRAFT")
+                .get("/api/v1/articles/simple?cursor=1&limit=10&expectedStatus=DRAFT")
                 // then
                 .then()
                 .statusCode(403)
@@ -292,7 +294,9 @@ class ArticleResourceRestTests : RestTestAbstractSkeleton() {
         @Test
         fun `DRAFT 간소조회 요청이 있으면 유저가 아닐경우 401을 반환한다`() {
             // given
-            every { articleQueriesFacade.handle(any(IGetArticleById.Query::class)) } returns IGetArticleById.Info(
+            every {
+                articleQueriesFacade.handle(any(IGetExpectedStatusArticleById.Query::class))
+            } returns IGetExpectedStatusArticleById.Info(
                 id = ArticleId(1L),
                 title = "title",
                 content = "content",
@@ -305,7 +309,7 @@ class ArticleResourceRestTests : RestTestAbstractSkeleton() {
             // when
             RestAssuredMockMvc.given()
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .get("/api/v1/articles/simple?cursor=1&limit=10&status=DRAFT")
+                .get("/api/v1/articles/simple?cursor=1&limit=10&expectedStatus=DRAFT")
                 // then
                 .then()
                 .statusCode(401)

@@ -24,7 +24,7 @@ import kr.co.jiniaslog.blog.domain.article.Article.Status.PUBLISHED
 import kr.co.jiniaslog.blog.domain.article.ArticleId
 import kr.co.jiniaslog.blog.domain.tag.TagName
 import kr.co.jiniaslog.blog.queries.ArticleQueriesFacade
-import kr.co.jiniaslog.blog.queries.IGetArticleById
+import kr.co.jiniaslog.blog.queries.IGetExpectedStatusArticleById
 import kr.co.jiniaslog.blog.queries.IGetSimpleArticles
 import kr.co.jiniaslog.blog.usecase.article.ArticleStatusChangeFacade
 import kr.co.jiniaslog.blog.usecase.article.ArticleUseCasesFacade
@@ -166,12 +166,12 @@ class ArticleResources(
     }
 
     @GetMapping("/{articleId}")
-    @PreAuthorize("!(#status.name() == 'DRAFT') or hasRole('ADMIN')")
+    @PreAuthorize("!(#expectedStatus.name() == 'DRAFT') or hasRole('ADMIN')")
     fun getArticle(
         @PathVariable articleId: Long,
-        @RequestParam status: Article.Status,
+        @RequestParam expectedStatus: Article.Status,
     ): ResponseEntity<GetArticleByIdResponse> {
-        val info = articleQueryFacade.handle(IGetArticleById.Query(ArticleId(articleId), status))
+        val info = articleQueryFacade.handle(IGetExpectedStatusArticleById.Query(ArticleId(articleId), expectedStatus))
         return ResponseEntity.ok(
             GetArticleByIdResponse(
                 id = info.id.value,
@@ -186,7 +186,7 @@ class ArticleResources(
     }
 
     @GetMapping("/simple")
-    @PreAuthorize("!(#status.name() == 'DRAFT') or hasRole('ADMIN')")
+    @PreAuthorize("!(#expectedStatus.name() == 'DRAFT') or hasRole('ADMIN')")
     @Operation(
         summary = "게시글 카드 목록 조회",
         description = "게시글의 간단한 정보를 조회한다. 키워드 검색은 커서와 함께 사용할 수 없다. 태그 검색은 커서와 함께 사용할 수 없다."
@@ -194,7 +194,7 @@ class ArticleResources(
     fun getSimpleArticleCards(
         @Parameter(description = "조회하려는 게시글 상태", required = true)
         @RequestParam(required = true)
-        status: Article.Status?,
+        expectedStatus: Article.Status?,
 
         @Parameter(description = "페이징을 위한 커서, 가장 마지막 글의 Id", required = false)
         @RequestParam(required = false)
@@ -212,7 +212,7 @@ class ArticleResources(
         @RequestParam(required = false)
         tagName: String?,
     ): ResponseEntity<List<SimpleArticleCardsViewModel>> {
-        val isPublished = when (status) {
+        val isPublished = when (expectedStatus) {
             DRAFT -> false
             PUBLISHED -> true
             else -> throw IllegalArgumentException("status는 DRAFT 또는 PUBLISHED만 가능합니다")
@@ -227,7 +227,7 @@ class ArticleResources(
                     createdAt = it.createdAt,
                     tags = it.tags.map { tag -> TagViewModel(tag.key, tag.value) },
                     content = it.content,
-                    contentStatus = status
+                    contentStatus = expectedStatus
                 )
             }
         )

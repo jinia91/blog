@@ -12,11 +12,14 @@ class ArticleQueries(
     private val articleRepository: ArticleRepository,
     private val articleSearcher: ArticleSearcher
 ) : ArticleQueriesFacade {
-    override fun handle(query: IGetArticleById.Query): IGetArticleById.Info {
+    override fun handle(query: IGetExpectedStatusArticleById.Query): IGetExpectedStatusArticleById.Info {
         val article = articleRepository.findById(query.articleId) ?: throw IllegalArgumentException("해당 아티클이 존재하지 않습니다")
-        val contents = if (query.status === Article.Status.DRAFT) article.draftContents else article.articleContents
+        if (article.isPublished.not() && query.expectedStatus === Article.Status.PUBLISHED) {
+            throw IllegalArgumentException("게시되지않은 게시물은 게시 상태의 데이터를 가져올 수 없습니다")
+        }
+        val contents = if (query.expectedStatus === Article.Status.DRAFT) article.draftContents else article.articleContents
 
-        return IGetArticleById.Info(
+        return IGetExpectedStatusArticleById.Info(
             id = article.id,
             title = contents.title,
             content = contents.contents,
