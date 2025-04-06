@@ -103,6 +103,7 @@ dependencies {
     testImplementation(testFixtures(project(Modules.Service.Memo.Core.path)))
     testImplementation(testFixtures(project(Modules.Service.AuthUser.Application.path)))
     testImplementation(testFixtures(project(Modules.Service.Blog.Core.path)))
+    testImplementation(testFixtures(project(Modules.Service.Comment.Core.path)))
     // external libs
     bootLib.forEach {
         implementation(it)

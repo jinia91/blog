@@ -8,6 +8,7 @@ import kr.co.jiniaslog.blog.domain.ArticleTestFixtures
 import kr.co.jiniaslog.blog.outbound.ArticleRepository
 import kr.co.jiniaslog.comment.domain.Comment
 import kr.co.jiniaslog.comment.domain.CommentId
+import kr.co.jiniaslog.comment.domain.CommentTestFixtures
 import kr.co.jiniaslog.comment.domain.ReferenceId
 import kr.co.jiniaslog.comment.outbound.CommentRepository
 import kr.co.jiniaslog.user.application.infra.UserRepository
@@ -121,7 +122,7 @@ class ICreateCommentTests : TestContainerAbstractSkeleton() {
     }
 
     @Test
-    fun `부모 댓글이 존재하지 않으면 에러가 발생한다`() {
+    fun `부모 댓글 아이디가 있는데 부모 댓글이 존재하지 않으면 에러가 발생한다`() {
         // given
         val article = articleRepository.save(ArticleTestFixtures.createPublishedArticle())
 
@@ -139,5 +140,31 @@ class ICreateCommentTests : TestContainerAbstractSkeleton() {
                 ),
             )
         }
+    }
+
+    @Test
+    fun `부모 댓글이 존재하면 하위에 댓글이 생성된다`() {
+        // given
+        val article = articleRepository.save(ArticleTestFixtures.createPublishedArticle())
+        val parentComment = commentRepository.save(CommentTestFixtures.createNoneUserComment())
+
+        // when
+        val result = sut.handle(
+            ICreateComment.Command(
+                refId = article.entityId.value.let { ReferenceId(it) },
+                refType = Comment.RefType.ARTICLE,
+                userId = null,
+                userName = "testUser",
+                password = "testPassword",
+                parentId = parentComment.id,
+                content = "test comment"
+            ),
+        )
+
+        // then
+        result.shouldNotBeNull()
+        val comment = commentRepository.findById(result.commentId)
+        comment.shouldNotBeNull()
+        comment.refId.value shouldBe article.entityId.value
     }
 }

@@ -75,33 +75,15 @@ class Comment protected constructor(
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parents_id")
-    val parents: Comment? = null
+    val parents: Comment? = parent
 
     @OneToMany(mappedBy = "parents", cascade = [CascadeType.REMOVE])
     @OnDelete(action = OnDeleteAction.CASCADE)
-    var child: MutableList<Comment> = mutableListOf()
+    var child: MutableList<Comment> = child
 
     @AttributeOverride(name = "value", column = Column(name = "contents"))
     var contents: CommentContents = contents
         private set
-
-    fun addChildComment(
-        userInfo: UserInfo,
-        refId: ReferenceId,
-        refType: RefType,
-        contents: CommentContents
-    ) {
-        val childComment = Comment(
-            id = CommentId(IdUtils.generate()),
-            userInfo = userInfo,
-            refId = refId,
-            refType = refType,
-            parent = this,
-            status = Status.ACTIVE,
-            contents = contents
-        )
-        child.add(childComment)
-    }
 
     companion object {
         fun newOne(

@@ -1,6 +1,7 @@
 plugins {
     springBootConventions
     `kotlin-jpa`
+    `kotlin-kapt`
 }
 
 dependencies {
@@ -9,4 +10,6 @@ dependencies {
     implementation(project(Modules.Service.Comment.Core.path))
     implementation(libs.spring.boot.starter.data.jpa)
     implementation(libs.spring.boot.starter.validation)
+    implementation("com.querydsl:querydsl-jpa:5.1.0:jakarta")
+    kapt("com.querydsl:querydsl-apt:5.1.0:jakarta")
 }

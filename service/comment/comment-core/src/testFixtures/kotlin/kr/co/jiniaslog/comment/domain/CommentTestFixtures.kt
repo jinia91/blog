@@ -19,8 +19,8 @@ val constructor: Constructor<Comment> = Comment::class.java.getDeclaredConstruct
 object CommentTestFixtures {
     fun createNoneUserComment(
         id: CommentId = CommentId(IdUtils.generate()),
-        userName: String,
-        userPassword: String?,
+        userName: String = "userName",
+        userPassword: String = "userPassword",
         refId: ReferenceId = ReferenceId(IdUtils.generate()),
         refType: Comment.RefType = Comment.RefType.ARTICLE,
         parent: Comment? = null,
