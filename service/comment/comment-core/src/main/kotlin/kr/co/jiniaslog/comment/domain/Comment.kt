@@ -10,7 +10,7 @@ import jakarta.persistence.Enumerated
 import kr.co.jiniaslog.shared.adapter.out.rdb.JpaAggregate
 
 @Entity
-class Comment internal constructor(
+class Comment protected constructor(
     id: CommentId,
     userInfo: UserInfo,
     refId: ReferenceId,
