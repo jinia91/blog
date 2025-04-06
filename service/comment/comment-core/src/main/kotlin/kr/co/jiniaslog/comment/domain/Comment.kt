@@ -57,7 +57,7 @@ class Comment protected constructor(
     @AttributeOverrides(
         AttributeOverride(name = "userId", column = Column(name = "user_id", nullable = true)),
         AttributeOverride(name = "userName", column = Column(name = "user_name", nullable = false)),
-        AttributeOverride(name = "password", column = Column(name = "password", nullable = false))
+        AttributeOverride(name = "password", column = Column(name = "password", nullable = true))
     )
     val userInfo: UserInfo = userInfo
 

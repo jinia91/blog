@@ -110,6 +110,7 @@ dependencies {
     integrationTestLib.forEach {
         testImplementation(it)
     }
+    testImplementation(kotlin("test"))
 }
 
 tasks {
