@@ -45,4 +45,6 @@ class Comment internal constructor(
     @AttributeOverride(name = "value", column = Column(name = "contents"))
     var contents: CommentContents = contents
         private set
+
+    companion object
 }
