@@ -61,6 +61,13 @@ object Modules {
             val Core = Module(":service:seo")
         }
 
+        object Comment {
+            val Core = Module(":service:comment:comment-core")
+            enum class Adaptors(val path: String) {
+                InHttp(":service:comment:adapter:comment-in-http")
+            }
+        }
+
         val MessageNexus = Module(":service:message-nexus")
     }
 
