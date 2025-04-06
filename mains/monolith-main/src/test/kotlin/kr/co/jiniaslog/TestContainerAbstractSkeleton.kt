@@ -19,6 +19,7 @@ import org.springframework.test.context.DynamicPropertyRegistry
 import org.springframework.test.context.DynamicPropertySource
 import org.testcontainers.containers.MySQLContainer
 import org.testcontainers.junit.jupiter.Testcontainers
+import java.util.stream.Stream
 
 @TestConfiguration
 class ContextWithTestContainerConfig {
@@ -97,14 +98,24 @@ abstract class TestContainerAbstractSkeleton {
                 .withReuse(true)
 
         @JvmStatic
+        val commentDb: MySQLContainer<*> =
+            MySQLContainer("mysql:8.0")
+                .withCommand(RDB_CHARSET, RDB_COLLATION)
+                .withDatabaseName("jiniaslog_comment")
+                .withReuse(true)
+
+        @JvmStatic
         val redis: RedisContainer = RedisContainer("redis:7.0")
             .withReuse(true)
 
         init {
-            userDb.start()
-            blogDb.start()
-            memoDb.start()
-            redis.start()
+            Stream.of(
+                userDb,
+                blogDb,
+                memoDb,
+                commentDb,
+                redis
+            ).forEach { it.start() }
         }
 
         @DynamicPropertySource
@@ -130,6 +141,13 @@ abstract class TestContainerAbstractSkeleton {
             registry.add("spring.datasource.memo.password") { memoDb.password }
             registry.add("spring.datasource.memo.driver-class-name") { memoDb.driverClassName }
             registry.add("spring.datasource.memo.connection-init-sql") { RDB_INIT_SQL }
+
+            // comment db
+            registry.add("spring.datasource.comment.jdbc-url") { commentDb.jdbcUrl }
+            registry.add("spring.datasource.comment.username") { commentDb.username }
+            registry.add("spring.datasource.comment.password") { commentDb.password }
+            registry.add("spring.datasource.comment.driver-class-name") { commentDb.driverClassName }
+            registry.add("spring.datasource.comment.connection-init-sql") { RDB_INIT_SQL }
 
             // redis
             registry.add("spring.data.redis.host") { redis.host }
