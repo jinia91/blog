@@ -64,7 +64,10 @@ object Modules {
         object Comment {
             val Core = Module(":service:comment:comment-core")
             enum class Adaptors(val path: String) {
-                InHttp(":service:comment:adapter:comment-in-http")
+                InHttp(":service:comment:adapter:comment-in-http"),
+                OutMySql(":service:comment:adapter:comment-out-mysql"),
+                OutBlog(":service:comment:adapter:comment-out-blog"),
+                OutUser(":service:comment:adapter:comment-out-user")
             }
         }
 

@@ -1,6 +1,7 @@
 package kr.co.jiniaslog.blog.queries
 
 import kr.co.jiniaslog.blog.domain.article.Article
+import kr.co.jiniaslog.blog.domain.article.ArticleVo
 import kr.co.jiniaslog.blog.domain.tag.TagName
 import kr.co.jiniaslog.blog.outbound.ArticleRepository
 import kr.co.jiniaslog.blog.outbound.ArticleSearcher
@@ -44,5 +45,12 @@ class ArticleQueries(
             else -> throw IllegalArgumentException("지원하지 않는 쿼리 입니다")
         }
         return IGetSimpleArticles.Info(vos.map { it.toSimplifiedArticleVo() })
+    }
+
+    override fun handle(query: IGetArticleById.Query): IGetArticleById.Info {
+        val article = articleRepository.findById(query.articleId) ?: throw IllegalArgumentException("해당 아티클이 존재하지 않습니다")
+        return IGetArticleById.Info(
+            article = ArticleVo.from(article)
+        )
     }
 }

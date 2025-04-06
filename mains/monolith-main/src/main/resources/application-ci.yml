@@ -27,6 +27,11 @@ spring:
       jdbc-url: jdbc:h2:mem:jiniaslog_memo
       username: sa
       password:
+    comment:
+      driver-class-name: org.h2.Driver
+      jdbc-url: jdbc:h2:mem:jiniaslog_comment
+      username: sa
+      password:
   jpa:
     open-in-view: false
     hibernate:

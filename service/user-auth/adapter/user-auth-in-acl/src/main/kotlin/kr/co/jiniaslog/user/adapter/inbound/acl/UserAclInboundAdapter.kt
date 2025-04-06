@@ -1,6 +1,7 @@
 package kr.co.jiniaslog.user.adapter.inbound.acl
 
 import kr.co.jiniaslog.user.application.usecase.ICheckUserExisted
+import kr.co.jiniaslog.user.application.usecase.IGetUserInfo
 import kr.co.jiniaslog.user.application.usecase.IRetrieveAdminUserIds
 import kr.co.jiniaslog.user.application.usecase.UseCasesUserAuthFacade
 import kr.co.jiniaslog.user.domain.user.UserId
@@ -16,5 +17,18 @@ class UserAclInboundAdapter(
 
     fun retrieveAdminUserIds(): List<Long> {
         return userQueries.handle(IRetrieveAdminUserIds.Query()).ids.map { it.value }
+    }
+
+    data class UserInfo(
+        val id: Long,
+        val name: String,
+    )
+
+    fun retrieveUserInfo(userId: Long): UserInfo {
+        val user = userQueries.handle(IGetUserInfo.Query(UserId(userId)))
+        return UserInfo(
+            id = user.id.value,
+            name = user.name,
+        )
     }
 }

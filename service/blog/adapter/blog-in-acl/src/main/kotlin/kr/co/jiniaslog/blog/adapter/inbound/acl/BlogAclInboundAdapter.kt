@@ -1,6 +1,8 @@
 package kr.co.jiniaslog.blog.adapter.inbound.acl
 
+import kr.co.jiniaslog.blog.domain.article.ArticleId
 import kr.co.jiniaslog.blog.queries.ArticleQueriesFacade
+import kr.co.jiniaslog.blog.queries.IGetArticleById
 import kr.co.jiniaslog.blog.queries.IGetSimpleArticles
 import org.springframework.stereotype.Component
 
@@ -27,5 +29,10 @@ class BlogAclInboundAdapter(
                 createdAt = it.createdAt
             )
         }
+    }
+
+    fun isExist(refId: Long): Boolean {
+        return articleQueriesFacade.handle(IGetArticleById.Query(ArticleId(refId)))
+            .article.id == refId
     }
 }

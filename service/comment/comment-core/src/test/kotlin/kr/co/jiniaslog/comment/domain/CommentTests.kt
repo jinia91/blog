@@ -1,5 +1,6 @@
 package kr.co.jiniaslog.comment.domain
 
+import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.nulls.shouldBeNull
 import io.kotest.matchers.shouldBe
 import kr.co.jiniaslog.shared.SimpleUnitTestContext
@@ -46,6 +47,47 @@ class CommentTests : SimpleUnitTestContext() {
             comment.userInfo.userId shouldBe userId
             comment.userInfo.userName shouldBe userName
             comment.userInfo.password shouldBe userPassword
+        }
+
+        @Test
+        fun `유저id가 없고 비밀번호도 없으면 예외가 발생한다`() {
+            // when, then
+            shouldThrow<IllegalArgumentException> {
+                UserInfo(
+                    userId = null,
+                    userName = "userName",
+                    password = null
+                )
+            }
+        }
+
+        @Test
+        fun `참조 아이디는 음수여서는 안된다`() {
+            shouldThrow<IllegalArgumentException> {
+                ReferenceId(-1L)
+            }
+        }
+
+        @Test
+        fun `댓글 컨텐츠는 1000자 이상일경우 예외가 발생한다`() {
+            // given
+            val content = "a".repeat(1001)
+
+            // when, then
+            shouldThrow<IllegalArgumentException> {
+                CommentContents(content)
+            }
+        }
+
+        @Test
+        fun `댓글 컨텐츠는 0자일경우 예외가 발생한다`() {
+            // given
+            val content = ""
+
+            // when, then
+            shouldThrow<IllegalArgumentException> {
+                CommentContents(content)
+            }
         }
     }
 }
