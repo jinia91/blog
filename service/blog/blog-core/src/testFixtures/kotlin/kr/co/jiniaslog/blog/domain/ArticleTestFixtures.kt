@@ -1,11 +1,25 @@
 package kr.co.jiniaslog.blog.domain
-
 import kr.co.jiniaslog.blog.domain.article.Article
 import kr.co.jiniaslog.blog.domain.article.ArticleContents
 import kr.co.jiniaslog.blog.domain.article.ArticleId
 import kr.co.jiniaslog.blog.domain.tag.Tag
 import kr.co.jiniaslog.shared.core.domain.IdUtils
+import java.lang.reflect.Constructor
+import java.lang.reflect.InvocationTargetException
 import java.time.LocalDateTime
+
+val constructor: Constructor<Article> = Article::class.java.getDeclaredConstructor(
+    ArticleId::class.java,
+    MemoId::class.java,
+    UserId::class.java,
+    Article.Status::class.java,
+    ArticleContents::class.java,
+    ArticleContents::class.java,
+    MutableSet::class.java,
+    Int::class.javaPrimitiveType,
+).apply {
+    isAccessible = true
+}
 
 object ArticleTestFixtures {
     fun createPublishedArticle(
@@ -28,20 +42,26 @@ object ArticleTestFixtures {
                 thumbnailUrl = thumbnailUrl,
             )
 
-        return Article(
-            memoRefId = memoRefId,
-            authorId = authorId,
-            publishedArticleContents = articleContents,
-            draftContents = articleContents,
-            tags = mutableSetOf(),
-            hit = hit,
-            status = status,
-            id = id,
-        ).apply {
-            this.createdAt = createdAt
-            this.updatedAt = updatedAt
-            tags.forEach { addTag(it) }
+        val article = try {
+            constructor.newInstance(
+                id,
+                memoRefId,
+                authorId,
+                status,
+                articleContents,
+                articleContents,
+                mutableSetOf<Tag>(),
+                hit,
+            )
+        } catch (e: InvocationTargetException) {
+            throw IllegalArgumentException("리플렉션으로 생성 실패", e)
         }
+
+        article.createdAt = createdAt
+        article.updatedAt = updatedAt
+        tags.forEach { article.addTag(it) }
+
+        return article
     }
 
     fun createDeletedArticle(
@@ -56,20 +76,26 @@ object ArticleTestFixtures {
         createdAt: LocalDateTime? = null,
         updatedAt: LocalDateTime? = null,
     ): Article {
-        return Article(
-            memoRefId = memoRefId,
-            authorId = authorId,
-            publishedArticleContents = ArticleContents(
-                title = title,
-                contents = contents,
-                thumbnailUrl = thumbnailUrl,
-            ),
-            tags = mutableSetOf(),
-            hit = hit,
-            status = status,
-            id = id,
-            draftContents = ArticleContents.EMPTY,
-        ).apply {
+        val article = try {
+            constructor.newInstance(
+                id,
+                memoRefId,
+                authorId,
+                status,
+                ArticleContents.EMPTY,
+                ArticleContents(
+                    title = title,
+                    contents = contents,
+                    thumbnailUrl = thumbnailUrl,
+                ),
+                mutableSetOf<Tag>(),
+                hit,
+            )
+        } catch (e: InvocationTargetException) {
+            throw IllegalArgumentException("리플렉션으로 생성 실패", e)
+        }
+
+        return article.apply {
             this.createdAt = createdAt
             this.updatedAt = updatedAt
         }
@@ -88,23 +114,31 @@ object ArticleTestFixtures {
         createdAt: LocalDateTime? = null,
         updatedAt: LocalDateTime? = null,
     ): Article {
-        return Article(
-            memoRefId = memoRefId,
-            authorId = authorId,
-            publishedArticleContents = ArticleContents.EMPTY,
-            tags = mutableSetOf(),
-            hit = hit,
-            status = status,
-            id = id,
-            draftContents = ArticleContents(
-                title = title,
-                contents = contents,
-                thumbnailUrl = thumbnailUrl,
-            ),
-        ).apply {
-            this.createdAt = createdAt
-            this.updatedAt = updatedAt
-            tags.forEach { addTag(it) }
+        val articleContents = ArticleContents(
+            title = title,
+            contents = contents,
+            thumbnailUrl = thumbnailUrl,
+        )
+
+        val article = try {
+            constructor.newInstance(
+                id,
+                memoRefId,
+                authorId,
+                status,
+                ArticleContents.EMPTY,
+                articleContents,
+                mutableSetOf<Tag>(),
+                hit,
+            )
+        } catch (e: InvocationTargetException) {
+            throw IllegalArgumentException("리플렉션으로 생성 실패", e)
         }
+
+        article.createdAt = createdAt
+        article.updatedAt = updatedAt
+        tags.forEach { article.addTag(it) }
+
+        return article
     }
 }

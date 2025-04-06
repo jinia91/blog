@@ -57,11 +57,15 @@ include(
     "service:user-auth:adapter:user-auth-out-mysql",
     "service:user-auth:adapter:user-auth-out-cache",
 
+    // comment
+    "service:comment",
+    "service:comment:adapter:comment-in-http",
+    "service:comment:comment-core",
+
     // admin
     "service:admin:admin-core",
     "service:admin:adapter:admin-in-http",
 
-    "service:comment",
     "service:seo",
     "service:message-nexus",
 )

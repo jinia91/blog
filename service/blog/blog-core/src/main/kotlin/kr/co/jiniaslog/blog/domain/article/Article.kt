@@ -36,7 +36,7 @@ import org.hibernate.annotations.FetchMode
  * @param hit 조회수
  */
 @Entity
-class Article internal constructor(
+class Article protected constructor(
     id: ArticleId,
     memoRefId: MemoId?,
     authorId: UserId,
