@@ -20,7 +20,7 @@ object CommentTestFixtures {
     fun createNoneUserComment(
         id: CommentId = CommentId(IdUtils.generate()),
         userName: String,
-        userPassword: String,
+        userPassword: String?,
         refId: ReferenceId = ReferenceId(IdUtils.generate()),
         refType: Comment.RefType = Comment.RefType.ARTICLE,
         parent: Comment? = null,

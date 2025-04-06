@@ -14,10 +14,6 @@ data class UserInfo(
         validate()
     }
 
-    fun isRegistered(): Boolean {
-        return userId != null
-    }
-
     override fun validate() {
         require(userId != null || password != null) { "유저 아이디나 비밀번호 는 필수입니다." }
     }
