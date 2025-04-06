@@ -2,20 +2,41 @@ package kr.co.jiniaslog.comment.domain
 
 import jakarta.persistence.AttributeOverride
 import jakarta.persistence.AttributeOverrides
+import jakarta.persistence.CascadeType
 import jakarta.persistence.Column
 import jakarta.persistence.EmbeddedId
 import jakarta.persistence.Entity
 import jakarta.persistence.EnumType
 import jakarta.persistence.Enumerated
+import jakarta.persistence.FetchType
+import jakarta.persistence.JoinColumn
+import jakarta.persistence.ManyToOne
+import jakarta.persistence.OneToMany
 import kr.co.jiniaslog.shared.adapter.out.rdb.JpaAggregate
+import kr.co.jiniaslog.shared.core.domain.IdUtils
+import org.hibernate.annotations.OnDelete
+import org.hibernate.annotations.OnDeleteAction
 
+/**
+ * 댓글
+ *
+ * @param id 댓글 식별자
+ * @param userInfo 댓글 작성자 정보로 비가입 유저도 존재
+ * @param refId 확장성을 고려해 Article만이 아니라 다른 도메인도 참조할 수 있도록 설계
+ * @param parent 부모 댓글
+ * @param child 자식 댓글
+ * @param status 댓글 상태로 삭제된 댓글은 물리적 삭제가 아닌 상태만 변경
+ * @param contents 댓글 내용
+ */
 @Entity
 class Comment protected constructor(
     id: CommentId,
     userInfo: UserInfo,
     refId: ReferenceId,
+    parent: Comment? = null,
+    child: MutableList<Comment> = mutableListOf(),
     status: Status,
-    contents: CommentContents
+    contents: CommentContents,
 ) : JpaAggregate<CommentId>() {
 
     enum class Status {
@@ -42,9 +63,48 @@ class Comment protected constructor(
     var status: Status = status
         private set
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "parents_id")
+    val parents: Comment? = null
+
+    @OneToMany(mappedBy = "parents", cascade = [CascadeType.REMOVE])
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    var child: MutableList<Comment> = mutableListOf()
+
     @AttributeOverride(name = "value", column = Column(name = "contents"))
     var contents: CommentContents = contents
         private set
 
-    companion object
+    fun addChildComment(
+        userInfo: UserInfo,
+        refId: ReferenceId,
+        contents: CommentContents
+    ) {
+        val childComment = Comment(
+            id = CommentId(IdUtils.generate()),
+            userInfo = userInfo,
+            refId = refId,
+            parent = this,
+            status = Status.ACTIVE,
+            contents = contents
+        )
+        child.add(childComment)
+    }
+
+    companion object {
+        fun newRootOne(
+            userInfo: UserInfo,
+            refId: ReferenceId,
+            status: Status = Status.ACTIVE,
+            contents: CommentContents,
+        ): Comment {
+            return Comment(
+                id = CommentId(IdUtils.generate()),
+                userInfo = userInfo,
+                refId = refId,
+                status = status,
+                contents = contents
+            )
+        }
+    }
 }

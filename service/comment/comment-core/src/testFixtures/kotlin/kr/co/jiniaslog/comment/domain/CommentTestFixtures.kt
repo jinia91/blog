@@ -7,6 +7,8 @@ val constructor: Constructor<Comment> = Comment::class.java.getDeclaredConstruct
     CommentId::class.java,
     UserInfo::class.java,
     ReferenceId::class.java,
+    Comment::class.java,
+    MutableList::class.java,
     Comment.Status::class.java,
     CommentContents::class.java
 ).apply {
@@ -19,6 +21,8 @@ object CommentTestFixtures {
         userName: String,
         userPassword: String,
         refId: ReferenceId = ReferenceId(IdUtils.generate()),
+        parent: Comment? = null,
+        child: MutableList<Comment> = mutableListOf(),
         status: Comment.Status = Comment.Status.ACTIVE,
         contents: CommentContents = CommentContents("contents"),
     ): Comment {
@@ -30,6 +34,8 @@ object CommentTestFixtures {
                 password = userPassword
             ),
             refId,
+            parent,
+            child,
             status,
             contents
         )
@@ -41,6 +47,8 @@ object CommentTestFixtures {
         userName: String,
         userPassword: String,
         refId: ReferenceId = ReferenceId(IdUtils.generate()),
+        parent: Comment? = null,
+        child: MutableList<Comment> = mutableListOf(),
         status: Comment.Status = Comment.Status.ACTIVE,
         contents: CommentContents = CommentContents("contents"),
     ): Comment {
@@ -52,6 +60,8 @@ object CommentTestFixtures {
                 password = userPassword
             ),
             refId,
+            parent,
+            child,
             status,
             contents
         )
