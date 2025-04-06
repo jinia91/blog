@@ -12,8 +12,8 @@ class UserServiceInComment(
     override fun getUserInfo(userId: Long): UserInfo {
         return userQueries.retrieveUserInfo(userId).let {
             UserInfo(
-                userId = it.id,
-                userName = it.name,
+                authorId = it.id,
+                authorName = it.name,
                 password = null,
             )
         }

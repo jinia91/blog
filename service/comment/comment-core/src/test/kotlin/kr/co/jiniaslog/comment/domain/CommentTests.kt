@@ -23,9 +23,9 @@ class CommentTests : SimpleUnitTestContext() {
             )
 
             // then
-            comment.userInfo.userId.shouldBeNull()
-            comment.userInfo.userName shouldBe userName
-            comment.userInfo.password shouldBe userPassword
+            comment.authorInfo.authorId.shouldBeNull()
+            comment.authorInfo.authorName shouldBe userName
+            comment.authorInfo.password shouldBe userPassword
             comment.refId.value shouldBe comment.refId.value
         }
 
@@ -44,9 +44,9 @@ class CommentTests : SimpleUnitTestContext() {
             )
 
             // then
-            comment.userInfo.userId shouldBe userId
-            comment.userInfo.userName shouldBe userName
-            comment.userInfo.password shouldBe userPassword
+            comment.authorInfo.authorId shouldBe userId
+            comment.authorInfo.authorName shouldBe userName
+            comment.authorInfo.password shouldBe userPassword
         }
 
         @Test
@@ -54,8 +54,8 @@ class CommentTests : SimpleUnitTestContext() {
             // when, then
             shouldThrow<IllegalArgumentException> {
                 UserInfo(
-                    userId = null,
-                    userName = "userName",
+                    authorId = null,
+                    authorName = "userName",
                     password = null
                 )
             }

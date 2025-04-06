@@ -4,7 +4,7 @@ import kr.co.jiniaslog.comment.domain.Comment
 import kr.co.jiniaslog.comment.domain.CommentVo
 import kr.co.jiniaslog.comment.domain.ReferenceId
 
-interface IGetCommentByRef {
+interface IGetHierarchyCommentsByRef {
     fun handle(command: Command): Info
 
     data class Command(
