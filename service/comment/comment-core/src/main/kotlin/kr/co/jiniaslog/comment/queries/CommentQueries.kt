@@ -42,6 +42,15 @@ class CommentQueries(
             }
         }
 
+        fun sortRecursively(comments: List<CommentVo>) {
+            comments.sorted().forEach {
+                sortRecursively(it.children)
+            }
+            (comments as MutableList).sort()
+        }
+
+        sortRecursively(roots)
+
         return roots
     }
 }

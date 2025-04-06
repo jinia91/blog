@@ -7,7 +7,7 @@ data class CommentVo(
     val createdAt: String,
     val updatedAt: String,
     val children: MutableList<CommentVo> = mutableListOf()
-) {
+) : Comparable<CommentVo> {
     companion object {
         fun from(comment: Comment): CommentVo {
             return CommentVo(
@@ -18,5 +18,9 @@ data class CommentVo(
                 updatedAt = comment.updatedAt.toString()
             )
         }
+    }
+
+    override fun compareTo(other: CommentVo): Int {
+        return this.createdAt.compareTo(other.createdAt)
     }
 }
