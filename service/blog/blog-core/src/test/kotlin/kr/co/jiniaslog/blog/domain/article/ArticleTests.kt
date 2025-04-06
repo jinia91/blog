@@ -33,7 +33,7 @@ class ArticleTests : SimpleUnitTestContext() {
         @Test
         fun `게시글의 조회수는 음수가 될 수 없다`() {
             // given
-            // when, then, 리플렉션
+            // when, then
             shouldThrow<IllegalArgumentException> {
                 ArticleTestFixtures.createPublishedArticle(
                     hit = -1
