@@ -1,10 +1,7 @@
-package kr.co.jiniaslog.comment.outbound
+package kr.co.jiniaslog.comment.domain
 
-import kr.co.jiniaslog.comment.domain.Comment
-import kr.co.jiniaslog.comment.domain.CommentContents
-import kr.co.jiniaslog.comment.domain.CommentId
-import kr.co.jiniaslog.comment.domain.ReferenceId
-import kr.co.jiniaslog.comment.domain.UserInfo
+import kr.co.jiniaslog.comment.outbound.CommentRepository
+import kr.co.jiniaslog.comment.outbound.UserService
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.stereotype.Component
 
@@ -54,7 +51,6 @@ class CommentFactory(
     ): UserInfo {
         return if (userId != null && userName == null && password == null) {
             userService.getUserInfo(userId)
-                ?: throw IllegalArgumentException("존재하지 않는 유저")
         } else {
             UserInfo(
                 userId = null,

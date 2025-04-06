@@ -9,6 +9,7 @@ import kr.co.jiniaslog.user.application.infra.UserAuthTransactionHandler
 import kr.co.jiniaslog.user.application.infra.UserRepository
 import kr.co.jiniaslog.user.application.usecase.ICheckUserExisted
 import kr.co.jiniaslog.user.application.usecase.IGetOAuthRedirectionUrl
+import kr.co.jiniaslog.user.application.usecase.IGetUserInfo
 import kr.co.jiniaslog.user.application.usecase.ILogOut
 import kr.co.jiniaslog.user.application.usecase.IRefreshToken
 import kr.co.jiniaslog.user.application.usecase.IRetrieveAdminUserIds
@@ -181,5 +182,14 @@ class UserAuthService(
     override fun handle(query: IRetrieveAdminUserIds.Query): IRetrieveAdminUserIds.Info {
         val adminUsers = userRepository.findAdminUsers()
         return IRetrieveAdminUserIds.Info(adminUsers.map { it.entityId })
+    }
+
+    override fun handle(query: IGetUserInfo.Query): IGetUserInfo.Info {
+        val user = userRepository.findById(query.userId)
+            ?: throw IllegalStateException("user not found. userId: ${query.userId}")
+        return IGetUserInfo.Info(
+            id = user.entityId,
+            name = user.nickName.value,
+        )
     }
 }

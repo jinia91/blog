@@ -1,3 +1,5 @@
 CREATE DATABASE IF NOT EXISTS jiniaslog_user;
 CREATE DATABASE IF NOT EXISTS jiniaslog_blog;
 CREATE DATABASE IF NOT EXISTS jiniaslog_memo;
+CREATE DATABASE IF NOT EXISTS jiniaslog_comment;
+

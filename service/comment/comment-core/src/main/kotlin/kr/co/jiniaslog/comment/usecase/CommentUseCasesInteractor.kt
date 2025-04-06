@@ -1,6 +1,6 @@
 package kr.co.jiniaslog.comment.usecase
 
-import kr.co.jiniaslog.comment.outbound.CommentFactory
+import kr.co.jiniaslog.comment.domain.CommentFactory
 import kr.co.jiniaslog.comment.outbound.CommentRepository
 import kr.co.jiniaslog.comment.outbound.CommentTransactionHandler
 import kr.co.jiniaslog.shared.core.annotation.UseCaseInteractor

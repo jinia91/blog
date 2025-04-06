@@ -61,6 +61,9 @@ include(
     "service:comment",
     "service:comment:adapter:comment-in-http",
     "service:comment:comment-core",
+    "service:comment:adapter:comment-out-mysql",
+    "service:comment:adapter:comment-out-blog",
+    "service:comment:adapter:comment-out-user",
 
     // admin
     "service:admin:admin-core",

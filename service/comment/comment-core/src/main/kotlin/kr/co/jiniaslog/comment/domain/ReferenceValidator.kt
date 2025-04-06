@@ -1,7 +1,6 @@
-package kr.co.jiniaslog.comment.outbound
+package kr.co.jiniaslog.comment.domain
 
-import kr.co.jiniaslog.comment.domain.Comment
-import kr.co.jiniaslog.comment.domain.ReferenceId
+import kr.co.jiniaslog.comment.outbound.ArticleService
 import org.springframework.stereotype.Component
 
 @Component
