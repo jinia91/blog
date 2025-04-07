@@ -31,7 +31,7 @@ class CommentFactory(
             throw IllegalArgumentException("유효하지 않은 참조 타입/ID")
         }
 
-        val parent: Comment? = parentId?.let {
+        parentId?.let {
             commentRepository.findById(it) ?: throw IllegalArgumentException("부모 댓글이 존재하지 않음")
         }
 
@@ -39,7 +39,7 @@ class CommentFactory(
             refId = refId,
             refType = refType,
             userInfo = userInfo,
-            parent = parent,
+            parentId = parentId,
             contents = CommentContents(content),
         )
     }
@@ -53,8 +53,8 @@ class CommentFactory(
             userService.getUserInfo(userId)
         } else {
             UserInfo(
-                userId = null,
-                userName = userName ?: throw IllegalArgumentException("유저 이름은 필수"),
+                authorId = null,
+                authorName = userName ?: throw IllegalArgumentException("유저 이름은 필수"),
                 password = passwordEncoder.encode(
                     password ?: throw IllegalArgumentException("비밀번호는 필수")
                 )

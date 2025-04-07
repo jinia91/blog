@@ -8,8 +8,7 @@ val constructor: Constructor<Comment> = Comment::class.java.getDeclaredConstruct
     UserInfo::class.java,
     ReferenceId::class.java,
     Comment.RefType::class.java,
-    Comment::class.java,
-    MutableList::class.java,
+    CommentId::class.java,
     Comment.Status::class.java,
     CommentContents::class.java
 ).apply {
@@ -19,26 +18,24 @@ val constructor: Constructor<Comment> = Comment::class.java.getDeclaredConstruct
 object CommentTestFixtures {
     fun createNoneUserComment(
         id: CommentId = CommentId(IdUtils.generate()),
-        userName: String,
-        userPassword: String?,
+        userName: String = "userName",
+        userPassword: String = "userPassword",
         refId: ReferenceId = ReferenceId(IdUtils.generate()),
         refType: Comment.RefType = Comment.RefType.ARTICLE,
-        parent: Comment? = null,
-        child: MutableList<Comment> = mutableListOf(),
+        parentId: CommentId? = null,
         status: Comment.Status = Comment.Status.ACTIVE,
         contents: CommentContents = CommentContents("contents"),
     ): Comment {
         return constructor.newInstance(
             id,
             UserInfo(
-                userId = null,
-                userName = userName,
+                authorId = null,
+                authorName = userName,
                 password = userPassword
             ),
             refId,
             refType,
-            parent,
-            child,
+            parentId,
             status,
             contents
         )
@@ -51,22 +48,20 @@ object CommentTestFixtures {
         userPassword: String,
         refId: ReferenceId = ReferenceId(IdUtils.generate()),
         refType: Comment.RefType = Comment.RefType.ARTICLE,
-        parent: Comment? = null,
-        child: MutableList<Comment> = mutableListOf(),
+        parentId: CommentId? = null,
         status: Comment.Status = Comment.Status.ACTIVE,
         contents: CommentContents = CommentContents("contents"),
     ): Comment {
         return constructor.newInstance(
             id,
             UserInfo(
-                userId = userId,
-                userName = userName,
+                authorId = userId,
+                authorName = userName,
                 password = userPassword
             ),
             refId,
             refType,
-            parent,
-            child,
+            parentId,
             status,
             contents
         )
