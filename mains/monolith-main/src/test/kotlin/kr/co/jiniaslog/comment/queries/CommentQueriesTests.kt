@@ -87,7 +87,7 @@ class CommentQueriesTests : TestContainerAbstractSkeleton() {
         }
 
         // when
-        val command = IGetHierarchyCommentsByRef.Command(
+        val command = IGetHierarchyCommentsByRef.Query(
             refId = ReferenceId(5L),
             refType = Comment.RefType.ARTICLE
         )
@@ -128,7 +128,7 @@ class CommentQueriesTests : TestContainerAbstractSkeleton() {
         )
 
         // when
-        val command = IGetHierarchyCommentsByRef.Command(
+        val command = IGetHierarchyCommentsByRef.Query(
             refId = ReferenceId(5L),
             refType = Comment.RefType.ARTICLE
         )
