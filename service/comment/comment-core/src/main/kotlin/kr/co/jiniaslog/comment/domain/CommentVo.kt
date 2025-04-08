@@ -3,9 +3,9 @@ package kr.co.jiniaslog.comment.domain
 data class CommentVo(
     val id: CommentId,
     val content: String,
-    val author: String,
+    val nickname: String,
     val createdAt: String,
-    val updatedAt: String,
+    val profileImageUrl: String?,
     val children: MutableList<CommentVo> = mutableListOf()
 ) : Comparable<CommentVo> {
     companion object {
@@ -13,9 +13,9 @@ data class CommentVo(
             return CommentVo(
                 id = comment.id,
                 content = comment.contents.value,
-                author = comment.authorInfo.authorName,
+                nickname = comment.authorInfo.authorName,
                 createdAt = comment.createdAt.toString(),
-                updatedAt = comment.updatedAt.toString()
+                profileImageUrl = comment.authorInfo.profileImageUrl,
             )
         }
     }

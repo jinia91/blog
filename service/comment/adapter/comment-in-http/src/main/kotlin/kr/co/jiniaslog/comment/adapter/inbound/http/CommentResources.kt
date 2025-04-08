@@ -5,9 +5,11 @@ import kr.co.jiniaslog.comment.domain.ReferenceId
 import kr.co.jiniaslog.comment.queries.CommentQueriesFacade
 import kr.co.jiniaslog.comment.queries.IGetHierarchyCommentsByRef
 import kr.co.jiniaslog.comment.usecase.CommentUseCasesFacade
+import kr.cojiniaslog.shared.adapter.inbound.http.AuthUserId
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
@@ -20,9 +22,10 @@ class CommentResources(
 ) {
     @PostMapping
     fun createComment(
-        request: CommentCreate,
+        @AuthUserId userId: Long?,
+        @RequestBody request: CommentCreate,
     ): ResponseEntity<CommentCreateResponse> {
-        val command = request.toCommand()
+        val command = request.toCommand(userId)
         val info = commentUseCases.handle(command)
         val response = info.toResponse()
         return ResponseEntity.ok(response)

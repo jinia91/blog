@@ -190,6 +190,7 @@ class UserAuthService(
         return IGetUserInfo.Info(
             id = user.entityId,
             name = user.nickName.value,
+            profileImageUrl = user.picUrl?.value,
         )
     }
 }

@@ -1,7 +1,7 @@
 package kr.co.jiniaslog.comment.outbound
 
-import kr.co.jiniaslog.comment.domain.UserInfo
+import kr.co.jiniaslog.comment.domain.AuthorInfo
 
 interface UserService {
-    fun getUserInfo(userId: Long): UserInfo
+    fun getUserInfo(userId: Long): AuthorInfo
 }

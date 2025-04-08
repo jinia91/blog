@@ -53,7 +53,7 @@ class CommentTests : SimpleUnitTestContext() {
         fun `유저id가 없고 비밀번호도 없으면 예외가 발생한다`() {
             // when, then
             shouldThrow<IllegalArgumentException> {
-                UserInfo(
+                AuthorInfo(
                     authorId = null,
                     authorName = "userName",
                     password = null

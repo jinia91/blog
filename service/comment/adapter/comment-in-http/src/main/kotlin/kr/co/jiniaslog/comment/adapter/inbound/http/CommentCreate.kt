@@ -6,23 +6,22 @@ import kr.co.jiniaslog.comment.domain.ReferenceId
 import kr.co.jiniaslog.comment.usecase.ICreateComment
 
 data class CommentCreate(
-    val refId: ReferenceId,
+    val refId: Long,
     val refType: Comment.RefType,
-    val userId: Long?,
     val userName: String?,
     val password: String?,
     val parentId: CommentId?,
     val content: String
 ) {
-    fun toCommand(): ICreateComment.Command {
+    fun toCommand(userId: Long?): ICreateComment.Command {
         return ICreateComment.Command(
-            refId = refId,
+            refId = ReferenceId(refId),
             refType = refType,
-            userId = userId,
             userName = userName,
             password = password,
             parentId = parentId,
-            content = content
+            content = content,
+            userId = userId
         )
     }
 }

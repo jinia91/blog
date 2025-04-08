@@ -5,7 +5,7 @@ import java.lang.reflect.Constructor
 
 val constructor: Constructor<Comment> = Comment::class.java.getDeclaredConstructor(
     CommentId::class.java,
-    UserInfo::class.java,
+    AuthorInfo::class.java,
     ReferenceId::class.java,
     Comment.RefType::class.java,
     CommentId::class.java,
@@ -28,7 +28,7 @@ object CommentTestFixtures {
     ): Comment {
         return constructor.newInstance(
             id,
-            UserInfo(
+            AuthorInfo(
                 authorId = null,
                 authorName = userName,
                 password = userPassword
@@ -54,7 +54,7 @@ object CommentTestFixtures {
     ): Comment {
         return constructor.newInstance(
             id,
-            UserInfo(
+            AuthorInfo(
                 authorId = userId,
                 authorName = userName,
                 password = userPassword

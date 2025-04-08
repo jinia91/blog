@@ -25,7 +25,7 @@ import kr.co.jiniaslog.shared.core.domain.IdUtils
 @Entity
 class Comment protected constructor(
     id: CommentId,
-    authorInfo: UserInfo,
+    authorInfo: AuthorInfo,
     refId: ReferenceId,
     refType: RefType,
     parentId: CommentId?,
@@ -48,10 +48,10 @@ class Comment protected constructor(
 
     @AttributeOverrides(
         AttributeOverride(name = "authorId", column = Column(name = "author_id", nullable = true)),
-        AttributeOverride(name = "userName", column = Column(name = "user_name", nullable = false)),
+        AttributeOverride(name = "authorName", column = Column(name = "user_name", nullable = false)),
         AttributeOverride(name = "password", column = Column(name = "password", nullable = true))
     )
-    val authorInfo: UserInfo = authorInfo
+    val authorInfo: AuthorInfo = authorInfo
 
     @AttributeOverride(name = "value", column = Column(name = "ref_id"))
     val refId: ReferenceId = refId
@@ -74,7 +74,7 @@ class Comment protected constructor(
 
     companion object {
         fun newOne(
-            userInfo: UserInfo,
+            userInfo: AuthorInfo,
             refId: ReferenceId,
             refType: RefType,
             parentId: CommentId? = null,
