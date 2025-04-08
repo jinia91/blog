@@ -68,6 +68,7 @@ class AuthUserResources(
                 email = info.email.value,
                 roles = info.roles.map { it.toString() }.toSet(),
                 picUrl = info.picUrl?.value,
+                userId = info.userId.value,
             )
 
         val accessCookie = buildCookieWithAccessToken(info.accessToken)
@@ -92,6 +93,7 @@ class AuthUserResources(
                 email = info.email.value,
                 roles = info.roles.map { it.toString() }.toSet(),
                 picUrl = info.picUrl?.value,
+                userId = info.userId.value,
             )
 
         val accessCookie = buildCookieWithAccessToken(info.accessToken)

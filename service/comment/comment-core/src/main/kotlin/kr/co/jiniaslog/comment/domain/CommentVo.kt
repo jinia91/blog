@@ -1,21 +1,25 @@
 package kr.co.jiniaslog.comment.domain
 
 data class CommentVo(
-    val id: CommentId,
+    val id: Long,
     val content: String,
-    val author: String,
+    val nickname: String,
+    val authorId: Long?,
     val createdAt: String,
-    val updatedAt: String,
-    val children: MutableList<CommentVo> = mutableListOf()
+    val profileImageUrl: String?,
+    val children: MutableList<CommentVo> = mutableListOf(),
+    val deleted: Boolean,
 ) : Comparable<CommentVo> {
     companion object {
         fun from(comment: Comment): CommentVo {
             return CommentVo(
-                id = comment.id,
+                id = comment.id.value,
                 content = comment.contents.value,
-                author = comment.authorInfo.authorName,
+                nickname = comment.authorInfo.authorName,
                 createdAt = comment.createdAt.toString(),
-                updatedAt = comment.updatedAt.toString()
+                profileImageUrl = comment.authorInfo.profileImageUrl,
+                authorId = comment.authorInfo.authorId,
+                deleted = comment.status == Comment.Status.DELETED,
             )
         }
     }

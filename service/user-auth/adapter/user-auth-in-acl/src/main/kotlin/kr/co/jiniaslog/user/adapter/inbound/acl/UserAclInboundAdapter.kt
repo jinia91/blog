@@ -22,6 +22,7 @@ class UserAclInboundAdapter(
     data class UserInfo(
         val id: Long,
         val name: String,
+        val profileImageUrl: String?,
     )
 
     fun retrieveUserInfo(userId: Long): UserInfo {
@@ -29,6 +30,7 @@ class UserAclInboundAdapter(
         return UserInfo(
             id = user.id.value,
             name = user.name,
+            profileImageUrl = user.profileImageUrl,
         )
     }
 }

@@ -3,12 +3,14 @@ package kr.co.jiniaslog.comment.usecase
 import kr.co.jiniaslog.comment.domain.CommentFactory
 import kr.co.jiniaslog.comment.outbound.CommentRepository
 import kr.co.jiniaslog.comment.outbound.CommentTransactionHandler
+import kr.co.jiniaslog.comment.outbound.UserService
 import kr.co.jiniaslog.shared.core.annotation.UseCaseInteractor
 
 @UseCaseInteractor
 class CommentUseCasesInteractor(
     private val commentFactory: CommentFactory,
     private val commentRepository: CommentRepository,
+    private val userService: UserService,
     private val commentTransactionHandler: CommentTransactionHandler,
 ) : CommentUseCasesFacade {
     override fun handle(command: ICreateComment.Command): ICreateComment.Info {
@@ -31,5 +33,25 @@ class CommentUseCasesInteractor(
                 commentId = it.id
             )
         }
+    }
+
+    override fun handle(command: IDeleteComment.Command): IDeleteComment.Info {
+        val comment = commentRepository.findById(command.commentId)
+            ?: throw IllegalArgumentException("댓글이 존재하지 않습니다")
+
+        val isAdmin: Boolean = command.requesterId?.let { userService.isAdmin(it) } ?: false
+        comment.delete(
+            command.password,
+            command.requesterId,
+            isAdmin
+        )
+
+        commentTransactionHandler.runInRepeatableReadTransaction {
+            commentRepository.save(comment)
+        }
+
+        return IDeleteComment.Info(
+            commentId = command.commentId
+        )
     }
 }

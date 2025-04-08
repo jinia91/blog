@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component
 class CommentQueries(
     private val commentRepository: CommentRepository,
 ) : CommentQueriesFacade {
-    override fun handle(command: IGetHierarchyCommentsByRef.Command): IGetHierarchyCommentsByRef.Info {
+    override fun handle(command: IGetHierarchyCommentsByRef.Query): IGetHierarchyCommentsByRef.Info {
         val flattenedComments = commentRepository.findByRefIdAndRefType(
             refId = command.refId,
             refType = command.refType

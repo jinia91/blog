@@ -27,59 +27,59 @@ class CommentQueriesTests : TestContainerAbstractSkeleton() {
     fun `부모 댓글과 자식댓글이 존재하면 게시글 참조타입에 따라 한번에 계층형으로 조회할 수 있다`() {
         // given
         withClue("부모 3, 각 부모마다 자식 3") {
-            val parent1 = commentRepository.save(CommentTestFixtures.createNoneUserComment(refId = ReferenceId(5L)))
-            val parent2 = commentRepository.save(CommentTestFixtures.createNoneUserComment(refId = ReferenceId(5L)))
-            val parent3 = commentRepository.save(CommentTestFixtures.createNoneUserComment(refId = ReferenceId(5L)))
+            val parent1 = commentRepository.save(CommentTestFixtures.createAnonymousComment(refId = ReferenceId(5L)))
+            val parent2 = commentRepository.save(CommentTestFixtures.createAnonymousComment(refId = ReferenceId(5L)))
+            val parent3 = commentRepository.save(CommentTestFixtures.createAnonymousComment(refId = ReferenceId(5L)))
             val child1 = commentRepository.save(
-                CommentTestFixtures.createNoneUserComment(
+                CommentTestFixtures.createAnonymousComment(
                     parentId = parent1.entityId,
                     refId = ReferenceId(5L)
                 )
             )
             val child2 = commentRepository.save(
-                CommentTestFixtures.createNoneUserComment(
+                CommentTestFixtures.createAnonymousComment(
                     parentId = parent1.entityId,
                     refId = ReferenceId(5L)
                 )
             )
             val child3 = commentRepository.save(
-                CommentTestFixtures.createNoneUserComment(
+                CommentTestFixtures.createAnonymousComment(
                     parentId = parent1.entityId,
                     refId = ReferenceId(5L)
                 )
             )
             val child4 = commentRepository.save(
-                CommentTestFixtures.createNoneUserComment(
+                CommentTestFixtures.createAnonymousComment(
                     parentId = parent2.entityId,
                     refId = ReferenceId(5L)
                 )
             )
             val child5 = commentRepository.save(
-                CommentTestFixtures.createNoneUserComment(
+                CommentTestFixtures.createAnonymousComment(
                     parentId = parent2.entityId,
                     refId = ReferenceId(5L)
                 )
             )
             val child6 = commentRepository.save(
-                CommentTestFixtures.createNoneUserComment(
+                CommentTestFixtures.createAnonymousComment(
                     parentId = parent2.entityId,
                     refId = ReferenceId(5L)
                 )
             )
             val child7 = commentRepository.save(
-                CommentTestFixtures.createNoneUserComment(
+                CommentTestFixtures.createAnonymousComment(
                     parentId = parent3.entityId,
                     refId = ReferenceId(5L)
                 )
             )
             val child8 = commentRepository.save(
-                CommentTestFixtures.createNoneUserComment(
+                CommentTestFixtures.createAnonymousComment(
                     parentId = parent3.entityId,
                     refId = ReferenceId(5L)
                 )
             )
             val child9 = commentRepository.save(
-                CommentTestFixtures.createNoneUserComment(
+                CommentTestFixtures.createAnonymousComment(
                     parentId = parent3.entityId,
                     refId = ReferenceId(5L)
                 )
@@ -87,7 +87,7 @@ class CommentQueriesTests : TestContainerAbstractSkeleton() {
         }
 
         // when
-        val command = IGetHierarchyCommentsByRef.Command(
+        val command = IGetHierarchyCommentsByRef.Query(
             refId = ReferenceId(5L),
             refType = Comment.RefType.ARTICLE
         )
@@ -107,28 +107,28 @@ class CommentQueriesTests : TestContainerAbstractSkeleton() {
     @Test
     fun `4단 계층으로도 댓글작성이 가능하다`() {
         // given
-        val parent1 = commentRepository.save(CommentTestFixtures.createNoneUserComment(refId = ReferenceId(5L)))
+        val parent1 = commentRepository.save(CommentTestFixtures.createAnonymousComment(refId = ReferenceId(5L)))
         val child1 = commentRepository.save(
-            CommentTestFixtures.createNoneUserComment(
+            CommentTestFixtures.createAnonymousComment(
                 parentId = parent1.entityId,
                 refId = ReferenceId(5L)
             )
         )
         val child2 = commentRepository.save(
-            CommentTestFixtures.createNoneUserComment(
+            CommentTestFixtures.createAnonymousComment(
                 parentId = child1.entityId,
                 refId = ReferenceId(5L)
             )
         )
         val child3 = commentRepository.save(
-            CommentTestFixtures.createNoneUserComment(
+            CommentTestFixtures.createAnonymousComment(
                 parentId = child2.entityId,
                 refId = ReferenceId(5L)
             )
         )
 
         // when
-        val command = IGetHierarchyCommentsByRef.Command(
+        val command = IGetHierarchyCommentsByRef.Query(
             refId = ReferenceId(5L),
             refType = Comment.RefType.ARTICLE
         )

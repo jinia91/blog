@@ -5,9 +5,9 @@ import kr.co.jiniaslog.comment.domain.CommentVo
 import kr.co.jiniaslog.comment.domain.ReferenceId
 
 interface IGetHierarchyCommentsByRef {
-    fun handle(command: Command): Info
+    fun handle(command: Query): Info
 
-    data class Command(
+    data class Query(
         val refId: ReferenceId,
         val refType: Comment.RefType
     )

@@ -9,6 +9,7 @@ import jakarta.persistence.EnumType
 import jakarta.persistence.Enumerated
 import jakarta.persistence.JoinColumn
 import kr.co.jiniaslog.shared.adapter.out.rdb.JpaAggregate
+import kr.co.jiniaslog.shared.core.cypher.PasswordHelper
 import kr.co.jiniaslog.shared.core.domain.IdUtils
 
 /**
@@ -25,14 +26,13 @@ import kr.co.jiniaslog.shared.core.domain.IdUtils
 @Entity
 class Comment protected constructor(
     id: CommentId,
-    authorInfo: UserInfo,
+    authorInfo: AuthorInfo,
     refId: ReferenceId,
     refType: RefType,
     parentId: CommentId?,
     status: Status,
     contents: CommentContents,
 ) : JpaAggregate<CommentId>() {
-
     enum class RefType {
         ARTICLE
     }
@@ -48,10 +48,11 @@ class Comment protected constructor(
 
     @AttributeOverrides(
         AttributeOverride(name = "authorId", column = Column(name = "author_id", nullable = true)),
-        AttributeOverride(name = "userName", column = Column(name = "user_name", nullable = false)),
-        AttributeOverride(name = "password", column = Column(name = "password", nullable = true))
+        AttributeOverride(name = "authorName", column = Column(name = "author_name", nullable = false)),
+        AttributeOverride(name = "password", column = Column(name = "password", nullable = true)),
+        AttributeOverride(name = "profileImageUrl", column = Column(name = "profile_image_url", nullable = true))
     )
-    val authorInfo: UserInfo = authorInfo
+    val authorInfo: AuthorInfo = authorInfo
 
     @AttributeOverride(name = "value", column = Column(name = "ref_id"))
     val refId: ReferenceId = refId
@@ -66,15 +67,37 @@ class Comment protected constructor(
         private set
 
     @JoinColumn(name = "parents_id")
+    @AttributeOverride(name = "value", column = Column(name = "parent_id"))
     val parentId: CommentId? = parentId
 
     @AttributeOverride(name = "value", column = Column(name = "contents"))
     var contents: CommentContents = contents
         private set
 
+    fun delete(
+        password: String?,
+        authorId: Long?,
+        isAdmin: Boolean = false
+    ) {
+        if (isAdmin) {
+            status = Status.DELETED
+            return
+        }
+
+        if (this.authorInfo.isAnonymous()) {
+            require(password != null) { "비밀번호가 필요합니다" }
+            check(PasswordHelper.matches(password, authorInfo.password!!)) { ("비밀번호가 틀립니다") }
+        } else {
+            require(password == null) { "비밀번호는 필요하지 않습니다" }
+            require(authorId == authorInfo.authorId) { "댓글 작성자만 삭제할 수 있습니다" }
+        }
+
+        status = Status.DELETED
+    }
+
     companion object {
         fun newOne(
-            userInfo: UserInfo,
+            userInfo: AuthorInfo,
             refId: ReferenceId,
             refType: RefType,
             parentId: CommentId? = null,

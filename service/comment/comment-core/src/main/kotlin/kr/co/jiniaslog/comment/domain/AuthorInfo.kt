@@ -4,14 +4,19 @@ import jakarta.persistence.Embeddable
 import kr.co.jiniaslog.shared.core.domain.vo.ValueObject
 
 @Embeddable
-data class UserInfo(
+data class AuthorInfo(
     val authorId: Long?,
     val authorName: String,
     val password: String?,
+    val profileImageUrl: String?
 ) : ValueObject {
 
     init {
         validate()
+    }
+
+    fun isAnonymous(): Boolean {
+        return authorId == null
     }
 
     override fun validate() {

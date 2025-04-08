@@ -1,11 +1,12 @@
 package kr.co.jiniaslog.comment.domain
 
+import kr.co.jiniaslog.shared.core.cypher.PasswordHelper
 import kr.co.jiniaslog.shared.core.domain.IdUtils
 import java.lang.reflect.Constructor
 
 val constructor: Constructor<Comment> = Comment::class.java.getDeclaredConstructor(
     CommentId::class.java,
-    UserInfo::class.java,
+    AuthorInfo::class.java,
     ReferenceId::class.java,
     Comment.RefType::class.java,
     CommentId::class.java,
@@ -16,7 +17,7 @@ val constructor: Constructor<Comment> = Comment::class.java.getDeclaredConstruct
 }
 
 object CommentTestFixtures {
-    fun createNoneUserComment(
+    fun createAnonymousComment(
         id: CommentId = CommentId(IdUtils.generate()),
         userName: String = "userName",
         userPassword: String = "userPassword",
@@ -28,10 +29,11 @@ object CommentTestFixtures {
     ): Comment {
         return constructor.newInstance(
             id,
-            UserInfo(
+            AuthorInfo(
                 authorId = null,
                 authorName = userName,
-                password = userPassword
+                password = PasswordHelper.encode(userPassword),
+                profileImageUrl = null
             ),
             refId,
             refType,
@@ -45,7 +47,6 @@ object CommentTestFixtures {
         id: CommentId = CommentId(IdUtils.generate()),
         userId: Long,
         userName: String,
-        userPassword: String,
         refId: ReferenceId = ReferenceId(IdUtils.generate()),
         refType: Comment.RefType = Comment.RefType.ARTICLE,
         parentId: CommentId? = null,
@@ -54,10 +55,11 @@ object CommentTestFixtures {
     ): Comment {
         return constructor.newInstance(
             id,
-            UserInfo(
+            AuthorInfo(
                 authorId = userId,
                 authorName = userName,
-                password = userPassword
+                password = null,
+                profileImageUrl = null
             ),
             refId,
             refType,

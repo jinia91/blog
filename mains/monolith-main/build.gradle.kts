@@ -57,7 +57,7 @@ val seoService = mutableListOf(
 
 val commentService = mutableListOf(
     project(Modules.Service.Comment.Core.path),
-//    project(Modules.Service.Comment.Adaptors.InHttp.path),
+    project(Modules.Service.Comment.Adaptors.InHttp.path),
     project(Modules.Service.Comment.Adaptors.OutMySql.path),
     project(Modules.Service.Comment.Adaptors.OutUser.path),
     project(Modules.Service.Comment.Adaptors.OutBlog.path),

@@ -12,5 +12,6 @@ interface IGetUserInfo {
     data class Info(
         val id: UserId,
         val name: String,
+        val profileImageUrl: String?,
     )
 }
