@@ -15,6 +15,10 @@ data class AuthorInfo(
         validate()
     }
 
+    fun isAnonymous(): Boolean {
+        return authorId == null
+    }
+
     override fun validate() {
         require(authorId != null || password != null) { "유저 아이디나 비밀번호 는 필수입니다." }
     }

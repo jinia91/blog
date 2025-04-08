@@ -48,8 +48,9 @@ class Comment protected constructor(
 
     @AttributeOverrides(
         AttributeOverride(name = "authorId", column = Column(name = "author_id", nullable = true)),
-        AttributeOverride(name = "authorName", column = Column(name = "user_name", nullable = false)),
-        AttributeOverride(name = "password", column = Column(name = "password", nullable = true))
+        AttributeOverride(name = "authorName", column = Column(name = "author_name", nullable = false)),
+        AttributeOverride(name = "password", column = Column(name = "password", nullable = true)),
+        AttributeOverride(name = "profileImageUrl", column = Column(name = "profile_image_url", nullable = true))
     )
     val authorInfo: AuthorInfo = authorInfo
 
@@ -66,6 +67,7 @@ class Comment protected constructor(
         private set
 
     @JoinColumn(name = "parents_id")
+    @AttributeOverride(name = "value", column = Column(name = "parent_id"))
     val parentId: CommentId? = parentId
 
     @AttributeOverride(name = "value", column = Column(name = "contents"))

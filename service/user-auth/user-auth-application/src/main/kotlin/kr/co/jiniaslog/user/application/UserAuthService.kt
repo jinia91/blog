@@ -61,6 +61,7 @@ class UserAuthService(
                         email = user.email,
                         roles = user.roles,
                         picUrl = providerUserInfo.picture,
+                        userId = user.entityId,
                     )
                 }
             return info
@@ -94,6 +95,7 @@ class UserAuthService(
                     email = user.email,
                     roles = user.roles,
                     picUrl = user.picUrl,
+                    userId = user.entityId,
                 )
             }
 
@@ -136,6 +138,7 @@ class UserAuthService(
             email = user.email,
             roles = user.roles,
             picUrl = user.picUrl,
+            userId = user.entityId,
         )
     }
 
@@ -153,6 +156,7 @@ class UserAuthService(
             email = user.email,
             roles = user.roles,
             picUrl = user.picUrl,
+            userId = user.entityId,
         )
     }
 

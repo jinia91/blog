@@ -9,4 +9,5 @@ data class OAuthLoginResponse(
     val email: String,
     val roles: Set<String>,
     val picUrl: String?,
+    val userId: Long,
 )

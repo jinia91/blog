@@ -4,6 +4,7 @@ data class CommentVo(
     val id: CommentId,
     val content: String,
     val nickname: String,
+    val authorId: Long?,
     val createdAt: String,
     val profileImageUrl: String?,
     val children: MutableList<CommentVo> = mutableListOf()
@@ -16,6 +17,7 @@ data class CommentVo(
                 nickname = comment.authorInfo.authorName,
                 createdAt = comment.createdAt.toString(),
                 profileImageUrl = comment.authorInfo.profileImageUrl,
+                authorId = comment.authorInfo.authorId,
             )
         }
     }
