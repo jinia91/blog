@@ -103,7 +103,7 @@ class CommentTests : SimpleUnitTestContext() {
             // when
             anonymousComment.delete(
                 password = password,
-                authorId = null
+                authorId = null,
             )
 
             // then
@@ -122,7 +122,7 @@ class CommentTests : SimpleUnitTestContext() {
             shouldThrow<IllegalStateException> {
                 anonymousComment.delete(
                     password = "wrong",
-                    authorId = null
+                    authorId = null,
                 )
             }
         }
@@ -138,7 +138,7 @@ class CommentTests : SimpleUnitTestContext() {
             // when
             anonymousComment.delete(
                 password = password,
-                authorId = 123L
+                authorId = 123L,
             )
 
             // then
@@ -156,7 +156,7 @@ class CommentTests : SimpleUnitTestContext() {
             // when
             userComment.delete(
                 null,
-                1L
+                1L,
             )
 
             // then
@@ -175,7 +175,7 @@ class CommentTests : SimpleUnitTestContext() {
             shouldThrow<IllegalArgumentException> {
                 userComment.delete(
                     null,
-                    2L
+                    2L,
                 )
             }
         }
@@ -192,9 +192,27 @@ class CommentTests : SimpleUnitTestContext() {
             shouldThrow<IllegalArgumentException> {
                 userComment.delete(
                     "test",
-                    1L
+                    1L,
                 )
             }
+        }
+
+        @Test
+        fun `어드민 유저가 삭제를 시도하면 삭제된다`() {
+            // given
+            val userComment = CommentTestFixtures.createUserComment(
+                userId = 1L,
+                userName = "testMan"
+            )
+            // when
+            userComment.delete(
+                null,
+                null,
+                isAdmin = true
+            )
+
+            // then
+            userComment.status shouldBe Comment.Status.DELETED
         }
     }
 }

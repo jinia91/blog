@@ -67,7 +67,7 @@ class CommentResources(
     ): ResponseEntity<DeleteCommentResponse> {
         val command = IDeleteComment.Command(
             commentId = CommentId(commentId),
-            authorId = userId,
+            requesterId = userId,
             password = request.password,
         )
         val info = commentUseCases.handle(command)

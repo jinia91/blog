@@ -19,4 +19,9 @@ class UserServiceInComment(
             )
         }
     }
+
+    override fun isAdmin(userId: Long): Boolean {
+        val ids = userQueries.retrieveAdminUserIds()
+        return ids.contains(userId)
+    }
 }

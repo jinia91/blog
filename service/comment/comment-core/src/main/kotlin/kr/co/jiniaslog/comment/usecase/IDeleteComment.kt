@@ -7,7 +7,7 @@ interface IDeleteComment {
 
     data class Command(
         val commentId: CommentId,
-        val authorId: Long?,
+        val requesterId: Long?,
         val password: String?,
     )
 

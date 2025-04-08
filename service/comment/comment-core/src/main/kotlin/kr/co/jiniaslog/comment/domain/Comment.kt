@@ -76,8 +76,14 @@ class Comment protected constructor(
 
     fun delete(
         password: String?,
-        authorId: Long?
+        authorId: Long?,
+        isAdmin: Boolean = false
     ) {
+        if (isAdmin) {
+            status = Status.DELETED
+            return
+        }
+
         if (this.authorInfo.isAnonymous()) {
             require(password != null) { "비밀번호가 필요합니다" }
             check(PasswordHelper.matches(password, authorInfo.password!!)) { ("비밀번호가 틀립니다") }
