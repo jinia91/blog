@@ -78,7 +78,7 @@ class Comment protected constructor(
         password: String?,
         authorId: Long?
     ) {
-        if (authorInfo.isAnonymous()) {
+        if (this.authorInfo.isAnonymous()) {
             require(password != null) { "비밀번호가 필요합니다" }
             check(PasswordHelper.matches(password, authorInfo.password!!)) { ("비밀번호가 틀립니다") }
         } else {

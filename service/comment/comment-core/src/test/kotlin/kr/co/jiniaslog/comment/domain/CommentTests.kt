@@ -89,4 +89,112 @@ class CommentTests : SimpleUnitTestContext() {
             }
         }
     }
+
+    @Nested
+    inner class `댓글 삭제 테스트` {
+        @Test
+        fun `익명 유저의 댓글은 패스워드 일치시 삭제처리할 수 있다`() {
+            // given
+            val password = "password"
+            val anonymousComment = CommentTestFixtures.createAnonymousComment(
+                userPassword = password
+            )
+
+            // when
+            anonymousComment.delete(
+                password = password,
+                authorId = null
+            )
+
+            // then
+            anonymousComment.status shouldBe Comment.Status.DELETED
+        }
+
+        @Test
+        fun `익명 유저 댓글의 패스워드가 불일치 하면 에러가 발생한다`() {
+            // given
+            val password = "password"
+            val anonymousComment = CommentTestFixtures.createAnonymousComment(
+                userPassword = password
+            )
+
+            // when, then
+            shouldThrow<IllegalStateException> {
+                anonymousComment.delete(
+                    password = "wrong",
+                    authorId = null
+                )
+            }
+        }
+
+        @Test
+        fun `익명 유저 댓글에 특정 유저가 패스워드로 삭제 요청하면 삭제처리된다`() {
+            // given
+            val password = "password"
+            val anonymousComment = CommentTestFixtures.createAnonymousComment(
+                userPassword = password
+            )
+
+            // when
+            anonymousComment.delete(
+                password = password,
+                authorId = 123L
+            )
+
+            // then
+            anonymousComment.status shouldBe Comment.Status.DELETED
+        }
+
+        @Test
+        fun `유저의 댓글에 본인이 삭제요청시 삭제처리된다`() {
+            // given
+            val userComment = CommentTestFixtures.createUserComment(
+                userId = 1L,
+                userName = "testMan"
+            )
+
+            // when
+            userComment.delete(
+                null,
+                1L
+            )
+
+            // then
+            userComment.status shouldBe Comment.Status.DELETED
+        }
+
+        @Test
+        fun `유저의 댓글에 다른 유저가 삭제요청을 하면 에러가 발생한다`() {
+            // given
+            val userComment = CommentTestFixtures.createUserComment(
+                userId = 1L,
+                userName = "testMan"
+            )
+
+            // when then
+            shouldThrow<IllegalArgumentException> {
+                userComment.delete(
+                    null,
+                    2L
+                )
+            }
+        }
+
+        @Test
+        fun `유저의 댓글에 비밀번호로 삭제 시도하면 실패한다`() {
+            // given
+            val userComment = CommentTestFixtures.createUserComment(
+                userId = 1L,
+                userName = "testMan"
+            )
+
+            // when then
+            shouldThrow<IllegalArgumentException> {
+                userComment.delete(
+                    "test",
+                    1L
+                )
+            }
+        }
+    }
 }
