@@ -1,11 +1,11 @@
-package kr.co.jiniaslog.comment.adapter.inbound.http
+package kr.co.jiniaslog.comment.adapter.inbound.http.dto
 
 import kr.co.jiniaslog.comment.domain.Comment
 import kr.co.jiniaslog.comment.domain.CommentId
 import kr.co.jiniaslog.comment.domain.ReferenceId
 import kr.co.jiniaslog.comment.usecase.ICreateComment
 
-data class CommentCreate(
+data class CreateCommentRequest(
     val refId: Long,
     val refType: Comment.RefType,
     val userName: String?,
@@ -26,10 +26,10 @@ data class CommentCreate(
     }
 }
 
-data class CommentCreateResponse(
+data class CreateCommentResponse(
     val commentId: CommentId
 )
 
-fun ICreateComment.Info.toResponse() = CommentCreateResponse(
+fun ICreateComment.Info.toResponse() = CreateCommentResponse(
     commentId = this.commentId
 )

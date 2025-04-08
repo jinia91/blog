@@ -1,4 +1,4 @@
-package kr.co.jiniaslog.comment.adapter.inbound.http
+package kr.co.jiniaslog.comment.adapter.inbound.http.dto
 
 import kr.co.jiniaslog.comment.domain.CommentVo
 

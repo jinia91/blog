@@ -18,7 +18,7 @@ import kr.co.jiniaslog.user.domain.user.User
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 
-class ICreateCommentTests : TestContainerAbstractSkeleton() {
+class ICreateCommentRequestTests : TestContainerAbstractSkeleton() {
     @Autowired
     lateinit var sut: ICreateComment
 

@@ -32,4 +32,22 @@ class CommentUseCasesInteractor(
             )
         }
     }
+
+    override fun handle(command: IDeleteComment.Command): IDeleteComment.Info {
+        val comment = commentRepository.findById(command.commentId)
+            ?: throw IllegalArgumentException("댓글이 존재하지 않습니다")
+
+        comment.delete(
+            authorId = command.authorId,
+            password = command.password
+        )
+
+        commentTransactionHandler.runInRepeatableReadTransaction {
+            commentRepository.save(comment)
+        }
+
+        return IDeleteComment.Info(
+            commentId = command.commentId
+        )
+    }
 }

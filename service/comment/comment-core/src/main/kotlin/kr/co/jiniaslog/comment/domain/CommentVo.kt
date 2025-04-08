@@ -7,7 +7,8 @@ data class CommentVo(
     val authorId: Long?,
     val createdAt: String,
     val profileImageUrl: String?,
-    val children: MutableList<CommentVo> = mutableListOf()
+    val children: MutableList<CommentVo> = mutableListOf(),
+    val deleted: Boolean,
 ) : Comparable<CommentVo> {
     companion object {
         fun from(comment: Comment): CommentVo {
@@ -18,6 +19,7 @@ data class CommentVo(
                 createdAt = comment.createdAt.toString(),
                 profileImageUrl = comment.authorInfo.profileImageUrl,
                 authorId = comment.authorInfo.authorId,
+                deleted = comment.status == Comment.Status.DELETED,
             )
         }
     }
