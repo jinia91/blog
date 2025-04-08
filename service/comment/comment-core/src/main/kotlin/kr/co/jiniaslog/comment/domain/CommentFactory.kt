@@ -2,7 +2,7 @@ package kr.co.jiniaslog.comment.domain
 
 import kr.co.jiniaslog.comment.outbound.CommentRepository
 import kr.co.jiniaslog.comment.outbound.UserService
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
+import kr.co.jiniaslog.shared.core.cypher.PasswordHelper
 import org.springframework.stereotype.Component
 
 @Component
@@ -10,7 +10,6 @@ class CommentFactory(
     private val userService: UserService,
     private val commentRepository: CommentRepository,
     private val referenceValidator: ReferenceValidator,
-    private val passwordEncoder: BCryptPasswordEncoder,
 ) {
     fun create(
         refId: ReferenceId,
@@ -56,7 +55,7 @@ class CommentFactory(
             AuthorInfo(
                 authorId = null,
                 authorName = userName ?: throw IllegalArgumentException("유저 이름은 필수"),
-                password = passwordEncoder.encode(
+                password = PasswordHelper.encode(
                     password ?: throw IllegalArgumentException("비밀번호는 필수")
                 ),
                 profileImageUrl = null

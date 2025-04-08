@@ -146,7 +146,7 @@ class ICreateCommentRequestTests : TestContainerAbstractSkeleton() {
     fun `부모 댓글이 존재하면 하위에 댓글이 생성된다`() {
         // given
         val article = articleRepository.save(ArticleTestFixtures.createPublishedArticle())
-        val parentComment = commentRepository.save(CommentTestFixtures.createNoneUserComment())
+        val parentComment = commentRepository.save(CommentTestFixtures.createAnonymousComment())
 
         // when
         val result = sut.handle(

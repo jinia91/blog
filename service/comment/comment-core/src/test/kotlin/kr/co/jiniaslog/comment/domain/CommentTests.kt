@@ -17,7 +17,7 @@ class CommentTests : SimpleUnitTestContext() {
             val userPassword = "userPassword"
 
             // when
-            val comment = CommentTestFixtures.createNoneUserComment(
+            val comment = CommentTestFixtures.createAnonymousComment(
                 userName = userName,
                 userPassword = userPassword
             )
@@ -34,19 +34,16 @@ class CommentTests : SimpleUnitTestContext() {
             // given
             val userId = 1L
             val userName = "userName"
-            val userPassword = "userPassword"
 
             // when
             val comment = CommentTestFixtures.createUserComment(
                 userId = userId,
                 userName = userName,
-                userPassword = userPassword
             )
 
             // then
             comment.authorInfo.authorId shouldBe userId
             comment.authorInfo.authorName shouldBe userName
-            comment.authorInfo.password shouldBe userPassword
         }
 
         @Test

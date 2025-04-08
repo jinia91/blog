@@ -9,6 +9,7 @@ import jakarta.persistence.EnumType
 import jakarta.persistence.Enumerated
 import jakarta.persistence.JoinColumn
 import kr.co.jiniaslog.shared.adapter.out.rdb.JpaAggregate
+import kr.co.jiniaslog.shared.core.cypher.PasswordHelper
 import kr.co.jiniaslog.shared.core.domain.IdUtils
 
 /**
@@ -73,7 +74,18 @@ class Comment protected constructor(
     var contents: CommentContents = contents
         private set
 
-    fun delete() {
+    fun delete(
+        password: String?,
+        authorId: Long?
+    ) {
+        if (authorInfo.isAnonymous()) {
+            require(password != null) { "비밀번호가 필요합니다" }
+            check(PasswordHelper.matches(password, authorInfo.password!!)) { ("비밀번호가 틀립니다") }
+        } else {
+            require(password == null) { "비밀번호는 필요하지 않습니다" }
+            require(authorId == authorInfo.authorId) { "댓글 작성자만 삭제할 수 있습니다" }
+        }
+
         status = Status.DELETED
     }
 
