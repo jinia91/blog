@@ -10,7 +10,7 @@ data class CreateCommentRequest(
     val refType: Comment.RefType,
     val userName: String?,
     val password: String?,
-    val parentId: CommentId?,
+    val parentId: Long?,
     val content: String
 ) {
     fun toCommand(userId: Long?): ICreateComment.Command {
@@ -19,7 +19,7 @@ data class CreateCommentRequest(
             refType = refType,
             userName = userName,
             password = password,
-            parentId = parentId,
+            parentId = parentId?.let { CommentId(parentId) },
             content = content,
             userId = userId
         )
@@ -27,9 +27,9 @@ data class CreateCommentRequest(
 }
 
 data class CreateCommentResponse(
-    val commentId: CommentId
+    val commentId: Long
 )
 
 fun ICreateComment.Info.toResponse() = CreateCommentResponse(
-    commentId = this.commentId
+    commentId = this.commentId.value
 )

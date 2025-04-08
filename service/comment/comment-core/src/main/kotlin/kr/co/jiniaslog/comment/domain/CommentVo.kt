@@ -1,7 +1,7 @@
 package kr.co.jiniaslog.comment.domain
 
 data class CommentVo(
-    val id: CommentId,
+    val id: Long,
     val content: String,
     val nickname: String,
     val authorId: Long?,
@@ -13,7 +13,7 @@ data class CommentVo(
     companion object {
         fun from(comment: Comment): CommentVo {
             return CommentVo(
-                id = comment.id,
+                id = comment.id.value,
                 content = comment.contents.value,
                 nickname = comment.authorInfo.authorName,
                 createdAt = comment.createdAt.toString(),

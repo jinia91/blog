@@ -73,14 +73,7 @@ class Comment protected constructor(
     var contents: CommentContents = contents
         private set
 
-    fun delete(authorId: Long?, password: String?) {
-        if (authorInfo.isAnonymous()) {
-            checkNotNull(password) { "비밀번호가 필요합니다" }
-            check(password == authorInfo.password) { "비밀번호가 일치하지 않습니다" }
-        } else {
-            checkNotNull(authorId) { "작성자 ID가 필요합니다" }
-            check(authorId == authorInfo.authorId) { "작성자 ID가 일치하지 않습니다" }
-        }
+    fun delete() {
         status = Status.DELETED
     }
 
