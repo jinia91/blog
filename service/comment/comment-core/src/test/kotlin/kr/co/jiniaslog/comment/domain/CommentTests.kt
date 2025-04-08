@@ -4,6 +4,7 @@ import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.nulls.shouldBeNull
 import io.kotest.matchers.shouldBe
 import kr.co.jiniaslog.shared.SimpleUnitTestContext
+import kr.co.jiniaslog.shared.core.cypher.PasswordHelper
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 
@@ -25,7 +26,7 @@ class CommentTests : SimpleUnitTestContext() {
             // then
             comment.authorInfo.authorId.shouldBeNull()
             comment.authorInfo.authorName shouldBe userName
-            comment.authorInfo.password shouldBe userPassword
+            PasswordHelper.matches(userPassword, comment.authorInfo.password!!) shouldBe true
             comment.refId.value shouldBe comment.refId.value
         }
 
