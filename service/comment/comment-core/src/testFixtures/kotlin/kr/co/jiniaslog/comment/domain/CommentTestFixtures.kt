@@ -31,7 +31,8 @@ object CommentTestFixtures {
             AuthorInfo(
                 authorId = null,
                 authorName = userName,
-                password = userPassword
+                password = userPassword,
+                profileImageUrl = null
             ),
             refId,
             refType,
@@ -57,7 +58,8 @@ object CommentTestFixtures {
             AuthorInfo(
                 authorId = userId,
                 authorName = userName,
-                password = userPassword
+                password = userPassword,
+                profileImageUrl = null
             ),
             refId,
             refType,

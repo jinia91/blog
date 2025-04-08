@@ -56,7 +56,8 @@ class CommentTests : SimpleUnitTestContext() {
                 AuthorInfo(
                     authorId = null,
                     authorName = "userName",
-                    password = null
+                    password = null,
+                    profileImageUrl = null
                 )
             }
         }
