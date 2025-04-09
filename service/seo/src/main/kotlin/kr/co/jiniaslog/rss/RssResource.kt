@@ -10,10 +10,6 @@ import org.springframework.web.bind.annotation.RestController
 class RssResource(
     private val retrieveRssFeed: IRetrieveRssFeed
 ) {
-    data class RssResponse(
-        val feed: String
-    )
-
     @GetMapping("/rss", produces = ["application/rss+xml"])
     fun getRssFeed(): ResponseEntity<String> {
         val rssXml = retrieveRssFeed.handle(IRetrieveRssFeed.Command()).feed
