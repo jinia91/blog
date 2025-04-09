@@ -1,5 +1,6 @@
-package kr.co.jiniaslog.rss
+package kr.co.jiniaslog.seo.sitemap
 
+import kr.co.jiniaslog.seo.rss.IRetrieveSiteMap
 import org.jdom2.output.Format
 import org.jdom2.output.XMLOutputter
 import org.springframework.http.ResponseEntity

@@ -1,6 +1,7 @@
-package kr.co.jiniaslog.rss
+package kr.co.jiniaslog.seo.sitemap
 
 import kr.co.jiniaslog.blog.adapter.inbound.acl.BlogAclInboundAdapter
+import kr.co.jiniaslog.seo.rss.IRetrieveSiteMap
 import kr.co.jiniaslog.shared.core.annotation.UseCaseInteractor
 
 @UseCaseInteractor

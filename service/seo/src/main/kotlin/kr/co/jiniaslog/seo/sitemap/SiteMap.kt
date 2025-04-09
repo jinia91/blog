@@ -1,4 +1,4 @@
-package kr.co.jiniaslog.rss
+package kr.co.jiniaslog.seo.sitemap
 
 import kr.co.jiniaslog.blog.adapter.inbound.acl.ArticleAclVo
 import org.jdom2.Document

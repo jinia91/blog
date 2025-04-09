@@ -1,4 +1,4 @@
-package kr.co.jiniaslog.rss
+package kr.co.jiniaslog.seo.rss
 
 interface IRetrieveRssFeed {
     fun handle(command: Command): Info

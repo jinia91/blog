@@ -1,4 +1,4 @@
-package kr.co.jiniaslog.rss
+package kr.co.jiniaslog.seo.rss
 
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
