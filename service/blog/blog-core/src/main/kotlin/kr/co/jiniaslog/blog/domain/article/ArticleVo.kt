@@ -25,7 +25,7 @@ data class ArticleVo(
         return ArticleVo(
             id = id,
             title = title,
-            content = content.take(100),
+            content = content.take(200),
             thumbnailUrl = thumbnailUrl,
             status = status,
             tags = tags,
