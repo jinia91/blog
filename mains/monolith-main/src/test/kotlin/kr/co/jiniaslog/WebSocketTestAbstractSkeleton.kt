@@ -3,7 +3,7 @@ package kr.co.jiniaslog
 import com.ninjasquad.springmockk.MockkBean
 import kr.co.jiniaslog.blog.usecase.article.ArticleUseCasesFacade
 import kr.co.jiniaslog.memo.usecase.MemoUseCasesFacade
-import kr.co.jiniaslog.user.domain.auth.token.TokenManger
+import kr.co.jiniaslog.user.domain.auth.token.TokenManager
 import kr.co.jiniaslog.user.domain.user.Role
 import kr.co.jiniaslog.user.domain.user.UserId
 import org.junit.jupiter.api.Test
@@ -29,7 +29,7 @@ abstract class WebSocketTestAbstractSkeleton {
     protected lateinit var subscribeFuture: CompletableFuture<Any>
 
     @Autowired
-    private lateinit var tokenManager: TokenManger
+    private lateinit var tokenManager: TokenManager
 
     @Test
     fun contextLoads() {

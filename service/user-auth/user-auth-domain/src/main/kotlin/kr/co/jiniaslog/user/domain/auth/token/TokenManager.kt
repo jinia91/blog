@@ -3,7 +3,7 @@ package kr.co.jiniaslog.user.domain.auth.token
 import kr.co.jiniaslog.user.domain.user.Role
 import kr.co.jiniaslog.user.domain.user.UserId
 
-interface TokenManger {
+interface TokenManager {
     fun generateAccessToken(
         id: UserId,
         roles: Set<Role>,

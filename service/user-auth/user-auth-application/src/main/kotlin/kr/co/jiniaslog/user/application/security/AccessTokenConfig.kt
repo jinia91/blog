@@ -1,7 +1,7 @@
 package kr.co.jiniaslog.user.application.security
 
 import kr.co.jiniaslog.user.domain.auth.token.JwtTokenManager
-import kr.co.jiniaslog.user.domain.auth.token.TokenManger
+import kr.co.jiniaslog.user.domain.auth.token.TokenManager
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -19,7 +19,7 @@ class AccessTokenConfig {
     lateinit var refreshTokenValidDuration: Duration
 
     @Bean
-    fun jwtTokenGenerator(): TokenManger {
+    fun jwtTokenGenerator(): TokenManager {
         return JwtTokenManager(secretKey, tokenValidDuration, refreshTokenValidDuration)
     }
 }

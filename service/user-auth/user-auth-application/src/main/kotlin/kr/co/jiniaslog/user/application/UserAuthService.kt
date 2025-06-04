@@ -17,7 +17,7 @@ import kr.co.jiniaslog.user.application.usecase.ISignInOAuthUser
 import kr.co.jiniaslog.user.application.usecase.UseCasesUserAuthFacade
 import kr.co.jiniaslog.user.domain.auth.provider.ProviderUserInfo
 import kr.co.jiniaslog.user.domain.auth.token.RefreshToken
-import kr.co.jiniaslog.user.domain.auth.token.TokenManger
+import kr.co.jiniaslog.user.domain.auth.token.TokenManager
 import kr.co.jiniaslog.user.domain.user.User
 import mu.KotlinLogging
 import kotlin.contracts.ExperimentalContracts
@@ -30,7 +30,7 @@ class UserAuthService(
     private val userRepository: UserRepository,
     private val tokenStore: TokenStore,
     private val providerResolver: ProviderResolver,
-    private val tokenManger: TokenManger,
+    private val tokenManager: TokenManager,
     private val transactionHandler: UserAuthTransactionHandler,
     private val idempotencyLockManager: AuthUserLockManager,
 ) : UseCasesUserAuthFacade {
@@ -50,8 +50,8 @@ class UserAuthService(
             val info =
                 transactionHandler.runInRepeatableReadTransaction {
                     val user = getOrCreateUser(providerUserInfo)
-                    val accessToken = tokenManger.generateAccessToken(user.entityId, user.roles)
-                    val refreshToken = tokenManger.generateRefreshToken(user.entityId, user.roles)
+                    val accessToken = tokenManager.generateAccessToken(user.entityId, user.roles)
+                    val refreshToken = tokenManager.generateRefreshToken(user.entityId, user.roles)
                     tokenStore.save(user.entityId, accessToken, refreshToken)
 
                     return@runInRepeatableReadTransaction ISignInOAuthUser.Info(
@@ -78,8 +78,8 @@ class UserAuthService(
 
     override fun handle(command: IRefreshToken.Command): IRefreshToken.Info =
         with(command) {
-            require(tokenManger.validateToken(refreshToken)) { "리프레시 토큰이 유효하지 않습니다" }
-            val userId = tokenManger.extractUserId(refreshToken)
+            require(tokenManager.validateToken(refreshToken)) { "리프레시 토큰이 유효하지 않습니다" }
+            val userId = tokenManager.extractUserId(refreshToken)
             val storedAuthToken = tokenStore.findByUserId(userId)
             validateRefreshToken(storedAuthToken, refreshToken)
             val user = userRepository.findById(userId)
@@ -125,9 +125,9 @@ class UserAuthService(
     ): IRefreshToken.Info {
         val foundAuthTokens = tokenStore.findByUserId(user.entityId)
         validateRefreshToken(foundAuthTokens, refreshToken)
-        val roles = tokenManger.getRole(refreshToken)
-        val newAccessToken = tokenManger.generateAccessToken(user.entityId, roles)
-        val newRefreshToken = tokenManger.generateRefreshToken(user.entityId, roles)
+        val roles = tokenManager.getRole(refreshToken)
+        val newAccessToken = tokenManager.generateAccessToken(user.entityId, roles)
+        val newRefreshToken = tokenManager.generateRefreshToken(user.entityId, roles)
         transactionHandler.runInRepeatableReadTransaction {
             tokenStore.save(user.entityId, newAccessToken, newRefreshToken)
         }

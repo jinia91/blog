@@ -15,7 +15,7 @@ class JwtTokenManager(
     secretKey: String,
     tokenValidDuration: Duration,
     refreshTokenValidDuration: Duration,
-) : TokenManger {
+) : TokenManager {
     private val roleKey = "roles"
     private val tokenValidDuration = tokenValidDuration.toMillis()
     private val refreshTokenValidDuration = refreshTokenValidDuration.toMillis()

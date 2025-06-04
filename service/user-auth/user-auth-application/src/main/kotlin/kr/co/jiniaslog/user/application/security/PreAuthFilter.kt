@@ -3,7 +3,7 @@ package kr.co.jiniaslog.user.application.security
 import jakarta.servlet.http.HttpServletRequest
 import kr.co.jiniaslog.user.domain.auth.token.AccessToken
 import kr.co.jiniaslog.user.domain.auth.token.AuthToken
-import kr.co.jiniaslog.user.domain.auth.token.TokenManger
+import kr.co.jiniaslog.user.domain.auth.token.TokenManager
 import org.springframework.security.authentication.ProviderManager
 import org.springframework.security.core.Authentication
 import org.springframework.security.web.authentication.preauth.AbstractPreAuthenticatedProcessingFilter
@@ -12,7 +12,7 @@ import java.util.stream.Collectors
 
 @Component
 class PreAuthFilter(
-    private val jwtTokenManager: TokenManger,
+    private val jwtTokenManager: TokenManager,
     authenticationProvider: AuthProvider,
 ) : AbstractPreAuthenticatedProcessingFilter() {
     init {
