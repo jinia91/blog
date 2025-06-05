@@ -18,7 +18,7 @@ import kr.co.jiniaslog.user.domain.auth.provider.Provider
 import kr.co.jiniaslog.user.domain.auth.token.AccessToken
 import kr.co.jiniaslog.user.domain.auth.token.AuthorizationCode
 import kr.co.jiniaslog.user.domain.auth.token.RefreshToken
-import kr.co.jiniaslog.user.domain.auth.token.TokenManger
+import kr.co.jiniaslog.user.domain.auth.token.TokenManager
 import kr.co.jiniaslog.user.domain.user.Email
 import kr.co.jiniaslog.user.domain.user.NickName
 import kr.co.jiniaslog.user.domain.user.Role
@@ -62,7 +62,7 @@ class UserUseCasesTests : TestContainerAbstractSkeleton() {
         lateinit var sut: IRefreshToken
 
         @Autowired
-        lateinit var tokenManger: TokenManger
+        lateinit var tokenManager: TokenManager
 
         @Autowired
         lateinit var tokenStore: TokenStore
@@ -87,7 +87,7 @@ class UserUseCasesTests : TestContainerAbstractSkeleton() {
         @Test
         fun `포멧이 유효한 리프레시 토큰이여도 스토어에 저장되어있지 않다면 실패한다`() {
             // given
-            val refreshToken = tokenManger.generateRefreshToken(UserId(1L), setOf(Role.USER))
+            val refreshToken = tokenManager.generateRefreshToken(UserId(1L), setOf(Role.USER))
 
             val command =
                 IRefreshToken.Command(
@@ -105,10 +105,10 @@ class UserUseCasesTests : TestContainerAbstractSkeleton() {
             // given context
             val user = userRepository.save(User.newOne(NickName("test"), Email("jinia@test.com"), null))
 
-            val accessToken = tokenManger.generateAccessToken(user.entityId, setOf(Role.USER))
-            val tempRefreshToken = tokenManger.generateRefreshToken(user.entityId, setOf(Role.USER))
+            val accessToken = tokenManager.generateAccessToken(user.entityId, setOf(Role.USER))
+            val tempRefreshToken = tokenManager.generateRefreshToken(user.entityId, setOf(Role.USER))
             tokenStore.save(user.entityId, accessToken, tempRefreshToken)
-            val newRefreshToken = tokenManger.generateRefreshToken(user.entityId, setOf(Role.USER))
+            val newRefreshToken = tokenManager.generateRefreshToken(user.entityId, setOf(Role.USER))
             tokenStore.save(user.entityId, accessToken, newRefreshToken)
 
             val command =
@@ -138,8 +138,8 @@ class UserUseCasesTests : TestContainerAbstractSkeleton() {
             // given context
             val user = userRepository.save(User.newOne(NickName("test"), Email("jinia@test.com"), null))
             val userId = user.entityId
-            val accessToken = tokenManger.generateAccessToken(userId, setOf(Role.USER))
-            val refreshToken = tokenManger.generateRefreshToken(userId, setOf(Role.USER))
+            val accessToken = tokenManager.generateAccessToken(userId, setOf(Role.USER))
+            val refreshToken = tokenManager.generateRefreshToken(userId, setOf(Role.USER))
             tokenStore.save(userId, accessToken, refreshToken)
 
             Thread.sleep(6000)
@@ -170,8 +170,8 @@ class UserUseCasesTests : TestContainerAbstractSkeleton() {
             // given
             val user = userRepository.save(User.newOne(NickName("test"), Email("jinia@test.com"), null))
             val userId = user.entityId
-            val accessToken = tokenManger.generateAccessToken(userId, setOf(Role.USER))
-            val refreshToken = tokenManger.generateRefreshToken(userId, setOf(Role.USER))
+            val accessToken = tokenManager.generateAccessToken(userId, setOf(Role.USER))
+            val refreshToken = tokenManager.generateRefreshToken(userId, setOf(Role.USER))
             tokenStore.save(userId, accessToken, refreshToken)
 
             Thread.sleep(6000)

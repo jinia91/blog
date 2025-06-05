@@ -20,7 +20,7 @@ import kr.co.jiniaslog.user.application.security.AuthProvider
 import kr.co.jiniaslog.user.application.security.PreAuthFilter
 import kr.co.jiniaslog.user.application.security.SecurityConfig
 import kr.co.jiniaslog.user.application.usecase.UseCasesUserAuthFacade
-import kr.co.jiniaslog.user.domain.auth.token.TokenManger
+import kr.co.jiniaslog.user.domain.auth.token.TokenManager
 import kr.co.jiniaslog.user.domain.user.Role
 import kr.co.jiniaslog.user.domain.user.UserId
 import org.junit.jupiter.api.BeforeEach
@@ -41,7 +41,7 @@ class SecurityTestContextConfig {
 
     @Bean
     fun preAuthFilter(
-        jwtTokenManager: TokenManger,
+        jwtTokenManager: TokenManager,
         authenticationProvider: AuthProvider,
     ): PreAuthFilter {
         return PreAuthFilter(jwtTokenManager, authenticationProvider)
@@ -63,7 +63,7 @@ abstract class RestTestAbstractSkeleton {
     private lateinit var mockMvc: MockMvc
 
     @Autowired
-    private lateinit var tokenManager: TokenManger
+    private lateinit var tokenManager: TokenManager
 
     @MockkBean
     protected lateinit var imageService: ImageUseCasesFacade
