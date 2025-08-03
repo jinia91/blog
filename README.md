@@ -16,7 +16,7 @@ https://www.jiniaslog.co.kr/
   - os: Ubuntu 22.04.4 LTS
   - sdcard
 - 쿠버네티스 클러스터 (k3s)
-- ArgoCd
+- ArgoCd, helm, argoCd image updater
 - GitHub Actions
 
 ## Observability
