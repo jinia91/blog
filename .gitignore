@@ -61,3 +61,8 @@ src/main/resources/application-dev.yml
 ### kafka
 confluent-hub-components/
 
+### cluade
+/.claude
+/.omc
+AGENTS.md
+
