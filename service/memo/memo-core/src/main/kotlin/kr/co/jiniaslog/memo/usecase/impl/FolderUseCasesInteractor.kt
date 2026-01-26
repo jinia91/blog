@@ -22,9 +22,10 @@ internal class FolderUseCasesInteractor(
     @CacheEvict(value = ["folders"], key = "#command.authorId")
     override fun handle(command: ICreateNewFolder.Command): ICreateNewFolder.Info {
         ensureFolderCountIsUnderLimit(authorId = command.authorId)
-        val newOne = Folder.init(authorId = command.authorId)
+        command.parentId?.let { getFolder(it) }
+        val newOne = Folder.init(authorId = command.authorId, parent = command.parentId)
         folderRepository.save(newOne)
-        return ICreateNewFolder.Info(newOne.entityId, newOne.name)
+        return ICreateNewFolder.Info(newOne.entityId, newOne.name, newOne.parent)
     }
 
     private fun ensureFolderCountIsUnderLimit(authorId: AuthorId) {

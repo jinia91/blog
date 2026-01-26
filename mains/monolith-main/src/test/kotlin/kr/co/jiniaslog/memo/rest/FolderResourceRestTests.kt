@@ -5,6 +5,7 @@ import io.mockk.mockk
 import io.restassured.module.mockmvc.RestAssuredMockMvc
 import kr.co.jiniaslog.RestTestAbstractSkeleton
 import kr.co.jiniaslog.memo.adapter.inbound.http.dto.ChangeFolderNameRequest
+import kr.co.jiniaslog.memo.adapter.inbound.http.dto.CreateNewFolderRequest
 import kr.co.jiniaslog.memo.adapter.inbound.http.dto.MakeFolderRelationshipRequest
 import kr.co.jiniaslog.memo.domain.folder.FolderId
 import kr.co.jiniaslog.memo.domain.folder.FolderName
@@ -29,7 +30,8 @@ class FolderResourceRestTests : RestTestAbstractSkeleton() {
                 FolderId(
                     1L
                 ),
-                FolderName("name")
+                FolderName("name"),
+                null
             )
 
             // when, then
@@ -47,7 +49,8 @@ class FolderResourceRestTests : RestTestAbstractSkeleton() {
                 FolderId(
                     1L
                 ),
-                FolderName("name")
+                FolderName("name"),
+                null
             )
 
             // when, then
@@ -78,7 +81,8 @@ class FolderResourceRestTests : RestTestAbstractSkeleton() {
                 FolderId(
                     1L
                 ),
-                FolderName("name")
+                FolderName("name"),
+                null
             )
 
             // when, then
@@ -100,7 +104,8 @@ class FolderResourceRestTests : RestTestAbstractSkeleton() {
                 FolderId(
                     1L
                 ),
-                FolderName("name")
+                FolderName("name"),
+                null
             )
 
             // when, then
@@ -110,6 +115,37 @@ class FolderResourceRestTests : RestTestAbstractSkeleton() {
                 .post("/api/v1/folders")
                 .then()
                 .statusCode(201)
+        }
+
+        @Test
+        fun `유효한 하위 폴더 생성 요청시 201을 받고 부모 폴더 아이디가 반환된다`() {
+            // given
+            every { folderService.handle(any(ICreateNewFolder.Command::class)) } returns ICreateNewFolder.Info(
+                FolderId(2L),
+                FolderName("name"),
+                FolderId(1L) // parentId
+            )
+
+            // when, then
+            RestAssuredMockMvc.given()
+                .cookies(PreAuthFilter.ACCESS_TOKEN_HEADER, getTestAdminUserToken())
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(CreateNewFolderRequest(parentId = 1L))
+                .post("/api/v1/folders")
+                .then()
+                .statusCode(201)
+                .body(
+                    "folder",
+                    equalTo(
+                        mapOf(
+                            "id" to 2,
+                            "name" to "name",
+                            "parent" to 1,
+                            "children" to emptyList<Any>(),
+                            "memos" to emptyList<Any>()
+                        )
+                    )
+                )
         }
     }
 
