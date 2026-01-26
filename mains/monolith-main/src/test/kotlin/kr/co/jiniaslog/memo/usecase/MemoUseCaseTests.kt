@@ -52,6 +52,45 @@ class MemoUseCaseTests : TestContainerAbstractSkeleton() {
     }
 
     @Test
+    fun `메모 초기화시 존재하지 않는 폴더를 부모로 지정하면 실패한다`() {
+        // given
+        val command =
+            IInitMemo.Command(
+                authorId = AuthorId(1),
+                parentFolderId = FolderId(9999),
+            )
+        // when
+        // then
+        shouldThrow<IllegalArgumentException> {
+            sut.handle(command)
+        }
+    }
+
+    @Test
+    fun `메모 초기화시 부모 폴더를 지정하면 메모는 지정된 부모 폴더를 가진다`() {
+        // given
+        val folder =
+            folderRepository.save(
+                Folder.init(
+                    authorId = AuthorId(1),
+                ),
+            )
+        val command =
+            IInitMemo.Command(
+                authorId = AuthorId(1),
+                parentFolderId = folder.entityId,
+            )
+        // when
+        val info = sut.handle(command)
+
+        // then
+        info.id shouldNotBe null
+        val createdMemo = memoRepository.findById(info.id)
+        createdMemo shouldNotBe null
+        createdMemo!!.parentFolderId shouldBe folder.entityId
+    }
+
+    @Test
     fun `메모 초기화시 메모 개수가 제한을 초과하면 실패한다`() {
         // given
         val capedMemoCount = Memo.INIT_LIMIT.toInt()
