@@ -23,6 +23,7 @@ internal class MemoUseCasesInteractor(
     @CacheEvict(value = ["folders"], key = "#command.authorId")
     override fun handle(command: IInitMemo.Command): IInitMemo.Info {
         ensureMemoCountIsUnderLimit(authorId = command.authorId)
+        command.parentFolderId?.let { getFolder(it) }
         val newOne =
             Memo.init(
                 authorId = command.authorId,
