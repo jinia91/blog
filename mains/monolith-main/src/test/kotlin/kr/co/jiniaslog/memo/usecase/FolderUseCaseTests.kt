@@ -79,6 +79,21 @@ class FolderUseCaseTests : TestContainerAbstractSkeleton() {
     }
 
     @Test
+    fun `없는 폴더를 부모로 하는 폴더 초기화 요청시 예외가 발생한다`() {
+        // given
+        val command =
+            ICreateNewFolder.Command(
+                authorId = AuthorId(1),
+                parentId = FolderId(9999),
+            )
+
+        // when & then
+        shouldThrow<IllegalArgumentException> {
+            sut.handle(command)
+        }
+    }
+
+    @Test
     fun `제한 폴더수 이상 폴더 초기화 요청시 예외가 발생한다`() {
         // given
         val jdbcTemplate = JdbcTemplate(dataSource)
