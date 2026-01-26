@@ -42,6 +42,7 @@ class FolderUseCaseTests : TestContainerAbstractSkeleton() {
         val command =
             ICreateNewFolder.Command(
                 authorId = AuthorId(1),
+                parentId = null,
             )
 
         // when
@@ -50,6 +51,31 @@ class FolderUseCaseTests : TestContainerAbstractSkeleton() {
         // then
         info.id shouldNotBe null
         folderRepository.findById(info.id) shouldNotBe null
+        info.parentId shouldBe null
+    }
+
+    @Test
+    fun `유효한 하위 폴더 초기화 요청시 폴더는 초기화 된다`() {
+        // given
+        val parentFolder =
+            folderRepository.save(
+                Folder.init(
+                    authorId = AuthorId(1),
+                ),
+            )
+        val command =
+            ICreateNewFolder.Command(
+                authorId = AuthorId(1),
+                parentId = parentFolder.entityId,
+            )
+        // when
+        val info = sut.handle(command)
+
+        // then
+        info.id shouldNotBe null
+        val createdFolder = folderRepository.findById(info.id)
+        createdFolder shouldNotBe null
+        createdFolder!!.parent shouldBe parentFolder.entityId
     }
 
     @Test
@@ -66,6 +92,7 @@ class FolderUseCaseTests : TestContainerAbstractSkeleton() {
         val command =
             ICreateNewFolder.Command(
                 authorId = AuthorId(1),
+                parentId = null,
             )
 
         // when & then

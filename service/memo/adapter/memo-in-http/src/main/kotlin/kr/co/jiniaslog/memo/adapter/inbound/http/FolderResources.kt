@@ -2,6 +2,7 @@ package kr.co.jiniaslog.memo.adapter.inbound.http
 
 import kr.co.jiniaslog.memo.adapter.inbound.http.dto.ChangeFolderNameRequest
 import kr.co.jiniaslog.memo.adapter.inbound.http.dto.ChangeFolderNameResponse
+import kr.co.jiniaslog.memo.adapter.inbound.http.dto.CreateNewFolderRequest
 import kr.co.jiniaslog.memo.adapter.inbound.http.dto.CreateNewFolderResponse
 import kr.co.jiniaslog.memo.adapter.inbound.http.dto.DeleteFolderResponse
 import kr.co.jiniaslog.memo.adapter.inbound.http.dto.GetFolderAndMemoResponse
@@ -46,8 +47,15 @@ class FolderResources(
     @PostMapping()
     fun createNewFolder(
         @AuthUserId userId: Long?,
+        @RequestBody(required = false) request: CreateNewFolderRequest?,
     ): ResponseEntity<CreateNewFolderResponse> {
-        val info = folderUseCases.handle(ICreateNewFolder.Command(AuthorId(userId!!)))
+        val parentId = request?.parentId?.let { FolderId(it) }
+        val info = folderUseCases.handle(
+            ICreateNewFolder.Command(
+                authorId = AuthorId(userId!!),
+                parentId = parentId
+            )
+        )
         return ResponseEntity.created(
             java.net.URI("/api/v1/folders/${info.id.value}"),
         ).body(
@@ -55,7 +63,7 @@ class FolderResources(
                 FolderViewModel(
                     id = info.id.value,
                     name = info.folderName.value,
-                    parent = null,
+                    parent = info.parentId?.value,
                     children = mutableListOf(),
                     memos = mutableListOf()
                 )

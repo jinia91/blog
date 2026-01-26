@@ -9,7 +9,8 @@ interface ICreateNewFolder {
 
     data class Command(
         val authorId: AuthorId,
+        val parentId: FolderId? = null,
     )
 
-    data class Info(val id: FolderId, val folderName: FolderName)
+    data class Info(val id: FolderId, val folderName: FolderName, val parentId: FolderId?)
 }
