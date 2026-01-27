@@ -5,4 +5,5 @@ interface MemoUseCasesFacade :
     IUpdateMemoContents,
     IDeleteMemo,
     IMakeRelationShipFolderAndMemo,
-    IUpdateMemoReferences
+    IUpdateMemoReferences,
+    IReorderMemo

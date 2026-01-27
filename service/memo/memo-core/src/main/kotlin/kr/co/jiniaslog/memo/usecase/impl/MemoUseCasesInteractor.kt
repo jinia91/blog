@@ -9,6 +9,7 @@ import kr.co.jiniaslog.memo.domain.memo.MemoRepository
 import kr.co.jiniaslog.memo.usecase.IDeleteMemo
 import kr.co.jiniaslog.memo.usecase.IInitMemo
 import kr.co.jiniaslog.memo.usecase.IMakeRelationShipFolderAndMemo
+import kr.co.jiniaslog.memo.usecase.IReorderMemo
 import kr.co.jiniaslog.memo.usecase.IUpdateMemoContents
 import kr.co.jiniaslog.memo.usecase.IUpdateMemoReferences
 import kr.co.jiniaslog.memo.usecase.MemoUseCasesFacade
@@ -100,6 +101,15 @@ internal class MemoUseCasesInteractor(
                 throw IllegalArgumentException("순환참조가 발생합니다")
             }
         }
+    }
+
+    @CacheEvict(value = ["folders"], key = "#command.requesterId")
+    override fun handle(command: IReorderMemo.Command): IReorderMemo.Info {
+        val memo = getMemo(command.memoId)
+        memo.validateOwnership(command.requesterId)
+        memo.changeSequence(command.newSequence)
+        memoRepository.save(memo)
+        return IReorderMemo.Info(memo.entityId, memo.sequence)
     }
 
     private fun getFolder(id: FolderId) =

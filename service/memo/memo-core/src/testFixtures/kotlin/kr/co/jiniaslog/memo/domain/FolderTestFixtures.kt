@@ -14,6 +14,7 @@ object FolderTestFixtures {
         name: FolderName = FolderName("test folder"),
         authorId: AuthorId = defaultAuthorId,
         parent: FolderId? = null,
+        sequence: Double = System.currentTimeMillis().toDouble(),
         createdAt: LocalDateTime? = null,
         updatedAt: LocalDateTime? = null,
     ): Folder {
@@ -22,6 +23,7 @@ object FolderTestFixtures {
             name = name,
             authorId = authorId,
             parent = parent,
+            sequence = sequence,
             createdAt = createdAt,
             updatedAt = updatedAt,
         )

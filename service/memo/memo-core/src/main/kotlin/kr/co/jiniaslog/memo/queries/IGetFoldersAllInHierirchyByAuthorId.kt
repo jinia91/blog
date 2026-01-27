@@ -20,6 +20,7 @@ interface IGetFoldersAllInHierirchyByAuthorId {
         val parent: FolderInfo?,
         var children: List<FolderInfo>,
         var memos: List<MemoInfo>,
+        val sequence: Double?,
     )
 
     @NoArgConstructor
@@ -33,5 +34,6 @@ interface IGetFoldersAllInHierirchyByAuthorId {
         val id: Long,
         val title: String,
         val references: List<MemoReferenceInfo>,
+        val sequence: Double,
     )
 }
