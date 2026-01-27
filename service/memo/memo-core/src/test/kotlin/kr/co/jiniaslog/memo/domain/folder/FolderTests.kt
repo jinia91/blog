@@ -100,7 +100,7 @@ class FolderTests : CustomBehaviorSpec() {
             val folder = Folder.init(authorId)
             val originalSequence = folder.sequence
             When("폴더 순서를 변경하면") {
-                val newSequence = 10.5
+                val newSequence = "0|i00000:"
                 folder.changeSequence(newSequence)
                 Then("폴더 순서가 변경된다.") {
                     folder.sequence shouldBe newSequence
@@ -117,7 +117,7 @@ class FolderTests : CustomBehaviorSpec() {
             val folderId = FolderId(1)
             val folderName = FolderName("folderName")
             val parentFolderId = FolderId(2)
-            val sequence = 1.0
+            val sequence = "0|hzzzzz:"
 
             When("폴더를 from으로 생성하면") {
                 val folder =

@@ -33,7 +33,7 @@ class Memo private constructor(
     content: MemoContent,
     references: MutableSet<MemoReference>,
     parentFolderId: FolderId?,
-    sequence: Double,
+    sequence: String,
 ) : JpaAggregate<MemoId>() {
     @EmbeddedId
     @AttributeOverride(column = Column(name = "id"), name = "value")
@@ -64,7 +64,7 @@ class Memo private constructor(
         private set
 
     @Column(name = "sequence")
-    var sequence: Double = sequence
+    var sequence: String = sequence
         private set
 
     fun getReferences(): Set<MemoReference> {
@@ -101,7 +101,7 @@ class Memo private constructor(
         this.parentFolderId = folderId
     }
 
-    fun changeSequence(sequence: Double) {
+    fun changeSequence(sequence: String) {
         this.sequence = sequence
     }
 
@@ -115,10 +115,12 @@ class Memo private constructor(
 
     companion object {
         const val INIT_LIMIT = 1000L
+        const val DEFAULT_SEQUENCE = "0|hzzzzz:"
+
         fun init(
             authorId: AuthorId,
             parentFolderId: FolderId?,
-            sequence: Double = System.currentTimeMillis().toDouble(),
+            sequence: String = DEFAULT_SEQUENCE,
         ): Memo {
             return Memo(
                 id = MemoId(IdUtils.idGenerator.generate()),
@@ -138,7 +140,7 @@ class Memo private constructor(
             content: MemoContent,
             reference: MutableSet<MemoReference>,
             parentFolderId: FolderId?,
-            sequence: Double,
+            sequence: String,
             createdAt: LocalDateTime?,
             updatedAt: LocalDateTime?,
         ): Memo {

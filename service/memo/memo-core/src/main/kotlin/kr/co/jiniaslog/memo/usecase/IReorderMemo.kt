@@ -8,12 +8,12 @@ interface IReorderMemo {
 
     data class Command(
         val memoId: MemoId,
-        val newSequence: Double,
+        val newSequence: String,
         val requesterId: AuthorId,
     )
 
     data class Info(
         val memoId: MemoId,
-        val sequence: Double,
+        val sequence: String,
     )
 }

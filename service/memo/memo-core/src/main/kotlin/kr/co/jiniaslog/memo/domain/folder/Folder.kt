@@ -24,7 +24,7 @@ class Folder internal constructor(
     name: FolderName,
     authorId: AuthorId,
     parent: FolderId?,
-    sequence: Double,
+    sequence: String,
 ) : JpaAggregate<FolderId>() {
     @EmbeddedId
     @AttributeOverride(column = Column(name = "id"), name = "value")
@@ -42,7 +42,7 @@ class Folder internal constructor(
         private set
 
     @Column(name = "sequence")
-    var sequence: Double = sequence
+    var sequence: String = sequence
         private set
 
     fun validateOwnership(authorId: AuthorId) {
@@ -59,16 +59,18 @@ class Folder internal constructor(
         this.parent = parent?.entityId
     }
 
-    fun changeSequence(sequence: Double) {
+    fun changeSequence(sequence: String) {
         this.sequence = sequence
     }
 
     companion object {
         const val INIT_LIMIT = 100L
+        const val DEFAULT_SEQUENCE = "0|hzzzzz:"
+
         fun init(
             authorId: AuthorId,
             parent: FolderId? = null,
-            sequence: Double = System.currentTimeMillis().toDouble(),
+            sequence: String = DEFAULT_SEQUENCE,
         ): Folder {
             return Folder(
                 id = FolderId(IdUtils.idGenerator.generate()),
@@ -84,7 +86,7 @@ class Folder internal constructor(
             name: FolderName,
             authorId: AuthorId,
             parent: FolderId?,
-            sequence: Double,
+            sequence: String,
             createdAt: LocalDateTime?,
             updatedAt: LocalDateTime?,
         ): Folder {

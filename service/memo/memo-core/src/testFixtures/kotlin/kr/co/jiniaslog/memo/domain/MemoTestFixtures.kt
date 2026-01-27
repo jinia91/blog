@@ -19,7 +19,7 @@ object MemoTestFixtures {
         title: MemoTitle = MemoTitle("test title"),
         references: MutableSet<MemoReference> = mutableSetOf(),
         parentFolderId: FolderId? = null,
-        sequence: Double = 0.0,
+        sequence: String = "0|hzzzzz:",
         createdAt: LocalDateTime? = null,
         updatedAt: LocalDateTime? = null,
     ): Memo {

@@ -8,12 +8,12 @@ interface IReorderFolder {
 
     data class Command(
         val folderId: FolderId,
-        val newSequence: Double,
+        val newSequence: String,
         val requesterId: AuthorId,
     )
 
     data class Info(
         val folderId: FolderId,
-        val sequence: Double,
+        val sequence: String,
     )
 }

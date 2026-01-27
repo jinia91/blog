@@ -58,7 +58,7 @@ internal class MemoTests : CustomBehaviorSpec() {
             val content = MemoContent("content")
             val reference = mutableSetOf<MemoReference>()
             val parentFolderId = FolderId(1)
-            val sequence = 0.0
+            val sequence = "0|hzzzzz:"
             val createdAt = null
             val updatedAt = null
             When("메모를 생성하면") {
