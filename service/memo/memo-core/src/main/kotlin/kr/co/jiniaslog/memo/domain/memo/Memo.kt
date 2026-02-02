@@ -33,6 +33,7 @@ class Memo private constructor(
     content: MemoContent,
     references: MutableSet<MemoReference>,
     parentFolderId: FolderId?,
+    sequence: String,
 ) : JpaAggregate<MemoId>() {
     @EmbeddedId
     @AttributeOverride(column = Column(name = "id"), name = "value")
@@ -60,6 +61,10 @@ class Memo private constructor(
 
     @AttributeOverride(column = Column(name = "parent_folder_id"), name = "value")
     var parentFolderId: FolderId? = parentFolderId
+        private set
+
+    @Column(name = "sequence")
+    var sequence: String = sequence
         private set
 
     fun getReferences(): Set<MemoReference> {
@@ -96,6 +101,10 @@ class Memo private constructor(
         this.parentFolderId = folderId
     }
 
+    fun changeSequence(sequence: String) {
+        this.sequence = sequence
+    }
+
     override fun toString(): String {
         return "Memo(id=$entityId, authorId=$authorId, title=$title, content=$content, reference=$_references)"
     }
@@ -106,9 +115,12 @@ class Memo private constructor(
 
     companion object {
         const val INIT_LIMIT = 1000L
+        const val DEFAULT_SEQUENCE = "0|hzzzzz:"
+
         fun init(
             authorId: AuthorId,
             parentFolderId: FolderId?,
+            sequence: String = DEFAULT_SEQUENCE,
         ): Memo {
             return Memo(
                 id = MemoId(IdUtils.idGenerator.generate()),
@@ -117,6 +129,7 @@ class Memo private constructor(
                 references = mutableSetOf(),
                 authorId = authorId,
                 parentFolderId = parentFolderId,
+                sequence = sequence,
             )
         }
 
@@ -127,6 +140,7 @@ class Memo private constructor(
             content: MemoContent,
             reference: MutableSet<MemoReference>,
             parentFolderId: FolderId?,
+            sequence: String,
             createdAt: LocalDateTime?,
             updatedAt: LocalDateTime?,
         ): Memo {
@@ -137,6 +151,7 @@ class Memo private constructor(
                 title = title,
                 references = reference,
                 parentFolderId = parentFolderId,
+                sequence = sequence,
             ).apply {
                 this.createdAt = createdAt
                 this.updatedAt = updatedAt

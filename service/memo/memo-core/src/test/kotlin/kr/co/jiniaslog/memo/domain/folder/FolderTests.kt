@@ -93,6 +93,23 @@ class FolderTests : CustomBehaviorSpec() {
         }
 
         /**
+         * change sequence
+         */
+        Given("유효한 폴더가 하나 존재하고") {
+            val authorId = AuthorId(1)
+            val folder = Folder.init(authorId)
+            val originalSequence = folder.sequence
+            When("폴더 순서를 변경하면") {
+                val newSequence = "0|i00000:"
+                folder.changeSequence(newSequence)
+                Then("폴더 순서가 변경된다.") {
+                    folder.sequence shouldBe newSequence
+                    folder.sequence shouldNotBe originalSequence
+                }
+            }
+        }
+
+        /**
          * from
          */
         Given("유효한 폴더 데이터가 전부 존재하고") {
@@ -100,6 +117,7 @@ class FolderTests : CustomBehaviorSpec() {
             val folderId = FolderId(1)
             val folderName = FolderName("folderName")
             val parentFolderId = FolderId(2)
+            val sequence = "0|hzzzzz:"
 
             When("폴더를 from으로 생성하면") {
                 val folder =
@@ -108,6 +126,7 @@ class FolderTests : CustomBehaviorSpec() {
                         name = folderName,
                         authorId = authorId,
                         parent = parentFolderId,
+                        sequence = sequence,
                         createdAt = null,
                         updatedAt = null,
                     )
@@ -116,6 +135,7 @@ class FolderTests : CustomBehaviorSpec() {
                     folder.name shouldBe folderName
                     folder.authorId shouldBe authorId
                     folder.parent shouldBe parentFolderId
+                    folder.sequence shouldBe sequence
                 }
             }
         }

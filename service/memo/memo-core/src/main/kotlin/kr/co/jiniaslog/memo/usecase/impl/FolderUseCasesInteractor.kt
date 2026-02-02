@@ -11,6 +11,7 @@ import kr.co.jiniaslog.memo.usecase.ICreateNewFolder
 import kr.co.jiniaslog.memo.usecase.IDeleteAllWithoutAdmin
 import kr.co.jiniaslog.memo.usecase.IDeleteFoldersRecursively
 import kr.co.jiniaslog.memo.usecase.IMakeRelationShipFolderAndFolder
+import kr.co.jiniaslog.memo.usecase.IReorderFolder
 import kr.co.jiniaslog.shared.core.annotation.UseCaseInteractor
 import org.springframework.cache.annotation.CacheEvict
 
@@ -68,6 +69,15 @@ internal class FolderUseCasesInteractor(
         val adminIds = userService.retrieveAdminUserIds()
         folderRepository.deleteAllFoldersAndMemosWithout(adminIds)
         return IDeleteAllWithoutAdmin.Info()
+    }
+
+    @CacheEvict(value = ["folders"], key = "#command.requesterId")
+    override fun handle(command: IReorderFolder.Command): IReorderFolder.Info {
+        val folder = getFolder(command.folderId)
+        folder.validateOwnership(command.requesterId)
+        folder.changeSequence(command.newSequence)
+        folderRepository.save(folder)
+        return IReorderFolder.Info(folder.entityId, folder.sequence)
     }
 
     private fun getFolder(id: FolderId) =

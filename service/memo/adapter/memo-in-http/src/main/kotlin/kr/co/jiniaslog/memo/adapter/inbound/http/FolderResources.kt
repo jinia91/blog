@@ -8,6 +8,8 @@ import kr.co.jiniaslog.memo.adapter.inbound.http.dto.DeleteFolderResponse
 import kr.co.jiniaslog.memo.adapter.inbound.http.dto.GetFolderAndMemoResponse
 import kr.co.jiniaslog.memo.adapter.inbound.http.dto.MakeFolderRelationshipRequest
 import kr.co.jiniaslog.memo.adapter.inbound.http.dto.MakeFolderRelationshipResponse
+import kr.co.jiniaslog.memo.adapter.inbound.http.dto.ReorderFolderRequest
+import kr.co.jiniaslog.memo.adapter.inbound.http.dto.ReorderFolderResponse
 import kr.co.jiniaslog.memo.adapter.inbound.http.dto.toResponse
 import kr.co.jiniaslog.memo.adapter.inbound.http.viewmodel.FolderViewModel
 import kr.co.jiniaslog.memo.domain.exception.NotOwnershipException
@@ -19,6 +21,7 @@ import kr.co.jiniaslog.memo.usecase.FolderUseCasesFacade
 import kr.co.jiniaslog.memo.usecase.ICreateNewFolder
 import kr.co.jiniaslog.memo.usecase.IDeleteFoldersRecursively
 import kr.co.jiniaslog.memo.usecase.IMakeRelationShipFolderAndFolder
+import kr.co.jiniaslog.memo.usecase.IReorderFolder
 import kr.cojiniaslog.shared.adapter.inbound.http.AuthUserId
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.DeleteMapping
@@ -115,5 +118,21 @@ class FolderResources(
         val response = folderQueries.handle(IGetFoldersAllInHierirchyByAuthorId.Query(AuthorId(userId!!)))
             .toResponse()
         return ResponseEntity.ok(response)
+    }
+
+    @PutMapping("/{folderId}/sequence")
+    fun reorderFolder(
+        @PathVariable folderId: Long,
+        @AuthUserId userId: Long?,
+        @RequestBody request: ReorderFolderRequest,
+    ): ResponseEntity<ReorderFolderResponse> {
+        val info = folderUseCases.handle(
+            IReorderFolder.Command(
+                folderId = FolderId(folderId),
+                newSequence = request.sequence,
+                requesterId = AuthorId(userId!!),
+            )
+        )
+        return ResponseEntity.ok(ReorderFolderResponse(info.folderId.value, info.sequence))
     }
 }

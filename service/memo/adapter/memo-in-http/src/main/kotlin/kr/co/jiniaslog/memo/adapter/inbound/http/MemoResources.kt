@@ -8,6 +8,8 @@ import kr.co.jiniaslog.memo.adapter.inbound.http.dto.GetAllReferencesByMemoRespo
 import kr.co.jiniaslog.memo.adapter.inbound.http.dto.GetMemoByIdResponse
 import kr.co.jiniaslog.memo.adapter.inbound.http.dto.InitMemoRequest
 import kr.co.jiniaslog.memo.adapter.inbound.http.dto.RecommendRelatedMemoResponse
+import kr.co.jiniaslog.memo.adapter.inbound.http.dto.ReorderMemoRequest
+import kr.co.jiniaslog.memo.adapter.inbound.http.dto.ReorderMemoResponse
 import kr.co.jiniaslog.memo.adapter.inbound.http.dto.toResponse
 import kr.co.jiniaslog.memo.domain.exception.NotOwnershipException
 import kr.co.jiniaslog.memo.domain.folder.FolderId
@@ -22,6 +24,7 @@ import kr.co.jiniaslog.memo.queries.MemoQueriesFacade
 import kr.co.jiniaslog.memo.usecase.IDeleteMemo
 import kr.co.jiniaslog.memo.usecase.IInitMemo
 import kr.co.jiniaslog.memo.usecase.IMakeRelationShipFolderAndMemo
+import kr.co.jiniaslog.memo.usecase.IReorderMemo
 import kr.co.jiniaslog.memo.usecase.MemoUseCasesFacade
 import kr.cojiniaslog.shared.adapter.inbound.http.AuthUserId
 import org.springframework.http.ResponseEntity
@@ -138,5 +141,21 @@ class MemoResources(
     ): ResponseEntity<ISearchAllMemoByKeyword.Info> {
         val response = memoQueries.handle(ISearchAllMemoByKeyword.Query(AuthorId(userId!!), query))
         return ResponseEntity.ok(response)
+    }
+
+    @PutMapping("/{memoId}/sequence")
+    fun reorderMemo(
+        @PathVariable memoId: Long,
+        @AuthUserId userId: Long?,
+        @RequestBody request: ReorderMemoRequest,
+    ): ResponseEntity<ReorderMemoResponse> {
+        val info = memoUseCases.handle(
+            IReorderMemo.Command(
+                memoId = MemoId(memoId),
+                newSequence = request.sequence,
+                requesterId = AuthorId(userId!!),
+            )
+        )
+        return ResponseEntity.ok(ReorderMemoResponse(info.memoId.value, info.sequence))
     }
 }
