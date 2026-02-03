@@ -1,14 +1,21 @@
 package kr.co.jiniaslog
 
 import com.redis.testcontainers.RedisContainer
+import io.mockk.every
 import io.mockk.mockk
 import io.restassured.RestAssured
+import kr.co.jiniaslog.ai.outbound.EmbeddingStore
+import kr.co.jiniaslog.ai.outbound.IntentType
+import kr.co.jiniaslog.ai.outbound.LlmService
 import kr.co.jiniaslog.media.outbound.ImageUploader
 import kr.co.jiniaslog.utils.CacheCleaner
 import kr.co.jiniaslog.utils.MySqlRdbCleaner
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.springframework.ai.chat.model.ChatModel
+import org.springframework.ai.embedding.EmbeddingModel
+import org.springframework.ai.vectorstore.VectorStore
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.context.TestConfiguration
@@ -28,6 +35,39 @@ class ContextWithTestContainerConfig {
     fun imageUploader(): ImageUploader {
         return mockk()
     }
+
+    @Bean
+    @Primary
+    fun chatModel(): ChatModel {
+        return mockk(relaxed = true)
+    }
+
+    @Bean
+    @Primary
+    fun embeddingModel(): EmbeddingModel {
+        return mockk(relaxed = true)
+    }
+
+    @Bean
+    @Primary
+    fun vectorStore(): VectorStore {
+        return mockk(relaxed = true)
+    }
+
+    @Bean
+    @Primary
+    fun embeddingStore(): EmbeddingStore {
+        return mockk(relaxed = true)
+    }
+
+    @Bean
+    @Primary
+    fun llmService(): LlmService {
+        return mockk {
+            every { classifyIntent(any()) } returns IntentType.QUESTION
+            every { chat(any(), any()) } returns "테스트 응답입니다."
+        }
+    }
 }
 
 /**
@@ -46,6 +86,7 @@ class ContextWithTestContainerConfig {
 @SpringBootTest(
     webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
     classes = [ContextWithTestContainerConfig::class],
+    properties = ["spring.main.allow-bean-definition-overriding=true"]
 )
 abstract class TestContainerAbstractSkeleton {
     @LocalServerPort
@@ -105,6 +146,13 @@ abstract class TestContainerAbstractSkeleton {
                 .withReuse(true)
 
         @JvmStatic
+        val aiDb: MySQLContainer<*> =
+            MySQLContainer("mysql:8.0")
+                .withCommand(RDB_CHARSET, RDB_COLLATION)
+                .withDatabaseName("jiniaslog_ai")
+                .withReuse(true)
+
+        @JvmStatic
         val redis: RedisContainer = RedisContainer("redis:7.0")
             .withReuse(true)
 
@@ -114,6 +162,7 @@ abstract class TestContainerAbstractSkeleton {
                 blogDb,
                 memoDb,
                 commentDb,
+                aiDb,
                 redis
             ).forEach { it.start() }
         }
@@ -148,6 +197,13 @@ abstract class TestContainerAbstractSkeleton {
             registry.add("spring.datasource.comment.password") { commentDb.password }
             registry.add("spring.datasource.comment.driver-class-name") { commentDb.driverClassName }
             registry.add("spring.datasource.comment.connection-init-sql") { RDB_INIT_SQL }
+
+            // ai db
+            registry.add("spring.datasource.ai.jdbc-url") { aiDb.jdbcUrl }
+            registry.add("spring.datasource.ai.username") { aiDb.username }
+            registry.add("spring.datasource.ai.password") { aiDb.password }
+            registry.add("spring.datasource.ai.driver-class-name") { aiDb.driverClassName }
+            registry.add("spring.datasource.ai.connection-init-sql") { RDB_INIT_SQL }
 
             // redis
             registry.add("spring.data.redis.host") { redis.host }

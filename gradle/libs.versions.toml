@@ -41,6 +41,11 @@ spring-boot-configuration = { module = "org.springframework.boot:spring-boot-con
 spring-data-redis = { module = "org.springframework.boot:spring-boot-starter-data-redis" }
 spring-data-elasticsearch = { module = "org.springframework.boot:spring-boot-starter-data-elasticsearch" }
 
+# Spring AI
+spring-ai-bom = { module = "org.springframework.ai:spring-ai-bom", version = "1.0.0-M4" }
+spring-ai-openai-starter = { module = "org.springframework.ai:spring-ai-openai-spring-boot-starter" }
+spring-ai-chroma-store = { module = "org.springframework.ai:spring-ai-chroma-store-spring-boot-starter" }
+
 # 캐시
 spring-boot-starter-redisson = { module = "org.redisson:redisson-spring-boot-starter", version = "3.17.7" }
 caffeine = { module = "com.github.ben-manes.caffeine:caffeine", version = "3.1.8" }

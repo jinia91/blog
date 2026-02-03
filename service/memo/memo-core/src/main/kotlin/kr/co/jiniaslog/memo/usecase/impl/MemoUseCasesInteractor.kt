@@ -4,8 +4,11 @@ import kr.co.jiniaslog.memo.domain.folder.FolderId
 import kr.co.jiniaslog.memo.domain.folder.FolderRepository
 import kr.co.jiniaslog.memo.domain.memo.AuthorId
 import kr.co.jiniaslog.memo.domain.memo.Memo
+import kr.co.jiniaslog.memo.domain.memo.MemoCreatedEvent
+import kr.co.jiniaslog.memo.domain.memo.MemoDeletedEvent
 import kr.co.jiniaslog.memo.domain.memo.MemoId
 import kr.co.jiniaslog.memo.domain.memo.MemoRepository
+import kr.co.jiniaslog.memo.domain.memo.MemoUpdatedEvent
 import kr.co.jiniaslog.memo.usecase.IDeleteMemo
 import kr.co.jiniaslog.memo.usecase.IInitMemo
 import kr.co.jiniaslog.memo.usecase.IMakeRelationShipFolderAndMemo
@@ -15,11 +18,13 @@ import kr.co.jiniaslog.memo.usecase.IUpdateMemoReferences
 import kr.co.jiniaslog.memo.usecase.MemoUseCasesFacade
 import kr.co.jiniaslog.shared.core.annotation.UseCaseInteractor
 import org.springframework.cache.annotation.CacheEvict
+import org.springframework.context.ApplicationEventPublisher
 
 @UseCaseInteractor
 internal class MemoUseCasesInteractor(
     private val memoRepository: MemoRepository,
     private val folderRepository: FolderRepository,
+    private val eventPublisher: ApplicationEventPublisher,
 ) : MemoUseCasesFacade {
     @CacheEvict(value = ["folders"], key = "#command.authorId")
     override fun handle(command: IInitMemo.Command): IInitMemo.Info {
@@ -31,6 +36,14 @@ internal class MemoUseCasesInteractor(
                 parentFolderId = command.parentFolderId,
             )
         memoRepository.save(newOne)
+        eventPublisher.publishEvent(
+            MemoCreatedEvent(
+                memoId = newOne.entityId.value,
+                authorId = newOne.authorId.value,
+                title = newOne.title.value,
+                content = newOne.content.value,
+            )
+        )
         return IInitMemo.Info(newOne.entityId)
     }
 
@@ -45,6 +58,14 @@ internal class MemoUseCasesInteractor(
         val memo = getMemo(command.memoId)
         memo.update(command.title, command.content)
         memoRepository.save(memo)
+        eventPublisher.publishEvent(
+            MemoUpdatedEvent(
+                memoId = memo.entityId.value,
+                authorId = memo.authorId.value,
+                title = memo.title.value,
+                content = memo.content.value,
+            )
+        )
         return IUpdateMemoContents.Info(memo.entityId)
     }
 
@@ -56,7 +77,9 @@ internal class MemoUseCasesInteractor(
     override fun handle(command: IDeleteMemo.Command): IDeleteMemo.Info {
         val memo = getMemo(command.id)
         memo.validateOwnership(command.requesterId)
+        val memoId = memo.entityId.value
         memoRepository.deleteById(memo.entityId)
+        eventPublisher.publishEvent(MemoDeletedEvent(memoId = memoId))
         return IDeleteMemo.Info()
     }
 

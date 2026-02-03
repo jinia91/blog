@@ -63,6 +63,15 @@ val commentService = mutableListOf(
     project(Modules.Service.Comment.Adaptors.OutBlog.path),
 )
 
+val aiSecondBrainService = mutableListOf(
+    project(Modules.Service.AiSecondBrain.Core.path),
+    project(Modules.Service.AiSecondBrain.Adaptors.InHttp.path),
+    project(Modules.Service.AiSecondBrain.Adaptors.InMessage.path),
+    project(Modules.Service.AiSecondBrain.Adaptors.OutChromaDb.path),
+    project(Modules.Service.AiSecondBrain.Adaptors.OutMySql.path),
+    project(Modules.Service.AiSecondBrain.Adaptors.OutMemo.path),
+)
+
 var moduleBlocks = mutableListOf<Project>()
     .apply {
         addAll(shared)
@@ -72,6 +81,7 @@ var moduleBlocks = mutableListOf<Project>()
         addAll(authUserService)
         addAll(seoService)
         addAll(commentService)
+        addAll(aiSecondBrainService)
     }
 
 val bootLib = mutableListOf(
@@ -90,7 +100,8 @@ var integrationTestLib = mutableListOf(
     libs.restassured,
     libs.wiremock,
     libs.mockkbean,
-    libs.spring.boot.starter.websocket
+    libs.spring.boot.starter.websocket,
+    libs.spring.ai.openai.starter
 )
 
 dependencies {
@@ -100,10 +111,14 @@ dependencies {
         kover(it)
     }
 
+    // Spring AI BOM for test
+    testImplementation(platform(libs.spring.ai.bom))
+
     testImplementation(testFixtures(project(Modules.Service.Memo.Core.path)))
     testImplementation(testFixtures(project(Modules.Service.AuthUser.Application.path)))
     testImplementation(testFixtures(project(Modules.Service.Blog.Core.path)))
     testImplementation(testFixtures(project(Modules.Service.Comment.Core.path)))
+    testImplementation(testFixtures(project(Modules.Service.AiSecondBrain.Core.path)))
     // external libs
     bootLib.forEach {
         implementation(it)
