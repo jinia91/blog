@@ -1,0 +1,80 @@
+services:
+  mysql:
+    image: mysql:8.0.39
+    container_name: jiniaslog-mysql
+    restart: always
+    ports:
+      - "3307:3306"
+    environment:
+      MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+      MYSQL_DATABASE: jiniaslog_blog
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+    volumes:
+      - ./sql/initdb.d:/docker-entrypoint-initdb.d
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "--silent"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+    networks:
+      - jiniaslog-network
+
+  redis:
+    image: redis:7.0
+    container_name: jiniaslog-redis
+    restart: always
+    ports:
+      - "8882:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - jiniaslog-network
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.11.0
+    container_name: jiniaslog-elasticsearch
+    restart: always
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+      - xpack.security.enrollment.enabled=false
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    volumes:
+      - elasticsearch_data:/usr/share/elasticsearch/data
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:9200/_cluster/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 30
+    networks:
+      - jiniaslog-network
+
+  chromadb:
+    image: chromadb/chroma:latest
+    container_name: jiniaslog-chromadb
+    restart: always
+    ports:
+      - "8000:8000"
+    volumes:
+      - chroma_data:/chroma/chroma
+    environment:
+      - IS_PERSISTENT=TRUE
+      - ANONYMIZED_TELEMETRY=FALSE
+    networks:
+      - jiniaslog-network
+
+volumes:
+  mysql_data:
+  redis_data:
+  elasticsearch_data:
+  chroma_data:
+
+networks:
+  jiniaslog-network:
+    driver: bridge
