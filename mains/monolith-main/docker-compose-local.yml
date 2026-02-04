@@ -56,7 +56,7 @@ services:
       - jiniaslog-network
 
   chromadb:
-    image: chromadb/chroma:latest
+    image: chromadb/chroma:0.4.24
     container_name: jiniaslog-chromadb
     restart: always
     ports:
