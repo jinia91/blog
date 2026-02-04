@@ -26,7 +26,6 @@ import org.springframework.test.context.DynamicPropertyRegistry
 import org.springframework.test.context.DynamicPropertySource
 import org.testcontainers.containers.MySQLContainer
 import org.testcontainers.junit.jupiter.Testcontainers
-import java.util.stream.Stream
 
 @TestConfiguration
 class ContextWithTestContainerConfig {
@@ -122,92 +121,84 @@ abstract class TestContainerAbstractSkeleton {
         private const val RDB_COLLATION = "--collation-server=utf8mb4_unicode_ci"
         private const val RDB_INIT_SQL = "SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci"
 
+        private const val SCHEMA_USER = "jiniaslog_user"
+        private const val SCHEMA_BLOG = "jiniaslog_blog"
+        private const val SCHEMA_MEMO = "jiniaslog_memo"
+        private const val SCHEMA_COMMENT = "jiniaslog_comment"
+        private const val SCHEMA_AI = "jiniaslog_ai"
+
         @JvmStatic
-        val userDb: MySQLContainer<*> = MySQLContainer("mysql:8.0")
+        val mysql: MySQLContainer<*> = MySQLContainer("mysql:8.0")
             .withCommand(RDB_CHARSET, RDB_COLLATION)
-            .withDatabaseName("jiniaslog_user")
+            .withDatabaseName(SCHEMA_USER)
             .withReuse(true)
-
-        @JvmStatic
-        val blogDb: MySQLContainer<*> =
-            MySQLContainer("mysql:8.0")
-                .withCommand(RDB_CHARSET, RDB_COLLATION)
-                .withDatabaseName("jiniaslog_blog")
-                .withReuse(true)
-
-        @JvmStatic
-        val memoDb: MySQLContainer<*> =
-            MySQLContainer("mysql:8.0")
-                .withCommand(RDB_CHARSET, RDB_COLLATION)
-                .withDatabaseName("jiniaslog_memo")
-                .withReuse(true)
-
-        @JvmStatic
-        val commentDb: MySQLContainer<*> =
-            MySQLContainer("mysql:8.0")
-                .withCommand(RDB_CHARSET, RDB_COLLATION)
-                .withDatabaseName("jiniaslog_comment")
-                .withReuse(true)
-
-        @JvmStatic
-        val aiDb: MySQLContainer<*> =
-            MySQLContainer("mysql:8.0")
-                .withCommand(RDB_CHARSET, RDB_COLLATION)
-                .withDatabaseName("jiniaslog_ai")
-                .withReuse(true)
 
         @JvmStatic
         val redis: RedisContainer = RedisContainer("redis:7.0")
             .withReuse(true)
 
         init {
-            Stream.of(
-                userDb,
-                blogDb,
-                memoDb,
-                commentDb,
-                aiDb,
-                redis
-            ).forEach { it.start() }
+            mysql.start()
+            redis.start()
+            createSchemas()
+        }
+
+        private fun createSchemas() {
+            val rootUrl = "jdbc:mysql://${mysql.host}:${mysql.firstMappedPort}/"
+            java.sql.DriverManager.getConnection(rootUrl, "root", mysql.password).use { conn ->
+                conn.createStatement().use { stmt ->
+                    listOf(SCHEMA_BLOG, SCHEMA_MEMO, SCHEMA_COMMENT, SCHEMA_AI).forEach { schema ->
+                        stmt.execute(
+                            "CREATE DATABASE IF NOT EXISTS $schema CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci"
+                        )
+                        stmt.execute("GRANT ALL PRIVILEGES ON $schema.* TO '${mysql.username}'@'%'")
+                    }
+                    stmt.execute("FLUSH PRIVILEGES")
+                }
+            }
+        }
+
+        private fun jdbcUrlForSchema(schema: String): String {
+            return "jdbc:mysql://${mysql.host}:${mysql.firstMappedPort}/$schema"
         }
 
         @DynamicPropertySource
         @JvmStatic
         fun testProperty(registry: DynamicPropertyRegistry) {
             // user db
-            registry.add("spring.datasource.user.jdbc-url") { userDb.jdbcUrl }
-            registry.add("spring.datasource.user.username") { userDb.username }
-            registry.add("spring.datasource.user.password") { userDb.password }
-            registry.add("spring.datasource.user.driver-class-name") { userDb.driverClassName }
+            registry.add("spring.datasource.user.jdbc-url") { jdbcUrlForSchema(SCHEMA_USER) }
+            registry.add("spring.datasource.user.username") { mysql.username }
+            registry.add("spring.datasource.user.password") { mysql.password }
+            registry.add("spring.datasource.user.driver-class-name") { mysql.driverClassName }
             registry.add("spring.datasource.user.connection-init-sql") { RDB_INIT_SQL }
 
             // blog db
-            registry.add("spring.datasource.blog.jdbc-url") { blogDb.jdbcUrl }
-            registry.add("spring.datasource.blog.username") { blogDb.username }
-            registry.add("spring.datasource.blog.password") { blogDb.password }
-            registry.add("spring.datasource.blog.driver-class-name") { blogDb.driverClassName }
+            registry.add("spring.datasource.blog.jdbc-url") { jdbcUrlForSchema(SCHEMA_BLOG) }
+            registry.add("spring.datasource.blog.username") { mysql.username }
+            registry.add("spring.datasource.blog.password") { mysql.password }
+            registry.add("spring.datasource.blog.driver-class-name") { mysql.driverClassName }
             registry.add("spring.datasource.blog.connection-init-sql") { RDB_INIT_SQL }
 
             // memo db
-            registry.add("spring.datasource.memo.jdbc-url") { memoDb.jdbcUrl }
-            registry.add("spring.datasource.memo.username") { memoDb.username }
-            registry.add("spring.datasource.memo.password") { memoDb.password }
-            registry.add("spring.datasource.memo.driver-class-name") { memoDb.driverClassName }
+            registry.add("spring.datasource.memo.jdbc-url") { jdbcUrlForSchema(SCHEMA_MEMO) }
+            registry.add("spring.datasource.memo.username") { mysql.username }
+            registry.add("spring.datasource.memo.password") { mysql.password }
+            registry.add("spring.datasource.memo.driver-class-name") { mysql.driverClassName }
             registry.add("spring.datasource.memo.connection-init-sql") { RDB_INIT_SQL }
 
             // comment db
-            registry.add("spring.datasource.comment.jdbc-url") { commentDb.jdbcUrl }
-            registry.add("spring.datasource.comment.username") { commentDb.username }
-            registry.add("spring.datasource.comment.password") { commentDb.password }
-            registry.add("spring.datasource.comment.driver-class-name") { commentDb.driverClassName }
+            registry.add("spring.datasource.comment.jdbc-url") { jdbcUrlForSchema(SCHEMA_COMMENT) }
+            registry.add("spring.datasource.comment.username") { mysql.username }
+            registry.add("spring.datasource.comment.password") { mysql.password }
+            registry.add("spring.datasource.comment.driver-class-name") { mysql.driverClassName }
             registry.add("spring.datasource.comment.connection-init-sql") { RDB_INIT_SQL }
 
-            // ai db (uses DataSourceProperties which needs 'url' instead of 'jdbc-url')
-            registry.add("spring.datasource.ai.url") { aiDb.jdbcUrl }
-            registry.add("spring.datasource.ai.jdbc-url") { aiDb.jdbcUrl }
-            registry.add("spring.datasource.ai.username") { aiDb.username }
-            registry.add("spring.datasource.ai.password") { aiDb.password }
-            registry.add("spring.datasource.ai.driver-class-name") { aiDb.driverClassName }
+            // ai db
+            registry.add("spring.datasource.ai.url") { jdbcUrlForSchema(SCHEMA_AI) }
+            registry.add("spring.datasource.ai.jdbc-url") { jdbcUrlForSchema(SCHEMA_AI) }
+            registry.add("spring.datasource.ai.username") { mysql.username }
+            registry.add("spring.datasource.ai.password") { mysql.password }
+            registry.add("spring.datasource.ai.driver-class-name") { mysql.driverClassName }
             registry.add("spring.datasource.ai.connection-init-sql") { RDB_INIT_SQL }
 
             // redis
