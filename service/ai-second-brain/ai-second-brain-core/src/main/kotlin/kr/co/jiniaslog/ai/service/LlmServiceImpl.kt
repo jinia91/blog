@@ -1,19 +1,19 @@
-package kr.co.jiniaslog.ai.adapter.outbound.chromadb
+package kr.co.jiniaslog.ai.service
 
 import kr.co.jiniaslog.ai.domain.chat.ChatMessage
 import kr.co.jiniaslog.ai.domain.chat.MessageRole
 import kr.co.jiniaslog.ai.outbound.ChatContext
 import kr.co.jiniaslog.ai.outbound.IntentType
 import kr.co.jiniaslog.ai.outbound.LlmService
-import kr.co.jiniaslog.shared.core.annotation.PersistenceAdapter
 import org.springframework.ai.chat.client.ChatClient
 import org.springframework.ai.chat.messages.AssistantMessage
 import org.springframework.ai.chat.messages.Message
 import org.springframework.ai.chat.messages.SystemMessage
 import org.springframework.ai.chat.messages.UserMessage
+import org.springframework.stereotype.Service
 
-@PersistenceAdapter
-class OpenAiLlmServiceAdapter(
+@Service
+class LlmServiceImpl(
     private val chatClient: ChatClient,
 ) : LlmService {
 

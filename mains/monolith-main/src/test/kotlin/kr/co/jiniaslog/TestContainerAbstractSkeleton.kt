@@ -86,7 +86,11 @@ class ContextWithTestContainerConfig {
 @SpringBootTest(
     webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
     classes = [ContextWithTestContainerConfig::class],
-    properties = ["spring.main.allow-bean-definition-overriding=true"]
+    properties = [
+        "spring.main.allow-bean-definition-overriding=true",
+        "spring.test.database.replace=none",
+        "spring.autoconfigure.exclude=org.springframework.ai.autoconfigure.vectorstore.chroma.ChromaVectorStoreAutoConfiguration,org.springframework.ai.autoconfigure.openai.OpenAiAutoConfiguration,org.springframework.boot.autoconfigure.data.elasticsearch.ElasticsearchDataAutoConfiguration,org.springframework.boot.autoconfigure.elasticsearch.ElasticsearchRestClientAutoConfiguration,org.springframework.boot.autoconfigure.data.neo4j.Neo4jDataAutoConfiguration"
+    ]
 )
 abstract class TestContainerAbstractSkeleton {
     @LocalServerPort
@@ -198,7 +202,8 @@ abstract class TestContainerAbstractSkeleton {
             registry.add("spring.datasource.comment.driver-class-name") { commentDb.driverClassName }
             registry.add("spring.datasource.comment.connection-init-sql") { RDB_INIT_SQL }
 
-            // ai db
+            // ai db (uses DataSourceProperties which needs 'url' instead of 'jdbc-url')
+            registry.add("spring.datasource.ai.url") { aiDb.jdbcUrl }
             registry.add("spring.datasource.ai.jdbc-url") { aiDb.jdbcUrl }
             registry.add("spring.datasource.ai.username") { aiDb.username }
             registry.add("spring.datasource.ai.password") { aiDb.password }

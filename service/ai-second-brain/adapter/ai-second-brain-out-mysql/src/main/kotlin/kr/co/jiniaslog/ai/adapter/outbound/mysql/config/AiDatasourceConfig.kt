@@ -2,6 +2,7 @@ package kr.co.jiniaslog.ai.adapter.outbound.mysql.config
 
 import com.zaxxer.hikari.HikariDataSource
 import jakarta.persistence.EntityManagerFactory
+import kr.co.jiniaslog.shared.adapter.out.rdb.JpaAutoDdlProperty
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties
 import org.springframework.boot.context.properties.ConfigurationProperties
@@ -22,7 +23,7 @@ import javax.sql.DataSource
     entityManagerFactoryRef = "aiEntityManagerFactory",
     transactionManagerRef = "aiTransactionManager"
 )
-class AiDatasourceConfig {
+class AiDatasourceConfig(private val jpaDdlAutoProperty: JpaAutoDdlProperty) {
 
     @Bean
     @ConfigurationProperties("spring.datasource.ai")
@@ -47,6 +48,7 @@ class AiDatasourceConfig {
             .dataSource(dataSource)
             .packages("kr.co.jiniaslog.ai.domain.chat")
             .persistenceUnit("ai")
+            .properties(mapOf(jpaDdlAutoProperty.key to jpaDdlAutoProperty.ddlAuto))
             .build()
     }
 

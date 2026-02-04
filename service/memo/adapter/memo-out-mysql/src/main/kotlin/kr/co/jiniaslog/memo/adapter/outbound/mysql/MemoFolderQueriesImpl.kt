@@ -8,6 +8,7 @@ import kr.co.jiniaslog.memo.domain.memo.QMemo
 import kr.co.jiniaslog.memo.domain.memo.QMemo.memo
 import kr.co.jiniaslog.memo.queries.FolderQueriesFacade
 import kr.co.jiniaslog.memo.queries.ICheckMemoExisted
+import kr.co.jiniaslog.memo.queries.IGetAllMemosByAuthorId
 import kr.co.jiniaslog.memo.queries.IGetAllReferencedByMemo
 import kr.co.jiniaslog.memo.queries.IGetAllReferencesByMemo
 import kr.co.jiniaslog.memo.queries.IGetFoldersAllInHierirchyByAuthorId
@@ -207,5 +208,16 @@ internal class MemoFolderQueriesImpl(
                 memos = emptyList()
             )
         )
+    }
+
+    override fun handle(query: IGetAllMemosByAuthorId.Query): List<IGetAllMemosByAuthorId.MemoInfo> {
+        return memoRepository.findAllByAuthorId(query.authorId).map { memo ->
+            IGetAllMemosByAuthorId.MemoInfo(
+                id = memo.entityId.value,
+                authorId = memo.authorId.value,
+                title = memo.title.value,
+                content = memo.content.value,
+            )
+        }
     }
 }

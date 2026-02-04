@@ -1,7 +1,9 @@
 package kr.co.jiniaslog.utils
 
+import com.zaxxer.hikari.HikariDataSource
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.jdbc.datasource.DataSourceUtils
+import org.springframework.jdbc.datasource.DelegatingDataSource
 import org.springframework.stereotype.Component
 import java.sql.Connection
 import javax.sql.DataSource
@@ -9,9 +11,11 @@ import javax.sql.DataSource
 @Component
 class MySqlRdbCleaner(private val dataSources: List<DataSource>) : DbCleaner {
     override fun tearDownAll() {
-        dataSources.forEach { dataSource ->
-            clean(dataSource)
-        }
+        dataSources
+            .filter { !isH2DataSource(it) }
+            .forEach { dataSource ->
+                clean(dataSource)
+            }
     }
 
     private fun clean(dataSource: DataSource) {
@@ -38,6 +42,59 @@ class MySqlRdbCleaner(private val dataSources: List<DataSource>) : DbCleaner {
                 DataSourceUtils.releaseConnection(connection, jdbcTemplate.dataSource!!)
             }
         }
+    }
+
+    private fun isH2DataSource(dataSource: DataSource): Boolean {
+        return try {
+            // Try to find HikariDataSource in the wrapper chain
+            val hikari = findHikariDataSource(dataSource)
+            if (hikari != null) {
+                val jdbcUrl = hikari.jdbcUrl ?: ""
+                return jdbcUrl.startsWith("jdbc:h2:")
+            }
+            // Fallback: check toString for H2 indicators
+            dataSource.toString().contains("h2", ignoreCase = true)
+        } catch (e: Exception) {
+            // If we can't determine, assume it IS H2 to be safe (skip it)
+            true
+        }
+    }
+
+    private fun findHikariDataSource(dataSource: DataSource): HikariDataSource? {
+        var current: Any? = dataSource
+        val visited = mutableSetOf<Any>()
+
+        while (current != null && current !in visited) {
+            visited.add(current)
+
+            if (current is HikariDataSource) {
+                return current
+            }
+
+            // Try to get the wrapped/target DataSource using reflection
+            current = try {
+                when {
+                    current is DelegatingDataSource -> current.targetDataSource
+                    else -> {
+                        // Try common field names for wrapped DataSources
+                        val clazz = current::class.java
+                        listOf("realDataSource", "targetDataSource", "delegate", "dataSource", "ds")
+                            .firstNotNullOfOrNull { fieldName ->
+                                try {
+                                    val field = clazz.getDeclaredField(fieldName)
+                                    field.isAccessible = true
+                                    field.get(current) as? DataSource
+                                } catch (e: Exception) {
+                                    null
+                                }
+                            }
+                    }
+                }
+            } catch (e: Exception) {
+                null
+            }
+        }
+        return null
     }
 
     companion object {

@@ -6,18 +6,11 @@ import kr.co.jiniaslog.memo.usecase.MemoUseCasesFacade
 import kr.co.jiniaslog.user.domain.auth.token.TokenManager
 import kr.co.jiniaslog.user.domain.user.Role
 import kr.co.jiniaslog.user.domain.user.UserId
-import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.beans.factory.annotation.Value
-import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.messaging.simp.stomp.StompSession
 import java.util.concurrent.CompletableFuture
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-abstract class WebSocketTestAbstractSkeleton {
-    @Value("\${local.server.port}")
-    protected val port = 0
-
+abstract class WebSocketTestAbstractSkeleton : TestContainerAbstractSkeleton() {
     @MockkBean
     protected lateinit var memoUseCases: MemoUseCasesFacade
 
@@ -30,10 +23,6 @@ abstract class WebSocketTestAbstractSkeleton {
 
     @Autowired
     private lateinit var tokenManager: TokenManager
-
-    @Test
-    fun contextLoads() {
-    }
 
     protected fun getTestAdminUserToken(): String {
         return tokenManager.generateAccessToken(

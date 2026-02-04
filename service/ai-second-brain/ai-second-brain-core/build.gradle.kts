@@ -14,6 +14,10 @@ dependencies {
     implementation(libs.spring.boot.starter.core)
     implementation(libs.spring.boot.starter.validation)
 
+    // Spring AI - LLM 비즈니스 로직에서 직접 사용
+    implementation(platform(libs.spring.ai.bom))
+    implementation(libs.spring.ai.openai.starter)
+
     testImplementation(testFixtures(project(Modules.Libs.CoreKernel.path)))
     testFixturesApi(project(Modules.Libs.CoreKernel.path))
 }
