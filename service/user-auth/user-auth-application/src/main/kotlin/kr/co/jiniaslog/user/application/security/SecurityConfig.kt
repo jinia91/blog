@@ -31,6 +31,7 @@ class SecurityConfig(
                 it.requestMatchers("/api/v1/media").authenticated()
                 it.requestMatchers("/api/v1/memos/**", "/api/v1/memos").authenticated()
                 it.requestMatchers("/api/v1/folders/**", "/api/v1/folders").authenticated()
+                it.requestMatchers("/api/ai/**").authenticated()
                 it.anyRequest().permitAll()
             }
             .headers { it.frameOptions(Customizer { it.disable() }) }
