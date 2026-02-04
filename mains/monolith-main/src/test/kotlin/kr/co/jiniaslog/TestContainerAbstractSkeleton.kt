@@ -35,7 +35,7 @@ class ContextWithTestContainerConfig {
         return mockk()
     }
 
-    @Bean
+    @Bean(name = ["googleGenAiChatModel"])
     @Primary
     fun chatModel(): ChatModel {
         return mockk(relaxed = true)
@@ -88,7 +88,7 @@ class ContextWithTestContainerConfig {
     properties = [
         "spring.main.allow-bean-definition-overriding=true",
         "spring.test.database.replace=none",
-        "spring.autoconfigure.exclude=org.springframework.ai.autoconfigure.vectorstore.chroma.ChromaVectorStoreAutoConfiguration,org.springframework.ai.autoconfigure.openai.OpenAiAutoConfiguration,org.springframework.boot.autoconfigure.data.elasticsearch.ElasticsearchDataAutoConfiguration,org.springframework.boot.autoconfigure.elasticsearch.ElasticsearchRestClientAutoConfiguration,org.springframework.boot.autoconfigure.data.neo4j.Neo4jDataAutoConfiguration"
+        "spring.autoconfigure.exclude=org.springframework.ai.vectorstore.chroma.autoconfigure.ChromaVectorStoreAutoConfiguration,org.springframework.ai.model.google.genai.autoconfigure.chat.GoogleGenAiChatAutoConfiguration,org.springframework.ai.model.google.genai.autoconfigure.embedding.GoogleGenAiTextEmbeddingAutoConfiguration,org.springframework.ai.model.google.genai.autoconfigure.embedding.GoogleGenAiEmbeddingConnectionAutoConfiguration,org.springframework.boot.autoconfigure.data.elasticsearch.ElasticsearchDataAutoConfiguration,org.springframework.boot.autoconfigure.elasticsearch.ElasticsearchRestClientAutoConfiguration,org.springframework.boot.autoconfigure.data.neo4j.Neo4jDataAutoConfiguration"
     ]
 )
 abstract class TestContainerAbstractSkeleton {

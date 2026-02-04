@@ -42,9 +42,11 @@ spring-data-redis = { module = "org.springframework.boot:spring-boot-starter-dat
 spring-data-elasticsearch = { module = "org.springframework.boot:spring-boot-starter-data-elasticsearch" }
 
 # Spring AI
-spring-ai-bom = { module = "org.springframework.ai:spring-ai-bom", version = "1.0.0-M4" }
-spring-ai-openai-starter = { module = "org.springframework.ai:spring-ai-openai-spring-boot-starter" }
-spring-ai-chroma-store = { module = "org.springframework.ai:spring-ai-chroma-store-spring-boot-starter" }
+spring-ai-bom = { module = "org.springframework.ai:spring-ai-bom", version = "1.1.2" }
+spring-ai-openai-starter = { module = "org.springframework.ai:spring-ai-starter-model-openai" }
+spring-ai-google-genai-starter = { module = "org.springframework.ai:spring-ai-starter-model-google-genai" }
+spring-ai-google-genai-embedding-starter = { module = "org.springframework.ai:spring-ai-starter-model-google-genai-embedding" }
+spring-ai-chroma-store = { module = "org.springframework.ai:spring-ai-starter-vector-store-chroma" }
 
 # 캐시
 spring-boot-starter-redisson = { module = "org.redisson:redisson-spring-boot-starter", version = "3.17.7" }

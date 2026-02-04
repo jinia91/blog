@@ -10,4 +10,6 @@ dependencies {
 
     implementation(platform(libs.spring.ai.bom))
     implementation(libs.spring.ai.chroma.store)
+    // Google GenAI embedding 사용
+    implementation(libs.spring.ai.google.genai.embedding.starter)
 }

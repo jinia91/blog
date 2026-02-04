@@ -101,7 +101,8 @@ var integrationTestLib = mutableListOf(
     libs.wiremock,
     libs.mockkbean,
     libs.spring.boot.starter.websocket,
-    libs.spring.ai.openai.starter
+    libs.spring.ai.google.genai.embedding.starter,
+    libs.spring.ai.chroma.store
 )
 
 dependencies {
