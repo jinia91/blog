@@ -14,12 +14,6 @@ data class RecommendedMemoResponse(
     val similarity: Double,
 )
 
-@Schema(description = "임베딩 동기화 요청")
-data class SyncRequest(
-    @Schema(description = "동기화 대상 (all 또는 특정 메모 ID)", example = "all")
-    val target: String = "all",
-)
-
 @Schema(description = "임베딩 동기화 응답")
 data class SyncResponse(
     @Schema(description = "동기화된 메모 수")

@@ -6,7 +6,6 @@ import io.restassured.module.mockmvc.RestAssuredMockMvc
 import kr.co.jiniaslog.ai.adapter.inbound.http.AiResources
 import kr.co.jiniaslog.ai.adapter.inbound.http.dto.ChatRequest
 import kr.co.jiniaslog.ai.adapter.inbound.http.dto.CreateSessionRequest
-import kr.co.jiniaslog.ai.adapter.inbound.http.dto.SyncRequest
 import kr.co.jiniaslog.ai.domain.chat.MessageRole
 import kr.co.jiniaslog.ai.usecase.IChat
 import kr.co.jiniaslog.ai.usecase.ICreateChatSession
@@ -264,8 +263,6 @@ class AiResourceRestTests {
         @Test
         fun `인증 없이 동기화 요청하면 401을 반환한다`() {
             RestAssuredMockMvc.given()
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .body(SyncRequest(target = "all"))
                 .post("/api/ai/sync")
                 .then()
                 .statusCode(401)
@@ -279,8 +276,6 @@ class AiResourceRestTests {
             // when & then
             RestAssuredMockMvc.given()
                 .cookies(PreAuthFilter.ACCESS_TOKEN_HEADER, getTestUserToken())
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .body(SyncRequest(target = "all"))
                 .post("/api/ai/sync")
                 .then()
                 .statusCode(200)

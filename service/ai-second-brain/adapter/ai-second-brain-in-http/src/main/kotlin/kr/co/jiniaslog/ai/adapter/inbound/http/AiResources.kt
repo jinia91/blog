@@ -11,7 +11,6 @@ import kr.co.jiniaslog.ai.adapter.inbound.http.dto.CreateSessionResponse
 import kr.co.jiniaslog.ai.adapter.inbound.http.dto.MessageResponse
 import kr.co.jiniaslog.ai.adapter.inbound.http.dto.RecommendedMemoResponse
 import kr.co.jiniaslog.ai.adapter.inbound.http.dto.SessionResponse
-import kr.co.jiniaslog.ai.adapter.inbound.http.dto.SyncRequest
 import kr.co.jiniaslog.ai.adapter.inbound.http.dto.SyncResponse
 import kr.co.jiniaslog.ai.usecase.IChat
 import kr.co.jiniaslog.ai.usecase.ICreateChatSession
@@ -194,7 +193,6 @@ class AiResources(
     @PostMapping("/sync")
     fun syncAllMemos(
         @AuthUserId userId: Long,
-        @RequestBody request: SyncRequest,
     ): ResponseEntity<SyncResponse> {
         val result = syncAllUseCase(
             ISyncAllMemosToEmbedding.Command(authorId = userId)
