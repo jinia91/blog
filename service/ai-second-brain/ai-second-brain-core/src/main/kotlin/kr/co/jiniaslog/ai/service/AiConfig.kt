@@ -11,6 +11,8 @@ class AiConfig {
 
     @Bean
     fun chatClient(@Qualifier("googleGenAiChatModel") chatModel: ChatModel): ChatClient {
-        return ChatClient.builder(chatModel).build()
+        return ChatClient
+            .builder(chatModel)
+            .build()
     }
 }

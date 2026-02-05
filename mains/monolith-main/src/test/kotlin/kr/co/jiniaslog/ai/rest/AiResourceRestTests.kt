@@ -281,4 +281,84 @@ class AiResourceRestTests {
                 .statusCode(200)
         }
     }
+
+    @Nested
+    inner class `세션 삭제 API 테스트` {
+        @Test
+        fun `인증 없이 세션 삭제하면 401을 반환한다`() {
+            RestAssuredMockMvc.given()
+                .delete("/api/ai/sessions/1")
+                .then()
+                .statusCode(401)
+        }
+
+        @Test
+        fun `유효한 요청으로 세션을 삭제하면 204를 반환한다`() {
+            // given
+            every { deleteSessionUseCase(any()) } returns Unit
+
+            // when & then
+            RestAssuredMockMvc.given()
+                .cookies(PreAuthFilter.ACCESS_TOKEN_HEADER, getTestUserToken())
+                .delete("/api/ai/sessions/1")
+                .then()
+                .statusCode(204)
+        }
+    }
+
+    @Nested
+    inner class `추가 파라미터 테스트` {
+        @Test
+        fun `히스토리 조회 시 커서와 사이즈를 전달할 수 있다`() {
+            // given
+            every { getChatHistoryUseCase(any()) } returns IGetChatHistory.PagedMessages(
+                messages = emptyList(),
+                nextCursor = null,
+                hasNext = false
+            )
+
+            // when & then
+            RestAssuredMockMvc.given()
+                .cookies(PreAuthFilter.ACCESS_TOKEN_HEADER, getTestUserToken())
+                .queryParam("cursor", 10)
+                .queryParam("size", 20)
+                .get("/api/ai/sessions/1/messages")
+                .then()
+                .statusCode(200)
+        }
+
+        @Test
+        fun `메모 추천 시 memoId를 전달할 수 있다`() {
+            // given
+            every { recommendUseCase(any()) } returns emptyList()
+
+            // when & then
+            RestAssuredMockMvc.given()
+                .cookies(PreAuthFilter.ACCESS_TOKEN_HEADER, getTestUserToken())
+                .queryParam("memoId", 5)
+                .queryParam("topK", 3)
+                .get("/api/ai/recommend")
+                .then()
+                .statusCode(200)
+        }
+
+        @Test
+        fun `채팅 응답에 createdMemoId가 포함될 수 있다`() {
+            // given
+            every { chatUseCase(any()) } returns IChat.Info(
+                sessionId = 1L,
+                response = "메모가 생성되었습니다.",
+                createdMemoId = 100L
+            )
+
+            // when & then
+            RestAssuredMockMvc.given()
+                .cookies(PreAuthFilter.ACCESS_TOKEN_HEADER, getTestUserToken())
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .body(ChatRequest(sessionId = 1L, message = "메모 생성해줘"))
+                .post("/api/ai/chat")
+                .then()
+                .statusCode(200)
+        }
+    }
 }

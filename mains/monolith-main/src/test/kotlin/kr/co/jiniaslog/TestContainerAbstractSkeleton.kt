@@ -7,6 +7,9 @@ import io.restassured.RestAssured
 import kr.co.jiniaslog.ai.outbound.EmbeddingStore
 import kr.co.jiniaslog.ai.outbound.IntentType
 import kr.co.jiniaslog.ai.outbound.LlmService
+import kr.co.jiniaslog.ai.outbound.MemoCommandService
+import kr.co.jiniaslog.ai.outbound.MemoInfo
+import kr.co.jiniaslog.ai.outbound.MemoQueryService
 import kr.co.jiniaslog.media.outbound.ImageUploader
 import kr.co.jiniaslog.utils.CacheCleaner
 import kr.co.jiniaslog.utils.MySqlRdbCleaner
@@ -65,6 +68,28 @@ class ContextWithTestContainerConfig {
         return mockk {
             every { classifyIntent(any()) } returns IntentType.QUESTION
             every { chat(any(), any()) } returns "테스트 응답입니다."
+        }
+    }
+
+    @Bean
+    @Primary
+    fun memoQueryService(): MemoQueryService {
+        return mockk {
+            every { getMemoById(any()) } returns MemoInfo(
+                id = 1L,
+                authorId = 100L,
+                title = "테스트 메모",
+                content = "테스트 메모 내용입니다."
+            )
+            every { getAllMemosByAuthorId(any()) } returns emptyList()
+        }
+    }
+
+    @Bean
+    @Primary
+    fun memoCommandService(): MemoCommandService {
+        return mockk {
+            every { createMemo(any(), any(), any()) } returns 1L
         }
     }
 }

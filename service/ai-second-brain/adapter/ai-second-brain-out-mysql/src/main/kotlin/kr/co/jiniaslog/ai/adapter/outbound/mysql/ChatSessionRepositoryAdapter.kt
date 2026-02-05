@@ -21,7 +21,7 @@ class ChatSessionRepositoryAdapter(
     }
 
     override fun findAllByAuthorId(authorId: AuthorId): List<ChatSession> {
-        return jpaRepository.findAllByAuthorId(authorId)
+        return jpaRepository.findByAuthorIdOrderByUpdatedAtDesc(authorId)
     }
 
     override fun delete(chatSession: ChatSession) {

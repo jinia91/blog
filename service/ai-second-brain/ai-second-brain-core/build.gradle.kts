@@ -18,6 +18,10 @@ dependencies {
     implementation(platform(libs.spring.ai.bom))
     implementation(libs.spring.ai.google.genai.starter)
 
+    // QueryDSL - Q클래스 생성
+    implementation("com.querydsl:querydsl-jpa:5.1.0:jakarta")
+    kapt("com.querydsl:querydsl-apt:5.1.0:jakarta")
+
     testImplementation(testFixtures(project(Modules.Libs.CoreKernel.path)))
     testFixturesApi(project(Modules.Libs.CoreKernel.path))
 }

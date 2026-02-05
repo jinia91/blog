@@ -136,5 +136,106 @@ class IGetChatHistoryUseCaseTests : TestContainerAbstractSkeleton() {
             result.messages[0].content shouldBe "메시지 1"
             result.messages[2].content shouldBe "메시지 2"
         }
+
+        @Test
+        fun `페이지 크기보다 많은 메시지가 있으면 hasNext가 true이다`() {
+            // given
+            val authorId = 100L
+            val session = createChatSession(
+                ICreateChatSession.Command(authorId = authorId, title = "페이징 테스트 세션")
+            )
+
+            // 3번 채팅 -> 6개 메시지 (USER + ASSISTANT * 3)
+            repeat(3) { i ->
+                chatUseCase(
+                    IChat.Command(sessionId = session.sessionId, authorId = authorId, message = "메시지 $i")
+                )
+            }
+
+            // when
+            val result = getChatHistory(
+                IGetChatHistory.Query(
+                    sessionId = session.sessionId,
+                    authorId = authorId,
+                    size = 2 // 2개씩 가져오기
+                )
+            )
+
+            // then
+            result.messages.size shouldBe 2
+            result.hasNext shouldBe true
+            result.nextCursor shouldBe result.messages.last().messageId
+        }
+
+        @Test
+        fun `커서를 이용해 다음 페이지를 조회할 수 있다`() {
+            // given
+            val authorId = 100L
+            val session = createChatSession(
+                ICreateChatSession.Command(authorId = authorId, title = "페이징 테스트 세션")
+            )
+
+            // 3번 채팅 -> 6개 메시지
+            repeat(3) { i ->
+                chatUseCase(
+                    IChat.Command(sessionId = session.sessionId, authorId = authorId, message = "메시지 $i")
+                )
+            }
+
+            // 첫 페이지 조회
+            val firstPage = getChatHistory(
+                IGetChatHistory.Query(
+                    sessionId = session.sessionId,
+                    authorId = authorId,
+                    size = 2
+                )
+            )
+
+            // when - 커서를 사용해 다음 페이지 조회
+            val secondPage = getChatHistory(
+                IGetChatHistory.Query(
+                    sessionId = session.sessionId,
+                    authorId = authorId,
+                    cursor = firstPage.nextCursor,
+                    size = 2
+                )
+            )
+
+            // then
+            secondPage.messages.size shouldBe 2
+            secondPage.hasNext shouldBe true
+            // 첫 페이지와 두 번째 페이지의 메시지가 다른지 확인
+            val firstPageLastId = firstPage.messages.last().messageId
+            val secondPageFirstId = secondPage.messages.first().messageId
+            (secondPageFirstId > firstPageLastId) shouldBe true
+        }
+
+        @Test
+        fun `마지막 페이지 조회 시 hasNext가 false이다`() {
+            // given
+            val authorId = 100L
+            val session = createChatSession(
+                ICreateChatSession.Command(authorId = authorId, title = "마지막 페이지 테스트")
+            )
+
+            // 1번 채팅 -> 2개 메시지
+            chatUseCase(
+                IChat.Command(sessionId = session.sessionId, authorId = authorId, message = "유일한 메시지")
+            )
+
+            // when
+            val result = getChatHistory(
+                IGetChatHistory.Query(
+                    sessionId = session.sessionId,
+                    authorId = authorId,
+                    size = 10 // 메시지보다 큰 페이지 크기
+                )
+            )
+
+            // then
+            result.messages.size shouldBe 2
+            result.hasNext shouldBe false
+            result.nextCursor shouldBe null
+        }
     }
 }

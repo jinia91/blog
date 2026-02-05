@@ -16,6 +16,7 @@ import kr.co.jiniaslog.shared.core.domain.IdUtils
     name = "chat_message",
     indexes = [
         Index(name = "idx_chat_message_session_id", columnList = "session_id"),
+        Index(name = "idx_chat_message_session_cursor", columnList = "session_id, created_at, id"),
     ]
 )
 class ChatMessage private constructor(

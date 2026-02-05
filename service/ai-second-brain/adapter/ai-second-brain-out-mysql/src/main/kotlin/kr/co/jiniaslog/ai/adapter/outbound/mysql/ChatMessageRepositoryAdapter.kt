@@ -5,12 +5,11 @@ import kr.co.jiniaslog.ai.domain.chat.ChatMessageId
 import kr.co.jiniaslog.ai.domain.chat.ChatMessageRepository
 import kr.co.jiniaslog.ai.domain.chat.ChatSessionId
 import kr.co.jiniaslog.shared.core.annotation.PersistenceAdapter
-import org.springframework.data.domain.PageRequest
-import org.springframework.transaction.annotation.Transactional
 
 @PersistenceAdapter
 class ChatMessageRepositoryAdapter(
     private val jpaRepository: ChatMessageJpaRepository,
+    private val queryRepository: ChatMessageQueryRepository,
 ) : ChatMessageRepository {
 
     override fun save(chatMessage: ChatMessage): ChatMessage {
@@ -22,7 +21,7 @@ class ChatMessageRepositoryAdapter(
     }
 
     override fun findAllBySessionId(sessionId: ChatSessionId): List<ChatMessage> {
-        return jpaRepository.findAllBySessionId(sessionId)
+        return jpaRepository.findBySessionIdOrderByCreatedAtAsc(sessionId)
     }
 
     override fun findBySessionIdWithCursor(
@@ -30,16 +29,10 @@ class ChatMessageRepositoryAdapter(
         cursor: ChatMessageId?,
         size: Int,
     ): List<ChatMessage> {
-        val pageable = PageRequest.of(0, size + 1) // +1 for hasNext check
-        return if (cursor == null) {
-            jpaRepository.findBySessionIdWithoutCursor(sessionId, pageable)
-        } else {
-            jpaRepository.findBySessionIdWithCursor(sessionId, cursor, pageable)
-        }
+        return queryRepository.findBySessionIdWithCursor(sessionId, cursor, size)
     }
 
-    @Transactional
     override fun deleteAllBySessionId(sessionId: ChatSessionId) {
-        jpaRepository.deleteAllBySessionId(sessionId)
+        jpaRepository.deleteBySessionId(sessionId)
     }
 }

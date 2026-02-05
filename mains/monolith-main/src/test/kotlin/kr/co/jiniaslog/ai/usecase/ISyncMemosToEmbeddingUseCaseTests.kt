@@ -1,10 +1,13 @@
 package kr.co.jiniaslog.ai.usecase
 
 import io.kotest.matchers.shouldBe
+import io.mockk.every
 import io.mockk.verify
 import kr.co.jiniaslog.TestContainerAbstractSkeleton
 import kr.co.jiniaslog.ai.outbound.EmbeddingStore
 import kr.co.jiniaslog.ai.outbound.MemoEmbeddingDocument
+import kr.co.jiniaslog.ai.outbound.MemoInfo
+import kr.co.jiniaslog.ai.outbound.MemoQueryService
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -22,6 +25,9 @@ class ISyncMemosToEmbeddingUseCaseTests : TestContainerAbstractSkeleton() {
 
     @Autowired
     private lateinit var embeddingStore: EmbeddingStore
+
+    @Autowired
+    private lateinit var memoQueryService: MemoQueryService
 
     @Nested
     inner class `단일 메모 임베딩 동기화 테스트` {
@@ -66,6 +72,30 @@ class ISyncMemosToEmbeddingUseCaseTests : TestContainerAbstractSkeleton() {
 
             // then
             result.syncedCount shouldBe 0 // 메모가 없으므로 0
+        }
+
+        @Test
+        fun `여러 메모가 있으면 모두 동기화되고 개수가 반환된다`() {
+            // given
+            val authorId = 100L
+            val memos = listOf(
+                MemoInfo(id = 1L, authorId = authorId, title = "메모 1", content = "내용 1"),
+                MemoInfo(id = 2L, authorId = authorId, title = "메모 2", content = "내용 2"),
+                MemoInfo(id = 3L, authorId = authorId, title = "메모 3", content = "내용 3"),
+            )
+
+            every { memoQueryService.getAllMemosByAuthorId(authorId) } returns memos
+
+            // when
+            val result = syncAllMemosToEmbedding(
+                ISyncAllMemosToEmbedding.Command(authorId = authorId)
+            )
+
+            // then
+            result.syncedCount shouldBe 3
+
+            // 원래대로 복구
+            every { memoQueryService.getAllMemosByAuthorId(any()) } returns emptyList()
         }
     }
 

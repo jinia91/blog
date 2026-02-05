@@ -15,6 +15,9 @@ import kr.co.jiniaslog.ai.outbound.MemoCommandService
 import kr.co.jiniaslog.ai.outbound.MemoEmbeddingDocument
 import kr.co.jiniaslog.ai.outbound.MemoQueryService
 import kr.co.jiniaslog.shared.core.annotation.UseCaseInteractor
+import org.springframework.transaction.annotation.Transactional
+
+private val logger = mu.KotlinLogging.logger {}
 
 @UseCaseInteractor
 class AiUseCasesFacade(
@@ -37,7 +40,7 @@ class AiUseCasesFacade(
     companion object {
         private const val SYSTEM_PROMPT = """당신은 사용자의 개인 지식 관리 시스템에서 작동하는 AI 어시스턴트입니다.
 사용자의 메모 내용을 기반으로 질문에 답변하고, 필요한 경우 관련 메모를 참조하여 정확한 정보를 제공합니다.
-답변은 명확하고 간결하게 제공하며, 참조한 메모가 있다면 언급해주세요."""
+답변은 명확하고 간결하게 제공하며, 참조한 메모가 있다면 언급해주세요. 메모가 없다면 솔직하게 모른다고 답변하세요."""
     }
 
     override fun invoke(command: IChat.Command): IChat.Info {
@@ -67,6 +70,8 @@ class AiUseCasesFacade(
 
         val history = chatMessageRepository.findAllBySessionId(sessionId)
         val relevantDocs = embeddingStore.searchSimilar(message, authorId.value, 5)
+        logger.info { "Found ${relevantDocs.size} relevant documents for the message." }
+        logger.info { relevantDocs }
 
         val context = ChatContext(
             systemPrompt = SYSTEM_PROMPT,
@@ -172,6 +177,7 @@ class AiUseCasesFacade(
         )
     }
 
+    @Transactional("aiTransactionManager")
     override fun invoke(command: IDeleteChatSession.Command) {
         val sessionId = ChatSessionId(command.sessionId)
         val authorId = AuthorId(command.authorId)

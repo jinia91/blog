@@ -56,16 +56,21 @@ services:
       - jiniaslog-network
 
   chromadb:
-    image: chromadb/chroma:0.4.24
+    image: chromadb/chroma:latest
     container_name: jiniaslog-chromadb
     restart: always
     ports:
       - "8000:8000"
     volumes:
-      - chroma_data:/chroma/chroma
+      - chroma_data4:/chroma/chroma
     environment:
       - IS_PERSISTENT=TRUE
       - ANONYMIZED_TELEMETRY=FALSE
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/api/v1/heartbeat')"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
     networks:
       - jiniaslog-network
 
@@ -73,7 +78,7 @@ volumes:
   mysql_data:
   redis_data:
   elasticsearch_data:
-  chroma_data:
+  chroma_data4:
 
 networks:
   jiniaslog-network:

@@ -7,11 +7,10 @@ import kr.co.jiniaslog.shared.core.annotation.PersistenceAdapter
 import org.springframework.ai.document.Document
 import org.springframework.ai.vectorstore.SearchRequest
 import org.springframework.ai.vectorstore.VectorStore
-import org.springframework.context.annotation.Lazy
 
 @PersistenceAdapter
 class ChromaEmbeddingStoreAdapter(
-    @Lazy private val vectorStore: VectorStore,
+    private val vectorStore: VectorStore,
 ) : EmbeddingStore {
 
     companion object {
