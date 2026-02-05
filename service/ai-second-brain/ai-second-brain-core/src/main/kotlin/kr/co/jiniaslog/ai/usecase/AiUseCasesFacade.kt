@@ -28,6 +28,7 @@ class AiUseCasesFacade(
     ICreateChatSession,
     IGetChatSessions,
     IGetChatHistory,
+    IDeleteChatSession,
     IRecommendRelatedMemos,
     ISyncMemoToEmbedding,
     ISyncAllMemosToEmbedding,
@@ -139,21 +140,49 @@ class AiUseCasesFacade(
             }
     }
 
-    override fun invoke(query: IGetChatHistory.Query): List<IGetChatHistory.MessageInfo> {
+    override fun invoke(query: IGetChatHistory.Query): IGetChatHistory.PagedMessages {
         val session = chatSessionRepository.findById(ChatSessionId(query.sessionId))
             ?: throw IllegalArgumentException("Session not found: ${query.sessionId}")
 
         require(session.authorId == AuthorId(query.authorId)) { "Not authorized to access this session" }
 
-        return chatMessageRepository.findAllBySessionId(ChatSessionId(query.sessionId))
-            .map { message ->
+        val cursorId = query.cursor?.let { kr.co.jiniaslog.ai.domain.chat.ChatMessageId(it) }
+        val messages = chatMessageRepository.findBySessionIdWithCursor(
+            ChatSessionId(query.sessionId),
+            cursorId,
+            query.size
+        )
+
+        // size+1개 조회 후 hasNext 판단
+        val hasNext = messages.size > query.size
+        val resultMessages = if (hasNext) messages.dropLast(1) else messages
+        val nextCursor = if (hasNext) messages[query.size - 1].entityId.value else null
+
+        return IGetChatHistory.PagedMessages(
+            messages = resultMessages.map { message ->
                 IGetChatHistory.MessageInfo(
                     messageId = message.entityId.value,
                     role = message.role,
                     content = message.content,
                     createdAt = message.createdAt,
                 )
-            }
+            },
+            nextCursor = nextCursor,
+            hasNext = hasNext,
+        )
+    }
+
+    override fun invoke(command: IDeleteChatSession.Command) {
+        val sessionId = ChatSessionId(command.sessionId)
+        val authorId = AuthorId(command.authorId)
+
+        val session = chatSessionRepository.findById(sessionId)
+            ?: throw IllegalArgumentException("Session not found: ${command.sessionId}")
+
+        require(session.authorId == authorId) { "Not authorized to delete this session" }
+
+        chatMessageRepository.deleteAllBySessionId(sessionId)
+        chatSessionRepository.delete(session)
     }
 
     override fun invoke(query: IRecommendRelatedMemos.Query): List<IRecommendRelatedMemos.RecommendedMemo> {

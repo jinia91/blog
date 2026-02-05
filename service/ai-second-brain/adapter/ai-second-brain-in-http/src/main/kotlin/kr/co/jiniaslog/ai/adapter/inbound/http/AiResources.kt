@@ -3,6 +3,7 @@ package kr.co.jiniaslog.ai.adapter.inbound.http
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
 import io.swagger.v3.oas.annotations.tags.Tag
+import kr.co.jiniaslog.ai.adapter.inbound.http.dto.ChatHistoryResponse
 import kr.co.jiniaslog.ai.adapter.inbound.http.dto.ChatRequest
 import kr.co.jiniaslog.ai.adapter.inbound.http.dto.ChatResponse
 import kr.co.jiniaslog.ai.adapter.inbound.http.dto.CreateSessionRequest
@@ -14,6 +15,7 @@ import kr.co.jiniaslog.ai.adapter.inbound.http.dto.SyncRequest
 import kr.co.jiniaslog.ai.adapter.inbound.http.dto.SyncResponse
 import kr.co.jiniaslog.ai.usecase.IChat
 import kr.co.jiniaslog.ai.usecase.ICreateChatSession
+import kr.co.jiniaslog.ai.usecase.IDeleteChatSession
 import kr.co.jiniaslog.ai.usecase.IGetChatHistory
 import kr.co.jiniaslog.ai.usecase.IGetChatSessions
 import kr.co.jiniaslog.ai.usecase.IRecommendRelatedMemos
@@ -21,6 +23,7 @@ import kr.co.jiniaslog.ai.usecase.ISyncAllMemosToEmbedding
 import kr.cojiniaslog.shared.adapter.inbound.http.AuthUserId
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
@@ -37,6 +40,7 @@ class AiResources(
     private val createSessionUseCase: ICreateChatSession,
     private val getSessionsUseCase: IGetChatSessions,
     private val getChatHistoryUseCase: IGetChatHistory,
+    private val deleteSessionUseCase: IDeleteChatSession,
     private val recommendUseCase: IRecommendRelatedMemos,
     private val syncAllUseCase: ISyncAllMemosToEmbedding,
 ) {
@@ -108,27 +112,51 @@ class AiResources(
     }
 
     @Tag(name = "Chat")
-    @Operation(summary = "특정 세션의 채팅 히스토리 조회")
-    @GetMapping("/sessions/{sessionId}/messages")
-    fun getChatHistory(
+    @Operation(summary = "채팅 세션 삭제")
+    @DeleteMapping("/sessions/{sessionId}")
+    fun deleteSession(
         @AuthUserId userId: Long,
         @Parameter(description = "세션 ID") @PathVariable sessionId: Long,
-    ): ResponseEntity<List<MessageResponse>> {
-        val messages = getChatHistoryUseCase(
-            IGetChatHistory.Query(
+    ): ResponseEntity<Unit> {
+        deleteSessionUseCase(
+            IDeleteChatSession.Command(
                 sessionId = sessionId,
                 authorId = userId,
             )
         )
+        return ResponseEntity.noContent().build()
+    }
+
+    @Tag(name = "Chat")
+    @Operation(summary = "특정 세션의 채팅 히스토리 조회 (커서 페이징)")
+    @GetMapping("/sessions/{sessionId}/messages")
+    fun getChatHistory(
+        @AuthUserId userId: Long,
+        @Parameter(description = "세션 ID") @PathVariable sessionId: Long,
+        @Parameter(description = "커서 (메시지 ID, null이면 처음부터)") @RequestParam(required = false) cursor: Long?,
+        @Parameter(description = "페이지 크기") @RequestParam(defaultValue = "10") size: Int,
+    ): ResponseEntity<ChatHistoryResponse> {
+        val result = getChatHistoryUseCase(
+            IGetChatHistory.Query(
+                sessionId = sessionId,
+                authorId = userId,
+                cursor = cursor,
+                size = size,
+            )
+        )
         return ResponseEntity.ok(
-            messages.map { message ->
-                MessageResponse(
-                    messageId = message.messageId,
-                    role = message.role,
-                    content = message.content,
-                    createdAt = message.createdAt?.format(formatter),
-                )
-            }
+            ChatHistoryResponse(
+                messages = result.messages.map { message ->
+                    MessageResponse(
+                        messageId = message.messageId,
+                        role = message.role,
+                        content = message.content,
+                        createdAt = message.createdAt?.format(formatter),
+                    )
+                },
+                nextCursor = result.nextCursor,
+                hasNext = result.hasNext,
+            )
         )
     }
 

@@ -58,3 +58,13 @@ data class MessageResponse(
     @Schema(description = "생성일시")
     val createdAt: String?,
 )
+
+@Schema(description = "채팅 히스토리 응답 (페이징)")
+data class ChatHistoryResponse(
+    @Schema(description = "메시지 목록")
+    val messages: List<MessageResponse>,
+    @Schema(description = "다음 페이지 커서 (null이면 마지막 페이지)")
+    val nextCursor: Long?,
+    @Schema(description = "다음 페이지 존재 여부")
+    val hasNext: Boolean,
+)

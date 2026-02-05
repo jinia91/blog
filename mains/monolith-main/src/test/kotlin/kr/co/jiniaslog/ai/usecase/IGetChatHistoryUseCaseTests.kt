@@ -38,7 +38,7 @@ class IGetChatHistoryUseCaseTests : TestContainerAbstractSkeleton() {
             )
 
             // when
-            val history = getChatHistory(
+            val result = getChatHistory(
                 IGetChatHistory.Query(
                     sessionId = session.sessionId,
                     authorId = authorId
@@ -46,10 +46,11 @@ class IGetChatHistoryUseCaseTests : TestContainerAbstractSkeleton() {
             )
 
             // then
-            history.size shouldBe 2 // USER + ASSISTANT
-            history[0].role shouldBe MessageRole.USER
-            history[0].content shouldBe "첫 번째 메시지"
-            history[1].role shouldBe MessageRole.ASSISTANT
+            result.messages.size shouldBe 2 // USER + ASSISTANT
+            result.messages[0].role shouldBe MessageRole.USER
+            result.messages[0].content shouldBe "첫 번째 메시지"
+            result.messages[1].role shouldBe MessageRole.ASSISTANT
+            result.hasNext shouldBe false
         }
 
         @Test
@@ -61,7 +62,7 @@ class IGetChatHistoryUseCaseTests : TestContainerAbstractSkeleton() {
             )
 
             // when
-            val history = getChatHistory(
+            val result = getChatHistory(
                 IGetChatHistory.Query(
                     sessionId = session.sessionId,
                     authorId = authorId
@@ -69,7 +70,8 @@ class IGetChatHistoryUseCaseTests : TestContainerAbstractSkeleton() {
             )
 
             // then
-            history.size shouldBe 0
+            result.messages.size shouldBe 0
+            result.hasNext shouldBe false
         }
 
         @Test
@@ -125,14 +127,14 @@ class IGetChatHistoryUseCaseTests : TestContainerAbstractSkeleton() {
             )
 
             // when
-            val history = getChatHistory(
+            val result = getChatHistory(
                 IGetChatHistory.Query(sessionId = session.sessionId, authorId = authorId)
             )
 
             // then
-            history.size shouldBe 4 // 2 USER + 2 ASSISTANT
-            history[0].content shouldBe "메시지 1"
-            history[2].content shouldBe "메시지 2"
+            result.messages.size shouldBe 4 // 2 USER + 2 ASSISTANT
+            result.messages[0].content shouldBe "메시지 1"
+            result.messages[2].content shouldBe "메시지 2"
         }
     }
 }

@@ -10,6 +10,7 @@ import kr.co.jiniaslog.ai.adapter.inbound.http.dto.SyncRequest
 import kr.co.jiniaslog.ai.domain.chat.MessageRole
 import kr.co.jiniaslog.ai.usecase.IChat
 import kr.co.jiniaslog.ai.usecase.ICreateChatSession
+import kr.co.jiniaslog.ai.usecase.IDeleteChatSession
 import kr.co.jiniaslog.ai.usecase.IGetChatHistory
 import kr.co.jiniaslog.ai.usecase.IGetChatSessions
 import kr.co.jiniaslog.ai.usecase.IRecommendRelatedMemos
@@ -76,6 +77,9 @@ class AiResourceRestTests {
 
     @MockkBean
     private lateinit var syncAllUseCase: ISyncAllMemosToEmbedding
+
+    @MockkBean
+    private lateinit var deleteSessionUseCase: IDeleteChatSession
 
     @BeforeEach
     fun setup() {
@@ -200,13 +204,17 @@ class AiResourceRestTests {
         @Test
         fun `유효한 요청으로 히스토리를 조회하면 200을 반환한다`() {
             // given
-            every { getChatHistoryUseCase(any()) } returns listOf(
-                IGetChatHistory.MessageInfo(
-                    messageId = 1L,
-                    role = MessageRole.USER,
-                    content = "안녕",
-                    createdAt = LocalDateTime.now()
-                )
+            every { getChatHistoryUseCase(any()) } returns IGetChatHistory.PagedMessages(
+                messages = listOf(
+                    IGetChatHistory.MessageInfo(
+                        messageId = 1L,
+                        role = MessageRole.USER,
+                        content = "안녕",
+                        createdAt = LocalDateTime.now()
+                    )
+                ),
+                nextCursor = null,
+                hasNext = false
             )
 
             // when & then
