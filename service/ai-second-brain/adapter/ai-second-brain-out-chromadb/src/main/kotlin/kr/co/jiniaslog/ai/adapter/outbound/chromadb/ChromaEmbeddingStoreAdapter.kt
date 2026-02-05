@@ -70,7 +70,7 @@ class ChromaEmbeddingStoreAdapter(
                     memoId = (doc.metadata[MEMO_ID_KEY] as String).toLong(),
                     title = doc.metadata[TITLE_KEY] as String,
                     content = doc.text ?: "",
-                    similarity = 0.0,
+                    similarity = doc.score ?: 0.0,
                 )
             }
     }
