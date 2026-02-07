@@ -19,6 +19,11 @@ internal class MemoRepositoryAdapter(
     }
 
     @Transactional(readOnly = true, transactionManager = TRANSACTION_MANAGER)
+    override fun findAllByAuthorId(authorId: AuthorId): List<Memo> {
+        return memoJpaRepository.findAllByAuthorId(authorId)
+    }
+
+    @Transactional(readOnly = true, transactionManager = TRANSACTION_MANAGER)
     override fun findById(id: MemoId): Memo? {
         return memoJpaRepository.findById(id).orElse(null)
     }

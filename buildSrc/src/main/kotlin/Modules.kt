@@ -6,6 +6,18 @@ object Modules {
     }
 
     object Service {
+        object AiSecondBrain {
+            val Core = Module(":service:ai-second-brain:ai-second-brain-core")
+
+            enum class Adaptors(val path: String) {
+                InHttp(":service:ai-second-brain:adapter:ai-second-brain-in-http"),
+                InMessage(":service:ai-second-brain:adapter:ai-second-brain-in-message"),
+                OutChromaDb(":service:ai-second-brain:adapter:ai-second-brain-out-chromadb"),
+                OutMySql(":service:ai-second-brain:adapter:ai-second-brain-out-mysql"),
+                OutMemo(":service:ai-second-brain:adapter:ai-second-brain-out-memo")
+            }
+        }
+
         object Memo {
             val Core = Module(":service:memo:memo-core")
 

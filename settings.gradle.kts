@@ -1,5 +1,12 @@
 rootProject.name = "Jinia's Log"
 
+dependencyResolutionManagement {
+    repositories {
+        mavenCentral()
+        maven { url = uri("https://repo.spring.io/milestone") }
+    }
+}
+
 include(
     /**
      * ################
@@ -31,6 +38,14 @@ include(
     "service:blog:adapter:blog-out-memo",
     "service:blog:adapter:blog-out-mysql",
     "service:blog:adapter:blog-out-es",
+
+    // ai-second-brain
+    "service:ai-second-brain:ai-second-brain-core",
+    "service:ai-second-brain:adapter:ai-second-brain-in-http",
+    "service:ai-second-brain:adapter:ai-second-brain-out-chromadb",
+    "service:ai-second-brain:adapter:ai-second-brain-out-mysql",
+    "service:ai-second-brain:adapter:ai-second-brain-in-message",
+    "service:ai-second-brain:adapter:ai-second-brain-out-memo",
 
     // memo
     "service:memo:memo-core",
