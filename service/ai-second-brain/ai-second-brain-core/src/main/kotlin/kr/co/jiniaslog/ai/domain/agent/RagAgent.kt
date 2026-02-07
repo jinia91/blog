@@ -5,6 +5,8 @@ import org.springframework.ai.chat.memory.ChatMemory
 import org.springframework.ai.rag.retrieval.search.VectorStoreDocumentRetriever
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.stereotype.Component
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 /**
  * RAG Agent - RetrievalAugmentationAdvisor 기반 RAG 처리
@@ -27,10 +29,25 @@ class RagAgent(
     @Qualifier("ragChatClient") private val chatClient: ChatClient
 ) {
     companion object {
-        private const val SYSTEM_PROMPT = """당신은 사용자의 개인 지식 관리 시스템 AI 어시스턴트입니다.
+        private const val SYSTEM_PROMPT_TEMPLATE = """당신은 사용자의 개인 지식 관리 시스템 AI 어시스턴트입니다.
 사용자의 메모를 참조하여 정확하고 도움이 되는 답변을 제공합니다.
 참조한 메모가 있다면 언급하고, 관련 메모가 없으면 솔직히 모른다고 답변하세요.
-답변은 한국어로, 명확하고 간결하게 제공합니다."""
+답변은 한국어로, 명확하고 간결하게 제공합니다.
+
+## 현재 시간 정보
+%s
+
+사용자가 "내일", "모레", "다음주" 등 상대적 시간으로 질문하면, 위 정보를 참고하여 해당 날짜의 일정을 찾아주세요."""
+    }
+
+    private fun buildSystemPrompt(): String {
+        val now = LocalDateTime.now()
+        val timeInfo = """현재: ${now.format(DateTimeFormatter.ofPattern("yyyy년 MM월 dd일 (E) HH:mm"))}
+오늘: ${now.format(DateTimeFormatter.ofPattern("MM월 dd일 (E)"))}
+내일: ${now.plusDays(1).format(DateTimeFormatter.ofPattern("MM월 dd일 (E)"))}
+모레: ${now.plusDays(2).format(DateTimeFormatter.ofPattern("MM월 dd일 (E)"))}"""
+
+        return SYSTEM_PROMPT_TEMPLATE.format(timeInfo)
     }
 
     fun chat(
@@ -40,7 +57,7 @@ class RagAgent(
         useRag: Boolean = true
     ): String {
         return chatClient.prompt()
-            .system(SYSTEM_PROMPT)
+            .system(buildSystemPrompt())
             .user(message)
             .advisors { advisorSpec ->
                 // Chat Memory - conversationId 설정

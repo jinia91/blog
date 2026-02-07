@@ -4,6 +4,8 @@ import kr.co.jiniaslog.ai.outbound.MemoCommandService
 import org.springframework.ai.tool.annotation.Tool
 import org.springframework.ai.tool.annotation.ToolParam
 import org.springframework.stereotype.Component
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 /**
  * Memo/Folder Agent에서 사용하는 Tool 정의
@@ -19,6 +21,25 @@ class MemoTools(
 
     fun setAuthorId(authorId: Long) {
         this.currentAuthorId = authorId
+    }
+
+    @Tool(description = "현재 날짜와 시간을 조회합니다. 상대적 시간 표현(내일, 모레, 다음주 등)을 실제 날짜로 변환할 때 사용하세요.")
+    fun getCurrentDateTime(): String {
+        val now = LocalDateTime.now()
+        val formatter = DateTimeFormatter.ofPattern("yyyy년 MM월 dd일 (E) HH:mm")
+        val dateStr = now.format(formatter)
+
+        return """현재 시간: $dateStr
+오늘: ${now.format(DateTimeFormatter.ofPattern("MM월 dd일 (E)"))}
+내일: ${now.plusDays(1).format(DateTimeFormatter.ofPattern("MM월 dd일 (E)"))}
+모레: ${now.plusDays(2).format(DateTimeFormatter.ofPattern("MM월 dd일 (E)"))}
+이번주 토요일: ${now.plusDays(
+            (6 - now.dayOfWeek.value.toLong()).coerceAtLeast(0)
+        ).format(DateTimeFormatter.ofPattern("MM월 dd일 (E)"))}
+이번주 일요일: ${now.plusDays(
+            (7 - now.dayOfWeek.value.toLong()).coerceAtLeast(0)
+        ).format(DateTimeFormatter.ofPattern("MM월 dd일 (E)"))}
+다음주 월요일: ${now.plusDays(8 - now.dayOfWeek.value.toLong()).format(DateTimeFormatter.ofPattern("MM월 dd일 (E)"))}"""
     }
 
     @Tool(description = "사용자의 메모를 생성합니다. 적절한 제목과 내용을 추출하여 저장합니다.")

@@ -13,21 +13,30 @@ class IntentRouterAgent(
     @Qualifier("lightweightChatClient") private val chatClient: ChatClient
 ) {
     companion object {
-        private const val ROUTER_PROMPT = """당신은 사용자 메시지의 의도를 분류하는 라우터입니다.
-다음 중 하나로만 응답하세요:
+        private const val ROUTER_PROMPT = """사용자 메시지의 의도를 분류하세요.
 
-- QUESTION: 정보를 묻는 질문 (예: "~이 뭐야?", "~에 대해 알려줘", "~는 어떻게 해?", "다음주에 뭐해?")
-- MEMO_MANAGEMENT: 메모/폴더 관리 요청
-  - 생성: "~를 메모해줘", "~를 기록해", "노트로 저장해", "폴더 만들어줘"
-  - 수정: "메모 수정해줘", "제목 바꿔줘", "폴더 이름 변경"
-  - 삭제: "메모 삭제해", "폴더 지워줘"
-  - 이동: "메모를 폴더로 옮겨줘", "폴더 이동해줘"
-  - 조회: "메모 목록 보여줘", "폴더 뭐있어?", "내 메모들"
-- GENERAL_CHAT: 일반적인 대화, 인사, 감사 표현 등
+## 분류 기준
+
+QUESTION (질문):
+- 질문 어미: ~냐, ~니, ~야?, ~어?, ~나?, ~까?, ~해?, ~뭐야, ~있어?, ~뭐있어
+- 예: "내일 뭐있냐", "회의 언제야?", "약속 뭐있어?", "다음주에 뭐해?"
+
+MEMO_MANAGEMENT (메모 관리):
+- 진술 어미: ~있다, ~이다, ~해야함, ~한다, ~했다, ~할거다
+- 명령 어미: ~해줘, ~저장해, ~기록해, ~만들어줘, ~삭제해, ~수정해
+- 예: "5시에 약속있다", "내일 회의다", "우유 사야함", "메모 삭제해줘"
+
+GENERAL_CHAT (일반 대화):
+- 인사, 감사, 잡담
+- 예: "안녕", "고마워", "뭐해?"
+
+## 핵심 구분법
+- "~냐", "~니", "~야?", "~어?" = 질문 → QUESTION
+- "~있다", "~이다", "~한다" = 진술 → MEMO_MANAGEMENT
 
 메시지: %s
 
-의도(QUESTION/MEMO_MANAGEMENT/GENERAL_CHAT만 응답):"""
+의도:"""
     }
 
     fun classify(message: String): Intent {
