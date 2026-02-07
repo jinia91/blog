@@ -40,7 +40,7 @@ class RagAgent(
 사용자가 "내일", "모레", "다음주" 등 상대적 시간으로 질문하면, 위 정보를 참고하여 해당 날짜의 일정을 찾아주세요."""
     }
 
-    private fun buildSystemPrompt(): String {
+    internal fun buildSystemPrompt(): String {
         val now = LocalDateTime.now()
         val timeInfo = """현재: ${now.format(DateTimeFormatter.ofPattern("yyyy년 MM월 dd일 (E) HH:mm"))}
 오늘: ${now.format(DateTimeFormatter.ofPattern("MM월 dd일 (E)"))}
