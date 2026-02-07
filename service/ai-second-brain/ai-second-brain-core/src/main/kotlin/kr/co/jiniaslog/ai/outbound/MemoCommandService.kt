@@ -5,19 +5,14 @@ package kr.co.jiniaslog.ai.outbound
  * AI Agent에서 Tool Calling을 통해 사용합니다.
  */
 interface MemoCommandService {
-    // Memo Operations
     fun createMemo(authorId: Long, title: String, content: String): Long
     fun updateMemo(memoId: Long, requesterId: Long, title: String?, content: String?): Long
     fun deleteMemo(memoId: Long, requesterId: Long)
     fun linkMemoToFolder(memoId: Long, folderId: Long?, requesterId: Long)
-
-    // Folder Operations
     fun createFolder(authorId: Long, name: String, parentFolderId: Long?): Long
     fun renameFolder(folderId: Long, requesterId: Long, name: String)
     fun deleteFolder(folderId: Long, requesterId: Long)
     fun linkFolderToParent(childFolderId: Long, parentFolderId: Long?, requesterId: Long)
-
-    // Query Operations (for context)
     fun getMemoById(memoId: Long): MemoInfo?
     fun getAllMemos(authorId: Long): List<MemoInfo>
     fun getAllFolders(authorId: Long): List<FolderInfo>
