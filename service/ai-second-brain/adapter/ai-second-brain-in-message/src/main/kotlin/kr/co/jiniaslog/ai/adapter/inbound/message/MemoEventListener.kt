@@ -1,5 +1,6 @@
 package kr.co.jiniaslog.ai.adapter.inbound.message
 
+import jakarta.annotation.PreDestroy
 import kr.co.jiniaslog.ai.usecase.IDeleteMemoEmbedding
 import kr.co.jiniaslog.ai.usecase.ISyncMemoToEmbedding
 import kr.co.jiniaslog.memo.domain.memo.MemoCreatedEvent
@@ -26,12 +27,20 @@ class MemoEventListener(
     private val scheduler: ScheduledExecutorService,
 ) {
     companion object {
-        private const val DEBOUNCE_DELAY_SECONDS = 5L
+        private const val DEBOUNCE_DELAY_MINUTES = 10L
     }
 
     // 메모별 디바운스 타이머
     private val pendingUpdates = ConcurrentHashMap<Long, ScheduledFuture<*>>()
     private val pendingEvents = ConcurrentHashMap<Long, MemoUpdatedEvent>()
+
+    @PreDestroy
+    fun shutdown() {
+        pendingUpdates.values.forEach { it.cancel(false) }
+        pendingUpdates.clear()
+        pendingEvents.clear()
+        scheduler.shutdownNow()
+    }
 
     @Async("aiEmbeddingExecutor")
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
@@ -80,7 +89,7 @@ class MemoEventListener(
                     logger.error(e) { "Failed to update memo ${evt.memoId} in embedding store" }
                 }
             }
-        }, DEBOUNCE_DELAY_SECONDS, TimeUnit.SECONDS)
+        }, DEBOUNCE_DELAY_MINUTES, TimeUnit.MINUTES)
 
         pendingUpdates[event.memoId] = future
     }

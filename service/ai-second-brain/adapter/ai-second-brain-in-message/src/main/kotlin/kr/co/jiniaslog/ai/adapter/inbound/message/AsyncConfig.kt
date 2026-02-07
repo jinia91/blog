@@ -33,7 +33,7 @@ class AsyncConfig {
             private val counter = AtomicInteger(0)
             override fun newThread(r: Runnable): Thread {
                 return Thread(r, "embedding-scheduler-${counter.incrementAndGet()}").apply {
-                    isDaemon = false
+                    isDaemon = true
                 }
             }
         }
