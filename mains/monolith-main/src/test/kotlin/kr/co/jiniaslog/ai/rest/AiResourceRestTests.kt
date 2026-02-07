@@ -85,6 +85,13 @@ class AiResourceRestTests {
         RestAssuredMockMvc.mockMvc(mockMvc)
     }
 
+    private fun getTestAdminToken(): String {
+        return tokenManager.generateAccessToken(
+            UserId(1L),
+            setOf(Role.ADMIN)
+        ).value
+    }
+
     private fun getTestUserToken(): String {
         return tokenManager.generateAccessToken(
             UserId(1L),
@@ -94,6 +101,20 @@ class AiResourceRestTests {
 
     @Test
     fun contextLoads() {
+    }
+
+    @Nested
+    inner class `권한 테스트` {
+        @Test
+        fun `일반 USER 권한으로 AI API 접근 시 403을 반환한다`() {
+            RestAssuredMockMvc.given()
+                .cookies(PreAuthFilter.ACCESS_TOKEN_HEADER, getTestUserToken())
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .body(ChatRequest(sessionId = 1L, message = "안녕"))
+                .post("/api/ai/chat")
+                .then()
+                .statusCode(403)
+        }
     }
 
     @Nested
@@ -119,7 +140,7 @@ class AiResourceRestTests {
 
             // when & then
             RestAssuredMockMvc.given()
-                .cookies(PreAuthFilter.ACCESS_TOKEN_HEADER, getTestUserToken())
+                .cookies(PreAuthFilter.ACCESS_TOKEN_HEADER, getTestAdminToken())
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .body(ChatRequest(sessionId = 1L, message = "안녕"))
                 .post("/api/ai/chat")
@@ -150,7 +171,7 @@ class AiResourceRestTests {
 
             // when & then
             RestAssuredMockMvc.given()
-                .cookies(PreAuthFilter.ACCESS_TOKEN_HEADER, getTestUserToken())
+                .cookies(PreAuthFilter.ACCESS_TOKEN_HEADER, getTestAdminToken())
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .body(CreateSessionRequest(title = "새 세션"))
                 .post("/api/ai/sessions")
@@ -187,7 +208,7 @@ class AiResourceRestTests {
 
             // when & then
             RestAssuredMockMvc.given()
-                .cookies(PreAuthFilter.ACCESS_TOKEN_HEADER, getTestUserToken())
+                .cookies(PreAuthFilter.ACCESS_TOKEN_HEADER, getTestAdminToken())
                 .get("/api/ai/sessions")
                 .then()
                 .statusCode(200)
@@ -222,7 +243,7 @@ class AiResourceRestTests {
 
             // when & then
             RestAssuredMockMvc.given()
-                .cookies(PreAuthFilter.ACCESS_TOKEN_HEADER, getTestUserToken())
+                .cookies(PreAuthFilter.ACCESS_TOKEN_HEADER, getTestAdminToken())
                 .get("/api/ai/sessions/1/messages")
                 .then()
                 .statusCode(200)
@@ -254,7 +275,7 @@ class AiResourceRestTests {
 
             // when & then
             RestAssuredMockMvc.given()
-                .cookies(PreAuthFilter.ACCESS_TOKEN_HEADER, getTestUserToken())
+                .cookies(PreAuthFilter.ACCESS_TOKEN_HEADER, getTestAdminToken())
                 .queryParam("query", "테스트")
                 .get("/api/ai/recommend")
                 .then()
@@ -279,7 +300,7 @@ class AiResourceRestTests {
 
             // when & then
             RestAssuredMockMvc.given()
-                .cookies(PreAuthFilter.ACCESS_TOKEN_HEADER, getTestUserToken())
+                .cookies(PreAuthFilter.ACCESS_TOKEN_HEADER, getTestAdminToken())
                 .post("/api/ai/sync")
                 .then()
                 .statusCode(200)
@@ -303,7 +324,7 @@ class AiResourceRestTests {
 
             // when & then
             RestAssuredMockMvc.given()
-                .cookies(PreAuthFilter.ACCESS_TOKEN_HEADER, getTestUserToken())
+                .cookies(PreAuthFilter.ACCESS_TOKEN_HEADER, getTestAdminToken())
                 .delete("/api/ai/sessions/1")
                 .then()
                 .statusCode(204)
@@ -323,7 +344,7 @@ class AiResourceRestTests {
 
             // when & then
             RestAssuredMockMvc.given()
-                .cookies(PreAuthFilter.ACCESS_TOKEN_HEADER, getTestUserToken())
+                .cookies(PreAuthFilter.ACCESS_TOKEN_HEADER, getTestAdminToken())
                 .queryParam("cursor", 10)
                 .queryParam("size", 20)
                 .get("/api/ai/sessions/1/messages")
@@ -338,7 +359,7 @@ class AiResourceRestTests {
 
             // when & then
             RestAssuredMockMvc.given()
-                .cookies(PreAuthFilter.ACCESS_TOKEN_HEADER, getTestUserToken())
+                .cookies(PreAuthFilter.ACCESS_TOKEN_HEADER, getTestAdminToken())
                 .queryParam("memoId", 5)
                 .queryParam("topK", 3)
                 .get("/api/ai/recommend")
@@ -357,7 +378,7 @@ class AiResourceRestTests {
 
             // when & then
             RestAssuredMockMvc.given()
-                .cookies(PreAuthFilter.ACCESS_TOKEN_HEADER, getTestUserToken())
+                .cookies(PreAuthFilter.ACCESS_TOKEN_HEADER, getTestAdminToken())
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .body(ChatRequest(sessionId = 1L, message = "메모 생성해줘"))
                 .post("/api/ai/chat")
