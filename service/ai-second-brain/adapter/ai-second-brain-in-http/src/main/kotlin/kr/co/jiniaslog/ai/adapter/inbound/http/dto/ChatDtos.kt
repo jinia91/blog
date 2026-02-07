@@ -68,3 +68,13 @@ data class ChatHistoryResponse(
     @Schema(description = "다음 페이지 존재 여부")
     val hasNext: Boolean,
 )
+
+@Schema(description = "세션 목록 응답 (페이징)")
+data class SessionsPageResponse(
+    @Schema(description = "세션 목록")
+    val sessions: List<SessionResponse>,
+    @Schema(description = "다음 페이지 커서 (null이면 마지막 페이지)")
+    val nextCursor: Long?,
+    @Schema(description = "다음 페이지 존재 여부")
+    val hasNext: Boolean,
+)

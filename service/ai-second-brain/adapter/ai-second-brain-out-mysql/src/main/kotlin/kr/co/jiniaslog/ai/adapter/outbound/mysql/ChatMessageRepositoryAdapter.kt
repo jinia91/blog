@@ -32,6 +32,10 @@ class ChatMessageRepositoryAdapter(
         return queryRepository.findBySessionIdWithCursor(sessionId, cursor, size)
     }
 
+    override fun findLastUserMessagesBySessionIds(sessionIds: List<ChatSessionId>): Map<ChatSessionId, ChatMessage?> {
+        return queryRepository.findLastUserMessagesBySessionIds(sessionIds)
+    }
+
     override fun deleteAllBySessionId(sessionId: ChatSessionId) {
         jpaRepository.deleteBySessionId(sessionId)
     }

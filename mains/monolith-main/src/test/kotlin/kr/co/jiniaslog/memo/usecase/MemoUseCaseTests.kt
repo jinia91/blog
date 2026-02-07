@@ -52,6 +52,99 @@ class MemoUseCaseTests : TestContainerAbstractSkeleton() {
     }
 
     @Test
+    fun `유효한 제목과 내용이 주어지면 완성된 메모가 한 번에 생성된다`() {
+        // given
+        val command =
+            ICreateMemoWithContent.Command(
+                authorId = AuthorId(1),
+                title = MemoTitle("테스트 제목"),
+                content = MemoContent("테스트 내용"),
+                parentFolderId = null,
+            )
+
+        // when
+        val info = sut.handle(command)
+
+        // then
+        info.memoId shouldNotBe null
+        val createdMemo = memoRepository.findById(info.memoId)
+        createdMemo shouldNotBe null
+        createdMemo!!.title shouldBe MemoTitle("테스트 제목")
+        createdMemo.content shouldBe MemoContent("테스트 내용")
+    }
+
+    @Test
+    fun `내용이 포함된 메모 생성시 부모 폴더를 지정하면 메모는 지정된 부모 폴더를 가진다`() {
+        // given
+        val folder =
+            folderRepository.save(
+                Folder.init(
+                    authorId = AuthorId(1),
+                ),
+            )
+        val command =
+            ICreateMemoWithContent.Command(
+                authorId = AuthorId(1),
+                title = MemoTitle("테스트 제목"),
+                content = MemoContent("테스트 내용"),
+                parentFolderId = folder.entityId,
+            )
+
+        // when
+        val info = sut.handle(command)
+
+        // then
+        info.memoId shouldNotBe null
+        val createdMemo = memoRepository.findById(info.memoId)
+        createdMemo shouldNotBe null
+        createdMemo!!.parentFolderId shouldBe folder.entityId
+        createdMemo.title shouldBe MemoTitle("테스트 제목")
+        createdMemo.content shouldBe MemoContent("테스트 내용")
+    }
+
+    @Test
+    fun `내용이 포함된 메모 생성시 존재하지 않는 폴더를 부모로 지정하면 실패한다`() {
+        // given
+        val command =
+            ICreateMemoWithContent.Command(
+                authorId = AuthorId(1),
+                title = MemoTitle("테스트 제목"),
+                content = MemoContent("테스트 내용"),
+                parentFolderId = FolderId(9999),
+            )
+
+        // when & then
+        shouldThrow<IllegalArgumentException> {
+            sut.handle(command)
+        }
+    }
+
+    @Test
+    fun `내용이 포함된 메모 생성시 메모 개수가 제한을 초과하면 실패한다`() {
+        // given
+        val capedMemoCount = Memo.INIT_LIMIT.toInt()
+        val jdbcTemplate = JdbcTemplate(datasource)
+        val dateTime = LocalDateTime.now()
+        jdbcTemplate.batchUpdate(
+            "INSERT INTO memo (id, author_id, content, title, parent_folder_id, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?,?)",
+            (1..capedMemoCount).map { i ->
+                arrayOf(i.toLong(), 1, "content", "title", null, dateTime, dateTime)
+            }
+        )
+
+        // when & then
+        shouldThrow<IllegalArgumentException> {
+            sut.handle(
+                ICreateMemoWithContent.Command(
+                    AuthorId(1),
+                    MemoTitle("테스트 제목"),
+                    MemoContent("테스트 내용")
+                )
+            )
+        }
+    }
+
+    @Test
     fun `메모 초기화시 존재하지 않는 폴더를 부모로 지정하면 실패한다`() {
         // given
         val command =

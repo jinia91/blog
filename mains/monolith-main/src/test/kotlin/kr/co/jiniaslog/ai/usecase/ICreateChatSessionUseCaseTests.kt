@@ -63,10 +63,10 @@ class ICreateChatSessionUseCaseTests : TestContainerAbstractSkeleton() {
             )
 
             // when
-            val sessions = getChatSessions(IGetChatSessions.Query(authorId = authorId))
+            val result = getChatSessions(IGetChatSessions.Query(authorId = authorId))
 
             // then
-            sessions.size shouldBe 2
+            result.sessions.size shouldBe 2
         }
     }
 }

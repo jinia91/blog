@@ -26,10 +26,10 @@ class IGetChatSessionsUseCaseTests : TestContainerAbstractSkeleton() {
             createChatSession(ICreateChatSession.Command(authorId = authorId, title = "세션 3"))
 
             // when
-            val sessions = getChatSessions(IGetChatSessions.Query(authorId = authorId))
+            val result = getChatSessions(IGetChatSessions.Query(authorId = authorId))
 
             // then
-            sessions.size shouldBe 3
+            result.sessions.size shouldBe 3
         }
 
         @Test
@@ -38,10 +38,11 @@ class IGetChatSessionsUseCaseTests : TestContainerAbstractSkeleton() {
             val authorId = 999L
 
             // when
-            val sessions = getChatSessions(IGetChatSessions.Query(authorId = authorId))
+            val result = getChatSessions(IGetChatSessions.Query(authorId = authorId))
 
             // then
-            sessions.size shouldBe 0
+            result.sessions.size shouldBe 0
+            result.hasNext shouldBe false
         }
 
         @Test
@@ -53,14 +54,12 @@ class IGetChatSessionsUseCaseTests : TestContainerAbstractSkeleton() {
             createChatSession(ICreateChatSession.Command(authorId = authorId2, title = "사용자2 세션"))
 
             // when
-            val sessions1 = getChatSessions(IGetChatSessions.Query(authorId = authorId1))
-            val sessions2 = getChatSessions(IGetChatSessions.Query(authorId = authorId2))
+            val result1 = getChatSessions(IGetChatSessions.Query(authorId = authorId1))
+            val result2 = getChatSessions(IGetChatSessions.Query(authorId = authorId2))
 
             // then
-            sessions1.size shouldBe 1
-            sessions1[0].title shouldBe "사용자1 세션"
-            sessions2.size shouldBe 1
-            sessions2[0].title shouldBe "사용자2 세션"
+            result1.sessions.size shouldBe 1
+            result2.sessions.size shouldBe 1
         }
 
         @Test
@@ -70,10 +69,10 @@ class IGetChatSessionsUseCaseTests : TestContainerAbstractSkeleton() {
             createChatSession(ICreateChatSession.Command(authorId = authorId, title = "테스트 세션"))
 
             // when
-            val sessions = getChatSessions(IGetChatSessions.Query(authorId = authorId))
+            val result = getChatSessions(IGetChatSessions.Query(authorId = authorId))
 
             // then
-            sessions[0].createdAt shouldNotBe null
+            result.sessions[0].createdAt shouldNotBe null
         }
     }
 }

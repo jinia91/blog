@@ -5,12 +5,12 @@ import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import io.mockk.every
 import kr.co.jiniaslog.TestContainerAbstractSkeleton
+import kr.co.jiniaslog.ai.domain.agent.AgentOrchestrator
+import kr.co.jiniaslog.ai.domain.agent.AgentResponse
 import kr.co.jiniaslog.ai.domain.chat.ChatMessageRepository
 import kr.co.jiniaslog.ai.domain.chat.ChatSessionId
 import kr.co.jiniaslog.ai.domain.chat.ChatSessionRepository
 import kr.co.jiniaslog.ai.domain.chat.MessageRole
-import kr.co.jiniaslog.ai.outbound.IntentType
-import kr.co.jiniaslog.ai.outbound.LlmService
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -30,7 +30,7 @@ class IChatUseCaseTests : TestContainerAbstractSkeleton() {
     private lateinit var chatMessageRepository: ChatMessageRepository
 
     @Autowired
-    private lateinit var llmService: LlmService
+    private lateinit var agentOrchestrator: AgentOrchestrator
 
     @Nested
     inner class `채팅 테스트` {
@@ -132,7 +132,11 @@ class IChatUseCaseTests : TestContainerAbstractSkeleton() {
                 ICreateChatSession.Command(authorId = authorId, title = "메모 생성 테스트 세션")
             )
 
-            every { llmService.classifyIntent(any()) } returns IntentType.MEMO_CREATION
+            every { agentOrchestrator.process(any(), any(), any()) } returns AgentResponse.MemoCreated(
+                memoId = 1L,
+                title = "테스트 메모",
+                message = "메모가 생성되었습니다. (ID: 1, 제목: 테스트 메모)"
+            )
 
             // when
             val result = chatUseCase(
@@ -147,8 +151,8 @@ class IChatUseCaseTests : TestContainerAbstractSkeleton() {
             result.createdMemoId shouldNotBe null
             result.response.contains("메모가 생성되었습니다") shouldBe true
 
-            // 인텐트 다시 원래대로
-            every { llmService.classifyIntent(any()) } returns IntentType.QUESTION
+            // 원래 상태로 복원
+            every { agentOrchestrator.process(any(), any(), any()) } returns AgentResponse.ChatResponse("테스트 응답입니다.")
         }
 
         @Test
@@ -159,7 +163,11 @@ class IChatUseCaseTests : TestContainerAbstractSkeleton() {
                 ICreateChatSession.Command(authorId = authorId, title = "메모 생성 메시지 테스트")
             )
 
-            every { llmService.classifyIntent(any()) } returns IntentType.MEMO_CREATION
+            every { agentOrchestrator.process(any(), any(), any()) } returns AgentResponse.MemoCreated(
+                memoId = 1L,
+                title = "테스트 메모",
+                message = "메모가 생성되었습니다. (ID: 1, 제목: 테스트 메모)"
+            )
 
             // when
             chatUseCase(
@@ -178,34 +186,31 @@ class IChatUseCaseTests : TestContainerAbstractSkeleton() {
             messages.any { it.role == MessageRole.USER && it.content == "메모로 저장할 내용" } shouldBe true
             messages.any { it.role == MessageRole.ASSISTANT && it.content.contains("메모가 생성되었습니다") } shouldBe true
 
-            // 인텐트 다시 원래대로
-            every { llmService.classifyIntent(any()) } returns IntentType.QUESTION
+            // 원래 상태로 복원
+            every { agentOrchestrator.process(any(), any(), any()) } returns AgentResponse.ChatResponse("테스트 응답입니다.")
         }
 
         @Test
-        fun `빈 첫줄이면 Untitled로 제목이 설정된다`() {
+        fun `일반 채팅 인텐트는 memoId가 null이다`() {
             // given
             val authorId = 100L
             val session = createChatSession(
-                ICreateChatSession.Command(authorId = authorId, title = "빈 제목 테스트")
+                ICreateChatSession.Command(authorId = authorId, title = "일반 채팅 테스트")
             )
 
-            every { llmService.classifyIntent(any()) } returns IntentType.MEMO_CREATION
+            every { agentOrchestrator.process(any(), any(), any()) } returns AgentResponse.ChatResponse("일반 응답입니다.")
 
             // when
             val result = chatUseCase(
                 IChat.Command(
                     sessionId = session.sessionId,
                     authorId = authorId,
-                    message = "\n내용만 있는 메모"
+                    message = "일반적인 질문입니다"
                 )
             )
 
             // then
-            result.createdMemoId shouldNotBe null
-
-            // 인텐트 다시 원래대로
-            every { llmService.classifyIntent(any()) } returns IntentType.QUESTION
+            result.createdMemoId shouldBe null
         }
     }
 }

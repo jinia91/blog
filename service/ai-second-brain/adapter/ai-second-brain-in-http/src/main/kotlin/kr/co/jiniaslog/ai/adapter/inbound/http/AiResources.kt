@@ -11,6 +11,7 @@ import kr.co.jiniaslog.ai.adapter.inbound.http.dto.CreateSessionResponse
 import kr.co.jiniaslog.ai.adapter.inbound.http.dto.MessageResponse
 import kr.co.jiniaslog.ai.adapter.inbound.http.dto.RecommendedMemoResponse
 import kr.co.jiniaslog.ai.adapter.inbound.http.dto.SessionResponse
+import kr.co.jiniaslog.ai.adapter.inbound.http.dto.SessionsPageResponse
 import kr.co.jiniaslog.ai.adapter.inbound.http.dto.SyncResponse
 import kr.co.jiniaslog.ai.usecase.IChat
 import kr.co.jiniaslog.ai.usecase.ICreateChatSession
@@ -92,21 +93,33 @@ class AiResources(
     }
 
     @Tag(name = "Chat")
-    @Operation(summary = "사용자의 모든 채팅 세션 조회")
+    @Operation(summary = "사용자의 채팅 세션 목록 조회 (커서 페이징)")
     @GetMapping("/sessions")
     fun getSessions(
         @AuthUserId userId: Long,
-    ): ResponseEntity<List<SessionResponse>> {
-        val sessions = getSessionsUseCase(IGetChatSessions.Query(authorId = userId))
+        @Parameter(description = "커서 (세션 ID, null이면 처음부터)") @RequestParam(required = false) cursor: Long?,
+        @Parameter(description = "페이지 크기") @RequestParam(defaultValue = "20") size: Int,
+    ): ResponseEntity<SessionsPageResponse> {
+        val result = getSessionsUseCase(
+            IGetChatSessions.Query(
+                authorId = userId,
+                cursor = cursor,
+                size = size,
+            )
+        )
         return ResponseEntity.ok(
-            sessions.map { session ->
-                SessionResponse(
-                    sessionId = session.sessionId,
-                    title = session.title,
-                    createdAt = session.createdAt?.format(formatter),
-                    updatedAt = session.updatedAt?.format(formatter),
-                )
-            }
+            SessionsPageResponse(
+                sessions = result.sessions.map { session ->
+                    SessionResponse(
+                        sessionId = session.sessionId,
+                        title = session.lastMessage ?: "새 대화",
+                        createdAt = session.createdAt?.format(formatter),
+                        updatedAt = session.updatedAt?.format(formatter),
+                    )
+                },
+                nextCursor = result.nextCursor,
+                hasNext = result.hasNext,
+            )
         )
     }
 

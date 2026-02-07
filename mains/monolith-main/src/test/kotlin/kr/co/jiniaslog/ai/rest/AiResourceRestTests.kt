@@ -172,13 +172,17 @@ class AiResourceRestTests {
         @Test
         fun `유효한 요청으로 세션 목록을 조회하면 200을 반환한다`() {
             // given
-            every { getSessionsUseCase(any()) } returns listOf(
-                IGetChatSessions.SessionInfo(
-                    sessionId = 1L,
-                    title = "세션 1",
-                    createdAt = LocalDateTime.now(),
-                    updatedAt = LocalDateTime.now()
-                )
+            every { getSessionsUseCase(any()) } returns IGetChatSessions.PagedSessions(
+                sessions = listOf(
+                    IGetChatSessions.SessionInfo(
+                        sessionId = 1L,
+                        lastMessage = "세션 1",
+                        createdAt = LocalDateTime.now(),
+                        updatedAt = LocalDateTime.now()
+                    )
+                ),
+                nextCursor = null,
+                hasNext = false
             )
 
             // when & then

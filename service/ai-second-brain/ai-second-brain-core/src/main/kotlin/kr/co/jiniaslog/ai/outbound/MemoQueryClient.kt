@@ -7,7 +7,7 @@ data class MemoInfo(
     val content: String,
 )
 
-interface MemoQueryService {
+interface MemoQueryClient {
     fun getMemoById(memoId: Long): MemoInfo?
     fun getAllMemosByAuthorId(authorId: Long): List<MemoInfo>
 }

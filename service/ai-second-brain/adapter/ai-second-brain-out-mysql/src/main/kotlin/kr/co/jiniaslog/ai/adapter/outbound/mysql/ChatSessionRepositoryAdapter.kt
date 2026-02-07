@@ -10,6 +10,7 @@ import org.springframework.data.repository.findByIdOrNull
 @PersistenceAdapter
 class ChatSessionRepositoryAdapter(
     private val jpaRepository: ChatSessionJpaRepository,
+    private val queryRepository: ChatSessionQueryRepository,
 ) : ChatSessionRepository {
 
     override fun save(chatSession: ChatSession): ChatSession {
@@ -22,6 +23,10 @@ class ChatSessionRepositoryAdapter(
 
     override fun findAllByAuthorId(authorId: AuthorId): List<ChatSession> {
         return jpaRepository.findByAuthorIdOrderByUpdatedAtDesc(authorId)
+    }
+
+    override fun findByAuthorIdWithCursor(authorId: AuthorId, cursor: ChatSessionId?, size: Int): List<ChatSession> {
+        return queryRepository.findByAuthorIdWithCursor(authorId, cursor, size)
     }
 
     override fun delete(chatSession: ChatSession) {

@@ -17,6 +17,8 @@ dependencies {
     // Spring AI - LLM 비즈니스 로직에서 직접 사용 (Google GenAI Gemini)
     implementation(platform(libs.spring.ai.bom))
     implementation(libs.spring.ai.google.genai.starter)
+    implementation(libs.spring.ai.chroma.store)
+    implementation(libs.spring.ai.rag)
 
     // QueryDSL - Q클래스 생성
     implementation("com.querydsl:querydsl-jpa:5.1.0:jakarta")

@@ -9,5 +9,6 @@ interface ChatMessageRepository {
         cursor: ChatMessageId?,
         size: Int
     ): List<ChatMessage>
+    fun findLastUserMessagesBySessionIds(sessionIds: List<ChatSessionId>): Map<ChatSessionId, ChatMessage?>
     fun deleteAllBySessionId(sessionId: ChatSessionId)
 }

@@ -4,18 +4,24 @@ import com.redis.testcontainers.RedisContainer
 import io.mockk.every
 import io.mockk.mockk
 import io.restassured.RestAssured
+import kr.co.jiniaslog.ai.domain.agent.AgentOrchestrator
+import kr.co.jiniaslog.ai.domain.agent.AgentResponse
+import kr.co.jiniaslog.ai.domain.agent.Intent
+import kr.co.jiniaslog.ai.domain.agent.IntentRouterAgent
+import kr.co.jiniaslog.ai.domain.agent.MemoManagementAgent
+import kr.co.jiniaslog.ai.domain.agent.MemoTools
+import kr.co.jiniaslog.ai.domain.agent.RagAgent
 import kr.co.jiniaslog.ai.outbound.EmbeddingStore
-import kr.co.jiniaslog.ai.outbound.IntentType
-import kr.co.jiniaslog.ai.outbound.LlmService
 import kr.co.jiniaslog.ai.outbound.MemoCommandService
 import kr.co.jiniaslog.ai.outbound.MemoInfo
-import kr.co.jiniaslog.ai.outbound.MemoQueryService
+import kr.co.jiniaslog.ai.outbound.MemoQueryClient
 import kr.co.jiniaslog.media.outbound.ImageUploader
 import kr.co.jiniaslog.utils.CacheCleaner
 import kr.co.jiniaslog.utils.MySqlRdbCleaner
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.springframework.ai.chat.client.ChatClient
 import org.springframework.ai.chat.model.ChatModel
 import org.springframework.ai.embedding.EmbeddingModel
 import org.springframework.ai.vectorstore.VectorStore
@@ -64,16 +70,7 @@ class ContextWithTestContainerConfig {
 
     @Bean
     @Primary
-    fun llmService(): LlmService {
-        return mockk {
-            every { classifyIntent(any()) } returns IntentType.QUESTION
-            every { chat(any(), any()) } returns "테스트 응답입니다."
-        }
-    }
-
-    @Bean
-    @Primary
-    fun memoQueryService(): MemoQueryService {
+    fun memoQueryService(): MemoQueryClient {
         return mockk {
             every { getMemoById(any()) } returns MemoInfo(
                 id = 1L,
@@ -90,6 +87,76 @@ class ContextWithTestContainerConfig {
     fun memoCommandService(): MemoCommandService {
         return mockk {
             every { createMemo(any(), any(), any()) } returns 1L
+        }
+    }
+
+    // Multi-Agent 아키텍처 Mock Beans
+    @Bean(name = ["lightweightChatClient"])
+    @Primary
+    fun lightweightChatClient(): ChatClient {
+        return mockk(relaxed = true)
+    }
+
+    @Bean(name = ["ragChatClient"])
+    fun ragChatClient(): ChatClient {
+        return mockk(relaxed = true)
+    }
+
+    @Bean(name = ["memoChatClient"])
+    fun memoChatClient(): ChatClient {
+        return mockk(relaxed = true)
+    }
+
+    @Bean
+    @Primary
+    fun intentRouterAgent(): IntentRouterAgent {
+        return mockk {
+            every { classify(any()) } returns Intent.QUESTION
+        }
+    }
+
+    @Bean
+    @Primary
+    fun ragAgent(): RagAgent {
+        return mockk {
+            every { chat(any(), any(), any(), any()) } returns "테스트 응답입니다."
+        }
+    }
+
+    @Bean
+    @Primary
+    fun chatMemory(): org.springframework.ai.chat.memory.ChatMemory {
+        return mockk(relaxed = true)
+    }
+
+    @Bean
+    @Primary
+    fun memoTools(memoCommandService: MemoCommandService): MemoTools {
+        return MemoTools(memoCommandService)
+    }
+
+    @Bean
+    @Primary
+    fun memoManagementAgent(): MemoManagementAgent {
+        return mockk {
+            every { process(any(), any(), any()) } returns AgentResponse.MemoCreated(
+                memoId = 1L,
+                title = "테스트 메모",
+                message = "메모가 생성되었습니다. (ID: 1, 제목: 테스트 메모)"
+            )
+        }
+    }
+
+    @Bean
+    @Primary
+    fun agentOrchestrator(
+        intentRouterAgent: IntentRouterAgent,
+        ragAgent: RagAgent,
+        memoManagementAgent: MemoManagementAgent
+    ): AgentOrchestrator {
+        return mockk {
+            every { process(any(), any(), any()) } returns AgentResponse.ChatResponse("테스트 응답입니다.")
+            every { classifyIntent(any()) } returns Intent.QUESTION
         }
     }
 }

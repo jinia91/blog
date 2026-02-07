@@ -7,7 +7,7 @@ import kr.co.jiniaslog.TestContainerAbstractSkeleton
 import kr.co.jiniaslog.ai.outbound.EmbeddingStore
 import kr.co.jiniaslog.ai.outbound.MemoEmbeddingDocument
 import kr.co.jiniaslog.ai.outbound.MemoInfo
-import kr.co.jiniaslog.ai.outbound.MemoQueryService
+import kr.co.jiniaslog.ai.outbound.MemoQueryClient
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -27,7 +27,7 @@ class ISyncMemosToEmbeddingUseCaseTests : TestContainerAbstractSkeleton() {
     private lateinit var embeddingStore: EmbeddingStore
 
     @Autowired
-    private lateinit var memoQueryService: MemoQueryService
+    private lateinit var memoQueryClient: MemoQueryClient
 
     @Nested
     inner class `단일 메모 임베딩 동기화 테스트` {
@@ -84,7 +84,7 @@ class ISyncMemosToEmbeddingUseCaseTests : TestContainerAbstractSkeleton() {
                 MemoInfo(id = 3L, authorId = authorId, title = "메모 3", content = "내용 3"),
             )
 
-            every { memoQueryService.getAllMemosByAuthorId(authorId) } returns memos
+            every { memoQueryClient.getAllMemosByAuthorId(authorId) } returns memos
 
             // when
             val result = syncAllMemosToEmbedding(
@@ -95,7 +95,7 @@ class ISyncMemosToEmbeddingUseCaseTests : TestContainerAbstractSkeleton() {
             result.syncedCount shouldBe 3
 
             // 원래대로 복구
-            every { memoQueryService.getAllMemosByAuthorId(any()) } returns emptyList()
+            every { memoQueryClient.getAllMemosByAuthorId(any()) } returns emptyList()
         }
     }
 

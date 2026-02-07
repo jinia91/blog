@@ -47,6 +47,7 @@ spring-ai-openai-starter = { module = "org.springframework.ai:spring-ai-starter-
 spring-ai-google-genai-starter = { module = "org.springframework.ai:spring-ai-starter-model-google-genai" }
 spring-ai-google-genai-embedding-starter = { module = "org.springframework.ai:spring-ai-starter-model-google-genai-embedding" }
 spring-ai-chroma-store = { module = "org.springframework.ai:spring-ai-starter-vector-store-chroma" }
+spring-ai-rag = { module = "org.springframework.ai:spring-ai-rag" }
 
 # 캐시
 spring-boot-starter-redisson = { module = "org.redisson:redisson-spring-boot-starter", version = "3.17.7" }

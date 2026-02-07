@@ -9,6 +9,7 @@ import kr.co.jiniaslog.memo.domain.memo.MemoDeletedEvent
 import kr.co.jiniaslog.memo.domain.memo.MemoId
 import kr.co.jiniaslog.memo.domain.memo.MemoRepository
 import kr.co.jiniaslog.memo.domain.memo.MemoUpdatedEvent
+import kr.co.jiniaslog.memo.usecase.ICreateMemoWithContent
 import kr.co.jiniaslog.memo.usecase.IDeleteMemo
 import kr.co.jiniaslog.memo.usecase.IInitMemo
 import kr.co.jiniaslog.memo.usecase.IMakeRelationShipFolderAndMemo
@@ -19,6 +20,7 @@ import kr.co.jiniaslog.memo.usecase.MemoUseCasesFacade
 import kr.co.jiniaslog.shared.core.annotation.UseCaseInteractor
 import org.springframework.cache.annotation.CacheEvict
 import org.springframework.context.ApplicationEventPublisher
+import org.springframework.transaction.annotation.Transactional
 
 @UseCaseInteractor
 internal class MemoUseCasesInteractor(
@@ -27,6 +29,7 @@ internal class MemoUseCasesInteractor(
     private val eventPublisher: ApplicationEventPublisher,
 ) : MemoUseCasesFacade {
     @CacheEvict(value = ["folders"], key = "#command.authorId")
+    @Transactional("memoTransactionManager")
     override fun handle(command: IInitMemo.Command): IInitMemo.Info {
         ensureMemoCountIsUnderLimit(authorId = command.authorId)
         command.parentFolderId?.let { getFolder(it) }
@@ -54,6 +57,33 @@ internal class MemoUseCasesInteractor(
         }
     }
 
+    @CacheEvict(value = ["folders"], key = "#command.authorId")
+    @Transactional("memoTransactionManager")
+    override fun handle(command: ICreateMemoWithContent.Command): ICreateMemoWithContent.Info {
+        ensureMemoCountIsUnderLimit(authorId = command.authorId)
+        command.parentFolderId?.let { getFolder(it) }
+
+        val memo = Memo.init(
+            authorId = command.authorId,
+            parentFolderId = command.parentFolderId,
+        )
+        memo.update(command.title, command.content)
+
+        memoRepository.save(memo)
+
+        eventPublisher.publishEvent(
+            MemoCreatedEvent(
+                memoId = memo.entityId.value,
+                authorId = memo.authorId.value,
+                title = memo.title.value,
+                content = memo.content.value,
+            )
+        )
+
+        return ICreateMemoWithContent.Info(memo.entityId)
+    }
+
+    @Transactional("memoTransactionManager")
     override fun handle(command: IUpdateMemoContents.Command): IUpdateMemoContents.Info {
         val memo = getMemo(command.memoId)
         memo.update(command.title, command.content)
@@ -73,6 +103,7 @@ internal class MemoUseCasesInteractor(
         getMemo(id)
     }
 
+    @Transactional("memoTransactionManager")
     @CacheEvict(value = ["folders"], key = "#command.requesterId")
     override fun handle(command: IDeleteMemo.Command): IDeleteMemo.Info {
         val memo = getMemo(command.id)

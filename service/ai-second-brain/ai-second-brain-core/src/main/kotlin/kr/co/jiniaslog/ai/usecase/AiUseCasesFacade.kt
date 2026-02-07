@@ -1,5 +1,7 @@
 package kr.co.jiniaslog.ai.usecase
 
+import kr.co.jiniaslog.ai.domain.agent.AgentOrchestrator
+import kr.co.jiniaslog.ai.domain.agent.AgentResponse
 import kr.co.jiniaslog.ai.domain.chat.AuthorId
 import kr.co.jiniaslog.ai.domain.chat.ChatMessage
 import kr.co.jiniaslog.ai.domain.chat.ChatMessageRepository
@@ -7,26 +9,29 @@ import kr.co.jiniaslog.ai.domain.chat.ChatSession
 import kr.co.jiniaslog.ai.domain.chat.ChatSessionId
 import kr.co.jiniaslog.ai.domain.chat.ChatSessionRepository
 import kr.co.jiniaslog.ai.domain.chat.MessageRole
-import kr.co.jiniaslog.ai.outbound.ChatContext
 import kr.co.jiniaslog.ai.outbound.EmbeddingStore
-import kr.co.jiniaslog.ai.outbound.IntentType
-import kr.co.jiniaslog.ai.outbound.LlmService
-import kr.co.jiniaslog.ai.outbound.MemoCommandService
 import kr.co.jiniaslog.ai.outbound.MemoEmbeddingDocument
-import kr.co.jiniaslog.ai.outbound.MemoQueryService
+import kr.co.jiniaslog.ai.outbound.MemoQueryClient
 import kr.co.jiniaslog.shared.core.annotation.UseCaseInteractor
 import org.springframework.transaction.annotation.Transactional
 
 private val logger = mu.KotlinLogging.logger {}
 
+/**
+ * AI 유스케이스 파사드 - Multi-Agent 아키텍처 기반
+ *
+ * AgentOrchestrator를 사용하여 토큰 최적화된 Multi-Agent 처리를 수행합니다.
+ * - Intent Router (경량 모델): 의도 분류
+ * - RAG Agent (풀 모델): 질문 답변
+ * - Memo Management Agent (중간 모델): 메모/폴더 관리
+ */
 @UseCaseInteractor
 class AiUseCasesFacade(
     private val chatSessionRepository: ChatSessionRepository,
     private val chatMessageRepository: ChatMessageRepository,
     private val embeddingStore: EmbeddingStore,
-    private val llmService: LlmService,
-    private val memoQueryService: MemoQueryService,
-    private val memoCommandService: MemoCommandService,
+    private val agentOrchestrator: AgentOrchestrator,
+    private val memoQueryClient: MemoQueryClient,
 ) : IChat,
     ICreateChatSession,
     IGetChatSessions,
@@ -37,12 +42,6 @@ class AiUseCasesFacade(
     ISyncAllMemosToEmbedding,
     IDeleteMemoEmbedding {
 
-    companion object {
-        private const val SYSTEM_PROMPT = """당신은 사용자의 개인 지식 관리 시스템에서 작동하는 AI 어시스턴트입니다.
-사용자의 메모 내용을 기반으로 질문에 답변하고, 필요한 경우 관련 메모를 참조하여 정확한 정보를 제공합니다.
-답변은 명확하고 간결하게 제공하며, 참조한 메모가 있다면 언급해주세요. 메모가 없다면 솔직하게 모른다고 답변하세요."""
-    }
-
     override fun invoke(command: IChat.Command): IChat.Info {
         val sessionId = ChatSessionId(command.sessionId)
         val authorId = AuthorId(command.authorId)
@@ -52,73 +51,40 @@ class AiUseCasesFacade(
 
         require(session.authorId == authorId) { "Not authorized to access this session" }
 
-        val intent = llmService.classifyIntent(command.message)
+        // 사용자 메시지 저장
+        val userMessage = ChatMessage.create(sessionId, MessageRole.USER, command.message)
+        chatMessageRepository.save(userMessage)
 
-        return when (intent) {
-            IntentType.MEMO_CREATION -> handleMemoCreation(sessionId, authorId, command.message)
-            else -> handleChat(sessionId, authorId, command.message)
+        // AgentOrchestrator를 통한 처리
+        val response = agentOrchestrator.process(
+            message = command.message,
+            sessionId = sessionId.value,
+            authorId = authorId.value
+        )
+
+        // 응답에 따른 처리
+        val (responseMessage, createdMemoId) = when (response) {
+            is AgentResponse.ChatResponse -> Pair(response.content, null)
+            is AgentResponse.MemoCreated -> Pair(response.message, response.memoId)
+            is AgentResponse.MemoUpdated -> Pair(response.message, null)
+            is AgentResponse.MemoMoved -> Pair(response.message, null)
+            is AgentResponse.FolderCreated -> Pair(response.message, null)
+            is AgentResponse.FolderRenamed -> Pair(response.message, null)
+            is AgentResponse.FolderMoved -> Pair(response.message, null)
+            is AgentResponse.MemoList -> Pair(response.message, null)
+            is AgentResponse.FolderList -> Pair(response.message, null)
+            is AgentResponse.Deleted -> Pair(response.message, null)
+            is AgentResponse.Error -> Pair(response.message, null)
         }
-    }
 
-    private fun handleChat(
-        sessionId: ChatSessionId,
-        authorId: AuthorId,
-        message: String,
-    ): IChat.Info {
-        val userMessage = ChatMessage.create(sessionId, MessageRole.USER, message)
-        chatMessageRepository.save(userMessage)
-
-        val history = chatMessageRepository.findAllBySessionId(sessionId)
-        val relevantDocs = embeddingStore.searchSimilar(message, authorId.value, 5)
-        logger.info { "Found ${relevantDocs.size} relevant documents for the message." }
-        logger.info { relevantDocs }
-
-        val context = ChatContext(
-            systemPrompt = SYSTEM_PROMPT,
-            conversationHistory = history,
-            relevantDocuments = relevantDocs,
-        )
-
-        val response = llmService.chat(message, context)
-
-        val assistantMessage = ChatMessage.create(sessionId, MessageRole.ASSISTANT, response)
+        val assistantMessage = ChatMessage.create(sessionId, MessageRole.ASSISTANT, responseMessage)
         chatMessageRepository.save(assistantMessage)
 
         return IChat.Info(
             sessionId = sessionId.value,
-            response = response,
-            createdMemoId = null,
+            response = responseMessage,
+            createdMemoId = createdMemoId,
         )
-    }
-
-    private fun handleMemoCreation(
-        sessionId: ChatSessionId,
-        authorId: AuthorId,
-        message: String,
-    ): IChat.Info {
-        val userMessage = ChatMessage.create(sessionId, MessageRole.USER, message)
-        chatMessageRepository.save(userMessage)
-
-        val memoId = memoCommandService.createMemo(
-            authorId = authorId.value,
-            title = extractTitle(message),
-            content = message,
-        )
-
-        val response = "메모가 생성되었습니다. (ID: $memoId)"
-        val assistantMessage = ChatMessage.create(sessionId, MessageRole.ASSISTANT, response)
-        chatMessageRepository.save(assistantMessage)
-
-        return IChat.Info(
-            sessionId = sessionId.value,
-            response = response,
-            createdMemoId = memoId,
-        )
-    }
-
-    private fun extractTitle(content: String): String {
-        val firstLine = content.lines().firstOrNull()?.take(50) ?: "Untitled"
-        return if (firstLine.isBlank()) "Untitled" else firstLine
     }
 
     override fun invoke(command: ICreateChatSession.Command): ICreateChatSession.Info {
@@ -133,16 +99,32 @@ class AiUseCasesFacade(
         )
     }
 
-    override fun invoke(query: IGetChatSessions.Query): List<IGetChatSessions.SessionInfo> {
-        return chatSessionRepository.findAllByAuthorId(AuthorId(query.authorId))
-            .map { session ->
+    override fun invoke(query: IGetChatSessions.Query): IGetChatSessions.PagedSessions {
+        val sessions = chatSessionRepository.findByAuthorIdWithCursor(
+            AuthorId(query.authorId),
+            query.cursor?.let { ChatSessionId(it) },
+            query.size + 1
+        )
+
+        val hasNext = sessions.size > query.size
+        val resultSessions = if (hasNext) sessions.dropLast(1) else sessions
+        val nextCursor = if (hasNext) resultSessions.lastOrNull()?.entityId?.value else null
+
+        val sessionIds = resultSessions.map { it.entityId }
+        val lastMessages = chatMessageRepository.findLastUserMessagesBySessionIds(sessionIds)
+
+        return IGetChatSessions.PagedSessions(
+            sessions = resultSessions.map { session ->
                 IGetChatSessions.SessionInfo(
                     sessionId = session.entityId.value,
-                    title = session.title,
+                    lastMessage = lastMessages[session.entityId]?.content?.take(100),
                     createdAt = session.createdAt,
                     updatedAt = session.updatedAt,
                 )
-            }
+            },
+            nextCursor = nextCursor,
+            hasNext = hasNext,
+        )
     }
 
     override fun invoke(query: IGetChatHistory.Query): IGetChatHistory.PagedMessages {
@@ -195,7 +177,7 @@ class AiUseCasesFacade(
         val searchQuery = when {
             query.query != null -> query.query
             query.currentMemoId != null -> {
-                val memo = memoQueryService.getMemoById(query.currentMemoId)
+                val memo = memoQueryClient.getMemoById(query.currentMemoId)
                     ?: throw IllegalArgumentException("Memo not found: ${query.currentMemoId}")
                 "${memo.title} ${memo.content}"
             }
@@ -226,7 +208,7 @@ class AiUseCasesFacade(
     }
 
     override fun invoke(command: ISyncAllMemosToEmbedding.Command): ISyncAllMemosToEmbedding.Info {
-        val memos = memoQueryService.getAllMemosByAuthorId(command.authorId)
+        val memos = memoQueryClient.getAllMemosByAuthorId(command.authorId)
         val documents = memos.map { memo ->
             MemoEmbeddingDocument(
                 memoId = memo.id,
