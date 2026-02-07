@@ -88,6 +88,141 @@ class MemoManagementAgent(
 - 도구 호출 없이 응답 금지
 - ID 질문 금지
 - "내일", "모레" 등 상대적 시간을 그대로 저장 금지"""
+
+        /**
+         * Tool 응답 문자열을 AgentResponse 객체로 파싱합니다.
+         * 테스트 가능하도록 companion object에 정의되었습니다.
+         */
+        internal fun parseResponse(response: String): AgentResponse {
+            // Tool 응답 파싱
+            return when {
+                response.startsWith("MEMO_CREATED:") -> {
+                    val parts = response.removePrefix("MEMO_CREATED:").split(":", limit = 3)
+                    if (parts.size >= 3) {
+                        AgentResponse.MemoCreated(
+                            memoId = parts[0].toLongOrNull() ?: 0L,
+                            title = parts[1],
+                            message = parts[2]
+                        )
+                    } else {
+                        AgentResponse.ChatResponse(response)
+                    }
+                }
+
+                response.startsWith("MEMO_UPDATED:") -> {
+                    val parts = response.removePrefix("MEMO_UPDATED:").split(":", limit = 2)
+                    AgentResponse.MemoUpdated(
+                        memoId = parts[0].toLongOrNull() ?: 0L,
+                        message = parts.getOrElse(1) { "메모가 수정되었습니다." }
+                    )
+                }
+
+                response.startsWith("MEMO_MOVED:") -> {
+                    val parts = response.removePrefix("MEMO_MOVED:").split(":", limit = 3)
+                    AgentResponse.MemoMoved(
+                        memoId = parts[0].toLongOrNull() ?: 0L,
+                        folderId = parts[1].toLongOrNull()?.takeIf { it != 0L },
+                        message = parts.getOrElse(2) { "메모가 이동되었습니다." }
+                    )
+                }
+
+                response.startsWith("FOLDER_CREATED:") -> {
+                    val parts = response.removePrefix("FOLDER_CREATED:").split(":", limit = 3)
+                    AgentResponse.FolderCreated(
+                        folderId = parts[0].toLongOrNull() ?: 0L,
+                        name = parts[1],
+                        message = parts.getOrElse(2) { "폴더가 생성되었습니다." }
+                    )
+                }
+
+                response.startsWith("FOLDER_RENAMED:") -> {
+                    val parts = response.removePrefix("FOLDER_RENAMED:").split(":", limit = 3)
+                    AgentResponse.FolderRenamed(
+                        folderId = parts[0].toLongOrNull() ?: 0L,
+                        name = parts[1],
+                        message = parts.getOrElse(2) { "폴더 이름이 변경되었습니다." }
+                    )
+                }
+
+                response.startsWith("FOLDER_MOVED:") -> {
+                    val parts = response.removePrefix("FOLDER_MOVED:").split(":", limit = 3)
+                    AgentResponse.FolderMoved(
+                        folderId = parts[0].toLongOrNull() ?: 0L,
+                        parentFolderId = parts[1].toLongOrNull()?.takeIf { it != 0L },
+                        message = parts.getOrElse(2) { "폴더가 이동되었습니다." }
+                    )
+                }
+
+                response.startsWith("DELETED:") -> {
+                    // FORMAT: DELETED:TYPE:ID:MESSAGE
+                    val parts = response.removePrefix("DELETED:").split(":", limit = 3)
+                    if (parts.size >= 3) {
+                        AgentResponse.Deleted(
+                            type = if (parts[0] == "MEMO") {
+                                AgentResponse.Deleted.DeleteType.MEMO
+                            } else {
+                                AgentResponse.Deleted.DeleteType.FOLDER
+                            },
+                            targetId = parts[1].toLongOrNull() ?: 0L,
+                            message = parts[2]
+                        )
+                    } else {
+                        AgentResponse.ChatResponse(response)
+                    }
+                }
+
+                response.startsWith("MEMO_LIST:") -> {
+                    val parts = response.removePrefix("MEMO_LIST:").split(":", limit = 2)
+                    val count = parts[0].toIntOrNull() ?: 0
+                    val message = parts.getOrElse(1) { "" }
+                    AgentResponse.MemoList(
+                        memos = if (count > 0) parseMemoList(message) else emptyList(),
+                        message = if (count == 0) message else "$count 개의 메모가 있습니다.\n$message"
+                    )
+                }
+
+                response.startsWith("FOLDER_LIST:") -> {
+                    val parts = response.removePrefix("FOLDER_LIST:").split(":", limit = 2)
+                    val count = parts[0].toIntOrNull() ?: 0
+                    val message = parts.getOrElse(1) { "" }
+                    AgentResponse.FolderList(
+                        folders = if (count > 0) parseFolderList(message) else emptyList(),
+                        message = if (count == 0) message else "$count 개의 폴더가 있습니다.\n$message"
+                    )
+                }
+
+                response.startsWith("ERROR:") -> {
+                    AgentResponse.Error(response.removePrefix("ERROR:").trim())
+                }
+
+                else -> {
+                    // Tool 호출 결과가 아닌 일반 응답 (삭제 확인 질문 등)
+                    AgentResponse.ChatResponse(response)
+                }
+            }
+        }
+
+        private fun parseMemoList(listStr: String): List<AgentResponse.MemoList.MemoSummary> {
+            val regex = """\[(\d+)] (.+?)(?:\s*\(폴더:\s*(\d+)\))?$""".toRegex(RegexOption.MULTILINE)
+            return regex.findAll(listStr).map { match ->
+                AgentResponse.MemoList.MemoSummary(
+                    id = match.groupValues[1].toLong(),
+                    title = match.groupValues[2].trim(),
+                    folderId = match.groupValues[3].takeIf { it.isNotEmpty() }?.toLongOrNull()
+                )
+            }.toList()
+        }
+
+        private fun parseFolderList(listStr: String): List<AgentResponse.FolderList.FolderSummary> {
+            val regex = """\[(\d+)] (.+?)(?:\s*\(상위:\s*(\d+)\)|\s*\(최상위\))?$""".toRegex(RegexOption.MULTILINE)
+            return regex.findAll(listStr).map { match ->
+                AgentResponse.FolderList.FolderSummary(
+                    id = match.groupValues[1].toLong(),
+                    name = match.groupValues[2].trim(),
+                    parentFolderId = match.groupValues[3].takeIf { it.isNotEmpty() }?.toLongOrNull()
+                )
+            }.toList()
+        }
     }
 
     /**
@@ -119,137 +254,6 @@ class MemoManagementAgent(
 
         log.debug("MemoManagementAgent response: $response")
 
-        return parseResponse(response)
-    }
-
-    private fun parseResponse(response: String): AgentResponse {
-        // Tool 응답 파싱
-        return when {
-            response.startsWith("MEMO_CREATED:") -> {
-                val parts = response.removePrefix("MEMO_CREATED:").split(":", limit = 3)
-                if (parts.size >= 3) {
-                    AgentResponse.MemoCreated(
-                        memoId = parts[0].toLongOrNull() ?: 0L,
-                        title = parts[1],
-                        message = parts[2]
-                    )
-                } else {
-                    AgentResponse.ChatResponse(response)
-                }
-            }
-
-            response.startsWith("MEMO_UPDATED:") -> {
-                val parts = response.removePrefix("MEMO_UPDATED:").split(":", limit = 2)
-                AgentResponse.MemoUpdated(
-                    memoId = parts[0].toLongOrNull() ?: 0L,
-                    message = parts.getOrElse(1) { "메모가 수정되었습니다." }
-                )
-            }
-
-            response.startsWith("MEMO_MOVED:") -> {
-                val parts = response.removePrefix("MEMO_MOVED:").split(":", limit = 3)
-                AgentResponse.MemoMoved(
-                    memoId = parts[0].toLongOrNull() ?: 0L,
-                    folderId = parts[1].toLongOrNull()?.takeIf { it != 0L },
-                    message = parts.getOrElse(2) { "메모가 이동되었습니다." }
-                )
-            }
-
-            response.startsWith("FOLDER_CREATED:") -> {
-                val parts = response.removePrefix("FOLDER_CREATED:").split(":", limit = 3)
-                AgentResponse.FolderCreated(
-                    folderId = parts[0].toLongOrNull() ?: 0L,
-                    name = parts[1],
-                    message = parts.getOrElse(2) { "폴더가 생성되었습니다." }
-                )
-            }
-
-            response.startsWith("FOLDER_RENAMED:") -> {
-                val parts = response.removePrefix("FOLDER_RENAMED:").split(":", limit = 3)
-                AgentResponse.FolderRenamed(
-                    folderId = parts[0].toLongOrNull() ?: 0L,
-                    name = parts[1],
-                    message = parts.getOrElse(2) { "폴더 이름이 변경되었습니다." }
-                )
-            }
-
-            response.startsWith("FOLDER_MOVED:") -> {
-                val parts = response.removePrefix("FOLDER_MOVED:").split(":", limit = 3)
-                AgentResponse.FolderMoved(
-                    folderId = parts[0].toLongOrNull() ?: 0L,
-                    parentFolderId = parts[1].toLongOrNull()?.takeIf { it != 0L },
-                    message = parts.getOrElse(2) { "폴더가 이동되었습니다." }
-                )
-            }
-
-            response.startsWith("DELETED:") -> {
-                // FORMAT: DELETED:TYPE:ID:MESSAGE
-                val parts = response.removePrefix("DELETED:").split(":", limit = 3)
-                if (parts.size >= 3) {
-                    AgentResponse.Deleted(
-                        type = if (parts[0] == "MEMO") {
-                            AgentResponse.Deleted.DeleteType.MEMO
-                        } else {
-                            AgentResponse.Deleted.DeleteType.FOLDER
-                        },
-                        targetId = parts[1].toLongOrNull() ?: 0L,
-                        message = parts[2]
-                    )
-                } else {
-                    AgentResponse.ChatResponse(response)
-                }
-            }
-
-            response.startsWith("MEMO_LIST:") -> {
-                val parts = response.removePrefix("MEMO_LIST:").split(":", limit = 2)
-                val count = parts[0].toIntOrNull() ?: 0
-                val message = parts.getOrElse(1) { "" }
-                AgentResponse.MemoList(
-                    memos = if (count > 0) parseMemoList(message) else emptyList(),
-                    message = if (count == 0) message else "$count 개의 메모가 있습니다.\n$message"
-                )
-            }
-
-            response.startsWith("FOLDER_LIST:") -> {
-                val parts = response.removePrefix("FOLDER_LIST:").split(":", limit = 2)
-                val count = parts[0].toIntOrNull() ?: 0
-                val message = parts.getOrElse(1) { "" }
-                AgentResponse.FolderList(
-                    folders = if (count > 0) parseFolderList(message) else emptyList(),
-                    message = if (count == 0) message else "$count 개의 폴더가 있습니다.\n$message"
-                )
-            }
-
-            response.startsWith("ERROR:") -> {
-                AgentResponse.Error(response.removePrefix("ERROR:").trim())
-            }
-
-            else -> {
-                // Tool 호출 결과가 아닌 일반 응답 (삭제 확인 질문 등)
-                AgentResponse.ChatResponse(response)
-            }
-        }
-    }
-
-    private fun parseMemoList(listStr: String): List<AgentResponse.MemoList.MemoSummary> {
-        val regex = """\[(\d+)] (.+?)(?:\s*\(폴더:\s*(\d+)\))?$""".toRegex(RegexOption.MULTILINE)
-        return regex.findAll(listStr).map { match ->
-            AgentResponse.MemoList.MemoSummary(
-                id = match.groupValues[1].toLong(),
-                title = match.groupValues[2].trim(),
-                folderId = match.groupValues[3].takeIf { it.isNotEmpty() }?.toLongOrNull()
-            )
-        }.toList()
-    }
-
-    private fun parseFolderList(listStr: String): List<AgentResponse.FolderList.FolderSummary> {
-        val regex = """\[(\d+)] (.+?)(?:\s*\(상위:\s*(\d+)\)|\s*\(최상위\))?$""".toRegex(RegexOption.MULTILINE)
-        return regex.findAll(listStr).map { match ->
-            AgentResponse.FolderList.FolderSummary(
-                id = match.groupValues[1].toLong(),
-                name = match.groupValues[2].trim(),
-                parentFolderId = match.groupValues[3].takeIf { it.isNotEmpty() }?.toLongOrNull()
-            )
-        }.toList()
+        return Companion.parseResponse(response)
     }
 }
