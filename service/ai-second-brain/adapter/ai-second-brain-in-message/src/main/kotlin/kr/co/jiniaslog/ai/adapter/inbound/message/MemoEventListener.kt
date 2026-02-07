@@ -26,7 +26,7 @@ class MemoEventListener(
     private val scheduler: ScheduledExecutorService,
 ) {
     companion object {
-        private const val DEBOUNCE_DELAY_SECONDS = 5L
+        private const val DEBOUNCE_DELAY_MINUTES = 10L
     }
 
     // 메모별 디바운스 타이머
@@ -80,7 +80,7 @@ class MemoEventListener(
                     logger.error(e) { "Failed to update memo ${evt.memoId} in embedding store" }
                 }
             }
-        }, DEBOUNCE_DELAY_SECONDS, TimeUnit.SECONDS)
+        }, DEBOUNCE_DELAY_MINUTES, TimeUnit.MINUTES)
 
         pendingUpdates[event.memoId] = future
     }
