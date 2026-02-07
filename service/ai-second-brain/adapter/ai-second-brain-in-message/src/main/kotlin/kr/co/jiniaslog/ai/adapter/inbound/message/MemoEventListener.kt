@@ -1,5 +1,6 @@
 package kr.co.jiniaslog.ai.adapter.inbound.message
 
+import jakarta.annotation.PreDestroy
 import kr.co.jiniaslog.ai.usecase.IDeleteMemoEmbedding
 import kr.co.jiniaslog.ai.usecase.ISyncMemoToEmbedding
 import kr.co.jiniaslog.memo.domain.memo.MemoCreatedEvent
@@ -32,6 +33,14 @@ class MemoEventListener(
     // 메모별 디바운스 타이머
     private val pendingUpdates = ConcurrentHashMap<Long, ScheduledFuture<*>>()
     private val pendingEvents = ConcurrentHashMap<Long, MemoUpdatedEvent>()
+
+    @PreDestroy
+    fun shutdown() {
+        pendingUpdates.values.forEach { it.cancel(false) }
+        pendingUpdates.clear()
+        pendingEvents.clear()
+        scheduler.shutdownNow()
+    }
 
     @Async("aiEmbeddingExecutor")
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
