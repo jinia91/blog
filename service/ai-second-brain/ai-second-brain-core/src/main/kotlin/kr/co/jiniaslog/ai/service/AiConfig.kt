@@ -132,7 +132,23 @@ class AiConfig {
     }
 
     /**
-     * 3. Memo Agent용 ChatClient (Tool Calling 지원)
+     * 3. 일반 대화용 ChatClient (Memory만, RAG 없음)
+     * GENERAL_CHAT 인텐트에서 사용 - RAG 노이즈 없이 대화 히스토리만 유지
+     */
+    @Bean("generalChatClient")
+    fun generalChatClient(
+        @Qualifier("googleGenAiChatModel") chatModel: ChatModel,
+        chatMemory: ChatMemory
+    ): ChatClient {
+        return ChatClient.builder(chatModel)
+            .defaultAdvisors(
+                MessageChatMemoryAdvisor.builder(chatMemory).build()
+            )
+            .build()
+    }
+
+    /**
+     * 4. Memo Agent용 ChatClient (Tool Calling 지원)
      * Tools는 런타임에 주입됨
      */
     @Bean("memoChatClient")

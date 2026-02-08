@@ -6,6 +6,7 @@ import io.mockk.mockk
 import io.restassured.RestAssured
 import kr.co.jiniaslog.ai.domain.agent.AgentOrchestrator
 import kr.co.jiniaslog.ai.domain.agent.AgentResponse
+import kr.co.jiniaslog.ai.domain.agent.GeneralChatAgent
 import kr.co.jiniaslog.ai.domain.agent.Intent
 import kr.co.jiniaslog.ai.domain.agent.IntentRouterAgent
 import kr.co.jiniaslog.ai.domain.agent.MemoManagementAgent
@@ -107,11 +108,16 @@ class ContextWithTestContainerConfig {
         return mockk(relaxed = true)
     }
 
+    @Bean(name = ["generalChatClient"])
+    fun generalChatClient(): ChatClient {
+        return mockk(relaxed = true)
+    }
+
     @Bean
     @Primary
     fun intentRouterAgent(): IntentRouterAgent {
         return mockk {
-            every { classify(any()) } returns Intent.QUESTION
+            every { classify(any(), any()) } returns Intent.QUESTION
         }
     }
 
@@ -119,7 +125,15 @@ class ContextWithTestContainerConfig {
     @Primary
     fun ragAgent(): RagAgent {
         return mockk {
-            every { chat(any(), any(), any(), any()) } returns "테스트 응답입니다."
+            every { chat(any(), any(), any()) } returns "테스트 응답입니다."
+        }
+    }
+
+    @Bean
+    @Primary
+    fun generalChatAgent(): GeneralChatAgent {
+        return mockk {
+            every { chat(any(), any()) } returns "테스트 응답입니다."
         }
     }
 
@@ -152,7 +166,9 @@ class ContextWithTestContainerConfig {
     fun agentOrchestrator(
         intentRouterAgent: IntentRouterAgent,
         ragAgent: RagAgent,
-        memoManagementAgent: MemoManagementAgent
+        generalChatAgent: GeneralChatAgent,
+        memoManagementAgent: MemoManagementAgent,
+        chatMemory: org.springframework.ai.chat.memory.ChatMemory
     ): AgentOrchestrator {
         return mockk {
             every { process(any(), any(), any()) } returns AgentResponse.ChatResponse("테스트 응답입니다.")
