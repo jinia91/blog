@@ -10,4 +10,5 @@ data class MemoInfo(
 interface MemoQueryClient {
     fun getMemoById(memoId: Long): MemoInfo?
     fun getAllMemosByAuthorId(authorId: Long): List<MemoInfo>
+    fun searchByKeyword(authorId: Long, keyword: String, limit: Int = 5): List<MemoInfo>
 }

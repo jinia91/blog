@@ -6,6 +6,7 @@ import io.mockk.mockk
 import io.restassured.RestAssured
 import kr.co.jiniaslog.ai.domain.agent.AgentOrchestrator
 import kr.co.jiniaslog.ai.domain.agent.AgentResponse
+import kr.co.jiniaslog.ai.domain.agent.CompoundIntentHandler
 import kr.co.jiniaslog.ai.domain.agent.GeneralChatAgent
 import kr.co.jiniaslog.ai.domain.agent.Intent
 import kr.co.jiniaslog.ai.domain.agent.IntentRouterAgent
@@ -80,6 +81,7 @@ class ContextWithTestContainerConfig {
                 content = "테스트 메모 내용입니다."
             )
             every { getAllMemosByAuthorId(any()) } returns emptyList()
+            every { searchByKeyword(any(), any(), any()) } returns emptyList()
         }
     }
 
@@ -117,7 +119,8 @@ class ContextWithTestContainerConfig {
     @Primary
     fun intentRouterAgent(): IntentRouterAgent {
         return mockk {
-            every { classify(any(), any()) } returns Intent.QUESTION
+            every { classify(any(), any()) } returns Intent.KNOWLEDGE_QUERY
+            every { classifyWithSubIntents(any(), any()) } returns Pair(Intent.KNOWLEDGE_QUERY, emptyList())
         }
     }
 
@@ -163,16 +166,23 @@ class ContextWithTestContainerConfig {
 
     @Bean
     @Primary
+    fun compoundIntentHandler(): CompoundIntentHandler {
+        return mockk(relaxed = true)
+    }
+
+    @Bean
+    @Primary
     fun agentOrchestrator(
         intentRouterAgent: IntentRouterAgent,
         ragAgent: RagAgent,
         generalChatAgent: GeneralChatAgent,
         memoManagementAgent: MemoManagementAgent,
+        compoundIntentHandler: CompoundIntentHandler,
         chatMemory: org.springframework.ai.chat.memory.ChatMemory
     ): AgentOrchestrator {
         return mockk {
             every { process(any(), any(), any()) } returns AgentResponse.ChatResponse("테스트 응답입니다.")
-            every { classifyIntent(any()) } returns Intent.QUESTION
+            every { classifyIntent(any()) } returns Intent.KNOWLEDGE_QUERY
         }
     }
 }

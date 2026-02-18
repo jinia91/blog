@@ -412,17 +412,31 @@ class IntentTests : SimpleUnitTestContext() {
     @Nested
     inner class `Intent enum 테스트` {
         @Test
-        fun `QUESTION 값이 존재한다`() {
-            val intent = Intent.QUESTION
+        fun `KNOWLEDGE_QUERY 값이 존재한다`() {
+            val intent = Intent.KNOWLEDGE_QUERY
 
-            intent shouldBe Intent.QUESTION
+            intent shouldBe Intent.KNOWLEDGE_QUERY
         }
 
         @Test
-        fun `MEMO_MANAGEMENT 값이 존재한다`() {
-            val intent = Intent.MEMO_MANAGEMENT
+        fun `MEMO_WRITE 값이 존재한다`() {
+            val intent = Intent.MEMO_WRITE
 
-            intent shouldBe Intent.MEMO_MANAGEMENT
+            intent shouldBe Intent.MEMO_WRITE
+        }
+
+        @Test
+        fun `MEMO_ORGANIZE 값이 존재한다`() {
+            val intent = Intent.MEMO_ORGANIZE
+
+            intent shouldBe Intent.MEMO_ORGANIZE
+        }
+
+        @Test
+        fun `MEMO_SEARCH 값이 존재한다`() {
+            val intent = Intent.MEMO_SEARCH
+
+            intent shouldBe Intent.MEMO_SEARCH
         }
 
         @Test
@@ -433,10 +447,17 @@ class IntentTests : SimpleUnitTestContext() {
         }
 
         @Test
-        fun `모든 값이 3개 존재한다`() {
+        fun `COMPOUND 값이 존재한다`() {
+            val intent = Intent.COMPOUND
+
+            intent shouldBe Intent.COMPOUND
+        }
+
+        @Test
+        fun `모든 값이 6개 존재한다`() {
             val values = Intent.entries
 
-            values shouldHaveSize 3
+            values shouldHaveSize 6
         }
     }
 }
