@@ -24,6 +24,7 @@ koverReport {
                 "*LlmServiceImpl*",
                 "*MemoQueryServiceAdapter*",
                 "*MemoCommandServiceAdapter*",
+                "*MemoQueryClientAdapter*",
             )
             // DTO 및 데이터 클래스 (equals, hashCode, toString 등 자동 생성)
             classes("*Dto", "*Dto\$*", "*Request", "*Request\$*", "*Response", "*Response\$*")
