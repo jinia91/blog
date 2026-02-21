@@ -31,4 +31,13 @@ class MemoQueryClientAdapter(
             )
         }
     }
+
+    override fun searchByKeyword(authorId: Long, keyword: String, limit: Int): List<MemoInfo> {
+        return getAllMemosByAuthorId(authorId)
+            .filter { memo ->
+                memo.title.contains(keyword, ignoreCase = true) ||
+                    memo.content.contains(keyword, ignoreCase = true)
+            }
+            .take(limit)
+    }
 }

@@ -20,6 +20,7 @@ class AgentOrchestrator(
     private val ragAgent: RagAgent,
     private val generalChatAgent: GeneralChatAgent,
     private val memoManagementAgent: MemoManagementAgent,
+    private val compoundIntentHandler: CompoundIntentHandler,
     private val chatMemory: ChatMemory
 ) {
     /**
@@ -38,12 +39,12 @@ class AgentOrchestrator(
         // 1. 최근 대화 히스토리를 가져와서 Intent Router에 전달 (맥락 기반 분류)
         val conversationHistory = buildConversationHistory(sessionId.toString())
 
-        // 2. Intent 분류 (경량 모델 + 대화 맥락)
-        val intent = intentRouter.classify(message, conversationHistory)
+        // 2. Intent 분류 (경량 모델 + 대화 맥락) - 복합 의도도 감지
+        val (intent, subIntents) = intentRouter.classifyWithSubIntents(message, conversationHistory)
 
         // 3. Intent에 따라 적절한 Agent로 라우팅
         return when (intent) {
-            Intent.QUESTION -> {
+            Intent.KNOWLEDGE_QUERY -> {
                 val response = ragAgent.chat(
                     message = message,
                     sessionId = sessionId,
@@ -51,8 +52,13 @@ class AgentOrchestrator(
                 )
                 AgentResponse.ChatResponse(response)
             }
-            Intent.MEMO_MANAGEMENT -> {
+            Intent.MEMO_WRITE,
+            Intent.MEMO_ORGANIZE,
+            Intent.MEMO_SEARCH -> {
                 memoManagementAgent.process(message, authorId, sessionId)
+            }
+            Intent.COMPOUND -> {
+                compoundIntentHandler.process(message, subIntents, sessionId, authorId)
             }
             Intent.GENERAL_CHAT -> {
                 val response = generalChatAgent.chat(

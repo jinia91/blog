@@ -1,9 +1,10 @@
 package kr.co.jiniaslog.ai.service
 
+import kr.co.jiniaslog.ai.domain.chat.ChatMessageRepository
+import kr.co.jiniaslog.ai.domain.chat.PersistentChatMemory
 import org.springframework.ai.chat.client.ChatClient
 import org.springframework.ai.chat.client.advisor.MessageChatMemoryAdvisor
 import org.springframework.ai.chat.memory.ChatMemory
-import org.springframework.ai.chat.memory.MessageWindowChatMemory
 import org.springframework.ai.chat.model.ChatModel
 import org.springframework.ai.rag.advisor.RetrievalAugmentationAdvisor
 import org.springframework.ai.rag.generation.augmentation.ContextualQueryAugmenter
@@ -36,13 +37,14 @@ class AiConfig {
 
     /**
      * ChatMemory 빈 - 대화 히스토리 관리
-     * InMemoryChatMemory를 사용하여 최근 N개 메시지 유지
+     * DB 기반 PersistentChatMemory를 사용하여 서버 재시작 후에도 대화 히스토리 유지
      */
     @Bean
-    fun chatMemory(): ChatMemory {
-        return MessageWindowChatMemory.builder()
-            .maxMessages(20)
-            .build()
+    fun chatMemory(chatMessageRepository: ChatMessageRepository): ChatMemory {
+        return PersistentChatMemory(
+            chatMessageRepository = chatMessageRepository,
+            maxMessages = 20,
+        )
     }
 
     /**
@@ -155,16 +157,6 @@ class AiConfig {
     fun memoChatClient(
         @Qualifier("googleGenAiChatModel") chatModel: ChatModel
     ): ChatClient {
-        return ChatClient.builder(chatModel)
-            .build()
-    }
-
-    /**
-     * 기존 LlmServiceImpl 호환을 위한 기본 ChatClient
-     * @deprecated AgentOrchestrator 사용 권장
-     */
-    @Bean("chatClient")
-    fun chatClient(@Qualifier("googleGenAiChatModel") chatModel: ChatModel): ChatClient {
         return ChatClient.builder(chatModel)
             .build()
     }
